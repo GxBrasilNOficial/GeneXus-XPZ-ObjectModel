@@ -153,7 +153,7 @@ Examples observed in the inspected XML:
 - objects using `type="ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0"`; per user confirmation in the KB, this object type is `Generator`
 - `AbrangenciaDaSelecaoDeCorte`, `Aliquota`, `CEST`, `EnderecoEmail`, and `PrecoComZ` use `type="00972a17-9975-449e-aab1-d26165d51393"` and consistently show `Domain`-style properties such as `ATTCUSTOMTYPE`, `Length`, `AttMaxLen`, `Decimals`, `ATT_PICTURE`, `IDEnumDefinedValues`, or `idBasedOn` -> `Domain`
 - objects using `type="1132ac08-290f-4fd1-bd18-64777b7329d1"` match the `File` export set from the KB and show `FileName`, `FileExtension`, embedded binary data, and extraction properties such as `JavaExtract` and `NetExtract` -> `File`
-- objects using `type="9fb193d9-64a4-4d30-b129-ff7c76830f7e"` consistently show image payload under `<Images>` and map directly to generated files under `C:\GxModels\FabricaBrasil18\CSharpModel\Web\Resources` -> `Image`
+- objects using `type="9fb193d9-64a4-4d30-b129-ff7c76830f7e"` consistently show image payload under `<Images>` and map directly to generated files under the web model's `Web/Resources` output directory -> `Image`
 - objects using `type="857ca50e-7905-0000-0007-c5d9ff2975ec"` consistently contain `<Index` and no objects outside that type showed the same pattern in the extracted KB object set -> `Index`
 - objects using `type="83476c1e-fa72-4229-9930-f51b954fca2d"` were `WorkWith` and `WorkWithDevices`, each storing `<Data Pattern="...">` configuration for pattern behavior -> `PatternSettings`
 - objects using `type="87313f43-5eb2-41d7-9b8c-e8d9f5bf9588"` consistently contain `<Subtype guid="...">` entries and no objects outside that type showed the same pattern in the extracted KB object set -> `SubTypeGroup`
@@ -317,7 +317,7 @@ Observed content style:
 - object names matching generated files in the web `Resources` directory
 
 Validation evidence:
-- sampled objects with `type="9fb193d9-64a4-4d30-b129-ff7c76830f7e"` consistently mapped to files generated under `C:\GxModels\FabricaBrasil18\CSharpModel\Web\Resources`
+- sampled objects with `type="9fb193d9-64a4-4d30-b129-ff7c76830f7e"` consistently mapped to files generated under the web model's `Web/Resources` output directory
 - the object XML embeds the resource data directly, including file name and image bytes
 
 ### Generator
@@ -381,7 +381,7 @@ Validation evidence:
 - all `501` extracted objects with `type="d4876646-98dd-419b-8c1c-896f83c48368"` contained both `ThemeElementInternalType` and `ThemeElementThemeTypes`
 - `ThemeElementInternalType` was `GxClass` in `501/501`
 - `ThemeElementThemeTypes` was `idWeb` in `490` objects and `idSD` in `11`
-- names such as `ActionButtons`, `ActionsContainer`, and `BigTitle` were found referenced in generated web output under `C:\GxModels\FabricaBrasil18\CSharpModel\Web`
+- names such as `ActionButtons`, `ActionsContainer`, and `BigTitle` were found referenced in generated web output under the web model output directory
 
 Operational note:
 - `ThemeClass` is a practical working label based on current evidence
@@ -495,6 +495,7 @@ Long term:
 3. Extract a simple `SDT`, a simple `Transaction`, and a `SubTypeGroup`
 4. Build a `Part type` catalog with semantic labels
 5. Test whether editing a copied object block and repacking the `XPZ` is accepted by GeneXus
+
 
 
 

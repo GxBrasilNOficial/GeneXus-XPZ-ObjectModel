@@ -12,3 +12,11 @@ Conhecimento compartilhado sobre GeneXus, com foco em pesquisa prática, conven�
 ## Objetivo
 
 Disponibilizar material útil para a comunidade GeneXus, especialmente para análise de Knowledge Bases, exportações `XPZ` e organização de artefatos técnicos.
+
+
+## Notas sobre exemplos
+
+- Parte deste material foi derivada de observação prática sobre KBs e builds reais.
+- Quando um documento menciona diretórios gerados, eles devem ser lidos como exemplos de saída de modelo, não como dependência de um caminho específico de máquina.
+- Sempre que possível, referências locais de ambiente são neutralizadas para manter o conteúdo reutilizável pela comunidade.
+
