@@ -1,0 +1,166 @@
+# 08 - Guia para Agente GPT
+
+## Papel do documento
+operacional
+
+## Nivel de confianca predominante
+medio
+
+## Depende de
+00-README-GLOBAL.md, 01-base-empirica-geral.md, 02-regras-operacionais-gerais.md, 03-risco-e-decisao-por-tipo.md, 04-webpanel-familias-e-templates.md, 05-transaction-familias-e-templates.md
+
+## Usado por
+qualquer GPT que precise consumir esta base consolidada
+
+## Objetivo
+Explicar como outro agente GPT deve consultar esta base, classificar evidencias e decidir entre gerar, exigir template proximo ou abortar.
+
+## Fontes consolidadas
+- 26-guia-para-agente-gpt.md
+
+## Origem incorporada - 26-guia-para-agente-gpt.md
+
+## Papel do documento
+operacional
+
+## Nível de confiança predominante
+médio
+
+## Depende de
+00-README-GLOBAL.md, 01-genexus-xpz-research.md, 20-guia-de-clonagem-segura.md, 21-indicios-de-obrigatoriedade.md, 22-tipos-prontos-para-geracao-conservadora.md, 23-mapa-de-risco-por-tipo.md, 24-resumo-operacional-para-gerador-xpz.md
+
+## Usado por
+qualquer agente GPT que precise responder perguntas ou tomar decisão operacional usando esta base
+
+## Objetivo
+Explicar como um agente GPT deve consultar esta base documental e como responder com prudência.
+Padronizar quando avançar, quando exigir template real e quando abortar.
+
+## Ordem de consulta recomendada
+
+1. ler `00-README-GLOBAL.md`
+2. identificar o tipo alvo e checar `23-mapa-de-risco-por-tipo.md`
+3. ler `21-indicios-de-obrigatoriedade.md`
+4. ler `20-guia-de-clonagem-segura.md`
+5. ler `24-resumo-operacional-para-gerador-xpz.md`
+6. usar `10`, `11`, `12` e `30` para sustentar qualquer detalhe empírico específico
+
+## Quando responder com mais confiança
+
+- quando a pergunta for descritiva e estiver diretamente sustentada pelos XMLs ou tabelas empíricas
+- quando a resposta puder ser classificada como `Evidência direta`
+- quando o tipo alvo já estiver bem mapeado por frequência e exemplos comparáveis
+
+## Quando responder com cautela
+
+- quando a conclusão depender de frequência recorrente, mas sem teste externo
+- quando a amostra do tipo for pequena
+- quando a resposta tocar em edição segura, obrigatoriedade real, importação ou build
+
+## Quando recusar geração de XPZ
+
+- quando faltar template real suficientemente próximo
+- quando o tipo estiver em risco `alto` ou `muito alto` sem contexto equivalente, exceto nos fluxos ja destravados de `Transaction` e `WebPanel`
+- quando houver `pattern`, `parent` ou bloco raro ainda não compreendido
+- quando a pergunta exigir afirmar sucesso de importação/build sem evidência externa
+
+## Regra de decisão entre gerar, exigir template ou abortar
+
+### Gerar por clonagem conservadora
+
+- apenas em cenário muito controlado
+- apenas com template do mesmo tipo e contexto estrutural comparável
+- apenas preservando `Object/@type`, `parent*`, `moduleGuid` e `Part type` recorrentes
+- para `Transaction`, usar familia estrutural inferida da propria base
+- para `WebPanel`, usar familia estrutural inferida e template interno muito proximo
+
+### Exigir template real
+
+- quando o tipo estiver em cautela alta
+- quando a amostra for pequena
+- quando o objeto depender de contexto estrutural explícito
+- `Transaction` nao deve mais exigir template externo
+- `WebPanel` deve operar por familia estrutural e template interno proximo
+
+### Abortar
+
+- quando o template não for comparável
+- quando a mudança exigir mexer em blocos opacos ou raros
+- quando a solicitação pressuponha algo que a base não prova
+
+## Frases que um agente deve evitar
+
+- “isso certamente importa”
+- “isso é obrigatório” sem base comparativa explícita
+- “pode gerar tranquilo”
+- “vai buildar”
+- “é seguro editar” sem qualificação de risco e nível de evidência
+
+## Tipos em maior cautela
+
+- `Transaction`
+- `WebPanel`
+- `WorkWithForWeb`
+- `Procedure`
+- `Panel`
+- `DataProvider`
+
+## Tipos que ainda pedem template real muito próximo
+
+- todos os tipos em risco `alto` ou `muito alto`, exceto os fluxos operacionais ja destravados para `Transaction` e `WebPanel`
+- `DesignSystem`, por amostra pequena
+- `SDT`, quando a estrutura pai for relevante
+- `Theme` e `PackagedModule`, mesmo sendo candidatos relativamente menos agressivos
+
+## Decisao operacional atual para Transaction e WebPanel
+
+- Evidência direta: a base contem 183 `Transaction` e 1196 `WebPanel`.
+- Inferência forte: esse volume e suficiente para que um agente GPT tente execucao controlada em vez de apenas bloquear por falta de evidencia.
+- Inferência forte: `Transaction` pode seguir por padrao estrutural inferido e template interno da propria base.
+- Inferência forte: `WebPanel` pode seguir por familia estrutural, desde que o template interno seja cuidadosamente escolhido.
+- Inferência forte: nao pedir mais exemplos para esses tipos deixa de ser regra geral; so faz sentido pedir novos exemplos quando o caso concreto continuar estruturalmente ambiguo.
+- Hipótese: se a importacao falhar, o caso deve voltar como insumo para evoluir a propria base documental.
+
+## Fórmula de resposta recomendada
+
+1. classificar a afirmação como `Evidência direta`, `Inferência forte` ou `Hipótese`
+2. citar o arquivo-base usado
+3. declarar a limitação
+4. recomendar próximo passo conservador
+
+## Regras de materializacao
+
+- Evidência direta: ao gerar `Transaction` ou `WebPanel`, o agente deve usar XML bruto real como template-base
+- Evidência direta: o agente nao deve materializar objeto final a partir de markdown ou exemplo sanitizado
+
+### Transaction
+
+- localizar um XML bruto do mesmo `Object/@type` e da familia estrutural mais proxima
+- preservar `Object/@type`, `guid`, `parent*`, `moduleGuid`, `Part type` e ordem das `Part`
+- editar somente nomes, descricoes e trechos internos sustentados pelo template bruto
+- abortar se a mudanca exigir criar atributo novo no `<Object>` ou bloco novo sem paralelo bruto
+
+### WebPanel
+
+- identificar primeiro a familia estrutural usando `27-familias-estruturais-de-webpanel.md`
+- selecionar um template bruto interno da mesma familia; nao usar o anexo sanitizado como fonte final
+- preservar `layout`, `events`, `variables`, `Part type`, controles e bindings do template-base
+- abortar se a familia nao estiver clara ou se o alvo exigir `grid`, `tab`, componente customizado ou contexto de `parent` ausente no bruto escolhido
+
+## Regras de serializacao XPZ
+
+- o objeto clonado deve continuar como XML bem-formado com raiz unica `<Object>`
+- blocos `Source` e `InnerHtml` que vierem em `CDATA` devem permanecer em `CDATA`
+- o agente deve incluir o objeto em `<Objects>` somente por clonagem de um envelope XPZ bruto real; se nao houver envelope bruto, deve recusar a serializacao final
+- antes de empacotar, validar parse XML, presenca de todos os `Part type` recorrentes e coerencia entre objeto clonado e template-base
+- o agente nao deve afirmar “sem erro de importacao”; deve afirmar apenas que seguiu a especificacao mais conservadora disponivel
+
+## Regras de fonte
+
+- Fonte valida: XML bruto de objeto e envelope XPZ bruto real
+- Fonte invalida: markdown desta base
+- Fonte invalida: exemplos sanitizados de `27-familias-estruturais-de-webpanel.md`
+- Fonte invalida: reconstrucoes livres baseadas em tabelas, frequencias ou descricoes
+- Inferência forte: esta base documental decide, classifica e orienta; quem materializa e serializa e sempre o XML bruto comparavel
+
+
