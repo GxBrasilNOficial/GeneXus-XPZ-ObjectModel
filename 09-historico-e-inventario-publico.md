@@ -10,7 +10,7 @@ alto
 nenhum
 
 ## Usado por
-00-README-GLOBAL.md, 01-base-empirica-geral.md
+00-readme-genexus-xpz-xml.md, 01-base-empirica-geral.md
 
 ## Objetivo
 Preservar rastreabilidade da consolidacao, inventario documental, inventario bruto publico sanitizado e o mapeamento usado para reduzir a base a ate 10 arquivos.
@@ -33,7 +33,7 @@ alto
 nenhum; este inventario reconstrói o estado da base antes da consolidacao final
 
 ## Usado por
-00-README-GLOBAL.md, 04-genexus-open-points.md, 99-resumo-da-consolidacao.md
+00-readme-genexus-xpz-xml.md, 04-genexus-open-points.md, 99-resumo-da-consolidacao.md
 
 ## Objetivo
 Mapear os arquivos Markdown encontrados, identificar sobreposições e registrar a lógica de consolidação adotada.
@@ -98,7 +98,7 @@ Servir como trilha de auditoria da reorganização da base documental.
 
 ## Conflitos identificados
 
-- `Evidência direta`: o prompt-alvo pede um `00-README-GLOBAL.md` e também um `00-inventario-da-base-documental.md`.
+- `Evidência direta`: o prompt-alvo pede um `00-readme-genexus-xpz-xml.md` e também um `00-inventario-da-base-documental.md`.
 - `Inferência forte`: isso cria uma colisao de prefixo, mas nao inviabiliza a ordem de leitura porque os nomes continuam distintos.
 - `Evidência direta`: arquivos heurísticos da subpasta (`15`, `16`, `17`) já tinham sido endurecidos para evitar promessas de importação.
 - `Inferência forte`: qualquer consolidação precisava preservar essa versão mais conservadora como fonte principal.
@@ -122,7 +122,7 @@ alto
 nenhum; esta versao substitui o dump bruto nominal para publicacao
 
 ## Usado por
-01-base-empirica-geral.md, 10-matriz-part-types-por-tipo.md, 11-campos-estaveis-vs-variaveis.md, 12-diffs-estruturais-por-tipo.md, 00-README-GLOBAL.md
+01-base-empirica-geral.md, 10-matriz-part-types-por-tipo.md, 11-campos-estaveis-vs-variaveis.md, 12-diffs-estruturais-por-tipo.md, 00-readme-genexus-xpz-xml.md
 
 ## Objetivo
 Preservar os fatos agregados da varredura XML sem expor nomes reais de objeto, modulos, pais, caminhos ou descricoes de negocio da KB de origem.
@@ -180,7 +180,7 @@ indice e operacional
 alto
 
 ## Depende de
-00-README-GLOBAL.md, 00-inventario-da-base-documental.md, 99-resumo-da-consolidacao.md
+00-readme-genexus-xpz-xml.md, 00-inventario-da-base-documental.md, 99-resumo-da-consolidacao.md
 
 ## Usado por
 futura consolidacao da base em ate 10 arquivos
@@ -191,7 +191,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ## Estrutura alvo
 
-1. `00-README-GLOBAL.md`
+1. `00-readme-genexus-xpz-xml.md`
 2. `01-base-empirica-geral.md`
 3. `02-regras-operacionais-e-runtime.md`
 4. `03-risco-e-decisao-por-tipo.md`
@@ -212,9 +212,9 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ## Mapeamento arquivo a arquivo
 
-### 00-README-GLOBAL.md
+### 00-readme-genexus-xpz-xml.md
 
-- Destino principal: `00-README-GLOBAL.md`
+- Destino principal: `00-readme-genexus-xpz-xml.md`
 - Manter:
   - objetivo da base
   - escopo
@@ -360,7 +360,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
   - criterios de resposta
   - quando gerar, recusar ou abortar
   - regras de materializacao, serializacao e fonte do ponto de vista do agente
-- Incorporar trechos introdutorios mais curtos tambem em `00-README-GLOBAL.md`
+- Incorporar trechos introdutorios mais curtos tambem em `00-readme-genexus-xpz-xml.md`
 
 ### 04-webpanel-familias-e-templates.md
 
@@ -410,9 +410,9 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ## Mapeamento por secao alvo
 
-### 00-README-GLOBAL.md
+### 00-readme-genexus-xpz-xml.md
 
-- de `00-README-GLOBAL.md`
+- de `00-readme-genexus-xpz-xml.md`
 - de `26-guia-para-agente-gpt.md`: ordem de consulta resumida e limites de uso
 
 ### 01-base-empirica-geral.md
@@ -477,7 +477,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 4. consolidar `03-risco-e-decisao-por-tipo.md`
 5. manter `04` e `05` como arquivos especializados
 6. consolidar `06`, `07` e `08`
-7. revisar `00-README-GLOBAL.md` por fim, apontando para a nova estrutura
+7. revisar `00-readme-genexus-xpz-xml.md` por fim, apontando para a nova estrutura
 
 ## Observacao final
 
@@ -527,7 +527,7 @@ Registrar o que foi lido, renomeado, consolidado e mantido em aberto durante a r
 ## Arquivos criados na consolidacao
 
 - `00-inventario-da-base-documental.md`
-- `00-README-GLOBAL.md`
+- `00-readme-genexus-xpz-xml.md`
 - `26-guia-para-agente-gpt.md`
 - `99-resumo-da-consolidacao.md`
 
@@ -541,7 +541,7 @@ Registrar o que foi lido, renomeado, consolidado e mantido em aberto durante a r
 
 ## Conflitos encontrados
 
-- conflito de prefixo entre `00-README-GLOBAL.md` e `00-inventario-da-base-documental.md`
+- conflito de prefixo entre `00-readme-genexus-xpz-xml.md` e `00-inventario-da-base-documental.md`
 - houve coexistência temporária entre arquivos legados e arquivos consolidados durante a consolidação
 - risco de leitura duplicada entre raiz e `docs-kb-md` se não houver orientação clara
 
@@ -557,6 +557,8 @@ Registrar o que foi lido, renomeado, consolidado e mantido em aberto durante a r
 - `Evidência direta`: a base passou a reconhecer 183 `Transaction` e 1196 `WebPanel` como massa amostral suficiente para execucao controlada.
 - `Inferência forte`: a mudanca pratica foi de bloqueio por prudencia para tentativa controlada com template interno da propria base.
 - `Hipótese`: os erros de importacao que aparecerem devem ser incorporados ao refinamento desta mesma documentacao.
+
+
 
 
 

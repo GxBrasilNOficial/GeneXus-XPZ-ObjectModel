@@ -14,7 +14,7 @@ Este repositório reúne documentação consolidada sobre análise estrutural de
 
 Os documentos principais foram consolidados em 10 arquivos Markdown para facilitar leitura, manutenção e uso controlado:
 
-- `00-README-GLOBAL.md`
+- `00-readme-genexus-xpz-xml.md`
 - `01-base-empirica-geral.md`
 - `02-regras-operacionais-e-runtime.md`
 - `03-risco-e-decisao-por-tipo.md`
@@ -29,7 +29,7 @@ Os documentos principais foram consolidados em 10 arquivos Markdown para facilit
 
 Se você quer entender a base rapidamente:
 
-1. comece por `00-README-GLOBAL.md`
+1. comece por `00-readme-genexus-xpz-xml.md`
 2. siga para `01-base-empirica-geral.md`
 3. depois leia `03-risco-e-decisao-por-tipo.md`
 4. para casos práticos, use `04-webpanel-familias-e-templates.md` e `05-transaction-familias-e-templates.md`
@@ -57,7 +57,7 @@ Este repositorio reúne documentación consolidada sobre análisis estructural d
 
 Los documentos principales fueron consolidados en 10 archivos Markdown para facilitar lectura, mantenimiento y uso controlado:
 
-- `00-README-GLOBAL.md`
+- `00-readme-genexus-xpz-xml.md`
 - `01-base-empirica-geral.md`
 - `02-regras-operacionais-e-runtime.md`
 - `03-risco-e-decisao-por-tipo.md`
@@ -72,7 +72,7 @@ Los documentos principales fueron consolidados en 10 archivos Markdown para faci
 
 Si quieres entender la base rápidamente:
 
-1. empieza por `00-README-GLOBAL.md`
+1. empieza por `00-readme-genexus-xpz-xml.md`
 2. continúa con `01-base-empirica-geral.md`
 3. luego lee `03-risco-e-decisao-por-tipo.md`
 4. para casos prácticos, usa `04-webpanel-familias-e-templates.md` y `05-transaction-familias-e-templates.md`
@@ -100,7 +100,7 @@ This repository contains consolidated documentation about structural analysis of
 
 The main documentation has been consolidated into 10 Markdown files to make reading, maintenance, and controlled use easier:
 
-- `00-README-GLOBAL.md`
+- `00-readme-genexus-xpz-xml.md`
 - `01-base-empirica-geral.md`
 - `02-regras-operacionais-e-runtime.md`
 - `03-risco-e-decisao-por-tipo.md`
@@ -115,7 +115,7 @@ The main documentation has been consolidated into 10 Markdown files to make read
 
 If you want to understand the repository quickly:
 
-1. start with `00-README-GLOBAL.md`
+1. start with `00-readme-genexus-xpz-xml.md`
 2. continue with `01-base-empirica-geral.md`
 3. then read `03-risco-e-decisao-por-tipo.md`
 4. for practical cases, use `04-webpanel-familias-e-templates.md` and `05-transaction-familias-e-templates.md`
@@ -126,4 +126,6 @@ If you want to understand the repository quickly:
 - it does not guarantee successful import or build without external validation
 - sanitized examples are intended for public documentation, not as the final source for materialization
 - the content is meant to reduce trial and error, not to eliminate risk
+
+
 

@@ -28,6 +28,55 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Inferência forte`: certos sinais estruturais do XML permitem falar em risco runtime relativo, desde que a fala seja qualificada e nao prometa comportamento real sem teste.
 - `Hipótese`: quanto mais denso o objeto em `events`, `grid`, `Level`, `AttributeProperties`, `parent`, `pattern` e links contextuais, maior tende a ser a sensibilidade a navegacao, carga de dados e comportamento nao trivial em execucao.
 
+## Envelope XPZ observado em export real
+
+- `Evidência direta`: no export real inspecionado nesta trilha, o arquivo `.xpz` continha um unico XML principal com raiz `<ExportFile>`.
+- `Evidência direta`: os blocos de primeiro nivel observados nesse XML foram `KMW`, `Source`, `KnowledgeBase`, `Objects`, `Attributes` e `Dependencies`, exatamente nessa ordem.
+- `Evidência direta`: o bloco `KMW` observado continha `MajorVersion`, `MinorVersion` e `Build`.
+- `Evidência direta`: no export completo observado, o bloco top-level `<Objects>` continha `7219` nos `<Object>`.
+- `Evidência direta`: apos o fechamento do bloco top-level `<Objects>`, o envelope observado seguiu com `<Attributes>`, depois `<Dependencies>`, e por fim `</ExportFile>`.
+- `Inferência forte`: para esta base, a forma mais segura de pensar um XPZ e "envelope `<ExportFile>` com secoes top-level recorrentes", e nao "arquivo `Objects.xml` isolado" sem prova local.
+- `Hipótese`: outros formatos de export GeneXus 18 podem existir; esta base so prova o envelope observado acima.
+
+### Exemplo sanitizado do envelope observado
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ExportFile>
+  <KMW>
+    <MajorVersion>4</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <Build>BUILD_OBSERVADO</Build>
+  </KMW>
+  <Source kb="GUID_SANITIZED" username="SANITIZED\\USER" UNCPath="\\\\SANITIZED\\KBPATH">
+    <Version guid="GUID_SANITIZED" name="KB_SANITIZED" />
+  </Source>
+  <KnowledgeBase name="KB_SANITIZED" type="GUID_TIPO_KB" description="Descricao sanitizada" user="SANITIZED\\USER">
+    <Properties />
+    <Version guid="GUID_SANITIZED" versionDate="0001-01-01T00:00:00.0000000" checksum="CHECKSUM_SANITIZED" server_checksum="">
+      <Properties />
+    </Version>
+    <Environments />
+  </KnowledgeBase>
+  <Objects>
+    <Object ... />
+  </Objects>
+  <Attributes>
+    <Attribute ... />
+  </Attributes>
+  <Dependencies>
+    <Reference ... />
+  </Dependencies>
+</ExportFile>
+```
+
+## Vocabulario operacional de fonte e molde
+
+- `Molde bruto comparavel`: XML bruto real do mesmo `Object/@type` e de familia estrutural proxima, usado para materializacao final quando a base ainda nao tem anexo completo suficiente.
+- `Molde sanitizado documentado`: XML completo e sanitizado embutido nesta base, preservando estrutura suficiente para leitura e, em casos suportados, para geracao controlada sem recorrer ao acervo bruto.
+- `Envelope XPZ observado`: estrutura externa `<ExportFile>` documentada acima, derivada de export real inspecionado nesta trilha.
+- `Resumo textual`: tabelas, frequencias, heuristicas e explicacoes. Serve para decidir; sozinho nao substitui um molde XML completo.
+
 ## Ligacao estrutural com runtime GeneXus
 
 - `Evidência direta`: no acervo desta KB, `Transaction` aparece em 183 objetos, todos com `parent`, todos com `Level`, e 177/183 com `AttributeProperties`.
@@ -98,7 +147,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Quando falar com cautela`:
   - `Inferência forte`: quando o XML sugere navegacao nao trivial, mas sem relatorio de navegacao ou sem codigo suficiente para confirmar custo e cardinalidade.
   - `Hipótese`: quando a conclusao depender de supor joins, roundtrips ou custo de banco sem prova direta.
-- `Quando exigir template mais proximo`:
+- `Quando exigir molde mais proximo`:
   - `Inferência forte`: em `WebPanel` com `grid` + `events` + `parent` ou marcas de objeto gerado.
   - `Inferência forte`: em `Transaction` com 2+ `Level` ou densidade alta de atributos relacionais.
   - `Inferência forte`: em `WorkWithForWeb`, `Panel` gerado por pattern e `API` com eventos server-side relevantes.
@@ -144,7 +193,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - escalar o risco se surgir FK adicional, alteracao de contexto ou mudanca de `DescriptionAttribute`
 
 #### Exemplos de aplicação
-- nova `Transaction` simples de cadastro basico deve partir de template da familia simples de 1 nivel e nao de familia mestre-detalhe
+- nova `Transaction` simples de cadastro basico deve partir de molde da familia simples de 1 nivel e nao de familia mestre-detalhe
 
 ### Heurística H02 - Transaction com 2+ niveis
 
@@ -160,13 +209,13 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Hipótese`: mudancas entre niveis podem afetar navegacao, joins implicitos e comportamento nao trivial na KB.
 
 #### Ação do agente
-- exigir template interno muito proximo
+- exigir molde interno muito proximo
 - preservar hierarquia inteira e evitar mover atributos entre niveis
 - nao prometer simplicidade de manutencao ou boa performance
 - abortar se a mudanca exigir redesenho de niveis sem paralelo bruto
 
 #### Exemplos de aplicação
-- pedido com itens deve partir de familia mestre-detalhe equivalente, e nao de um template de 1 nivel
+- pedido com itens deve partir de familia mestre-detalhe equivalente, e nao de um molde de 1 nivel
 
 ### Heurística H03 - Transaction com alta densidade de AttributeProperties
 
@@ -179,13 +228,13 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Evidência direta`: 177/183 `Transaction` observadas possuem `AttributeProperties`, com densidade variavel.
 - `Regra documentada`: atributos fora do contexto imediato podem aumentar sensibilidade a `Extended Table` e navegacao.
 - `Inferência forte`: densidade alta de `AttributeProperties` sugere mais pontos de dependencia estrutural e funcional.
-- `Hipótese`: a chance de vazamento de template e de erro por coerencia interna cresce junto com a densidade.
+- `Hipótese`: a chance de vazamento do molde-base e de erro por coerencia interna cresce junto com a densidade.
 
 #### Ação do agente
 - responder com cautela
 - preservar atributos, propriedades e referencias internas com diff estrutural rigoroso
 - nao tratar remocao de atributos como edicao trivial
-- exigir template mais proximo se houver muitos atributos relacionais ou flags internos
+- exigir molde mais proximo se houver muitos atributos relacionais ou flags internos
 
 #### Exemplos de aplicação
 - `Transaction` com dezenas de `AttributeProperties` nao deve ser usada como casca de edicao agressiva sem familia equivalente
@@ -227,13 +276,13 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Hipótese`: parte do comportamento esperado pode estar fora do XML isolado, em pattern, master page ou objeto pai.
 
 #### Ação do agente
-- exigir template interno mais proximo
+- exigir molde interno mais proximo
 - preservar marcas estruturais e contexto de `parent`
 - nao responder com linguagem otimista do tipo “casca simples”
 - abortar se o caso exigir descolar o objeto do contexto gerado sem paralelo bruto
 
 #### Exemplos de aplicação
-- `WebPanel` vindo de familia gerada por defaults nao deve ser reaproveitado como template generico para tela livre
+- `WebPanel` vindo de familia gerada por defaults nao deve ser reaproveitado como molde generico para tela livre
 
 ### Heurística H06 - WebPanel com events
 
@@ -271,7 +320,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Hipótese`: sem relatorio de navegacao, o risco de leitura incompleta do runtime continua alto.
 
 #### Ação do agente
-- exigir template interno muito proximo
+- exigir molde interno muito proximo
 - preservar estrutura de grid, eventos, filtros, bindings e ordem dos blocos
 - nao tratar como casca simples nem autorizar simplificacao agressiva
 - abortar se a familia estrutural equivalente nao estiver clara
@@ -296,7 +345,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - responder com cautela
 - preservar assinatura de parametros, blocos de codigo e relacao entre variaveis e atributos
 - nao falar de `For each` ou performance sem considerar `Base Table` e navegacao
-- exigir template mais proximo se o codigo tocar consulta de dados relevante
+- exigir molde mais proximo se o codigo tocar consulta de dados relevante
 
 #### Exemplos de aplicação
 - `DataProvider` com filtros e mapeamento de SDT deve ser clonado a partir de outro `DataProvider` com forma de consulta comparavel
@@ -315,7 +364,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Hipótese`: remover ou trocar esse contexto pode quebrar comportamento esperado mesmo que o XML permaneça bem-formado.
 
 #### Ação do agente
-- exigir template muito proximo ou contexto completo
+- exigir molde muito proximo ou contexto completo
 - preservar todos os vinculos de `parent*`, `moduleGuid` e marcas de pattern
 - nao autorizar “generalizacao” do objeto
 - abortar se o objetivo for desacoplar o objeto do pai/pattern sem base real equivalente
@@ -323,7 +372,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 #### Exemplos de aplicação
 - `WorkWithForWeb` deve ser tratado como altamente dependente do objeto pai transacional e do pattern de origem
 
-### Heurística H10 - Quando exigir template mais proximo ou abortar
+### Heurística H10 - Quando exigir molde mais proximo ou abortar
 
 #### Sinais observáveis
 - mistura de familias
@@ -335,11 +384,11 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 #### Leitura técnica
 - `Evidência direta`: a base ja documenta familias, riscos e dependencias contextuais para os tipos mais sensiveis.
 - `Regra documentada`: runtime e navegacao nao podem ser garantidos apenas por semelhanca superficial de XML.
-- `Inferência forte`: quando sinais de alta sensibilidade se acumulam, a postura correta deixa de ser “seguir” e passa a ser “exigir template” ou “abortar”.
+- `Inferência forte`: quando sinais de alta sensibilidade se acumulam, a postura correta deixa de ser “seguir” e passa a ser “exigir molde” ou “abortar”.
 - `Hipótese`: insistir em clonagem nessas condicoes aumenta bastante a chance de erro estrutural ou runtime.
 
 #### Ação do agente
-- exigir template mais proximo quando ainda houver caminho estrutural comparavel
+- exigir molde mais proximo quando ainda houver caminho estrutural comparavel
 - abortar quando nao houver familia equivalente ou quando a mudanca pedir invencao de estrutura
 - nao prometer importacao, build, navegacao correta ou performance
 - deixar explicito o motivo do aborto
@@ -353,8 +402,8 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - nunca responder “vai buildar” ou “vai importar” sem evidencia externa
 - nunca tratar `grid + events` como casca simples
 - nunca responder sobre `For each` sem considerar `Base Table`, navegacao e contexto de atributos
-- nunca autorizar edicao agressiva em `Transaction` multinivel sem template equivalente
-- nunca usar entusiasmo estrutural para atropelar heuristica que mandou exigir template ou abortar
+- nunca autorizar edicao agressiva em `Transaction` multinivel sem molde equivalente
+- nunca usar entusiasmo estrutural para atropelar heuristica que mandou exigir molde ou abortar
 
 ## Origem incorporada - 02-genexus-xpz-generation-rules.md
 
@@ -448,7 +497,7 @@ médio
 
 ## Objetivo
 Traduzir a análise empírica em orientação prudente para clonagem conservadora de objetos.
-Indicar o que preservar, o que merece template real e onde o risco cresce.
+Indicar o que preservar, o que exige molde bruto comparável e onde o risco cresce.
 
 Este guia e operacional, mas conservador.
 
@@ -460,7 +509,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = 36e32e2d-023e-4188-95df-d13573bac2e0.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: 9f577ec2-27f4-4cf4-8ad5-f3f50c9d69b5; ad3ca970-19d0-44e1-a7b7-db05556e820c; babf62c5-0111-49e9-a1c3-cc004d90900a; c44bd5ff-f918-415b-98e6-aca44fed84fa; e4c4ade7-53f0-4a56-bdfd-843735b66f47.
 - Evidência direta: objetos com parent: 1/1; com pattern: 0/1.
@@ -470,7 +519,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = 2a9e9aba-d2de-4801-ae7f-5e3819222daf.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: 1d8aeb5a-6e98-45a7-92d2-d8de7384e432; 9b0a32a3-de6d-4be1-a4dd-1b85d3741534; ad3ca970-19d0-44e1-a7b7-db05556e820c; babf62c5-0111-49e9-a1c3-cc004d90900a; e4c4ade7-53f0-4a56-bdfd-843735b66f47.
 - Evidência direta: objetos com parent: 24/24; com pattern: 0/24.
@@ -480,7 +529,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = 78b3fa0e-174c-4b2b-8716-718167a428b5.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: medio.
 - Evidência direta: Part type mais recorrentes: 36982745-cb77-47a3-bc04-9d0d764ff532; 75e52d99-6edd-4bad-a1d7-dcc9b7f000ef; babf62c5-0111-49e9-a1c3-cc004d90900a; c6b14574-4f5f-4e35-aaa7-e322e88a9a10.
 - Evidência direta: objetos com parent: 1/2; com pattern: 0/2.
@@ -490,7 +539,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = c88fffcd-b6f8-0000-8fec-00b5497e2117.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: alto.
 - Evidência direta: Part type mais recorrentes: babf62c5-0111-49e9-a1c3-cc004d90900a; ed1b7b1c-2aaf-46eb-9ec5-db348f6fa3fc; a5e6a251-2df0-44d8-adab-1da237574326.
 - Evidência direta: objetos com parent: 2/16; com pattern: 0/16.
@@ -500,7 +549,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = d82625fd-5892-40b0-99c9-5c8559c197fc.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: b4378a97-f9b2-4e05-b2f8-c610de258402; babf62c5-0111-49e9-a1c3-cc004d90900a.
 - Evidência direta: objetos com parent: 7/7; com pattern: 7/7.
@@ -510,7 +559,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = 84a12160-f59b-4ad7-a683-ea4481ac23e9.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: 528d1c06-a9c2-420d-bd35-21dca83f12ff; 763f0d8b-d8ac-4db4-8dd4-de8979f2b5b9; 9b0a32a3-de6d-4be1-a4dd-1b85d3741534; ad3ca970-19d0-44e1-a7b7-db05556e820c; babf62c5-0111-49e9-a1c3-cc004d90900a; c414ed00-8cc4-4f44-8820-4baf93547173.
 - Evidência direta: objetos com parent: 2281/2281; com pattern: 0/2281.
@@ -520,7 +569,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = 447527b5-9210-4523-898b-5dccb17be60a.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: 5c2aa9da-8fc4-4b6b-ae02-8db4fa48976a; babf62c5-0111-49e9-a1c3-cc004d90900a.
 - Evidência direta: objetos com parent: 591/594; com pattern: 0/594.
@@ -530,7 +579,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = c804fdbd-7c0b-440d-8527-4316c92649a6.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: alto.
 - Evidência direta: Part type mais recorrentes: 43b86e51-163f-44af-ac5a-e101541b1a71; babf62c5-0111-49e9-a1c3-cc004d90900a; c31007a6-01d3-4788-95b3-425921d47758.
 - Evidência direta: objetos com parent: 0/7; com pattern: 0/7.
@@ -540,7 +589,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = 1db606f2-af09-4cf9-a3b5-b481519d28f6.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: 264be5fb-1b28-4b25-a598-6ca900dd059f; 4c28dfb9-f83b-46f0-9cf3-f7e090b525d5; 9b0a32a3-de6d-4be1-a4dd-1b85d3741534; ad3ca970-19d0-44e1-a7b7-db05556e820c; babf62c5-0111-49e9-a1c3-cc004d90900a; c44bd5ff-f918-415b-98e6-aca44fed84fa.
 - Evidência direta: objetos com parent: 183/183; com pattern: 0/183.
@@ -550,7 +599,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = c9584656-94b6-4ccd-890f-332d11fc2c25.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: 763f0d8b-d8ac-4db4-8dd4-de8979f2b5b9; 9b0a32a3-de6d-4be1-a4dd-1b85d3741534; ad3ca970-19d0-44e1-a7b7-db05556e820c; babf62c5-0111-49e9-a1c3-cc004d90900a; c44bd5ff-f918-415b-98e6-aca44fed84fa; d24a58ad-57ba-41b7-9e6e-eaca3543c778.
 - Evidência direta: objetos com parent: 1195/1196; com pattern: 0/1196.
@@ -560,7 +609,7 @@ Este guia e operacional, mas conservador.
 - Evidência direta: template recomendado: escolher objeto do mesmo diretório e mesmo Object/@type = 78cecefe-be7d-4980-86ce-8d6e91fba04b.
 - Inferência forte: preservar guid, type, parent* e moduleGuid ate entender explicitamente a mudanca desejada.
 - Inferência forte: blocos com Source, nomes e descricoes textuais sao candidatos mais plausiveis para edicao controlada quando aparecem de forma recorrente.
-- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e merecem template real antes de alteracao.
+- Hipótese: blocos raros ou quase sempre vazios podem ser estruturais/reservados e exigem molde bruto comparável antes de alteracao.
 - Nivel de confianca atual da clonagem: baixo.
 - Evidência direta: Part type mais recorrentes: a51ced48-7bee-0001-ab12-04e9e32123d1; babf62c5-0111-49e9-a1c3-cc004d90900a.
 - Evidência direta: objetos com parent: 183/183; com pattern: 183/183.
@@ -593,48 +642,48 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 
 ## Algoritmo sugerido de geracao por clonagem
 
-1. Escolher o tipo alvo e localizar um template real do mesmo diretório e do mesmo `Object/@type`.
+1. Escolher o tipo alvo e localizar um molde XML completo do mesmo diretório e do mesmo `Object/@type`.
 2. Preferir template do mesmo contexto estrutural do alvo:
    mesmo uso de `parent`, mesmo uso de `pattern`, mesma familia de objeto.
 3. Preservar integralmente `Object/@type`, `guid`, `parent`, `parentGuid`, `parentType`, `moduleGuid` e todos os `Part type` recorrentes do template.
 4. Alterar primeiro apenas nomes, descricoes e blocos textuais claramente recorrentes.
-5. Rejeitar a clonagem se surgir qualquer bloco raro, opaco ou ausente no template comparavel.
-6. So empacotar depois de validar XML bem-formado e diff estrutural contra o template-base.
+5. Rejeitar a clonagem se surgir qualquer bloco raro, opaco ou ausente no molde comparavel.
+6. So empacotar depois de validar XML bem-formado e diff estrutural contra o molde-base.
 
 ## Quando abortar a geracao
 
-- Inferência forte: abortar quando o tipo estiver em risco `alto` ou `muito alto` e nao houver template suficientemente proximo.
-- Inferência forte: abortar quando o objeto alvo exigir `pattern` ou contexto de `parent` nao representado no template.
-- Inferência forte: abortar quando o template comparavel tiver mais de um bloco raro/exclusivo que ainda nao foi entendido.
+- Inferência forte: abortar quando o tipo estiver em risco `alto` ou `muito alto` e nao houver molde suficientemente proximo.
+- Inferência forte: abortar quando o objeto alvo exigir `pattern` ou contexto de `parent` nao representado no molde.
+- Inferência forte: abortar quando o molde comparavel tiver mais de um bloco raro/exclusivo que ainda nao foi entendido.
 - Hipótese: abortar tambem quando a mudanca pretendida exigir alterar blocos nao textuais pouco recorrentes.
 
-## Quando exigir template real
+## Quando exigir molde bruto comparável
 
-- Evidência direta: exigir template real muito proximo para `API`, `DataProvider`, `Panel`, `Procedure` e `WorkWithForWeb`.
-- Evidência direta: exigir template real tambem para `DesignSystem`, por causa da amostra muito pequena.
-- Inferência forte: para `SDT`, `Theme` e `PackagedModule`, um template real proximo continua sendo a opcao mais segura, mesmo quando a estrutura pareca menos agressiva.
+- Evidência direta: exigir molde bruto comparável muito proximo para `API`, `DataProvider`, `Panel`, `Procedure` e `WorkWithForWeb`.
+- Evidência direta: exigir molde bruto comparável tambem para `DesignSystem`, por causa da amostra muito pequena.
+- Inferência forte: para `SDT`, `Theme` e `PackagedModule`, um molde bruto comparável proximo continua sendo a opcao mais segura, mesmo quando a estrutura pareca menos agressiva.
 
 ## Politica para Transaction
 
 - Evidência direta: existem 183 `Transaction` no acervo.
 - Inferência forte: usar padrao estrutural inferido da propria base em vez de bloquear execucao por falta de exemplo.
 - Inferência forte: escolher uma familia simples e estruturalmente proxima do alvo.
-- Inferência forte: nao abortar so por ausencia de template externo; a referencia principal passa a ser template interno da propria base.
+- Inferência forte: nao abortar so por ausencia de template externo; a referencia principal passa a ser molde interno da propria base.
 - Hipótese: os erros por objeto devem ser tratados incrementalmente para refinar os documentos.
 
 ## Politica para WebPanel
 
 - Evidência direta: existem 1196 `WebPanel` no acervo.
 - Inferência forte: identificar primeiro a familia estrutural antes de gerar.
-- Inferência forte: escolher o template interno mais proximo, sem generalizar `WebPanel` como tipo homogeneo.
-- Inferência forte: manter todos os `Part type` recorrentes do template escolhido.
-- Hipótese: abortar apenas quando nao houver familia estrutural identificavel ou quando a proximidade do template continuar ambigua.
+- Inferência forte: escolher o molde interno mais proximo, sem generalizar `WebPanel` como tipo homogeneo.
+- Inferência forte: manter todos os `Part type` recorrentes do molde escolhido.
+- Hipótese: abortar apenas quando nao houver familia estrutural identificavel ou quando a proximidade do molde continuar ambigua.
 
 ## Quando aceitar apenas experimento conservador
 
 - Inferência forte: `PackagedModule` e `Theme` sao os melhores candidatos relativos do recorte, mas apenas para experimento muito controlado.
-- Inferência forte: `SDT` pode entrar nessa mesma trilha somente quando houver template muito proximo e preservacao rigorosa de `parent`.
-- Inferência forte: `Transaction` e `WebPanel` ficam desbloqueados para execucao controlada usando a propria base como fonte de templates internos.
+- Inferência forte: `SDT` pode entrar nessa mesma trilha somente quando houver molde muito proximo e preservacao rigorosa de `parent`.
+- Inferência forte: `Transaction` e `WebPanel` ficam desbloqueados para execucao controlada usando a propria base como fonte de moldes internos.
 - Hipótese: nenhum tipo deste acervo deveria ser liberado para geracao automatica ampla sem uma rodada externa de validacao.
 
 ## Validacoes minimas antes de empacotar
@@ -644,57 +693,60 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - `Part type` recorrentes preservados.
 - `parent*` e `moduleGuid` preservados quando presentes no template.
 - Revisao manual dos campos textuais alterados.
-- Diff estrutural curto entre template-base e clone.
+- Diff estrutural curto entre molde-base e clone.
 
 ## Estrategia incremental recomendada
 
 - Inferência forte: comecar por provas de conceito extremamente pequenas.
-- Inferência forte: manter o escopo por tipo e por template, sem misturar familias estruturais diferentes.
+- Inferência forte: manter o escopo por tipo e por molde, sem misturar familias estruturais diferentes.
 - Inferência forte: para `Transaction` e `WebPanel`, priorizar execucao controlada e retroalimentar a base com os erros observados.
 - Inferência forte: so depois de casos externos bem-sucedidos vale endurecer linguagem como "obrigatorio", "editavel com baixo risco" ou "apto para geracao conservadora".
 
 ## Ajuste no algoritmo
 
 - Inferência forte: `Transaction` nao deve abortar apenas por ausencia de template externo.
-- Inferência forte: `WebPanel` deve abortar apenas quando nao houver familia estrutural identificavel ou template interno suficientemente proximo.
+- Inferência forte: `WebPanel` deve abortar apenas quando nao houver familia estrutural identificavel ou molde interno suficientemente proximo.
 
 ## Regras de materializacao
 
-- Evidência direta: a materializacao final de `Transaction` e `WebPanel` deve partir de um XML bruto real do mesmo `Object/@type`.
-- Inferência forte: nunca montar um objeto do zero a partir de descricao em markdown; sempre clonar um XML bruto comparavel e editar o clone.
+- Evidência direta: a materializacao final de `Transaction` e `WebPanel` pode partir de um molde XML completo desta base ou de XML bruto real do mesmo `Object/@type`, desde que a estrutura usada seja completa e comparavel.
+- Inferência forte: nunca montar um objeto do zero a partir de descricao em markdown; sempre partir de um molde XML completo e editar o clone.
 
 ### Transaction
 
-- preservar `Object/@type`, `guid`, `parent*`, `moduleGuid` e inventario completo de `Part` do template-base
+- preservar `Object/@type`, `guid`, `parent*`, `moduleGuid` e inventario completo de `Part` do molde-base
 - nao remover `Part` recorrente nem trocar a ordem dos blocos
 - alterar apenas campos textuais, nomes e trechos internos que tenham paralelo claro em outros `Transaction` da mesma familia
-- se um atributo do no `<Object>` nao existir no template bruto, nao inventar esse atributo no clone
-- se surgir referencia a `parent`, modulo ou pattern que nao exista no template comparavel, abortar
+- se um atributo do no `<Object>` nao existir no molde usado, nao inventar esse atributo no clone
+- se surgir referencia a `parent`, modulo ou pattern que nao exista no molde comparavel, abortar
 
 ### WebPanel
 
-- escolher primeiro a familia estrutural e so depois o template interno real
+- escolher primeiro a familia estrutural e so depois o molde interno completo
 - preservar `Object/@type`, `guid`, `parent*`, `moduleGuid`, quantidade de `Part` e a ordem dos blocos
-- manter `layout`, `events`, `variables` e todos os `Part type` recorrentes do template selecionado
-- nao substituir controles, bindings ou componentes raros por texto livre; se nao houver equivalente estrutural no template, abortar
-- usar exemplos sanitizados apenas como apoio de leitura; a materializacao final deve vir do XML bruto correspondente
+- manter `layout`, `events`, `variables` e todos os `Part type` recorrentes do molde selecionado
+- nao substituir controles, bindings ou componentes raros por texto livre; se nao houver equivalente estrutural no molde, abortar
+- quando houver anexo sanitizado completo e explicitamente preservado nesta base, ele pode servir como molde de partida para prototipo controlado; na falta disso, recorrer ao XML bruto correspondente
 
 ## Regras de serializacao XPZ
 
 - Evidência direta: o XML do objeto deve continuar com raiz unica `<Object>` e permanecer bem-formado apos qualquer edicao
-- Evidência direta: cada `Part` deve manter seu atributo `type` e seu conteudo no mesmo bloco estrutural do template-base
-- Inferência forte: quando o template bruto usar `<![CDATA[...]]>` em `Source` ou `InnerHtml`, o clone deve manter `CDATA`; nao converter esses blocos em texto escapado
+- Evidência direta: cada `Part` deve manter seu atributo `type` e seu conteudo no mesmo bloco estrutural do molde-base
+- Inferência forte: quando o molde usado trouxer `<![CDATA[...]]>` em `Source` ou `InnerHtml`, o clone deve manter `CDATA`; nao converter esses blocos em texto escapado
 - Inferência forte: o objeto so deve ser incluido em `<Objects>` por clonagem de um contêiner XPZ bruto real da mesma linha de exportacao; nao inventar a estrutura externa de `<Objects>` a partir desta base documental
-- Inferência forte: antes de empacotar, validar parse XML do objeto clonado e validar que o envelope XPZ continua contendo o mesmo padrao estrutural do template bruto
-- Hipótese: checksum, datas e outros metadados externos so devem ser recalculados se houver processo real de exportacao que faca isso; na ausencia desse processo, preservar o padrao do template bruto
+- Inferência forte: antes de empacotar, validar parse XML do objeto clonado e validar que o envelope XPZ continua contendo o mesmo padrao estrutural do molde usado
+- Hipótese: checksum, datas e outros metadados externos so devem ser recalculados se houver processo real de exportacao que faca isso; na ausencia desse processo, preservar o padrao do molde usado
 
 ## Regras de fonte
 
-- Fonte valida: XML bruto extraido do acervo ou de template XPZ bruto real comparavel
-- Fonte invalida: markdown desta base
-- Fonte invalida: exemplos sanitizados, inclusive os anexos de `04-webpanel-familias-e-templates.md`
+- Fonte valida: XML bruto extraido do acervo ou de export XPZ real comparavel
+- Fonte valida: molde sanitizado documentado nesta base, quando o anexo embutir XML completo suficiente para o tipo e a familia alvo
+- Fonte invalida: markdown meramente descritivo, sem XML completo
 - Fonte invalida: reconstrucoes feitas so por resumo textual, tabela, frequencia ou memoria do agente
-- Inferência forte: markdown e exemplos sanitizados servem para decisao e escolha de template, nunca para materializacao final do XML ou serializacao final do XPZ
+- Inferência forte: `04-webpanel-familias-e-templates.md` ja contem moldes sanitizados completos para familias de `WebPanel`
+- Inferência forte: `05-transaction-familias-e-templates.md` agora tambem contem moldes sanitizados completos para familias representativas de `Transaction` (`F1`, `F2`, `F5` e `F6`)
+- Hipótese: as familias `F3` e `F4` de `Transaction` ainda ficam mais seguras com molde bruto comparavel adicional, por terem densidade estrutural maior e ainda nao terem anexo completo proprio
+- Inferência forte: para o envelope externo do XPZ observado, a especificacao desta propria base ja e suficiente para evitar inventar `Objects.xml` isolado ou hierarquia externa sem prova local
 
 
 

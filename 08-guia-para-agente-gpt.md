@@ -7,13 +7,13 @@ operacional
 medio
 
 ## Depende de
-00-README-GLOBAL.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 04-webpanel-familias-e-templates.md, 05-transaction-familias-e-templates.md
+00-readme-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 04-webpanel-familias-e-templates.md, 05-transaction-familias-e-templates.md
 
 ## Usado por
 qualquer GPT que precise consumir esta base consolidada
 
 ## Objetivo
-Explicar como outro agente GPT deve consultar esta base, classificar evidencias e decidir entre gerar, exigir template proximo ou abortar.
+Explicar como outro agente GPT deve consultar esta base, classificar evidencias e decidir entre gerar, exigir molde proximo ou abortar.
 
 ## Fontes consolidadas
 - 26-guia-para-agente-gpt.md
@@ -27,18 +27,18 @@ operacional
 médio
 
 ## Depende de
-00-README-GLOBAL.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 22-tipos-prontos-para-geracao-conservadora.md, 03-risco-e-decisao-por-tipo.md, 02-regras-operacionais-e-runtime.md
+00-readme-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 22-tipos-prontos-para-geracao-conservadora.md, 03-risco-e-decisao-por-tipo.md, 02-regras-operacionais-e-runtime.md
 
 ## Usado por
 qualquer agente GPT que precise responder perguntas ou tomar decisão operacional usando esta base
 
 ## Objetivo
 Explicar como um agente GPT deve consultar esta base documental e como responder com prudência.
-Padronizar quando avançar, quando exigir template real e quando abortar.
+Padronizar quando avançar, quando exigir molde bruto comparável e quando abortar.
 
 ## Ordem de consulta recomendada
 
-1. ler `00-README-GLOBAL.md`
+1. ler `00-readme-genexus-xpz-xml.md`
 2. identificar o tipo alvo e checar `03-risco-e-decisao-por-tipo.md`
 3. ler `02-regras-operacionais-e-runtime.md`
 4. para `WebPanel`, ler `04-webpanel-familias-e-templates.md`
@@ -51,10 +51,16 @@ Padronizar quando avançar, quando exigir template real e quando abortar.
 - quando a pergunta envolver apenas estrutura XML observada, priorizar `01-base-empirica-geral.md`
 - quando a pergunta misturar estrutura e comportamento provavel, responder separando explicitamente `Evidência direta`, `Regra documentada`, `Inferência forte` e `Hipótese`
 
+## Regra de leitura para XPZ
+
+- quando a tarefa envolver montar ou serializar `XPZ`, consultar primeiro a secao `Envelope XPZ observado em export real` de `02-regras-operacionais-e-runtime.md`
+- nao presumir `Objects.xml` isolado nem manifesto externo separado se isso nao estiver documentado no `02`
+- usar o envelope sanitizado documentado na base como referencia estrutural antes de pedir XML externo adicional
+
 ## Precedencia das heuristicas
 
 - se uma heuristica do `02-regras-operacionais-e-runtime.md` apontar cautela runtime, o agente nao pode responder com linguagem otimista
-- se uma heuristica do `02-regras-operacionais-e-runtime.md` apontar `exigir template`, isso prevalece sobre entusiasmo estrutural, frequencia amostral ou similaridade superficial
+- se uma heuristica do `02-regras-operacionais-e-runtime.md` apontar `exigir molde`, isso prevalece sobre entusiasmo estrutural, frequencia amostral ou similaridade superficial
 - se uma heuristica do `02-regras-operacionais-e-runtime.md` apontar `abortar`, o agente deve abortar de forma clara, explicando o sinal estrutural e o limite metodologico
 - quando houver choque entre “parece estruturalmente simples” e “runtime sensivel”, prevalece a leitura mais conservadora
 
@@ -72,32 +78,32 @@ Padronizar quando avançar, quando exigir template real e quando abortar.
 
 ## Quando recusar geração de XPZ
 
-- quando faltar template real suficientemente próximo
+- quando faltar molde XML completo suficientemente próximo
 - quando o tipo estiver em risco `alto` ou `muito alto` sem contexto equivalente, exceto nos fluxos ja destravados de `Transaction` e `WebPanel`
 - quando houver `pattern`, `parent` ou bloco raro ainda não compreendido
 - quando a pergunta exigir afirmar sucesso de importação/build sem evidência externa
 
-## Regra de decisão entre gerar, exigir template ou abortar
+## Regra de decisão entre gerar, exigir molde ou abortar
 
 ### Gerar por clonagem conservadora
 
 - apenas em cenário muito controlado
-- apenas com template do mesmo tipo e contexto estrutural comparável
+- apenas com molde do mesmo tipo e contexto estrutural comparável
 - apenas preservando `Object/@type`, `parent*`, `moduleGuid` e `Part type` recorrentes
 - para `Transaction`, usar familia estrutural inferida da propria base
-- para `WebPanel`, usar familia estrutural inferida e template interno muito proximo
+- para `WebPanel`, usar familia estrutural inferida e molde interno muito proximo
 
-### Exigir template real
+### Exigir molde bruto comparável
 
 - quando o tipo estiver em cautela alta
 - quando a amostra for pequena
 - quando o objeto depender de contexto estrutural explícito
-- `Transaction` nao deve mais exigir template externo
-- `WebPanel` deve operar por familia estrutural e template interno proximo
+- `Transaction` nao deve mais exigir molde externo
+- `WebPanel` deve operar por familia estrutural e molde interno proximo
 
 ### Abortar
 
-- quando o template não for comparável
+- quando o molde não for comparável
 - quando a mudança exigir mexer em blocos opacos ou raros
 - quando a solicitação pressuponha algo que a base não prova
 
@@ -118,7 +124,7 @@ Padronizar quando avançar, quando exigir template real e quando abortar.
 - `Panel`
 - `DataProvider`
 
-## Tipos que ainda pedem template real muito próximo
+## Tipos que ainda pedem molde bruto muito próximo
 
 - todos os tipos em risco `alto` ou `muito alto`, exceto os fluxos operacionais ja destravados para `Transaction` e `WebPanel`
 - `DesignSystem`, por amostra pequena
@@ -129,8 +135,8 @@ Padronizar quando avançar, quando exigir template real e quando abortar.
 
 - Evidência direta: a base contem 183 `Transaction` e 1196 `WebPanel`.
 - Inferência forte: esse volume e suficiente para que um agente GPT tente execucao controlada em vez de apenas bloquear por falta de evidencia.
-- Inferência forte: `Transaction` pode seguir por padrao estrutural inferido e template interno da propria base.
-- Inferência forte: `WebPanel` pode seguir por familia estrutural, desde que o template interno seja cuidadosamente escolhido.
+- Inferência forte: `Transaction` pode seguir por padrao estrutural inferido e molde interno da propria base.
+- Inferência forte: `WebPanel` pode seguir por familia estrutural, desde que o molde interno seja cuidadosamente escolhido.
 - Inferência forte: nao pedir mais exemplos para esses tipos deixa de ser regra geral; so faz sentido pedir novos exemplos quando o caso concreto continuar estruturalmente ambiguo.
 - Hipótese: se a importacao falhar, o caso deve voltar como insumo para evoluir a propria base documental.
 
@@ -143,38 +149,46 @@ Padronizar quando avançar, quando exigir template real e quando abortar.
 
 ## Regras de materializacao
 
-- Evidência direta: ao gerar `Transaction` ou `WebPanel`, o agente deve usar XML bruto real como template-base
-- Evidência direta: o agente nao deve materializar objeto final a partir de markdown ou exemplo sanitizado
+- Evidência direta: ao gerar `Transaction` ou `WebPanel`, o agente deve partir de um molde XML completo
+- Evidência direta: o agente nao deve materializar objeto final a partir de resumo textual sem XML completo
+- Inferência forte: para `WebPanel`, os anexos completos de `04-webpanel-familias-e-templates.md` ja podem servir como molde sanitizado documentado
+- Inferência forte: para `Transaction`, `05-transaction-familias-e-templates.md` ja contem moldes sanitizados completos para as familias `F1`, `F2`, `F5` e `F6`
+- Hipótese: para `Transaction` das familias `F3` e `F4`, continua prudente buscar molde bruto comparavel adicional se a densidade estrutural real do alvo ultrapassar o que os anexos atuais sustentam
 
 ### Transaction
 
-- localizar um XML bruto do mesmo `Object/@type` e da familia estrutural mais proxima
+- localizar um molde XML completo do mesmo `Object/@type` e da familia estrutural mais proxima
 - preservar `Object/@type`, `guid`, `parent*`, `moduleGuid`, `Part type` e ordem das `Part`
-- editar somente nomes, descricoes e trechos internos sustentados pelo template bruto
-- abortar se a mudanca exigir criar atributo novo no `<Object>` ou bloco novo sem paralelo bruto
+- editar somente nomes, descricoes e trechos internos sustentados pelo molde usado
+- abortar se a mudanca exigir criar atributo novo no `<Object>` ou bloco novo sem paralelo claro
 
 ### WebPanel
 
 - identificar primeiro a familia estrutural usando `04-webpanel-familias-e-templates.md`
-- selecionar um template bruto interno da mesma familia; nao usar o anexo sanitizado como fonte final
-- preservar `layout`, `events`, `variables`, `Part type`, controles e bindings do template-base
-- abortar se a familia nao estiver clara ou se o alvo exigir `grid`, `tab`, componente customizado ou contexto de `parent` ausente no bruto escolhido
+- selecionar um molde interno da mesma familia; quando houver anexo sanitizado completo, ele pode ser a fonte final do prototipo
+- preservar `layout`, `events`, `variables`, `Part type`, controles e bindings do molde-base
+- abortar se a familia nao estiver clara ou se o alvo exigir `grid`, `tab`, componente customizado ou contexto de `parent` ausente no molde escolhido
 
 ## Regras de serializacao XPZ
 
 - o objeto clonado deve continuar como XML bem-formado com raiz unica `<Object>`
 - blocos `Source` e `InnerHtml` que vierem em `CDATA` devem permanecer em `CDATA`
-- o agente deve incluir o objeto em `<Objects>` somente por clonagem de um envelope XPZ bruto real; se nao houver envelope bruto, deve recusar a serializacao final
-- antes de empacotar, validar parse XML, presenca de todos os `Part type` recorrentes e coerencia entre objeto clonado e template-base
+- o agente deve incluir o objeto em `<Objects>` seguindo o envelope XPZ observado documentado em `02-regras-operacionais-e-runtime.md`
+- antes de empacotar, validar parse XML, presenca de todos os `Part type` recorrentes e coerencia entre objeto clonado e molde-base
 - o agente nao deve afirmar “sem erro de importacao”; deve afirmar apenas que seguiu a especificacao mais conservadora disponivel
 
 ## Regras de fonte
 
-- Fonte valida: XML bruto de objeto e envelope XPZ bruto real
-- Fonte invalida: markdown desta base
-- Fonte invalida: exemplos sanitizados de `04-webpanel-familias-e-templates.md`
+- Fonte valida: XML bruto de objeto
+- Fonte valida: envelope XPZ observado documentado em `02-regras-operacionais-e-runtime.md`
+- Fonte valida: exemplos sanitizados completos de `04-webpanel-familias-e-templates.md`, quando usados como molde de `WebPanel`
+- Fonte invalida: markdown apenas descritivo desta base
 - Fonte invalida: reconstrucoes livres baseadas em tabelas, frequencias ou descricoes
-- Inferência forte: esta base documental decide, classifica e orienta; quem materializa e serializa e sempre o XML bruto comparavel
+- Inferência forte: esta base documental ja explica o envelope XPZ observado e ja contem moldes sanitizados completos para `WebPanel`
+- Inferência forte: esta base documental ja contem moldes sanitizados completos tambem para `Transaction` em familias representativas
+- Hipótese: nem todos os tipos da base chegaram nesse mesmo nivel de cobertura; para varios deles ainda prevalece a orientacao por familia + molde bruto comparavel
+
+
 
 
 

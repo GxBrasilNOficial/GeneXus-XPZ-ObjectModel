@@ -176,13 +176,13 @@ Evitar que “melhor candidato” seja confundido com “tipo comprovadamente se
 | SDT | apto somente por clonagem muito controlada | 594 objetos; media de Part = 2; parent = 591; pattern = 0 | baixa contagem de Part nao elimina dependencia estrutural de parent |
 | Theme | apto somente por clonagem muito controlada | 7 objetos; media de Part = 3; parent = 0; pattern = 0 | sem muita dependencia contextual aparente, mas a amostra ainda e pequena |
 | Transaction | apto por clonagem baseada em padrao estrutural inferido (decisao operacional) | 183 objetos; media de Part = 8; parent = 183; pattern = 0 | ha massa critica suficiente para trabalhar por familia estrutural interna, com erro tratado incrementalmente |
-| WebPanel | apto por clonagem baseada em familia estrutural (alta variabilidade; requer template interno proximo) | 1196 objetos; media de Part = 7; parent = 1195; pattern = 0 | ha massa critica suficiente para escolher template interno proximo, sem tratar WebPanel como estrutura unica |
-| WorkWithForWeb | ainda nao apto sem template real | 183 objetos; media de Part = 2; parent = 183; pattern = 183 | pattern e parent aparecem em 100% dos casos observados |
+| WebPanel | apto por clonagem baseada em familia estrutural (alta variabilidade; requer molde interno proximo) | 1196 objetos; media de Part = 7; parent = 1195; pattern = 0 | ha massa critica suficiente para escolher molde interno proximo, sem tratar WebPanel como estrutura unica |
+| WorkWithForWeb | ainda nao apto sem molde bruto comparável | 183 objetos; media de Part = 2; parent = 183; pattern = 183 | pattern e parent aparecem em 100% dos casos observados |
 
 ## Leitura conservadora
 
 - Evidência direta: nenhum dos tipos prioritarios ficou sustentado por evidencia de importacao real nesta trilha.
-- Inferência forte: `PackagedModule` e `Theme` parecem menos agressivos do que os tipos com pattern ou muitos blocos internos, mas ainda merecem template real proximo e validacao humana.
+- Inferência forte: `PackagedModule` e `Theme` parecem menos agressivos do que os tipos com pattern ou muitos blocos internos, mas ainda merecem molde bruto comparável proximo e validacao humana.
 - Inferência forte: `Transaction` e `WebPanel` passam a ficar desbloqueados para execucao controlada por clonagem interna da propria base, sem prometer importacao bem-sucedida.
 - Inferência forte: `WorkWithForWeb` deve permanecer na zona de maior cautela.
 
@@ -218,17 +218,17 @@ Servir como primeira triagem operacional antes de qualquer tentativa de clonagem
 
 | FolderType | StructuralRisk | ParentModuleDependency | PatternDependency | CurrentConfidence | PracticalRecommendation |
 | --- | --- | --- | --- | --- | --- |
-| API | alto | 1/1 | 0/1 | baixa | exigir template real muito proximo do caso alvo |
-| DataProvider | alto | 24/24 | 0/24 | baixa | exigir template real muito proximo do caso alvo |
-| DesignSystem | alto | 1/2 | 0/2 | baixa | exigir template real e evitar extrapolacao com amostra pequena |
+| API | alto | 1/1 | 0/1 | baixa | exigir molde bruto comparável muito proximo do caso alvo |
+| DataProvider | alto | 24/24 | 0/24 | baixa | exigir molde bruto comparável muito proximo do caso alvo |
+| DesignSystem | alto | 1/2 | 0/2 | baixa | exigir molde bruto comparável e evitar extrapolacao com amostra pequena |
 | PackagedModule | medio | 2/16 | 0/16 | media-baixa | clonar so com diff estrutural e revisao manual forte |
-| Panel | alto | 7/7 | 7/7 | baixa | exigir template real muito proximo do caso alvo |
-| Procedure | alto | 2281/2281 | 0/2281 | baixa | exigir template real muito proximo e preservar todos os blocos recorrentes |
+| Panel | alto | 7/7 | 7/7 | baixa | exigir molde bruto comparável muito proximo do caso alvo |
+| Procedure | alto | 2281/2281 | 0/2281 | baixa | exigir molde bruto comparável muito proximo e preservar todos os blocos recorrentes |
 | SDT | medio | 591/594 | 0/594 | media-baixa | clonar so com template do mesmo subtipo estrutural e checagem de parent |
 | Theme | medio | 0/7 | 0/7 | media-baixa | usar apenas para experimentos muito controlados e com diff manual |
 | Transaction | muito alto | 183/183 | 0/183 | media | permitir geracao por padrao estrutural inferido; preservar estrutura e tratar erros incrementalmente |
-| WebPanel | muito alto | 1195/1196 | 0/1196 | media-baixa | permitir geracao por familia estrutural; usar template interno proximo; nao generalizar estrutura |
-| WorkWithForWeb | muito alto | 183/183 | 183/183 | baixa | nao tentar sem template real e contexto completo de pattern |
+| WebPanel | muito alto | 1195/1196 | 0/1196 | media-baixa | permitir geracao por familia estrutural; usar molde interno proximo; nao generalizar estrutura |
+| WorkWithForWeb | muito alto | 183/183 | 183/183 | baixa | nao tentar sem molde bruto comparável e contexto completo de pattern |
 
 ## Notas de leitura
 
