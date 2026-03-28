@@ -255,6 +255,11 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Evidência direta`: no export combinado com `WorkWithForWeb`, a `Transaction` mantem a propriedade `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b=True`.
 - `Evidência direta`: no mesmo export, `PatternSettings 'WorkWith'` materializa `ContextVariable`, `LoadProcedure`, `Security Check` e `NotAuthorized` no XML interno.
 - `Inferência forte`: a ponte operacional real do pattern web observado fica distribuida entre `Transaction` (aplicacao do pattern), `WorkWithForWeb` (instancia por objeto), `PatternSettings` (configuracao global do pattern) e `Table` (camada fisica com indices internos).
+- `Evidência direta`: o par de exports `FabricaBrasil18_PaisSemWWweb.xpz` e `FabricaBrasil18_PaisComWWweb.xpz` forneceu um recorte minimo comparavel da mesma `Transaction 'Pais'`.
+- `Evidência direta`: `PaisSemWWweb` veio com `7` objetos, `10` atributos top-level e `25` identidades; `PaisComWWweb` veio com `8` objetos, os mesmos `10` atributos e `49` identidades.
+- `Evidência direta`: a unica diferenca de objeto entre os dois recortes foi a entrada de `WorkWithWebPais`.
+- `Evidência direta`: apesar disso, a entrada de `WorkWithWebPais` quase dobrou o total de identidades de contexto em `ObjectsIdentityMapping`, incluindo referencias adicionais a `UF`, `PessoaEnderecos`, `wpAtualizaPorOutroServidor` e atributos relacionados.
+- `Inferência forte`: num caso minimo real, incluir `WorkWithForWeb` acrescenta pouco no bloco `<Objects>`, mas pode expandir bastante o grafo de contexto que o pacote precisa descrever em `ObjectsIdentityMapping`.
 
 ## Complemento posterior - export combinado de `API` e da pilha visual
 

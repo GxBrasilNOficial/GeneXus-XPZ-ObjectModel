@@ -195,6 +195,8 @@ Orientar futuras coletas de templates comparáveis.
 - `Evidência direta`: o export `Table + Transaction + ColorPalette + DesignSystem + Theme + WebTheme + Category + ThemeClass + ThemeColor` mostrou a pilha visual completa exportada como familia combinada.
 - `Evidência direta`: os exports `Attribute + Domain + Transaction + SubtypeGroup` e `Attribute + Domain + Transaction + SubtypeGroup + Table + Index` mostraram que a IDE tambem serializa familia combinada com `Attributes` top-level no mesmo `.xpz`.
 - `Inferência forte`: a frente aberta de `Attribute` deixa de incluir duvida relevante sobre contêiner multiobjeto; o foco remanescente continua sendo dependencia semantica de propriedades e contexto de KB.
+- `Evidência direta`: o par `PaisSemWWweb` e `PaisComWWweb` mostrou, em escala minima e comparavel, o custo estrutural de adicionar `WorkWithForWeb` a uma `Transaction`.
+- `Inferência forte`: esse tipo de par minimo comparavel e especialmente valioso para medir expansao de `ObjectsIdentityMapping` e dependencias de contexto sem o ruido dos pacotes grandes.
 - `Inferência forte`: futuras analises devem priorizar combinacoes de familias relacionadas, e nao apenas tipos isolados.
 
 

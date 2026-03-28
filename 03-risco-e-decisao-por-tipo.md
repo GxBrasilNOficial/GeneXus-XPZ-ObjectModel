@@ -332,6 +332,8 @@ Servir como primeira triagem operacional antes de qualquer tentativa de clonagem
 ## Estado atual consolidado - pattern web e camada fisica
 
 - `Evidência direta`: `Work With for Web` importa com sucesso quando o XML do pattern usa o convenio estrutural real de atributo `adbb33c9-0906-4971-833c-998de27e0676-NomeDoAtributo`.
+- `Evidência direta`: no recorte comparavel `PaisSemWWweb` vs `PaisComWWweb`, a entrada de um unico `WorkWithWebPais` elevou `ObjectsIdentityMapping` de `25` para `49` identidades.
+- `Inferência forte`: isso reforca que o risco de `WorkWithForWeb` continua alto mesmo em casos pequenos, porque o objeto puxa contexto adicional alem do seu proprio XML.
 - `Evidência direta`: `Table` aparece como familia top-level propria (`857ca50e-7905-0000-0007-c5d9ff2975ec`) e `Index` aparece embutido dentro de `Table` nesta trilha de export.
 - `Inferência forte`: a pendencia residual de camada fisica se concentra em como `Table` e `Index` se reassociam corretamente a partir da `Transaction`.
 - `Evidência direta`: os exports `Table + Transaction + WorkWithForWeb + PatternSettings` e `Table + Transaction + DataSelector` mostraram que essas familias convivem no mesmo `.xpz` sem exigir `Attributes` top-level no contêiner.

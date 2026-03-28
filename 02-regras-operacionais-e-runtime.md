@@ -168,6 +168,9 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Evidência direta`: o teste sintetico inicial resultou em `was not changed`, mas o teste posterior com `Pattern Settings 'WorkWith'` real importou com sucesso.
 - `Inferência forte`: `PatternSettings` deixa de ser pendencia estrutural aberta e passa a depender principalmente de pattern real compativel com o ambiente.
 - `Regra operacional`: sempre preferir `PatternSettings` reais do pattern alvo; se o log disser `pattern nao registrado`, tratar como incompatibilidade do ambiente, nao como erro do envelope.
+- `Evidência direta`: no par minimo `FabricaBrasil18_PaisSemWWweb.xpz` e `FabricaBrasil18_PaisComWWweb.xpz`, a inclusao de `WorkWithWebPais` elevou o pacote de `25` para `49` identidades em `ObjectsIdentityMapping`, mesmo acrescentando apenas um objeto top-level.
+- `Inferência forte`: para `WorkWithForWeb`, o aumento de risco operacional nao esta apenas no XML do pattern; ele tambem aparece como ampliacao do grafo de identidades e dependencias de contexto.
+- `Regra operacional`: ao montar pacote minimo com `WorkWithForWeb`, comparar sempre a lista de `ObjectsIdentityMapping` com a versao sem `WW`; o delta de identidades ajuda a separar dependencia real do pattern de ruido do contêiner.
 
 ### Politica para `Folder`
 
