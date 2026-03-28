@@ -250,6 +250,11 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Inferência forte`: pedir `Table + Index` explicitamente na IDE nao muda a forma de serializacao observada; `Index` continua consolidado dentro de `Table`.
 - `Evidência direta`: em `WorkWithForWeb` real, as referencias de atributo dentro do `CDATA` do pattern usam o prefixo estrutural fixo `adbb33c9-0906-4971-833c-998de27e0676-NomeDoAtributo`.
 - `Inferência forte`: para `WorkWithForWeb`, esse formato deve ser tratado como convenio estrutural do pattern, e nao como reflexo do GUID do `Attribute` top-level nem do GUID inline do `Level` da `Transaction`.
+- `Evidência direta`: o export `FabricaBrasil18_Table_Transaction_WorkWithForWeb_PatternSettings.xpz` veio com `596` objetos: `228` `Table`, `183` `Transaction`, `183` `WorkWithForWeb` e `2` `PatternSettings`, sem `Attributes`.
+- `Evidência direta`: o export `FabricaBrasil18_Table_Transaction_DataSelector.xpz` veio com `413` objetos: `228` `Table`, `183` `Transaction` e `2` `DataSelector`, tambem sem `Attributes`.
+- `Evidência direta`: no export combinado com `WorkWithForWeb`, a `Transaction` mantem a propriedade `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b=True`.
+- `Evidência direta`: no mesmo export, `PatternSettings 'WorkWith'` materializa `ContextVariable`, `LoadProcedure`, `Security Check` e `NotAuthorized` no XML interno.
+- `Inferência forte`: a ponte operacional real do pattern web observado fica distribuida entre `Transaction` (aplicacao do pattern), `WorkWithForWeb` (instancia por objeto), `PatternSettings` (configuracao global do pattern) e `Table` (camada fisica com indices internos).
 
 
 

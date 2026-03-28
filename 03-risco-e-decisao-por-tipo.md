@@ -329,6 +329,8 @@ Servir como primeira triagem operacional antes de qualquer tentativa de clonagem
 - `Evidência direta`: um quinto export posterior `Table + Index` confirmou o mesmo resultado estrutural do export isolado de `Table`, sem criar familia top-level adicional para `Index`.
 - `Inferência forte`: `WorkWithForWeb` deixa de ser pendencia estrutural aberta nesta trilha.
 - `Inferência forte`: a pendencia residual de camada fisica passa a se concentrar em como `Table` e `Index` se reassociam corretamente a partir da `Transaction`, e nao em como serializar `WorkWithForWeb`.
+- `Evidência direta`: exports combinados posteriores `Table + Transaction + WorkWithForWeb + PatternSettings` e `Table + Transaction + DataSelector` mostraram que essas familias convivem no mesmo `.xpz` sem exigir `Attributes` top-level no contêiner.
+- `Inferência forte`: para engenharia reversa do pattern web, a unidade mais informativa deixa de ser o tipo isolado e passa a ser a combinacao `Transaction + Table + WorkWithForWeb + PatternSettings`.
 
 ## Nota leve de risco runtime relativo
 

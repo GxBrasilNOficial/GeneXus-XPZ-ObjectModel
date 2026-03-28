@@ -203,6 +203,8 @@ Orientar futuras coletas de templates comparáveis.
 - `Evidência direta`: o export isolado de `Index` veio vazio; os indices observados aparecem como filhos de `Table`.
 - `Evidência direta`: o export `Table + Index` repetiu exatamente a mesma estrutura de `Table`, reforcando que `Index` nao ganha materializacao top-level adicional quando selecionado junto.
 - `Inferência forte`: a frente aberta deixa de ser `WorkWithForWeb` e passa a ser a serializacao/reassociacao correta da camada fisica `Table/Index` a partir da modelagem transacional.
+- `Evidência direta`: os exports `Table + Transaction + WorkWithForWeb + PatternSettings` e `Table + Transaction + DataSelector` explicitaram a ponte estrutural entre camada logica, camada fisica e camada de pattern, sem carregar `Attributes` top-level no pacote.
+- `Inferência forte`: futuras analises de engenharia reversa devem priorizar combinacoes de familias relacionadas, e nao apenas tipos isolados, quando o objetivo for entender como GeneXus reassocia pattern, camada fisica e modelagem transacional.
 
 
 
