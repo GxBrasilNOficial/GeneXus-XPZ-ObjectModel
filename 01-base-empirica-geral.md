@@ -154,6 +154,67 @@ Servir como base conceitual para os documentos empíricos e operacionais.
 - `Inferência forte`: a documentação atual descreve bem a organização dos XMLs extraídos desta KB.
 - `Hipótese`: ainda não é seguro generalizar todos os padrões acima para qualquer KB GeneXus 18 sem nova amostragem.
 
+## Evidencia complementar - consulta ao acervo real apos a bateria de importacao
+
+## Papel do complemento
+empirico complementar
+
+## Objetivo
+Registrar o que a leitura direta do acervo real em `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml` acrescentou aos resultados da bateria controlada de importacao.
+Separar com mais precisao o que e falta de shape, o que e dependencia semantica da KB e o que e apenas diferenca de nomenclatura reconhecida pela IDE.
+
+- `Evidência direta`: a consulta real foi direcionada aos tipos que ficaram problemáticos ou ambíguos na bateria: `Folder`, `PatternSettings`, `Theme`, `API`, `Transaction` e depois tambem `Attribute`.
+- `Evidência direta`: numa primeira passada em `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml`, `Attribute` nao apareceu como diretório proprio e os atributos observados surgiam principalmente embutidos em `Transaction`.
+- `Evidência direta`: depois foi consultado `C:\Dev\Prod\Gx_FabricaBrasil\XpzExportadosPelaIDE\FabricaBrasil18_Full_20260324a\FabricaBrasil18_Full_20260324a.xml`, onde apareceram objetos `Attribute` top-level com raiz `<Attribute ... name="...">`.
+- `Evidência direta`: esses `Attribute` top-level foram extraidos para `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml\Attribute` e a pasta foi saneada para manter apenas os atributos reais, removendo referencias inline.
+- `Inferência forte`: `Attribute` deixou de estar sem evidencia top-level; o risco atual passa a ser distinguir definicao real de atributo contra ocorrencia contextual dentro de outros objetos.
+
+### `Folder`
+
+- `Evidência direta`: exemplos reais em `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml\Folder\GAM.xml` usam `Object/@type="00000000-0000-0000-0000-000000000006"`.
+- `Evidência direta`: esses exemplos sao extremamente curtos, com `Part type="babf62c5-0111-49e9-a1c3-cc004d90900a"` vazio e propriedades como `Name` e `IsDefault`.
+- `Inferência forte`: o shape XML de `Folder` nesta KB e minimo e estavel.
+- `Inferência forte`: como a IDE reconheceu o teste importado como `Category`, a divergencia atual parece mais ligada a nomenclatura/categorizacao exibida pelo GeneXus do que a um envelope XML complexo.
+
+### `PatternSettings`
+
+- `Evidência direta`: os exemplos reais `WorkWith.xml` e `WorkWithDevices.xml` guardam configuracao dentro de `<Data Pattern="..."> <![CDATA[ ... ]]> </Data>`.
+- `Evidência direta`: o XML interno referencia IDs de `Pattern`, `ContextVariable`, `LoadProcedure`, `Security` e outros artefatos associados ao pattern registrado.
+- `Inferência forte`: `PatternSettings` nao deve ser tratado como objeto declarativo autocontido; ele depende fortemente do pattern correspondente estar registrado no ambiente de destino.
+
+### `Theme`
+
+- `Evidência direta`: o exemplo real `SimpleIOS.xml` contem `PredefinedTypes` e classes visuais concretas como `TableDetail`, `TableSection` e `TextBlockGroupCaption`.
+- `Evidência direta`: essas classes aparecem referenciadas por outras classes no proprio tema, por exemplo `Group` referencia `TextBlockGroupCaption` e `TableSection` referencia `HorizontalLine`.
+- `Inferência forte`: um tema simples mas valido precisa preservar nao apenas classes isoladas, e sim o grafo minimo de classes referenciadas internamente.
+- `Inferência forte`: a falha do teste de `Theme` na bateria foi coerente com esse achado; o pacote gerado nao preservava o conjunto de classes efetivamente exigido pelo tema base.
+
+### `API`
+
+- `Evidência direta`: o exemplo real `apiPDV_Integracao.xml` usa varios `ATTCUSTOMTYPE` validos, incluindo `exo:GAMSession, GeneXusSecurity`, `exo:GAMError, GeneXusSecurity`, `exo:GAMUser, GeneXusSecurity`, `sdt:Messages, GeneXus.Common`, `sdt:sdtProdutoDadosBasicos` e `sdt:sdtTributacaoDadosBasicosSelecao`.
+- `Evidência direta`: o mesmo exemplo tambem depende de `Procedure` e eventos reais no codigo fonte.
+- `Inferência forte`: em `API`, o envelope XML e relativamente bem definido, mas os tipos customizados e procedimentos referenciados precisam existir de fato na KB de destino.
+- `Inferência forte`: nao e seguro inventar `ATTCUSTOMTYPE`; ele deve copiar um valor comprovado ou apontar para tipo efetivamente existente no alvo.
+
+### `Transaction`
+
+- `Evidência direta`: exemplos reais como `DocumentoFiscalLacre.xml` trazem `<Level ...>` com muitos `<Attribute ... guid="...">NomeDoAtributo</Attribute>` e varios blocos `<AttributeProperties Attribute="...">`.
+- `Evidência direta`: no mesmo tipo aparecem variaveis nomeadas `Context`, `TrnContext` e `TrnContextAtt`, com `ATTCUSTOMTYPE` como `sdt:Context`, `sdt:TransactionContext` e `sdt:TransactionContext.Attribute`.
+- `Inferência forte`: em `Transaction`, o shape estrutural pode ser inferido por familia, mas o objeto final continua dependente da existencia real dos atributos e SDTs de contexto na KB.
+- `Inferência forte`: a falha observada na bateria foi coerente com o acervo real; nao faltava apenas envelope, faltavam atributos reais e tipos de contexto validos.
+
+### `Attribute`
+
+- `Evidência direta`: o export full `C:\Dev\Prod\Gx_FabricaBrasil\XpzExportadosPelaIDE\FabricaBrasil18_Full_20260324a\FabricaBrasil18_Full_20260324a.xml` contem objetos `Attribute` top-level com raiz `<Attribute ...>`, e nao `<Object ...>`.
+- `Evidência direta`: um atributo real completo, como `PessoaCreditoTipoDocumentoId`, traz atributos XML como `guid`, `name`, `fullyQualifiedName`, `description`, `moduleGuid`, `parentGuid`, alem de `Part` e `Properties`.
+- `Evidência direta`: no mesmo export tambem aparecem nos curtos `<Attribute key="True|False" guid="...">NomeDoAtributo</Attribute>` dentro de `<Level>` de `Transaction`.
+- `Evidência direta`: os nos curtos compartilham o mesmo `guid` do atributo real top-level correspondente; eles funcionam como referencia contextual do atributo no nivel da `Transaction`, nao como definicao top-level.
+- `Evidência direta`: na saneacao da pasta `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml\Attribute`, permaneceram `7646` atributos reais top-level e foram removidas `8539` referencias inline `Attribute_*.xml`.
+- `Evidência direta`: na ampliacao da busca para `C:\GxModels\FabricaBrasil18`, nomes sugestivos como `GAMExampleUserCustomAttributes.xml` nao se revelaram objeto `Attribute`; esse arquivo se apresentou como `Web Panel`.
+- `Evidência direta`: arquivos como `FabricaBrasil18selectAttributes.Filters` se mostraram apenas configuracoes auxiliares de filtro/interface, nao export de objeto `Attribute`.
+- `Inferência forte`: `Attribute` top-level ja esta empiricamente provado nesta trilha, mas exige cuidado extra porque o mesmo nome de elemento XML tambem aparece como referencia inline em `Transaction`.
+- `Inferência forte`: para montar ou extrair corpus de `Attribute`, o filtro correto nao e “todo no chamado Attribute”, e sim apenas o no raiz completo com `name` e estrutura de `Part` e `Properties`.
+
 
 
 
@@ -1954,6 +2015,9 @@ Destacar estabilidade estrutural relativa e pontos de maior risco para clonagem.
 
 - Perfil: API com bloco Service, multiplos RestMethod, eventos .Before/.After e conjunto denso de variaveis.
 - Uso operacional: boa referencia para API com servicos REST coordenados por eventos e logica auxiliar interna.
+- Evidência direta: a validacao posterior no acervo real confirmou que `API` usa `ATTCUSTOMTYPE` concretos para `EXO` e `SDT`, como `exo:GAMSession, GeneXusSecurity` e `sdt:Messages, GeneXus.Common`.
+- Inferência forte: este molde so deve ser materializado quando os `Procedure`, `EXO` e `SDT` referenciados existirem de fato na KB de destino.
+- Inferência forte: trocar nomes e codigo sem revisar os `ATTCUSTOMTYPE` e as dependencias chamadas em `Source` tende a produzir falha semantica, nao falha de envelope.
 
 `xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -5477,6 +5541,9 @@ VolumeMovimentoVolumePesoLiquido.Visible = not VolumeMovimentoVolumePesoLiquido.
 
 - Perfil: Theme mobile com PredefinedTypes, KmwSchemaVersion e conjunto grande de classes visuais.
 - Uso operacional: boa referencia para temas de plataforma e estilos visuais baseados em classes internas.
+- Evidência direta: a validacao posterior no acervo real mostrou que classes como `TableDetail`, `TableSection` e `TextBlockGroupCaption` fazem parte do conjunto minimo usado por temas simples validos.
+- Inferência forte: ao reduzir este molde, o agente nao deve podar classes apenas por parecerem acessorias; referencias internas entre classes podem quebrar o import mesmo quando o envelope estiver correto.
+- Inferência forte: para clonagem segura, preservar `PredefinedTypes`, `Styles` e o grafo minimo de referencias de classe e mais importante do que simplificar agressivamente o XML.
 
 `xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -10302,6 +10369,9 @@ when &sdtRegistroParametros.ComDocumentoCobranca = SimOuNao.Nao;
 
 - Perfil: configuracao enxuta de `PatternSettings` para `Work With for Web`, com `StandardActions`, `Context` e `Security`.
 - Uso operacional: boa referencia para padroes web centralizados que preservam a hierarquia `<Config>`.
+- Evidência direta: a validacao posterior no acervo real confirmou que `PatternSettings` depende de `Pattern="..."`, `ContextVariable`, `LoadProcedure` e referencias de seguranca presentes no ambiente.
+- Inferência forte: este molde nao deve ser tratado como objeto autocontido; ele so fecha comportamento quando o pattern correspondente estiver registrado no destino.
+- Inferência forte: se o ambiente nao reconhecer o pattern citado, o resultado esperado e importacao sem mudanca util ou aviso de pattern nao registrado.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -10349,6 +10419,8 @@ when &sdtRegistroParametros.ComDocumentoCobranca = SimOuNao.Nao;
 
 - Perfil: configuracao de `PatternSettings` voltada a multiplas plataformas, com bloco denso de `Platforms`.
 - Uso operacional: boa referencia para padroes mobile/web com segmentacao por dispositivo e tema.
+- Evidência direta: o `Pattern` e os `Theme` referenciados no bloco de plataformas importam contexto real do ambiente.
+- Inferência forte: editar apenas nomes e plataformas sem validar GUIDs de `Pattern` e referencias de `Theme` pode manter o XML bem-formado e ainda assim torná-lo inutilizavel no destino.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -11193,8 +11265,11 @@ when &sdtRegistroParametros.ComDocumentoCobranca = SimOuNao.Nao;
 
 - Perfil: `Folder` minimo com apenas `Name` e propriedades basicas.
 - Uso operacional: boa referencia para pastas simples de organizacao sem metadados extras.
+- Evidência direta: a validacao posterior no acervo real confirmou que este shape minimo e coerente com exemplos reais de `Folder`.
+- Inferência forte: a divergencia observada na bateria, em que a IDE exibiu o objeto como `Category`, nao invalida este molde; por enquanto ela deve ser lida como diferenca de reconhecimento semantico/nomenclatura da IDE.
 
-```xml<?xml version="1.0" encoding="utf-8"?>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
 <Object parentGuid="00000000-0000-0000-0000-000000000000" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2025-03-27T23:17:35.0000000Z" checksum="66a8ea763f94ed342bd2726191bed7a0" fullyQualifiedName="PastaRefinamentoExemplo" moduleGuid="00000000-0000-0000-0000-000000000000" guid="91314acb-c530-4e3e-9b94-db33281c99bf" name="PastaRefinamentoExemplo" type="00000000-0000-0000-0000-000000000006" description="Pasta Refinamento Exemplo">
   <Part type="babf62c5-0111-49e9-a1c3-cc004d90900a">
     <Properties />
@@ -11209,14 +11284,18 @@ when &sdtRegistroParametros.ComDocumentoCobranca = SimOuNao.Nao;
       <Value>False</Value>
     </Property>
   </Properties>
-</Object>```
+</Object>
+```
 
 ### Molde sanitizado de Folder 2 - `PastaProgramasPrincipaisExemplo`
 
 - Perfil: `Folder` com propriedades adicionais como `ShowInModelTree`, `Query` e flags textuais.
 - Uso operacional: boa referencia para pastas funcionais e de agrupamento visivel na arvore do modelo.
+- Evidência direta: esse perfil continua coerente com os exemplos reais da pasta `Folder` consultada depois da bateria.
+- Inferência forte: quando o objetivo for apenas criar uma pasta simples, preferir o molde 1; usar este molde 2 apenas quando as propriedades adicionais forem realmente exigidas.
 
-```xml<?xml version="1.0" encoding="utf-8"?>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
 <Object parentGuid="00000000-0000-0000-0000-000000000000" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2014-09-03T20:49:42.0000000Z" checksum="55629d2ccd74c89a2b72536ff9c3b4c2" fullyQualifiedName="PastaProgramasPrincipaisExemplo" moduleGuid="00000000-0000-0000-0000-000000000000" guid="a7ccc3ad-5574-4898-9a1d-c6b74633f3d1" name="PastaProgramasPrincipaisExemplo" type="00000000-0000-0000-0000-000000000006" description="Pasta Programas Principais Exemplo">
   <Part type="babf62c5-0111-49e9-a1c3-cc004d90900a">
     <Properties />
@@ -11243,7 +11322,8 @@ when &sdtRegistroParametros.ComDocumentoCobranca = SimOuNao.Nao;
       <Value>False</Value>
     </Property>
   </Properties>
-</Object>```
+</Object>
+```
 
 ## Moldes sanitizados completos de Stencil
 

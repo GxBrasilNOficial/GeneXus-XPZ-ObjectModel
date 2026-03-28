@@ -56,6 +56,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a tarefa envolver montar ou serializar `XPZ`, consultar primeiro a secao `Envelope XPZ observado em export real` de `02-regras-operacionais-e-runtime.md`
 - nao presumir `Objects.xml` isolado nem manifesto externo separado se isso nao estiver documentado no `02`
 - usar o envelope sanitizado documentado na base como referencia estrutural antes de pedir XML externo adicional
+- depois da bateria de importacao e da consulta ao acervo real, separar explicitamente `problema de envelope`, `problema de shape minimo` e `problema de dependencia da KB`
 
 ## Precedencia das heuristicas
 
@@ -75,6 +76,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a conclusão depender de frequência recorrente, mas sem teste externo
 - quando a amostra do tipo for pequena
 - quando a resposta tocar em edição segura, obrigatoriedade real, importação ou build
+- quando o tipo depender de `ATTCUSTOMTYPE`, `pattern` registrado, classe visual pai, package importado, atributo real ou objeto pai existente
 
 ## Quando recusar geração de XPZ
 
@@ -93,6 +95,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - apenas preservando `Object/@type`, `parent*`, `moduleGuid` e `Part type` recorrentes
 - para `Transaction`, usar familia estrutural inferida da propria base
 - para `WebPanel`, usar familia estrutural inferida e molde interno muito proximo
+- para `Theme`, preservar tambem o conjunto minimo de classes visuais efetivamente referenciadas entre si
+- para `API`, copiar apenas `ATTCUSTOMTYPE` comprovado e somente quando o tipo correspondente existir no alvo
 
 ### Exigir molde bruto comparável
 
@@ -101,6 +105,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando o objeto depender de contexto estrutural explícito
 - `Transaction` nao deve mais exigir molde externo
 - `WebPanel` deve operar por familia estrutural e molde interno proximo
+- `Attribute` ja tem shape top-level provado, mas ainda deve exigir filtro cuidadoso para nao confundir definicao real com referencia inline de `Transaction`
+- `PatternSettings` deve exigir pattern registrado e contexto equivalente; o XML sozinho nao fecha o comportamento
 
 ### Abortar
 
@@ -131,6 +137,9 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - `DesignSystem`, por amostra pequena
 - `SDT`, quando a estrutura pai for relevante
 - `Theme` e `PackagedModule`, mesmo sendo candidatos relativamente menos agressivos
+- `Attribute`, quando houver duvida entre definicao top-level e referencia inline dentro de `Transaction`
+- `API`, quando o caso concreto depender de `EXO`, `SDT` ou `Procedure` que nao existam comprovadamente no alvo
+- `PatternSettings`, quando o pattern correspondente nao estiver registrado no ambiente
 
 ## Decisao operacional atual para Transaction e WebPanel
 
@@ -156,13 +165,43 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - Inferência forte: para `Transaction`, `05-transaction-familias-e-templates.md` ja contem moldes sanitizados completos para as familias `F1`, `F2`, `F5` e `F6`
 - Inferência forte: para `Procedure`, `DataProvider`, `DataSelector`, `Panel`, `API`, `WorkWithForWeb`, `SDT`, `Domain`, `Theme`, `PackagedModule`, `DesignSystem`, `ColorPalette`, `ThemeClass`, `ThemeColor`, `Image`, `Index`, `Document`, `ExternalObject`, `UserControl`, `Module`, `SubTypeGroup`, `PatternSettings`, `DataStore`, `Dashboard`, `DeploymentUnit`, `Generator`, `Language`, `Folder`, `Stencil` e `File`, `01-base-empirica-geral.md` ja contem moldes sanitizados completos representativos
 - Hipótese: para `Transaction` das familias `F3` e `F4`, continua prudente buscar molde bruto comparavel adicional se a densidade estrutural real do alvo ultrapassar o que os anexos atuais sustentam
+- Evidência direta: a consulta ao acervo real mostrou que `Transaction` materializa atributos dentro do proprio `<Level>` e usa variaveis de contexto como `sdt:Context`, `sdt:TransactionContext` e `sdt:TransactionContext.Attribute`
+- Evidência direta: a consulta ao acervo real mostrou que `Theme` simples valido preserva classes como `TableDetail`, `TableSection` e `TextBlockGroupCaption`, alem de suas referencias internas
+- Evidência direta: a consulta ao acervo real mostrou que `PatternSettings` embute configuracao em `CDATA` com `Pattern="..."` e referencias a procedures e contextos do pattern
+- Evidência direta: a consulta ao export full trouxe exemplo real de `Attribute` top-level com raiz `<Attribute ... name="...">`, e tambem revelou referencias inline `<Attribute key="...">Nome</Attribute>` dentro de `Transaction`
 
 ### Transaction
 
 - localizar um molde XML completo do mesmo `Object/@type` e da familia estrutural mais proxima
 - preservar `Object/@type`, `guid`, `parent*`, `moduleGuid`, `Part type` e ordem das `Part`
 - editar somente nomes, descricoes e trechos internos sustentados pelo molde usado
-- abortar se a mudanca exigir criar atributo novo no `<Object>` ou bloco novo sem paralelo claro
+- preservar tambem os `<Attribute ...>` dentro de `<Level>` com nome interno preenchido, `guid`, `key` e `isNullable` quando existirem
+- abortar se a mudanca exigir inventar atributo inexistente na KB ou tipo de contexto nao existente
+
+### API
+
+- copiar somente um molde XML completo do mesmo tipo e com contexto comparavel
+- validar antes se cada `ATTCUSTOMTYPE` apontado no molde existe no alvo como `EXO`, `SDT` ou tipo base suportado
+- abortar se a API depender de procedures, `EXO` ou `SDT` inexistentes no destino
+
+### Theme
+
+- preservar `PredefinedTypes`, `Styles`, classes visuais base e referencias internas entre classes
+- nao podar classes so porque parecem "sobrando"; classes como `TableDetail`, `TableSection` e `TextBlockGroupCaption` podem ser exigidas por outras referencias do proprio tema
+- abortar se a edicao quebrar o grafo minimo de classes referenciadas
+
+### PatternSettings
+
+- tratar o objeto como configuracao de pattern, nao como objeto autocontido
+- validar se o pattern citado por GUID esta registrado no ambiente de destino
+- abortar se o caso exigir inferir ou inventar contexto de pattern, procedures de suporte ou variaveis de contexto
+
+### Attribute
+
+- distinguir sempre dois formatos diferentes: `Attribute` top-level real e referencia inline de `Transaction`
+- ao extrair ou usar corpus de `Attribute`, aceitar apenas raiz `<Attribute ... name="...">` com `Part` e `Properties`
+- nao reutilizar nos curtos `<Attribute key="True|False" guid="...">Nome</Attribute>` como se fossem objeto `Attribute` completo
+- ao gerar `Attribute` isolado, partir apenas de molde real top-level comparavel
 
 ### WebPanel
 

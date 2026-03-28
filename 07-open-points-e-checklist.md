@@ -42,6 +42,9 @@ Servir como local único para conflitos não resolvidos silenciosamente.
 - `Evidência direta`: o acervo extraído tem taxonomia estável por diretório e por `Object/@type`.
 - `Evidência direta`: há relações aparentes visíveis por `parent`, `parentGuid`, `parentType`, `moduleGuid`, propriedades e referências nominais em código.
 - `Evidência direta`: não houve arquivos problemáticos na leitura do conjunto atual.
+- `Evidência direta`: a trilha ja contem bateria controlada de importacao real com reconhecimento coerente para `Procedure`, `Domain`, `SDT`, `Data Provider`, `Subtype Group`, `Module`, `External Object`, `Data Store`, `Generator`, `Panel`, `Image`, `Theme Color`, `Document`, `File`, `Language`, `Color Palette`, `Dashboard`, `User Control` e `Stencil`.
+- `Evidência direta`: nessa bateria, `Dashboard` chegou a executar geracao de pattern com sucesso apos a importacao.
+- `Inferência forte`: a base `.md` local, usada junto com o skill `nexa`, ja e fonte operacional forte para tipos autocontidos ou estruturalmente simples a moderados.
 
 ## Pontos ainda abertos
 
@@ -52,7 +55,8 @@ Servir como local único para conflitos não resolvidos silenciosamente.
 - `Hipótese`: ainda falta validar se os padrões observados nesta KB se repetem sem mudança relevante em outros exports GeneXus 18.
 - `Evidência direta`: ja houve importacao bem-sucedida, nesta trilha, de um `.xpz` minimo de `Procedure` gerado a partir da propria base documental.
 - `Evidência direta`: nesse teste, placeholders textuais em `Source/@kb` e `Source/Version/@guid` causaram erro de parse; GUIDs sintaticamente validos destravaram a importacao.
-- `Hipótese`: ainda nao ha evidência nesta trilha documental de build e execucao a partir de XMLs gerados, nem de importacao bem-sucedida para muitos tipos diferentes.
+- `Evidência direta`: ainda nao ha evidência nesta trilha documental de build e execucao a partir de XMLs gerados.
+- `Evidência direta`: ja ha evidência nesta trilha documental de importacao bem-sucedida para muitos tipos diferentes, conforme a bateria controlada registrada nesta base.
 - `Evidência direta`: o envelope XPZ observado em export real ja foi documentado na base como `<ExportFile>` com `KMW` e `Source` invariantes; o bloco especial de KB (`KnowledgeBase` ou nome literal da KB) aparece apenas em exportacoes especiais/full e nao no formato normal mais frequente de objetos.
 - `Evidência direta`: nos exports normais lidos, `ObjectsIdentityMapping` usa `ObjectIdentity` com `Type`, `Name`, `parent` e `Guid` preenchidos; o bloco nao repete os proprios objetos exportados, mas identidades de contexto.
 - `Evidência direta`: nos exports normais lidos, `Source/Version/@name`, `Object/@name` e `ObjectIdentity/@Name` nao apareceram vazios.
@@ -68,12 +72,22 @@ Servir como local único para conflitos não resolvidos silenciosamente.
 - `Evidência direta`: `05-transaction-familias-e-templates.md` agora tambem contem anexos XML sanitizados completos para familias representativas de `Transaction`.
 - `Evidência direta`: `01-base-empirica-geral.md` agora tambem contem anexos XML sanitizados completos representativos de `Procedure`, `DataProvider`, `DataSelector`, `Panel`, `API`, `WorkWithForWeb`, `SDT`, `Domain`, `Theme`, `PackagedModule`, `DesignSystem`, `ColorPalette`, `ThemeClass`, `ThemeColor`, `Image`, `Index`, `Document`, `ExternalObject`, `UserControl`, `Module`, `SubTypeGroup`, `PatternSettings`, `DataStore`, `Dashboard`, `DeploymentUnit`, `Generator`, `Language`, `Folder`, `Stencil` e `File`.
 - `Hipótese`: ainda vale completar `Transaction` com anexos equivalentes para as familias mais densas (`F3` e `F4`) se a meta for cobertura integral so pelos `.md`, sem recorrer ao acervo bruto.
+- `Evidência direta`: o primeiro teste de `Attribute` falhou no load com `Field: name` nulo.
+- `Evidência direta`: depois da bateria, o export full `FabricaBrasil18_Full_20260324a.xml` revelou `Attribute` top-level real com raiz `<Attribute ... name="...">`.
+- `Evidência direta`: o mesmo export tambem trouxe referencias inline `<Attribute key="...">Nome</Attribute>` dentro de `Transaction`; elas chegaram a contaminar a pasta de extraidos ate a limpeza posterior.
+- `Inferência forte`: a pendencia de `Attribute` deixou de ser “falta total de shape” e passou a ser “disciplina de filtragem e uso do shape top-level correto”.
+- `Evidência direta`: `Folder` continua pendente de fechamento semantico, porque o caso gerado foi reconhecido pela IDE como `Category`.
+- `Evidência direta`: `Theme` e `Pattern Settings` nao falharam por envelope puro; os resultados apontaram respectivamente inconsistencia de classes visuais e pattern nao registrado.
+- `Evidência direta`: `API`, `Transaction`, `Data Selector`, `Index`, `Deployment Unit`, `Theme Class`, `Design System` e `Work With for Web` mostraram dependencia contextual real da KB.
+- `Inferência forte`: a lacuna dominante agora nao e mais "como serializar o XPZ", e sim "quais referencias e dependencias minimas precisam existir na KB para cada tipo contextual".
 
 ## Próximas frentes recomendadas
 
 - `Inferência forte`: vale montar um catálogo dedicado de `Part type` por diretório/tipo extraído.
 - `Inferência forte`: vale isolar pares de objetos simples e complexos do mesmo grupo para comparação estrutural.
 - `Inferência forte`: vale produzir uma camada de validação cruzando `parent*`, `moduleGuid`, chamadas em código e nomes de objeto.
+- `Inferência forte`: antes de corrigir os `.md` dos tipos problemáticos, vale usar a bateria atual para distinguir "erro de molde" de "erro de dependência de KB" em cada tipo.
+- `Inferência forte`: a proxima coleta em exemplos reais deve priorizar `Folder`, `Theme`, `Pattern Settings`, `API` e `Transaction`; `Attribute` ja teve o shape top-level encontrado, mas ainda merece refinamento documental para geracao segura.
 
 ## Decisao operacional - Transaction e WebPanel
 

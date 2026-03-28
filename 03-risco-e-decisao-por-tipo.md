@@ -163,7 +163,8 @@ Evitar que “melhor candidato” seja confundido com “tipo comprovadamente se
 
 - Evidência direta: a classificacao abaixo considera quantidade de objetos, media de Part, dependencia de parent/module e presenca de pattern no acervo extraído.
 - Inferência forte: "pronto" aqui significa apenas "melhor candidato relativo para experimentacao controlada por clonagem", nao tipo comprovadamente importavel.
-- Hipótese: sem teste real de importacao, build e abertura na IDE, nenhum tipo deve ser tratado como definitivamente seguro.
+- Evidência direta: a trilha ja contem bateria controlada de importacao real a partir de `.xpz` montados com base nos `.md` locais e no skill `nexa`.
+- Inferência forte: isso nao transforma nenhum tipo em "definitivamente seguro", mas ja separa tipos com envelope comprovado dos tipos que ainda dependem de contexto real da KB.
 
 | FolderType | Classification | Evidence | Reading |
 | --- | --- | --- | --- |
@@ -181,10 +182,10 @@ Evitar que “melhor candidato” seja confundido com “tipo comprovadamente se
 
 ## Leitura conservadora
 
-- Evidência direta: nenhum dos tipos prioritarios ficou sustentado por evidencia de importacao real nesta trilha.
-- Inferência forte: `PackagedModule` e `Theme` parecem menos agressivos do que os tipos com pattern ou muitos blocos internos, mas ainda merecem molde bruto comparável proximo e validacao humana.
-- Inferência forte: `Transaction` e `WebPanel` passam a ficar desbloqueados para execucao controlada por clonagem interna da propria base, sem prometer importacao bem-sucedida.
-- Inferência forte: `WorkWithForWeb` deve permanecer na zona de maior cautela.
+- Evidência direta: a trilha ja contem evidência de importacao real bem-sucedida para varios tipos, usando somente os `.md` locais como base documental combinados com o skill `nexa`.
+- Inferência forte: `PackagedModule` deixou de ser apenas candidato relativo e passou a ter importacao bem-sucedida como `Module` em caso controlado.
+- Inferência forte: `Transaction` continua desbloqueada para execucao controlada, mas o teste real mostrou dependencia de atributos e tipos de contexto existentes na KB.
+- Inferência forte: `WorkWithForWeb` permanece na zona de maior cautela por depender de `Transaction` pai real.
 
 ## Decisao operacional provisoria
 
@@ -193,6 +194,66 @@ Evitar que “melhor candidato” seja confundido com “tipo comprovadamente se
 - Inferência forte: para `Transaction`, a estrategia preferida passa a ser clonagem por familia estrutural inferida.
 - Inferência forte: para `WebPanel`, a estrategia preferida passa a ser clonagem por familia estrutural interna, com selecao cuidadosa de template proximo.
 - Hipótese: os erros de importacao que surgirem devem ser tratados como feedback para refinar estes documentos, e nao como prova de inviabilidade geral do tipo.
+
+## Evidencia complementar - bateria controlada de importacao
+
+## Papel da bateria
+empirico complementar
+
+## Objetivo
+Registrar o que foi efetivamente reconhecido pela IDE em importacoes reais de `.xpz` de teste montados a partir desta base documental e do skill `nexa`.
+Separar falha de envelope/shape de falha por dependencia semantica da KB.
+
+- Evidência direta: o criterio de classificacao abaixo considera o texto retornado pela propria importacao, confirmando nome e tipo reconhecidos quando isso apareceu no log.
+- Evidência direta: os testes desta bateria usaram somente os `.md` desta pasta em conjunto com o skill `nexa`; nao usaram `C:\Dropbox\Backups\Gx_Kbs` nem outras bases externas.
+- Inferência forte: quando a importacao falha por objeto pai, atributo, `ATTCUSTOMTYPE`, package ou pattern inexistente, o envelope XML esta mais forte do que o contexto semantico do caso.
+
+## Tipos com importacao bem-sucedida e tipo coerente
+
+- `Procedure`
+- `Domain`
+- `SDT`
+- `Data Provider`
+- `Subtype Group`
+- `Module`
+- `External Object`
+- `Data Store`
+- `Generator`
+- `Panel`
+- `Image`
+- `Theme Color`
+- `Document`
+- `File`
+- `Language`
+- `Color Palette`
+- `Dashboard`
+- `User Control`
+- `Stencil`
+
+## Tipos testados, mas dependentes de contexto real da KB
+
+- `API`: falhou por `ATTCUSTOMTYPE` apontando para `EXO` e `SDT` inexistentes ou nao conversiveis no alvo.
+- `Transaction`: falhou por atributos inexistentes e por tipos de contexto nao resolvidos.
+- `Data Selector`: falhou por atributos/funcoes nao validos no contexto da KB de destino.
+- `Index`: foi pulado porque a tabela nao tinha `Transaction` associada.
+- `Deployment Unit`: falhou por `Procedure` membro inexistente.
+- `Theme Class`: falhou por objeto pai inexistente.
+- `Design System`: falhou por dependencia de package/import inexistente.
+- `Work With for Web`: falhou por `Transaction` pai inexistente.
+
+## Tipos testados com divergencia ou consistencia insuficiente
+
+- `Folder`: o XML gerado foi importado como `Category`, nao como `Folder`.
+- `Pattern Settings`: a importacao ocorreu como `was not changed`, com aviso de pattern nao registrado; o tipo nao ficou fechado como caso util.
+- `Attribute`: falhou no load com `Value cannot be null. Parameter name: Field: name`.
+- `Theme`: falhou por classes visuais referenciadas que nao existiam no pacote gerado.
+
+## Leitura operacional apos a bateria
+
+- Evidência direta: os `.md` locais, combinados com o skill `nexa`, sustentam uma faixa relevante de tipos autocontidos e estruturais com importacao real.
+- Inferência forte: a principal fronteira atual nao e mais o contêiner `.xpz`, e sim a dependencia de contexto real da KB em tipos que exigem pai, atributos, pattern, package, `EXO`, `SDT` ou membros existentes.
+- Inferência forte: os tipos em sucesso coerente passam a ter prioridade maior como fonte segura para agente/GPT nesta base.
+- Inferência forte: os tipos com falha contextual pedem complemento por exemplos reais ou regra documental mais especifica, e nao simples extrapolacao a partir do envelope minimo.
 
 
 ## Origem incorporada - 23-mapa-de-risco-por-tipo.md

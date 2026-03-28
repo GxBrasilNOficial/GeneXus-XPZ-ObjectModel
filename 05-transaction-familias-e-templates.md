@@ -239,6 +239,9 @@ Permitir escolha repetivel de template interno real, reduzindo risco de vazament
 - Inferencia forte: a regra pratica mais segura e `identificar familia -> escolher template bruto da mesma familia -> preservar Part, ordem e metadata -> editar apenas o que tem paralelo claro`
 - Inferencia forte: para `Transaction` nova, comecar sempre testando encaixe nas Familias 1, 2 ou 3 antes de considerar 5 ou 6
 - Inferencia forte: o erro de materializacao mais comum neste tipo e vazamento do template-base em `Level`, `Attribute`, `AttributeProperties` e `DescriptionAttribute`
+- Evidencia direta: a bateria de importacao mostrou que `Transaction` pode falhar mesmo com envelope correto quando os atributos do `Level` nao existem de fato na KB de destino
+- Evidencia direta: a consulta posterior ao acervo real confirmou o uso recorrente de variaveis de contexto com `ATTCUSTOMTYPE` como `sdt:Context`, `sdt:TransactionContext` e `sdt:TransactionContext.Attribute`
+- Inferencia forte: para `Transaction`, a validacao de contexto da KB e tao importante quanto a escolha correta da familia estrutural
 
 ## Validacoes obrigatorias de consistencia interna
 
@@ -248,8 +251,10 @@ Permitir escolha repetivel de template interno real, reduzindo risco de vazament
 - o objeto deve continuar com raiz unica `<Object>`
 - os 8 `Part type` recorrentes devem permanecer presentes
 - o nome de cada `Level` deve estar coerente com a estrutura final
+- todo `<Attribute ...>` dentro de `Level` deve manter nome interno preenchido e coerente com o restante do objeto
 - todo `DescriptionAttribute` deve apontar para atributo existente no mesmo nivel
 - todo atributo citado em `AttributeProperties` deve existir de fato no XML da estrutura
+- se houver variaveis `Context`, `TrnContext` ou `TrnContextAtt`, seus `ATTCUSTOMTYPE` devem apontar para tipos realmente existentes no destino
 - nao pode sobrar nome residual do template original
 
 ### Sinais classicos de erro
@@ -257,6 +262,7 @@ Permitir escolha repetivel de template interno real, reduzindo risco de vazament
 - `DescriptionAttribute` aponta para atributo inexistente
 - atributo aparece no `Level`, mas nao tem correspondencia esperada nas propriedades internas
 - `AttributeProperties` referencia atributo ausente
+- variavel de contexto aponta para `sdt` inexistente ou nao resolvido na KB
 - sobra nome residual do template-base em `Level`, `Attribute`, regras ou eventos
 
 ## Regras de serializacao XPZ para Transaction
