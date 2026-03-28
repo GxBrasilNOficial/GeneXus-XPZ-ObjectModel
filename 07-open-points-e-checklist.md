@@ -79,12 +79,19 @@ Servir como local único para conflitos não resolvidos silenciosamente.
 - `Inferência forte`: a pendencia de `Attribute` deixou de ser “falta total de shape” e passou a ser “uso de shape top-level correto + controle de propriedades que dependem de atributos reais da KB”.
 - `Evidência direta`: num consolidado revisado posterior, `Attribute 'DocumentoFiscalRemetenteDadosFiscaisAdicionaisId'` importou com sucesso.
 - `Inferência forte`: a pendencia principal de `Attribute` deixa de ser aberta; o tipo passa a exigir selecao de caso semanticamente fechado, nao nova pesquisa de envelope.
-- `Evidência direta`: `Folder` continua pendente de fechamento semantico, porque o caso gerado foi reconhecido pela IDE como `Category`.
+- `Evidência direta`: `Folder` foi reconhecido pela IDE como `Category`, mas as capturas da janela `New Object` mostraram que `Category` e o nome do agrupador visual da lista de tipos, nao um tipo XML estrutural.
+- `Inferência forte`: a pendencia de `Folder` deixa de ser de tipo estrutural e passa a ser apenas de nomenclatura exibida pela IDE/importador.
 - `Evidência direta`: `Theme` e `Pattern Settings` nao falharam por envelope puro; os resultados apontaram respectivamente inconsistencia de classes visuais e pattern nao registrado.
 - `Evidência direta`: mesmo substituindo o tema sintetico pelo `SimpleIOS` real, o ambiente de teste repetiu a falha nas classes `TableDetail`, `TableSection` e `TextBlockGroupCaption`.
 - `Evidência direta`: `API`, `Transaction`, `Data Selector`, `Index`, `Deployment Unit`, `Theme Class`, `Design System` e `Work With for Web` mostraram dependencia contextual real da KB.
 - `Inferência forte`: a lacuna dominante agora nao e mais "como serializar o XPZ", e sim "quais referencias e dependencias minimas precisam existir na KB para cada tipo contextual".
-- `Inferência forte`: em `Theme`, essa lacuna agora deve ser lida como dependencia de ambiente alvo, nao apenas de recorte do XML.
+- `Evidência direta`: num teste isolado posterior, `Pattern Settings 'WorkWith'` importou com sucesso.
+- `Evidência direta`: num teste isolado posterior, `Transaction 'Banco'` importou com sucesso quando acompanhado pelos atributos reais do `Level`, `SDT 'Context'` e `SDT 'TransactionContext'`.
+- `Evidência direta`: nesse mesmo teste, a importacao de `Transaction 'Banco'` ainda disparou geracao de pattern bem-sucedida para `WorkWithWebBanco`.
+- `Evidência direta`: num teste isolado posterior, `ThemeClass 'TableDetail'`, `ThemeClass 'TableSection'` e `ThemeClass 'TextBlockGroupCaption'` importaram com sucesso, e logo em seguida `Theme 'SimpleIOS'` tambem importou com sucesso.
+- `Evidência direta`: num teste isolado posterior, `API 'apiPDV_Integracao'` deixou de falhar por `ATTCUSTOMTYPE` quando acompanhada pelos SDTs reais e passou a falhar apenas por `Procedure` ausente e contexto de negocio (`TipoProd`, `Produto`).
+- `Evidência direta`: num pacote combinado posterior com tres tipos distintos, `ThemeClass`, `Theme` e `Pattern Settings` importaram juntos com sucesso no mesmo `.xpz`.
+- `Inferência forte`: `Theme`, `PatternSettings` e `Transaction` deixam de ser pendencias estruturais abertas nesta trilha; a fronteira principal remanescente se concentra em `API` e nos demais tipos contextuais ainda nao revisitados com dependencias reais completas.
 
 ## Próximas frentes recomendadas
 
@@ -92,7 +99,7 @@ Servir como local único para conflitos não resolvidos silenciosamente.
 - `Inferência forte`: vale isolar pares de objetos simples e complexos do mesmo grupo para comparação estrutural.
 - `Inferência forte`: vale produzir uma camada de validação cruzando `parent*`, `moduleGuid`, chamadas em código e nomes de objeto.
 - `Inferência forte`: antes de corrigir os `.md` dos tipos problemáticos, vale usar a bateria atual para distinguir "erro de molde" de "erro de dependência de KB" em cada tipo.
-- `Inferência forte`: a proxima coleta em exemplos reais deve priorizar `Theme`, `Pattern Settings`, `API`, `Transaction` e, em `Attribute`, apenas propriedades semanticas residuais quando o caso nao for semanticamente fechado.
+- `Inferência forte`: a proxima coleta em exemplos reais deve priorizar `API` e os tipos contextuais ainda nao revisitados com dependencias completas; para `Theme`, `PatternSettings` e `Transaction`, a coleta adicional passa a ser de generalizacao e nao de desbloqueio inicial.
 
 ## Decisao operacional - Transaction e WebPanel
 
@@ -188,6 +195,14 @@ Orientar futuras coletas de templates comparáveis.
 - Hipótese: `Domain` ja tem anexos representativos suficientes para prototipos escalares e enumerados comuns, mas ainda pode valer ampliar a base se surgirem dominios com metadata mais exotica ou comportamento especial de enumeracao
 - Hipótese: `Theme`, `PackagedModule`, `DesignSystem`, `ColorPalette`, `ThemeClass`, `ThemeColor`, `Image`, `Index`, `Document`, `DataSelector`, `PatternSettings`, `DataStore`, `Dashboard`, `DeploymentUnit`, `Generator`, `Language`, `Folder`, `Stencil` e `File` ja tem anexos representativos suficientes para prototipos controlados, mas `DesignSystem` segue sendo o mais sensivel do grupo por acumular tokens, imports e regras visuais extensas, `ThemeClass` ainda pede cuidado quando a cadeia de heranca visual for mais longa, `ThemeColor` e `ColorPalette` seguem os mais simples do grupo, `Image` pede preservacao rigorosa do binario e das referencias de tema, `Index` pede cuidado forte com a ordem dos `Members` e a distincao entre indices `Automatic` e `User`, `Document` pede apenas atencao ao conteudo HTML e a qualquer dado embutido sensivel, `DataSelector` pede cuidado com variaveis customizadas, parametros e filtros muito especificos, `PatternSettings` pede preservacao de referencias internas e blocos de plataforma, `DataStore` segue bastante declarativo, `Dashboard` pede cuidado com referencias a objetos analiticos, `DeploymentUnit` pede preservacao integral da lista de `Member`, `Generator` pede preservacao rigorosa das flags de categoria/tipo, `Language` pede preservacao integral das entradas de traducao, `Folder` segue simples, `Stencil` pede preservacao rigorosa de `CDATA`, screenshots e controles embutidos, e `File` pede preservacao integral do binario/texto serializado em `base64Binary` e dos caminhos de extracao
 - Hipótese: `ExternalObject`, `UserControl`, `Module` e `SubTypeGroup` ja tem anexos representativos suficientes para prototipos controlados; dentro desse grupo, `ExternalObject` e `UserControl` ainda merecem refinamento quando houver contratos externos, JavaScript embutido ou comportamento cliente mais denso, e `SubTypeGroup` ainda pede cuidado com nomes residuais e pares subtype/supertype extensos
+
+## Complemento posterior - fechamento de pendencias recentes
+
+- `Evidência direta`: `Work With for Web 'WorkWithWebTrnTesteMdF1'` importou com sucesso no experimento `.md`-only quando o pattern passou a usar o convenio real de atributo `adbb33c9-0906-4971-833c-998de27e0676-NomeDoAtributo`.
+- `Evidência direta`: exports isolados da IDE mostraram `Table` como familia top-level propria com `228` objetos.
+- `Evidência direta`: o export isolado de `Index` veio vazio; os indices observados aparecem como filhos de `Table`.
+- `Evidência direta`: o export `Table + Index` repetiu exatamente a mesma estrutura de `Table`, reforcando que `Index` nao ganha materializacao top-level adicional quando selecionado junto.
+- `Inferência forte`: a frente aberta deixa de ser `WorkWithForWeb` e passa a ser a serializacao/reassociacao correta da camada fisica `Table/Index` a partir da modelagem transacional.
 
 
 

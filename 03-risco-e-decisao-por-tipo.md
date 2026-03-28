@@ -232,8 +232,8 @@ Separar falha de envelope/shape de falha por dependencia semantica da KB.
 
 ## Tipos testados, mas dependentes de contexto real da KB
 
-- `API`: falhou por `ATTCUSTOMTYPE` apontando para `EXO` e `SDT` inexistentes ou nao conversiveis no alvo.
-- `Transaction`: falhou por atributos inexistentes e por tipos de contexto nao resolvidos.
+- `API`: na rodada inicial falhou por `ATTCUSTOMTYPE` de `EXO` e `SDT`; em teste isolado posterior, com os SDTs reais incluidos, essa camada foi resolvida e a falha remanescente migrou para `Procedure` ausente e contexto de negocio (`TipoProd`, `Produto`); em aprofundamento seguinte, ficou provado que a `API` puxa uma cadeia maior de `Procedure`, `Data Provider`, `Domain`, `Transaction` e atributos de negocio de `Produto` e `Tributacao`.
+- `Transaction`: na rodada inicial falhou por atributos inexistentes e por tipos de contexto nao resolvidos; em teste isolado posterior, `Banco` importou com sucesso quando acompanhado pelos atributos reais do `Level`, `Context` e `TransactionContext`.
 - `Data Selector`: falhou por atributos/funcoes nao validos no contexto da KB de destino.
 - `Index`: foi pulado porque a tabela nao tinha `Transaction` associada.
 - `Deployment Unit`: falhou por `Procedure` membro inexistente.
@@ -244,9 +244,9 @@ Separar falha de envelope/shape de falha por dependencia semantica da KB.
 ## Tipos testados com divergencia ou consistencia insuficiente
 
 - `Folder`: o XML gerado foi importado como `Category`, nao como `Folder`.
-- `Pattern Settings`: a importacao ocorreu como `was not changed`, com aviso de pattern nao registrado; o tipo nao ficou fechado como caso util.
+- `Pattern Settings`: o primeiro teste sintetico ficou em `was not changed`, mas o caso real `WorkWith` importou com sucesso; o risco remanescente passa a ser compatibilidade do pattern no ambiente.
 - `Attribute`: no primeiro teste falhou no load com `Value cannot be null. Parameter name: Field: name`; no teste combinado posterior, ja com shape top-level real, falhou por propriedade semantica `ControlItemDescription` apontando para atributo inexistente; em revisao seguinte, um atributo real simples (`DocumentoFiscalRemetenteDadosFiscaisAdicionaisId`) importou com sucesso.
-- `Theme`: falhou por classes visuais referenciadas que nao existiam no pacote gerado; depois, o proprio `SimpleIOS` real repetiu a mesma falha no ambiente de teste.
+- `Theme`: falhou inicialmente por classes visuais referenciadas ausentes; depois, o `SimpleIOS` real repetiu a mesma falha isoladamente; por fim, o `Theme` importou com sucesso quando acompanhado por `ThemeClass` reais (`TableDetail`, `TableSection`, `TextBlockGroupCaption`).
 
 ## Leitura operacional apos a bateria
 
@@ -254,21 +254,25 @@ Separar falha de envelope/shape de falha por dependencia semantica da KB.
 - Inferência forte: a principal fronteira atual nao e mais o contêiner `.xpz`, e sim a dependencia de contexto real da KB em tipos que exigem pai, atributos, pattern, package, `EXO`, `SDT` ou membros existentes.
 - Inferência forte: os tipos em sucesso coerente passam a ter prioridade maior como fonte segura para agente/GPT nesta base.
 - Inferência forte: os tipos com falha contextual pedem complemento por exemplos reais ou regra documental mais especifica, e nao simples extrapolacao a partir do envelope minimo.
+- `Inferência forte`: `Transaction`, `Theme` e `PatternSettings` deixaram de ser pendencias estruturais abertas nesta trilha; agora ja possuem receita empirica de sucesso sob dependencias explicitas conhecidas.
+- `Evidência direta`: um pacote composto posterior reuniu `ThemeClass`, `Theme`, `Attribute`, `SDT`, `Transaction` e `Pattern Settings` no mesmo `.xpz` e importou com sucesso, incluindo geracao de pattern para `WorkWithWebBanco`.
+- `Inferência forte`: a base ja nao prova apenas sucessos isolados por tipo; ela tambem sustenta composicao entre tipos resolvidos quando as dependencias explicitas entram juntas no pacote.
+- `Inferência forte`: `API` permanece como pendencia principal, mas seu risco residual ja nao esta em `ATTCUSTOMTYPE`; ele foi deslocado para uma subarvore funcional de negocio, envolvendo `Procedure`, `Data Provider`, `Domain`, `Transaction` e atributos reais da KB.
 
 ## Hierarquia de ataque das pendencias contextuais
 
 - Evidência direta: `Transaction` e `API` concentraram erros semanticos claros, apesar de o envelope ter passado da fase principal de parse/importacao.
 - Inferência forte: a ordem mais util de ataque e `Transaction -> API -> Theme -> Pattern Settings -> Folder`.
 - Inferência forte: `API` vem logo depois de `Transaction` porque compartilha o mesmo tipo de fragilidade principal: dependencia de tipos e referencias reais da KB.
-- Inferência forte: em `API`, a hierarquia correta de decisao e `ATTCUSTOMTYPE` valido -> `EXO` e `SDT` existentes -> `Procedure` chamada -> eventos/codigo.
+- Inferência forte: em `API`, a hierarquia correta de decisao e `ATTCUSTOMTYPE` valido -> `EXO` e `SDT` existentes -> `Procedure` chamada -> `Data Provider`/`Domain` auxiliares -> atributos e contexto de negocio -> eventos/codigo.
 - Inferência forte: qualquer tentativa de corrigir `API` pelo fim, mexendo primeiro em codigo ou serializacao, tende a mascarar a causa real do erro.
 - Inferência forte: `Theme` vem em seguida porque seu problema principal ja esta isolado e nao depende tanto de semantica de negocio da KB, mas sim de preservar o grafo minimo de classes visuais.
 - Inferência forte: em `Theme`, a hierarquia correta de decisao e `PredefinedTypes e Styles -> classes base existentes -> referencias internas entre classes -> simplificacao visual`.
 - Inferência forte: qualquer tentativa de reduzir `Theme` sem mapear antes as referencias entre classes tende a repetir o erro de `TableDetail`, `TableSection` e `TextBlockGroupCaption` ausentes.
-- `Inferência forte`: como o `SimpleIOS` real repetiu o mesmo erro, `Theme` deve agora ser tratado tambem como dependente do ambiente alvo, e nao apenas como caso de clonagem estrutural incompleta.
+- `Inferência forte`: o teste isolado mostrou que esse requisito de ambiente pode ser satisfeito materializando as `ThemeClass` auxiliares necessarias.
 - Inferência forte: `Pattern Settings` vem depois porque o erro principal ja foi isolado em `pattern` registrado e contexto do ambiente, nao no envelope XML.
 - Inferência forte: em `Pattern Settings`, a hierarquia correta de decisao e `Pattern registrado -> ContextVariable e LoadProcedure -> Security e referencias auxiliares -> detalhe declarativo interno`.
-- Inferência forte: qualquer tentativa de tratar `Pattern Settings` como objeto autocontido tende a repetir o sintoma de `was not changed` com pattern nao registrado.
+- Inferência forte: qualquer tentativa de tratar `Pattern Settings` como objeto autocontido tende a repetir o sintoma de `was not changed` com pattern nao registrado, mas o caso real `WorkWith` ja mostrou caminho de sucesso.
 - Inferência forte: `Attribute` ja nao pertence mais ao grupo de shape desconhecido; ele deve ser lido como tipo estruturalmente provado, mas dependente de propriedades que referenciam atributos reais da KB.
 - `Inferência forte`: quando o `Attribute` escolhido evita referencias nominais problematicas, como `ControlItemDescription`, o tipo ja demonstrou importacao bem-sucedida nesta trilha.
 - Inferência forte: `Folder` fica por ultimo porque o shape minimo ja parece estavel e o problema restante e mais de reconhecimento semantico da IDE do que de XML ou contexto pesado da KB.
@@ -316,6 +320,15 @@ Servir como primeira triagem operacional antes de qualquer tentativa de clonagem
 - Evidência direta: `Transaction`, `WebPanel` e `WorkWithForWeb` combinam alta dependencia contextual com estrutura relativamente rica ou pattern explicito.
 - Inferência forte: `Transaction` e `WebPanel` continuam em risco alto/muito alto, mas deixam de ser bloqueados por falta de base amostral.
 - Inferência forte: `PackagedModule`, `Theme` e parte de `SDT` seguem entre os candidatos menos agressivos do recorte, mas ainda nao devem ser tratados como baixos riscos absolutos.
+
+## Complemento posterior - fechamento de `WorkWithForWeb` e reposicionamento de `Table/Index`
+
+- `Evidência direta`: um pacote `.md`-only posterior reuniu `ThemeClass`, `Theme`, `DesignSystem`, `Attribute`, `Transaction`, `Data Selector`, `Work With for Web`, `Pattern Settings` e `Deployment Unit`; todos importaram com sucesso, exceto a camada `Index/Table`.
+- `Evidência direta`: nessa mesma trilha, `Work With for Web 'WorkWithWebTrnTesteMdF1'` passou a importar com sucesso quando o XML do pattern usou o convenio real de atributo `adbb33c9-0906-4971-833c-998de27e0676-NomeDoAtributo`.
+- `Evidência direta`: exports isolados posteriores da IDE mostraram `Table` como familia top-level propria (`857ca50e-7905-0000-0007-c5d9ff2975ec`) e `Index` como export isolado vazio.
+- `Evidência direta`: um quinto export posterior `Table + Index` confirmou o mesmo resultado estrutural do export isolado de `Table`, sem criar familia top-level adicional para `Index`.
+- `Inferência forte`: `WorkWithForWeb` deixa de ser pendencia estrutural aberta nesta trilha.
+- `Inferência forte`: a pendencia residual de camada fisica passa a se concentrar em como `Table` e `Index` se reassociam corretamente a partir da `Transaction`, e nao em como serializar `WorkWithForWeb`.
 
 ## Nota leve de risco runtime relativo
 

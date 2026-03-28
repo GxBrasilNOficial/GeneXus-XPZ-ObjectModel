@@ -173,14 +173,20 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 
 - `Evidência direta`: exemplos reais em `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml\Folder\GAM.xml` usam `Object/@type="00000000-0000-0000-0000-000000000006"`.
 - `Evidência direta`: esses exemplos sao extremamente curtos, com `Part type="babf62c5-0111-49e9-a1c3-cc004d90900a"` vazio e propriedades como `Name` e `IsDefault`.
+- `Evidência direta`: exemplos reais como `Main Programs.xml` e `ToBeDefined.xml` mostram o mesmo `Object/@type` de `Folder` com pequenas variacoes de propriedades, reforcando o mesmo tipo estrutural para pastas organizacionais da KB.
+- `Evidência direta`: as capturas da janela `New Object` da IDE mostram que `Category` e o nome do agrupador visual da lista de tipos, com grupos como `Data Management`, `User Interface`, `BPM`, `Resources`, `Documentation`, `Extensibility`, `Deploy`, `Super App`, `Reporting`, `Test` e `ALL`.
+- `Evidência direta`: nessas mesmas capturas, um mesmo tipo pode aparecer em mais de uma `Category` da UI, como `Web Theme` em `User Interface` e `Resources`, e `User Control` em `User Interface` e `Extensibility`.
 - `Inferência forte`: o shape XML de `Folder` nesta KB e minimo e estavel.
-- `Inferência forte`: como a IDE reconheceu o teste importado como `Category`, a divergencia atual parece mais ligada a nomenclatura/categorizacao exibida pelo GeneXus do que a um envelope XML complexo.
+- `Inferência forte`: isso reforca que `Category`, no contexto da IDE, funciona como rotulo de agrupamento visual de tipos de objeto, nao como tipo XML equivalente a `Folder`.
+- `Inferência forte`: como a IDE reconheceu o teste importado como `Category`, a divergencia atual parece ligada ao vocabulario de exibicao da interface/importador para agrupadores organizacionais, e nao a um envelope XML complexo ou a um segundo tipo estrutural concorrente.
 
 ### `PatternSettings`
 
 - `Evidência direta`: os exemplos reais `WorkWith.xml` e `WorkWithDevices.xml` guardam configuracao dentro de `<Data Pattern="..."> <![CDATA[ ... ]]> </Data>`.
 - `Evidência direta`: o XML interno referencia IDs de `Pattern`, `ContextVariable`, `LoadProcedure`, `Security` e outros artefatos associados ao pattern registrado.
 - `Inferência forte`: `PatternSettings` nao deve ser tratado como objeto declarativo autocontido; ele depende fortemente do pattern correspondente estar registrado no ambiente de destino.
+- `Evidência direta`: num teste posterior isolado com o objeto real `WorkWith`, `Pattern Settings 'WorkWith'` importou com sucesso no ambiente de teste.
+- `Inferência forte`: `PatternSettings` deixa de ser uma pendencia estrutural aberta nesta trilha; o ponto operacional passa a ser usar caso real compativel com pattern efetivamente reconhecido no alvo.
 
 ### `Theme`
 
@@ -188,7 +194,9 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Evidência direta`: essas classes aparecem referenciadas por outras classes no proprio tema, por exemplo `Group` referencia `TextBlockGroupCaption` e `TableSection` referencia `HorizontalLine`.
 - `Inferência forte`: um tema simples mas valido precisa preservar nao apenas classes isoladas, e sim o grafo minimo de classes referenciadas internamente.
 - `Evidência direta`: num consolidado revisado posterior, o proprio `SimpleIOS` real foi importado no ambiente de teste e ainda assim falhou com `Theme class 'TableDetail' does not exist`, `Theme class 'TableSection' does not exist` e `Theme class 'TextBlockGroupCaption' does not exist`.
-- `Inferência forte`: nesta trilha, `Theme` deixou de parecer apenas um problema de serializacao ou de recorte do XML; o comportamento aponta dependencia do ambiente alvo ou de contexto adicional da KB mesmo quando o XML vem de exemplo real.
+- `Evidência direta`: a pasta real `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml\ThemeClass` contem objetos `ThemeClass` top-level separados para `TableDetail`, `TableSection` e `TextBlockGroupCaption`.
+- `Evidência direta`: num teste isolado posterior, esses tres `ThemeClass` reais foram importados com sucesso e, logo em seguida, o `Theme 'SimpleIOS'` tambem importou com sucesso.
+- `Inferência forte`: nesta trilha, `Theme` deixa de parecer um problema de serializacao pura; o requisito operacional observado e materializar tambem as `ThemeClass` auxiliares referenciadas pelo tema.
 
 ### `API`
 
@@ -196,6 +204,14 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Evidência direta`: o mesmo exemplo tambem depende de `Procedure` e eventos reais no codigo fonte.
 - `Inferência forte`: em `API`, o envelope XML e relativamente bem definido, mas os tipos customizados e procedimentos referenciados precisam existir de fato na KB de destino.
 - `Inferência forte`: nao e seguro inventar `ATTCUSTOMTYPE`; ele deve copiar um valor comprovado ou apontar para tipo efetivamente existente no alvo.
+- `Evidência direta`: num teste isolado posterior, os SDTs reais `sdtProdutoDadosBasicos`, `sdtProdutoDadosFiscaisAdicionaisDadosBasicos`, `sdtProdutoDadosOpcionaisDadosBasicos`, `sdtProdutoIdiomasDadosBasicos`, `sdtTributacaoDadosBasicos` e `sdtTributacaoDadosBasicosSelecao` importaram com sucesso antes da tentativa da `API`.
+- `Evidência direta`: nesse mesmo teste, `API 'apiPDV_Integracao'` deixou de falhar por `ATTCUSTOMTYPE` e passou a falhar por `Object Reference procListaSdtProdutoDadosBasicosConformeParametros not found`, `Invalid attribute 'TipoProd'` e `'Produto' invalid property`.
+- `Inferência forte`: o gargalo atual de `API` nesta trilha ja nao e mais tipagem `SDT`; ele ficou reduzido a `Procedure` e contexto de negocio realmente existentes na KB de destino.
+- `Evidência direta`: numa rodada posterior, `Domain 'TipoProd'` importou com sucesso e a `Procedure 'procListaSdtProdutoDadosBasicosConformeParametros'` foi localizada no acervo real.
+- `Evidência direta`: ao tentar incluir essa `Procedure`, ela falhou por depender de uma cadeia grande de transacoes e atributos de `Produto`, incluindo `Produto`, `ProdutoDadosFiscaisAdicionais`, `ProdutoDadosOpcionais`, `ProdutoIdiomas`, varios atributos `Produto...` e dominios auxiliares como `SimOuNao`, `GrupoEspecie` e `TipoLocalEstoque`.
+- `Evidência direta`: na mesma tentativa, a `API` avancou mais um passo e passou a falhar por outra `Procedure` faltante: `procSdtTributacaoDadosBasicosSelecaoConformeParametros`.
+- `Evidência direta`: essa segunda `Procedure` tambem existe no acervo real e, ao ser inspecionada, mostrou dependencia adicional de `Data Provider` (`dpSdtTributacaoDadosBasicosSelecaoConformeParametros`), `Domain 'TipoRomaneio'` e atributos de tributacao como `TributacaoEmpresaId`, `TributacaoId` e `DocumentoFiscalEmpresaId`.
+- `Inferência forte`: `API` entra definitivamente na zona de dependencia de negocio pesada; para este caso, fechar a importacao deixou de ser tarefa de empacotar poucos objetos auxiliares e passou a exigir uma subarvore funcional relevante da KB.
 
 ### `Transaction`
 
@@ -203,6 +219,9 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Evidência direta`: no mesmo tipo aparecem variaveis nomeadas `Context`, `TrnContext` e `TrnContextAtt`, com `ATTCUSTOMTYPE` como `sdt:Context`, `sdt:TransactionContext` e `sdt:TransactionContext.Attribute`.
 - `Inferência forte`: em `Transaction`, o shape estrutural pode ser inferido por familia, mas o objeto final continua dependente da existencia real dos atributos e SDTs de contexto na KB.
 - `Inferência forte`: a falha observada na bateria foi coerente com o acervo real; nao faltava apenas envelope, faltavam atributos reais e tipos de contexto validos.
+- `Evidência direta`: num teste isolado posterior, os `Attribute` reais de `Banco`, o `SDT 'Context'` e o `SDT 'TransactionContext'` importaram com sucesso antes da tentativa da `Transaction`.
+- `Evidência direta`: nesse mesmo teste, `Transaction 'Banco'` importou com sucesso e ainda disparou geracao de pattern bem-sucedida para `WorkWithWebBanco`.
+- `Inferência forte`: `Transaction` fica destravada nesta trilha quando o pacote inclui os atributos top-level reais do `Level` e os SDTs de contexto exigidos pelo caso.
 
 ### `Attribute`
 
@@ -219,6 +238,18 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Inferência forte`: `Attribute` saiu da zona “shape insuficiente” e entrou na mesma classe metodologica de dependencia contextual de KB em propriedades como `ControlItemDescription`, `idBasedOn` e outras referencias nominais a atributos reais.
 - `Evidência direta`: num consolidado revisado posterior, o `Attribute 'DocumentoFiscalRemetenteDadosFiscaisAdicionaisId'`, extraido do acervo real e sem `ControlItemDescription`, importou com sucesso.
 - `Inferência forte`: `Attribute` passa a ser considerado estruturalmente destravado nesta trilha, desde que o caso escolhido seja top-level real e semanticamente fechado no ambiente de destino.
+
+## Complemento posterior - IDE exportando `Table`, `Index` e `WorkWithForWeb`
+
+- `Evidência direta`: o export isolado `FabricaBrasil18_Table.xpz` contem `228` objetos top-level no tipo `857ca50e-7905-0000-0007-c5d9ff2975ec`.
+- `Evidência direta`: esses objetos top-level de `Table` usam nomes iguais aos das `Transaction` correspondentes, como `AbateOrdem`, `Animal`, `Produto` e `Arquivo`.
+- `Evidência direta`: dentro de cada `Table` exportada aparecem blocos `<Indexes>` com filhos `<Index ... type="9e750647-3679-0000-0100-2529de263960">`.
+- `Evidência direta`: o export isolado `FabricaBrasil18_Index.xpz` veio vazio, sem `Objects` nem `Attributes`.
+- `Inferência forte`: nesta trilha da IDE, `Table` existe como familia top-level propria, enquanto `Index` aparece subordinado a `Table`, e nao como conjunto top-level isolado.
+- `Evidência direta`: o export `FabricaBrasil18_Table_Index.xpz` repetiu exatamente o mesmo comportamento de `Table`: `228` objetos top-level do tipo `857ca50e-7905-0000-0007-c5d9ff2975ec` e nenhum objeto top-level adicional para `Index`.
+- `Inferência forte`: pedir `Table + Index` explicitamente na IDE nao muda a forma de serializacao observada; `Index` continua consolidado dentro de `Table`.
+- `Evidência direta`: em `WorkWithForWeb` real, as referencias de atributo dentro do `CDATA` do pattern usam o prefixo estrutural fixo `adbb33c9-0906-4971-833c-998de27e0676-NomeDoAtributo`.
+- `Inferência forte`: para `WorkWithForWeb`, esse formato deve ser tratado como convenio estrutural do pattern, e nao como reflexo do GUID do `Attribute` top-level nem do GUID inline do `Level` da `Transaction`.
 
 
 
