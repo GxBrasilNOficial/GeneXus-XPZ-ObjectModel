@@ -556,7 +556,9 @@ Registrar o que foi lido, renomeado, consolidado e mantido em aberto durante a r
 
 - `Evidência direta`: a base passou a reconhecer 183 `Transaction` e 1196 `WebPanel` como massa amostral suficiente para execucao controlada.
 - `Inferência forte`: a mudanca pratica foi de bloqueio por prudencia para tentativa controlada com template interno da propria base.
-- `Hipótese`: os erros de importacao que aparecerem devem ser incorporados ao refinamento desta mesma documentacao.
+- `Evidência direta`: um teste controlado de importacao de `.xpz` minimo de `Procedure` foi bem-sucedido nesta trilha e confirmou o envelope normal sem `KnowledgeBase`.
+- `Evidência direta`: o mesmo teste mostrou que `Source/@kb` e `Source/Version/@guid` nao podem ficar como placeholders textuais; precisam ser GUIDs sintaticamente validos.
+- `Hipótese`: os erros adicionais de importacao que aparecerem devem continuar sendo incorporados ao refinamento desta mesma documentacao.
 
 
 

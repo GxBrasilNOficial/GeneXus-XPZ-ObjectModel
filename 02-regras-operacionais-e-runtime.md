@@ -28,6 +28,15 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Inferência forte`: certos sinais estruturais do XML permitem falar em risco runtime relativo, desde que a fala seja qualificada e nao prometa comportamento real sem teste.
 - `Hipótese`: quanto mais denso o objeto em `events`, `grid`, `Level`, `AttributeProperties`, `parent`, `pattern` e links contextuais, maior tende a ser a sensibilidade a navegacao, carga de dados e comportamento nao trivial em execucao.
 
+## Evidencia complementar de gerador local
+
+- `Evidência direta`: a pasta local `C:\\Dev\\Test\\from-anywhere-to-GeneXus` contem um gerador simplificado que monta XML de importacao GeneXus usando um envelope com `ExportFile`, `KMW`, `Source`, `Objects`, `Dependencies` e `ObjectsIdentityMapping`.
+- `Evidência direta`: nesse gerador local, o `README` e o script principal apontam para geracao de `import_file.xml` e importacao direta do XML, nao para empacotamento `.xpz` zipado real.
+- `Inferência forte`: essa fonte local serve como confirmacao secundaria de envelope minimo plausivel e do formato de `ObjectIdentity`, mas nao como autoridade principal para valores concretos de producao.
+- `Inferência forte`: o gerador local reforca a decisao de manter `KnowledgeBase` e `Settings` fora do formato normal de objetos.
+- `Hipótese`: valores hardcoded dessa fonte local, como `Build=0`, `username=\"root\"`, `SampleKB`, `BusinessLogic`, `parentGuid` fixo e `moduleGuid` fixo, podem levar o agente para caminho errado se forem tratados como regra geral.
+- `Evidência direta`: um `.xpz` minimo de `Procedure`, montado nesta trilha com `KMW`, `Source`, `Objects`, `Dependencies` e `ObjectsIdentityMapping`, foi importado com sucesso no GeneXus quando `Source/@kb` e `Source/Version/@guid` estavam em formato GUID valido.
+
 ## Envelope XPZ observado em export real
 
 - `Evidência direta`: no export real inspecionado nesta trilha, o arquivo `.xpz` continha um unico XML principal com raiz `<ExportFile>`.
@@ -741,9 +750,74 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - Inferência forte: quando o molde usado trouxer `<![CDATA[...]]>` em `Source` ou `InnerHtml`, o clone deve manter `CDATA`; nao converter esses blocos em texto escapado
 - Inferência forte: o objeto pode ser incluido em `<Objects>` usando o envelope XPZ observado e documentado nesta base, desde que o prototipo preserve a mesma hierarquia externa conhecida; nao inventar estrutura fora do que o envelope observado ja demonstra
 - Evidência direta: `KMW`, `Source` e `Dependencies` aparecem em todos os `.xpz` validos lidos nesta amostra ampla; `Objects` aparece no formato normal de export de objetos e pode ser substituido por `Attributes` em exportacoes parciais focadas em atributos
+- Evidência direta: nos exports normais de objetos com `ObjectsIdentityMapping`, o bloco usa elementos `<ObjectIdentity Type=\"...\" Name=\"...\" parent=\"...\">` contendo `<Guid>...</Guid>`; nao aparece como espelho 1:1 dos objetos exportados
+- Evidência direta: em amostra ampla de exports normais, `Object/@guid` nao reaparece em `ObjectsIdentityMapping`; o papel observado do bloco e descrever identidades de contexto, especialmente pais, modulos e referencias auxiliares
+- Evidência direta: `ObjectIdentity/@Name`, `ObjectIdentity/@Type` e `ObjectIdentity/Guid` vieram preenchidos nos exports normais lidos; `Source/Version/@name` tambem veio preenchido nesses casos
+- Evidência direta: no teste de importacao bem-sucedida desta trilha, `Source/@kb` e `Source/Version/@guid` precisaram estar em formato GUID valido; placeholders textuais causaram erro de parse antes da importacao
+- Evidência direta: nos exports normais lidos, `Object/@name` tambem veio sempre preenchido; `Dependency/Properties/@Name` e `Dependency/Properties/@PackageName`, quando presentes, vieram preenchidos
+- Evidência direta: campos de nome opcionais existem, mas nao se comportam como invariantes: `Object/@description` apareceu vazio em minoria dos casos e `ObjectIdentity/@parent` apareceu majoritariamente vazio
+- Inferência forte: se o objeto exportado tiver `parentGuid` ou `moduleGuid` apontando para contexto externo relevante, o `.xpz` normal fica mais coerente quando `ObjectsIdentityMapping` trouxer a identidade correspondente com o mesmo `Guid`
+- Inferência forte: `Dependencies` descreve principalmente metamodelo, parts e pacotes, nao o mapeamento principal de identidade entre objetos exportados e contexto
 - Inferência forte: para geracao de `.xpz` de objetos, o bloco especial de KB (`KnowledgeBase` ou elemento top-level com nome literal da KB) deve ser tratado como proibido
+- Hipótese forte: o erro `Fail creating backup: Empty name is not allowed.` esta mais ligado ao bloco especial de KB em exports full/especiais, sobretudo quando `KnowledgeBase/@name` falta, do que ao formato normal de `ObjectsIdentityMapping`
 - Inferência forte: antes de empacotar, validar parse XML do objeto clonado e validar que o envelope XPZ continua contendo o mesmo padrao estrutural do molde usado
 - Hipótese: checksum, datas e outros metadados externos so devem ser recalculados se houver processo real de exportacao que faca isso; na ausencia desse processo, preservar o padrao do molde usado
+
+### Campos de nome invariantes no formato normal
+
+- Evidência direta: `Source/Version/@name` nao apareceu vazio nos exports normais lidos
+- Evidência direta: `Object/@name` nao apareceu vazio nos exports normais lidos
+- Evidência direta: `ObjectIdentity/@Name` nao apareceu vazio nos exports normais lidos
+- Evidência direta: `ObjectIdentity/@Type` e `ObjectIdentity/Guid` tambem vieram sempre preenchidos nos exports normais lidos
+- Evidência direta: `Source/@kb` e `Source/Version/@guid` precisam ser GUIDs sintaticamente validos para que o GeneXus ao menos aceite o parse inicial do `.xpz`
+- Evidência direta: `Dependency/Properties/@Name` e `Dependency/Properties/@PackageName`, quando o no `Properties` existe, vieram preenchidos
+- Inferência forte: entre os campos de nome do formato normal, os candidatos mais fortes a obrigatoriedade estrutural sao `Source/Version/@name`, `Object/@name` e `ObjectIdentity/@Name`
+- Hipótese forte: como esses campos vieram consistentes no formato normal, o erro `Empty name is not allowed` fica mais plausivelmente associado ao bloco especial `KnowledgeBase/@name` em variantes especiais do que a um campo nominal do envelope normal
+
+### Coerencia entre `Objects` e `ObjectsIdentityMapping`
+
+- Evidência direta: `ObjectsIdentityMapping` nao repete automaticamente cada objeto de `<Objects>`
+- Evidência direta: a correspondencia observada e contextual, principalmente por `parentGuid` e, em muitos pacotes, por `moduleGuid`
+- Evidência direta: em amostra ampla de exports normais com `Objects` + `ObjectsIdentityMapping`, a resolucao de `parentGuid` em `Objects` ou `ObjectsIdentityMapping` ocorreu na grande maioria dos casos; para `moduleGuid`, a cobertura foi parcial e frequentemente ligada ao `Root Module`
+- Inferência forte: a regra mais segura para serializacao normal de objetos e manter no `ObjectsIdentityMapping` todas as identidades externas realmente referenciadas pelo objeto, sem tentar transformar o bloco em inventario completo de tudo que existe na KB
+- Inferência forte: se `parentGuid` ou `moduleGuid` apontarem para um GUID externo que nao exista nem em `<Objects>` nem em `<ObjectsIdentityMapping>`, o pacote fica estruturalmente mais fraco e merece cautela extra
+
+### Pares observados validos
+
+- Evidência direta: em `AJRS_MOSTRA_URL.xpz`, o objeto `procDisplayUrl` usa `moduleGuid=afa47377-41d5-4ae8-9755-6f53150aa361` e o `ObjectsIdentityMapping` contem `ObjectIdentity Name=\"Root Module\"` com o mesmo `Guid`
+- Evidência direta: em `AJRSgxIonicZip.xpz`, o objeto `DotNetZip` usa `parentGuid=65ff024e-84e1-4042-9321-cd3a230317d6` e o `ObjectsIdentityMapping` contem `ObjectIdentity Name=\"ZipUnzip\"` com o mesmo `Guid`
+- Evidência direta: em `AJRS_ConcatenaPdfEouPoeMarcaDagua-2.xpz`, o objeto `ZipFile` usa `parentGuid=9f21f62d-2d18-4f8d-8ec3-8399f3485298` e o `ObjectsIdentityMapping` contem `ObjectIdentity Name=\"DotNetZip\"` com o mesmo `Guid`
+
+### Modelo minimo correto de `.xpz` normal de objetos
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ExportFile>
+  <KMW>
+    <MajorVersion>4</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <Build>...</Build>
+  </KMW>
+  <Source kb="GUID_DA_KB" username="USUARIO" UNCPath="\\\\HOST\\CAMINHO">
+    <Version guid="GUID_DA_VERSAO" name="NOME_DA_KB" />
+  </Source>
+  <Objects>
+    <Object ... />
+  </Objects>
+  <Dependencies>
+    <Reference ... />
+  </Dependencies>
+  <ObjectsIdentityMapping>
+    <ObjectIdentity Type="..." Name="..." parent="...">
+      <Guid>...</Guid>
+    </ObjectIdentity>
+  </ObjectsIdentityMapping>
+</ExportFile>
+```
+
+- Evidência direta: `Attributes` e um bloco adicional comum no formato normal, mas nao invariavel
+- Inferência forte: para geracao conservadora de objetos comuns, este envelope minimo e mais seguro do que qualquer variante full/especial com `KnowledgeBase` ou `Settings`
+- Evidência direta: esse envelope minimo ja sustentou uma importacao bem-sucedida de um `Procedure` de teste nesta trilha, desde que os GUIDs de `Source` fossem sintaticamente validos
 
 ## Regras de fonte
 

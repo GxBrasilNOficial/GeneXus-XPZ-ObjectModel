@@ -50,8 +50,16 @@ Servir como local único para conflitos não resolvidos silenciosamente.
 - `Hipótese`: a correspondência entre nomes compactos de diretório e nomes oficiais mostrados na IDE ainda deve ser validada diretamente na KB quando isso for necessário.
 - `Hipótese`: a diferença exata entre `Module` e `PackagedModule` no plano funcional ainda não pode ser fechada só com os XMLs extraídos.
 - `Hipótese`: ainda falta validar se os padrões observados nesta KB se repetem sem mudança relevante em outros exports GeneXus 18.
-- `Hipótese`: ainda não há evidência nesta trilha documental de importação, build e execução a partir de XMLs gerados.
+- `Evidência direta`: ja houve importacao bem-sucedida, nesta trilha, de um `.xpz` minimo de `Procedure` gerado a partir da propria base documental.
+- `Evidência direta`: nesse teste, placeholders textuais em `Source/@kb` e `Source/Version/@guid` causaram erro de parse; GUIDs sintaticamente validos destravaram a importacao.
+- `Hipótese`: ainda nao ha evidência nesta trilha documental de build e execucao a partir de XMLs gerados, nem de importacao bem-sucedida para muitos tipos diferentes.
 - `Evidência direta`: o envelope XPZ observado em export real ja foi documentado na base como `<ExportFile>` com `KMW` e `Source` invariantes; o bloco especial de KB (`KnowledgeBase` ou nome literal da KB) aparece apenas em exportacoes especiais/full e nao no formato normal mais frequente de objetos.
+- `Evidência direta`: nos exports normais lidos, `ObjectsIdentityMapping` usa `ObjectIdentity` com `Type`, `Name`, `parent` e `Guid` preenchidos; o bloco nao repete os proprios objetos exportados, mas identidades de contexto.
+- `Evidência direta`: nos exports normais lidos, `Source/Version/@name`, `Object/@name` e `ObjectIdentity/@Name` nao apareceram vazios.
+- `Inferência forte`: a coerencia mais util entre `<Objects>` e `ObjectsIdentityMapping` ocorre via `parentGuid` e `moduleGuid`, nao via duplicacao de `Object/@guid` dentro do mapeamento.
+- `Hipótese forte`: o erro `Fail creating backup: Empty name is not allowed.` esta mais ligado a variantes especiais com `KnowledgeBase` sem `name` do que ao formato normal de `ObjectsIdentityMapping`.
+- `Evidência direta`: a pasta local `C:\\Dev\\Test\\from-anywhere-to-GeneXus` usa um envelope minimo com `ExportFile`, `KMW`, `Source`, `Objects`, `Dependencies` e `ObjectsIdentityMapping`, sem `KnowledgeBase` nem `Settings`.
+- `Inferência forte`: essa fonte local e util como evidencia complementar de envelope minimo, mas nao deve ensinar valores fixos de `Build`, `username`, `kb`, `parentGuid`, `moduleGuid` ou nomes como `SampleKB` e `BusinessLogic`.
 - `Inferência forte`: isso fecha a lacuna anterior sobre "como o XPZ é formado" para o formato de export observado nesta trilha.
 - `Hipótese`: ainda pode haver variantes de export XPZ nao cobertas por esse unico envelope observado.
 - `Evidência direta`: a base consolidada passou a conviver com uma cópia histórica em `docs-kb-md`.
