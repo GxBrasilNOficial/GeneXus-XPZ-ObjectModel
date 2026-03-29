@@ -2128,7 +2128,7 @@ Destacar estabilidade estrutural relativa e pontos de maior risco para clonagem.
 	=> procListaSdtItemDadosBasicosConformeParametros(
 		"", 
 		&ItemEmpresaId, 
-		&ItemTipoProd, 
+		&ItemTipoExemploA, 
 		&ItemCodigo, 
 		&UltimaAlteracaoInicio, 
 		&ComDFouPedidoOuVmEmpresaId, 
@@ -2136,11 +2136,11 @@ Destacar estabilidade estrutural relativa e pontos de maior risco para clonagem.
 		&SemDadosFiscaisAdicionais, 
 		&SemDadosOpcionaisPorEmpresa, 
 		&SemIdiomas, 
-		&GrupoEspecie, 
+		&DomainExemploGrupoA, 
 		&ItemMarcaId, 
 		&ComMarca, 
 		&CorteTipo, 
-		&TipoLocalEstoque, 
+		&DomainExemploLocalA, 
 		&GrupoDeItemId, 
 		&ListaSdtItemDadosBasicos, 
 		&MensagensRetorno
@@ -2195,7 +2195,7 @@ Destacar estabilidade estrutural relativa e pontos de maior risco para clonagem.
   <Part type="c44bd5ff-f918-415b-98e6-aca44fed84fa">
     <Source><![CDATA[Event ObterItens.Before
 	
-	&ItemTipoProd = TipoProd.Item
+	&ItemTipoExemploA = DomainExemploTipoA.Item
 	
 Endevent
 Event ObterItens.After
@@ -2599,16 +2599,16 @@ Endsub
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="GrupoEspecie">
+    <Variable Name="DomainExemploGrupoA">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>GrupoEspecie</Value>
+          <Value>DomainExemploGrupoA</Value>
         </Property>
         <Property>
           <Name>idBasedOn</Name>
-          <Value>Domain:GrupoEspecie</Value>
+          <Value>Domain:DomainExemploGrupoA</Value>
         </Property>
       </Properties>
     </Variable>
@@ -2760,12 +2760,12 @@ Endsub
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="ItemTipoProd">
+    <Variable Name="ItemTipoExemploA">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>ItemTipoProd</Value>
+          <Value>ItemTipoExemploA</Value>
         </Property>
         <Property>
           <Name>Description</Name>
@@ -2773,7 +2773,7 @@ Endsub
         </Property>
         <Property>
           <Name>idBasedOn</Name>
-          <Value>Attribute:ItemTipoProd</Value>
+          <Value>Attribute:ItemTipoExemploA</Value>
         </Property>
       </Properties>
     </Variable>
@@ -2906,16 +2906,16 @@ Endsub
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="TipoLocalEstoque">
+    <Variable Name="DomainExemploLocalA">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>TipoLocalEstoque</Value>
+          <Value>DomainExemploLocalA</Value>
         </Property>
         <Property>
           <Name>idBasedOn</Name>
-          <Value>Domain:TipoLocalEstoque</Value>
+          <Value>Domain:DomainExemploLocalA</Value>
         </Property>
       </Properties>
     </Variable>
