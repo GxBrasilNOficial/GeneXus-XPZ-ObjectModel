@@ -300,6 +300,50 @@ function Convert-NodeToXmlString {
     return [System.Text.Encoding]::UTF8.GetString($bytes)
 }
 
+function Get-LastUpdateInfoFromXmlDocument {
+    param(
+        [xml]$XmlDocument,
+        [string]$SourceLabel
+    )
+
+    $rootNode = $XmlDocument.DocumentElement
+    if ($null -eq $rootNode) {
+        throw "Missing root element while reading lastUpdate from $SourceLabel."
+    }
+
+    $rawValue = $rootNode.GetAttribute("lastUpdate")
+    if ([string]::IsNullOrWhiteSpace($rawValue)) {
+        throw "Missing lastUpdate on '$($rootNode.LocalName)' from $SourceLabel."
+    }
+
+    $parsedValue = [datetimeoffset]::MinValue
+    if (-not [datetimeoffset]::TryParse($rawValue, [ref]$parsedValue)) {
+        throw "Invalid lastUpdate '$rawValue' on '$($rootNode.LocalName)' from $SourceLabel."
+    }
+
+    return [pscustomobject]@{
+        RootTag = $rootNode.LocalName
+        RawValue = $rawValue
+        ParsedValue = $parsedValue.ToUniversalTime()
+    }
+}
+
+function Get-LastUpdateInfoFromNode {
+    param([System.Xml.XmlNode]$Node)
+
+    $ownerDocument = New-Object System.Xml.XmlDocument
+    $importedNode = $ownerDocument.ImportNode($Node, $true)
+    [void]$ownerDocument.AppendChild($importedNode)
+    return Get-LastUpdateInfoFromXmlDocument -XmlDocument $ownerDocument -SourceLabel "package item '$($Node.Attributes['name'].Value)'"
+}
+
+function Get-LastUpdateInfoFromFile {
+    param([string]$FilePath)
+
+    [xml]$xmlDocument = Get-Content -LiteralPath $FilePath -Raw
+    return Get-LastUpdateInfoFromXmlDocument -XmlDocument $xmlDocument -SourceLabel $FilePath
+}
+
 function Write-ItemToDestination {
     param(
         [object]$Item,
@@ -313,18 +357,25 @@ function Write-ItemToDestination {
 
     $filePath = Join-Path $folderPath ($Item.NormalizedName + ".xml")
     $xmlText = Convert-NodeToXmlString -Node $Item.Node
+    $incomingLastUpdate = Get-LastUpdateInfoFromNode -Node $Item.Node
     $status = "created"
+    $existingLastUpdate = $null
 
     if (Test-Path -LiteralPath $filePath) {
         $existing = Get-Content -LiteralPath $filePath -Raw
         if ($existing -eq $xmlText) {
             $status = "unchanged"
         } else {
-            $status = "updated"
+            $existingLastUpdate = Get-LastUpdateInfoFromFile -FilePath $filePath
+            if ($incomingLastUpdate.ParsedValue -lt $existingLastUpdate.ParsedValue) {
+                $status = "skipped-older-lastUpdate"
+            } else {
+                $status = "updated"
+            }
         }
     }
 
-    if ($status -ne "unchanged") {
+    if ($status -eq "created" -or $status -eq "updated") {
         [System.IO.File]::WriteAllText($filePath, $xmlText, (New-Object System.Text.UTF8Encoding($false)))
     }
 
@@ -334,6 +385,8 @@ function Write-ItemToDestination {
         FilePath = $filePath
         Status = $status
         WasNormalized = ($Item.LogicalName -ne $Item.NormalizedName)
+        IncomingLastUpdate = $incomingLastUpdate.RawValue
+        ExistingLastUpdate = if ($null -ne $existingLastUpdate) { $existingLastUpdate.RawValue } else { $null }
     }
 }
 
@@ -471,6 +524,7 @@ try {
         Created = @($writeResults | Where-Object { $_.Status -eq "created" }).Count
         Updated = @($writeResults | Where-Object { $_.Status -eq "updated" }).Count
         Unchanged = @($writeResults | Where-Object { $_.Status -eq "unchanged" }).Count
+        SkippedOlderLastUpdate = @($writeResults | Where-Object { $_.Status -eq "skipped-older-lastUpdate" }).Count
         NormalizedFileNames = @($writeResults | Where-Object { $_.WasNormalized }).Count
         MissingAfterVerification = $verification.Missing.Count
         MismatchesAfterVerification = $verification.Mismatch.Count

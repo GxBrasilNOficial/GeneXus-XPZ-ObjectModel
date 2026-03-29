@@ -50,6 +50,9 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Evidência direta`: no lote amplo de `.xpz` reais, tambem apareceu pacote valido sem itens exportaveis materializaveis no acervo final.
 - `Regra operacional`: pacote sem itens exportaveis nao deve ser classificado automaticamente como falha de leitura; a interpretacao correta depende do recorte de export efetivamente aceito pela IDE.
 - `Regra operacional`: quando houver relatorio de execucao, distinguir explicitamente entre `no-exportable-items` e erro real de leitura, mapeamento ou verificacao.
+- `Evidência direta`: no acervo amplo analisado, todos os XMLs individualizados continham `lastUpdate` presente e parseavel no elemento raiz.
+- `Regra operacional`: quando o acervo individualizado e o pacote processado tiverem `lastUpdate` valido, usar esse campo como protecao contra regressao de ordem de processamento.
+- `Regra operacional`: item vindo de pacote mais antigo nao deve sobrepor em disco um XML individualizado com `lastUpdate` mais novo; nesse caso, o processamento deve marcar o item como ignorado por obsolescencia, nao como falha de leitura.
 
 ### Exemplo sanitizado do envelope observado
 
