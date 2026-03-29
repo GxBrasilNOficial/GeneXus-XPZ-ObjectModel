@@ -2122,10 +2122,10 @@ Destacar estabilidade estrutural relativa e pontos de maior risco para clonagem.
 		in:&SemDadosFiscaisAdicionais, 
 		in:&ItemMarcaId, 
 		in:&GrupoDeItemId, 
-		out:&ListaSdtItemDadosBasicos, 
+		out:&ListaSDTExemploItemBasicoA, 
 		out:&MensagensRetorno
 	)
-	=> procListaSdtItemDadosBasicosConformeParametros(
+	=> PRCExemploListaItensA(
 		"", 
 		&ItemEmpresaId, 
 		&ItemTipoExemploA, 
@@ -2142,28 +2142,28 @@ Destacar estabilidade estrutural relativa e pontos de maior risco para clonagem.
 		&CorteTipo, 
 		&DomainExemploLocalA, 
 		&GrupoDeItemId, 
-		&ListaSdtItemDadosBasicos, 
+		&ListaSDTExemploItemBasicoA, 
 		&MensagensRetorno
 	);
 
 	[RestMethod(POST)]
 	[Description("Obter a lista de regras conforme parametros.")]
 	ObterRegras(
-		in:&RegraEmpresaId, 
-		in:&RegraId,
-		in:&DocumentoEmpresaId,
+		in:&RegraExemploEmpresaId, 
+		in:&RegraExemploId,
+		in:&DocumentoExemploEmpresaId,
 		in:&TipoExemplo,
 		in:&UltimaAlteracaoInicio, 
-		out:&sdtRegraDadosBasicosSelecao, 
+		out:&SDTExemploRegraSelecaoA, 
 		out:&MensagensRetorno
 	)
-	=> procSdtRegraDadosBasicosSelecaoConformeParametros(
-		&RegraEmpresaId, 
-		&RegraId,
-		&DocumentoEmpresaId,
+	=> PRCExemploRegraSelecaoA(
+		&RegraExemploEmpresaId, 
+		&RegraExemploId,
+		&DocumentoExemploEmpresaId,
 		&TipoExemplo,
 		&UltimaAlteracaoInicio, 
-		&sdtRegraDadosBasicosSelecao, 
+		&SDTExemploRegraSelecaoA, 
 		&MensagensRetorno
 	);
 	
@@ -2172,14 +2172,14 @@ Destacar estabilidade estrutural relativa e pontos de maior risco para clonagem.
 	EnviarDocumento(
 		in:&NomeDoArquivo, 
 		in:&ConteudoEmBase64,
-		in:&DocumentoEmpresaId,
+		in:&DocumentoExemploEmpresaId,
 		out:&OperacaoSucesso, 
 		out:&MensagensRetorno
 	)
-	=> procImportaDocumentoDeBase64(
+	=> PRCExemploImportaDocumentoBase64A(
 		&NomeDoArquivo, 
 		&ConteudoEmBase64,
-		&DocumentoEmpresaId,
+		&DocumentoExemploEmpresaId,
 		&OperacaoSucesso, 
 		&MensagensRetorno
 	);
@@ -2206,10 +2206,10 @@ Endevent
 
 Event ObterRegras.Before
 	
-	&ContextoLoginId = procEmpresaContextoId(&DocumentoEmpresaId)		
+	&ContextoLoginId = procEmpresaContextoId(&DocumentoExemploEmpresaId)		
 	if &ContextoLoginId.IsEmpty()
-			
-		&ContextoLoginId = &DocumentoEmpresaId
+	
+		&ContextoLoginId = &DocumentoExemploEmpresaId
 			
 	endif	
 	
@@ -2225,10 +2225,10 @@ Endevent
 
 Event EnviarDocumento.Before
 
-	&ContextoLoginId = procEmpresaContextoId(&DocumentoEmpresaId)		
+	&ContextoLoginId = procEmpresaContextoId(&DocumentoExemploEmpresaId)		
 	if &ContextoLoginId.IsEmpty()
-			
-		&ContextoLoginId = &DocumentoEmpresaId
+	
+		&ContextoLoginId = &DocumentoExemploEmpresaId
 			
 	endif	
 	
@@ -2442,12 +2442,12 @@ Endsub
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="DocumentoEmpresaId">
+    <Variable Name="DocumentoExemploEmpresaId">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>DocumentoEmpresaId</Value>
+          <Value>DocumentoExemploEmpresaId</Value>
         </Property>
         <Property>
           <Name>Description</Name>
@@ -2455,7 +2455,7 @@ Endsub
         </Property>
         <Property>
           <Name>idBasedOn</Name>
-          <Value>Attribute:DocumentoEmpresaId</Value>
+          <Value>Attribute:DocumentoExemploEmpresaId</Value>
         </Property>
       </Properties>
     </Variable>
@@ -2625,12 +2625,12 @@ Endsub
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="ListaSdtItemDadosBasicos">
+    <Variable Name="ListaSDTExemploItemBasicoA">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>ListaSdtItemDadosBasicos</Value>
+          <Value>ListaSDTExemploItemBasicoA</Value>
         </Property>
         <Property>
           <Name>ATTCUSTOMTYPE</Name>
@@ -2811,12 +2811,12 @@ Endsub
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="sdtRegraDadosBasicosSelecao">
+    <Variable Name="SDTExemploRegraSelecaoA">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>sdtRegraDadosBasicosSelecao</Value>
+          <Value>SDTExemploRegraSelecaoA</Value>
         </Property>
         <Property>
           <Name>idIsAutoDefinedVariable</Name>
@@ -2824,7 +2824,7 @@ Endsub
         </Property>
         <Property>
           <Name>ATTCUSTOMTYPE</Name>
-          <Value>sdt:sdtRegraDadosBasicosSelecao</Value>
+          <Value>sdt:SDTExemploRegraSelecaoA</Value>
         </Property>
       </Properties>
     </Variable>
@@ -2919,12 +2919,12 @@ Endsub
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="RegraEmpresaId">
+    <Variable Name="RegraExemploEmpresaId">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>RegraEmpresaId</Value>
+          <Value>RegraExemploEmpresaId</Value>
         </Property>
         <Property>
           <Name>Description</Name>
@@ -2936,16 +2936,16 @@ Endsub
         </Property>
         <Property>
           <Name>idBasedOn</Name>
-          <Value>Attribute:RegraEmpresaId</Value>
+          <Value>Attribute:RegraExemploEmpresaId</Value>
         </Property>
       </Properties>
     </Variable>
-    <Variable Name="RegraId">
+    <Variable Name="RegraExemploId">
       <Documentation />
       <Properties>
         <Property>
           <Name>Name</Name>
-          <Value>RegraId</Value>
+          <Value>RegraExemploId</Value>
         </Property>
         <Property>
           <Name>Description</Name>
@@ -2957,7 +2957,7 @@ Endsub
         </Property>
         <Property>
           <Name>idBasedOn</Name>
-          <Value>Attribute:RegraId</Value>
+          <Value>Attribute:RegraExemploId</Value>
         </Property>
       </Properties>
     </Variable>
