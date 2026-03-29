@@ -258,6 +258,10 @@ Separar falha de envelope/shape de falha por dependencia semantica da KB.
 - Inferência forte: os tipos em sucesso coerente passam a ter prioridade maior como fonte segura para agente/GPT nesta base.
 - Inferência forte: os tipos com falha contextual pedem complemento por exemplos reais ou regra documental mais especifica, e nao simples extrapolacao a partir do envelope minimo.
 - `Inferência forte`: `Transaction`, `Theme` e `PatternSettings` deixaram de ser pendencias estruturais abertas nesta trilha; agora ja possuem receita empirica de sucesso sob dependencias explicitas conhecidas.
+- `Evidência direta`: em bateria posterior, uma variante minima de `Transaction` com `DescriptionAttribute` e `AttributeProperties` tambem importou com sucesso quando os `Attribute` top-level correspondentes estavam presentes no pacote.
+- `Evidência direta`: nessa mesma bateria, o erro `Level is empty` reapareceu em tentativa com atributos presentes quando o `Part` principal nao seguia o shape estrutural esperado.
+- `Inferência forte`: o risco residual de `Transaction` nesta trilha nao esta apenas no envelope minimo; ele tambem depende da existencia real de `Attribute` top-level e da preservacao do shape correto do `Part` principal.
+- Regra operacional: tratar ausencia de `Attribute` top-level necessario como bloqueio operacional do pacote minimo, e nao apenas como dependencia semantica secundaria.
 - `Evidência direta`: um pacote composto posterior reuniu `ThemeClass`, `Theme`, `Attribute`, `SDT`, `Transaction` e `Pattern Settings` no mesmo `.xpz` e importou com sucesso, incluindo geracao de pattern para `WWExemploMinBancoA`.
 - `Inferência forte`: a base ja nao prova apenas sucessos isolados por tipo; ela tambem sustenta composicao entre tipos resolvidos quando as dependencias explicitas entram juntas no pacote.
 - `Inferência forte`: `API` permanece como pendencia principal, mas seu risco residual ja nao esta em `ATTCUSTOMTYPE`; ele foi deslocado para uma subarvore funcional de negocio, envolvendo `Procedure`, `Data Provider`, `Domain`, `Transaction` e atributos reais da KB.

@@ -223,7 +223,10 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Evidência direta`: nesse mesmo teste, `Transaction 'TRNExemploMinBancoA'` importou com sucesso e ainda disparou geracao de pattern bem-sucedida para `WWExemploMinBancoA`.
 - `Evidência direta`: em outro teste pratico controlado, uma `Transaction` minima so foi importada com sucesso apos a inclusao explicita dos `Attribute` top-level correspondentes no mesmo pacote.
 - `Evidência direta`: nesse caso, os nos `<Attribute>` dentro de `<Level>` nao bastaram para definir os atributos; eles funcionaram apenas como referencia contextual do `Level`.
-- `Inferência forte`: a distincao entre `Attribute` top-level e `Attribute` inline em `Level` e essencial no caso validado de montagem de pacote minimo valido de `Transaction`.
+- `Evidência direta`: numa bateria posterior de importacao real, uma `Transaction` minima tambem foi validada com `DescriptionAttribute` e `AttributeProperties`, desde que os `Attribute` top-level correspondentes estivessem presentes no pacote e o `Part` principal preservasse o shape esperado da familia.
+- `Evidência direta`: nessa mesma bateria, `AttributeProperties` funcionou tanto isoladamente quanto combinado com `DescriptionAttribute`.
+- `Evidência direta`: `DescriptionAttribute` foi aceito no caso minimo expandido quando apontava para atributo existente no mesmo `Level`.
+- `Inferência forte`: a distincao entre `Attribute` top-level e `Attribute` inline em `Level` continua essencial nos casos validados de montagem de pacote minimo de `Transaction`.
 - `Inferência forte`: `Transaction` fica destravada nesta trilha quando o pacote inclui os atributos top-level reais do `Level` e os SDTs de contexto exigidos pelo caso.
 
 ### `Attribute`

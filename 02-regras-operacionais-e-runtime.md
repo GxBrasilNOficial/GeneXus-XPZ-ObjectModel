@@ -847,6 +847,16 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - se um atributo do no `<Object>` nao existir no molde usado, nao inventar esse atributo no clone
 - se o caso exigir inventar atributo, `sdt:Context`, `sdt:TransactionContext` ou `sdt:TransactionContext.Attribute` inexistentes no destino, abortar
 - se surgir referencia a `parent`, modulo ou pattern que nao exista no molde comparavel, abortar
+- `Evidência direta`: em bateria recente de importacao real, uma `Transaction` minima com `1 Level`, `2` atributos, `DescriptionAttribute` e `AttributeProperties` foi aceita com sucesso quando os `Attribute` top-level estavam no pacote e o `Part` principal seguia o shape esperado da familia.
+- `Evidência direta`: nessa mesma bateria, `AttributeProperties` funcionou isoladamente e tambem combinado com `DescriptionAttribute`.
+- `Evidência direta`: `DescriptionAttribute` foi aceito no caso minimo expandido quando apontava para atributo existente no mesmo `Level`.
+- `Evidência direta`: o erro `Level is empty` voltou a aparecer em tentativa com atributos presentes quando o shape estrutural do `Part` principal nao seguia o template esperado.
+- `Inferência forte`: nos casos minimos validados, a aceitacao do `Level` dependeu tanto da disponibilidade real dos atributos quanto da preservacao do shape estrutural do `Part` onde o `Level` foi inserido.
+- Regra operacional: `Attribute` inline em `Level` nao substitui `Attribute` top-level no pacote.
+- Regra operacional: se os atributos do `Level` nao existirem previamente na KB de destino, a composicao minima segura e inclui-los como `Attribute` top-level no mesmo pacote da `Transaction`.
+- Regra operacional: `DescriptionAttribute` e opcional no caso minimo, mas quando presente deve apontar para atributo do mesmo `Level`.
+- Regra operacional: `AttributeProperties` e opcional no caso minimo e ja foi validado tanto isoladamente quanto combinado com `DescriptionAttribute`.
+- Regra operacional: para primeiro pacote minimo de `Transaction`, continuar preferindo validar antes a variante mais enxuta, e so depois enriquecer com `DescriptionAttribute`, `AttributeProperties` ou contexto adicional.
 
 ### API
 

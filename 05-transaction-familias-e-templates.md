@@ -96,6 +96,10 @@ Permitir escolha repetivel de template interno real, reduzindo risco de vazament
 - Evidencia direta: foi importado com sucesso um pacote contendo `2` `Attribute` top-level, `1` `Transaction` e `1` `Level` com ambos os atributos.
 - Evidencia direta: nesse caso controlado, os atributos usados foram um atributo chave e um atributo nao chave, sem subnivel, sem `DescriptionAttribute` e sem `AttributeProperties`.
 - Evidencia direta: o GeneXus executou `Updating table information` apos a importacao, indicando materializacao fisica da tabela no caso testado.
+- Evidencia direta: numa bateria posterior, outra variante minima do mesmo recorte tambem foi validada com `DescriptionAttribute` e `AttributeProperties`.
+- Evidencia direta: nessa bateria expandida, `AttributeProperties` funcionou tanto isoladamente quanto combinado com `DescriptionAttribute`.
+- Evidencia direta: `DescriptionAttribute` foi aceito quando apontava para atributo existente no mesmo `Level`.
+- Evidencia direta: o erro `Level is empty` apareceu em tentativa com atributos presentes quando o `Part` principal nao seguia o shape estrutural esperado.
 
 ### Assinatura do caso validado
 
@@ -118,6 +122,22 @@ Permitir escolha repetivel de template interno real, reduzindo risco de vazament
 ```
 
 - Evidencia direta: este shape foi aceito pelo importador no caso validado, desde que os atributos existissem como `Attribute` top-level no mesmo pacote e o `Part` principal preservasse a estrutura esperada da familia.
+
+### Variantes minimas validadas posteriormente
+
+- Evidencia direta: a familia `F1` ja tem variante minima validada sem `DescriptionAttribute` e sem `AttributeProperties`.
+- Evidencia direta: a familia `F1` ja tem variante minima validada com `DescriptionAttribute`.
+- Evidencia direta: a familia `F1` ja tem variante minima validada com `AttributeProperties`.
+- Evidencia direta: a familia `F1` ja tem variante minima validada com `DescriptionAttribute` e `AttributeProperties` combinados.
+- Inferencia forte: a ausencia de `DescriptionAttribute` no primeiro caso minimo validado desta trilha nao deve mais ser lida como padrao geral da familia, e sim como simplificacao conservadora daquele experimento inicial.
+
+### Regras operacionais adicionais para `F1`
+
+- Regra operacional: `Attribute` inline em `Level` nao substitui `Attribute` top-level no pacote.
+- Regra operacional: quando os atributos do `Level` nao existirem previamente na KB de destino, a composicao minima segura e inclui-los como `Attribute` top-level no mesmo pacote da `Transaction`.
+- Regra operacional: `DescriptionAttribute` e opcional no caso minimo, mas quando presente deve apontar para atributo do mesmo `Level`.
+- Regra operacional: `AttributeProperties` e opcional no caso minimo e ja foi validado tanto isoladamente quanto combinado com `DescriptionAttribute`.
+- Inferencia forte: no caso minimo expandido, a aceitacao do `Level` dependeu tanto da disponibilidade real dos atributos quanto da preservacao do shape estrutural do `Part` principal.
 
 ### Regra adicional para primeiro pacote minimo de `F1`
 
