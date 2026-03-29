@@ -56,7 +56,7 @@ Este documento registra apenas padrões observáveis no inventário bruto e nos 
 
 ### `SDT`
 
-- `Evidência direta`: nomes com prefixo `sdt` aparecem no acervo, como `sdtTributacaoDadosBasicosSelecao`, `SdtNfe` e `sdtFatura`.
+- `Evidência direta`: nomes com prefixo `sdt` aparecem no acervo, como `SDTExemploTribSelecaoA`, `SdtNfe` e `sdtFatura`.
 - `Inferência forte`: o prefixo `sdt` parece uma convenção frequente para estruturas de dados, embora a capitalização varie.
 
 ### `WebPanel`
@@ -76,7 +76,7 @@ Este documento registra apenas padrões observáveis no inventário bruto e nos 
 
 ## Padrões de organização
 
-- `Evidência direta`: vários objetos trazem `parent` apontando para um contêiner lógico, como `MODExemploAMenu` com `parent="MODExemploA"` e `apiPDV_Integracao` com `parent="MODExemploD"`.
+- `Evidência direta`: vários objetos trazem `parent` apontando para um contêiner lógico, como `MODExemploAMenu` com `parent="MODExemploA"` e `APIExemploIntegracaoA` com `parent="MODExemploD"`.
 - `Inferência forte`: módulos e contêineres funcionam como eixo importante de organização do acervo.
 - `Evidência direta`: o inventário bruto também registra `moduleGuid` e `parentGuid`, o que reforça a presença de uma organização explícita por vínculos.
 
