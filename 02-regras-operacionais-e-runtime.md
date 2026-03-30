@@ -238,7 +238,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: so promover hipotese de `User` novo quando houver evidencia comparavel de ordenacao ou busca de negocio nao coberta pelos indices automaticos existentes.
 - `Regra operacional`: tratar como excecao rara os casos sem `Automatic` `Duplicate`; quando aparecerem, verificar se o papel do `User` observado e busca simples por descricao/nome ou ordenacao basica por `Id Descendente`.
 - `Regra operacional`: nao usar `OperacaoFiscal`, `Pais` ou `TipoDocumento` como molde preferencial para inferir ausencia de `Automatic` `Duplicate` em novas `Table`.
-- `Regra operacional`: se o acervo privado ainda materializar esses objetos fisicos em pasta historica chamada `Index`, tratar isso como legado de extracao, e nao como prova de tipo top-level diferente.
+- `Regra operacional`: no acervo operacional atual, materializar esses objetos fisicos em pasta `Table`; se surgir pasta `Index` em algum contexto antigo, tratar isso como legado de extracao, e nao como prova de tipo top-level diferente.
 - `Regra operacional`: se o caso concreto depender de afirmar reassociacao fisica exata entre `Transaction`, `Table` e navegacao real da IDE, responder com cautela e separar explicitamente estrutura observada de comportamento runtime inferido.
 
 ### Politica para `Folder`
