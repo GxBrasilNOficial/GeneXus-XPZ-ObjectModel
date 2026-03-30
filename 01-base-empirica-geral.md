@@ -76,7 +76,7 @@ Servir como base conceitual para os documentos empíricos e operacionais.
 | `Folder` | 7 | `00000000-0000-0000-0000-000000000006` | `Evidência direta` |
 | `Generator` | 5 | `ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0` | `Evidência direta` |
 | `Image` | 250 | `9fb193d9-64a4-4d30-b129-ff7c76830f7e` | `Evidência direta` |
-| `Index` | 228 | `857ca50e-7905-0000-0007-c5d9ff2975ec` | `Evidência direta` |
+| `Table` | 228 | `857ca50e-7905-0000-0007-c5d9ff2975ec` | `Evidência direta` |
 | `Language` | 1 | `88313f43-5eb2-0000-0028-e8d9f5bf9588` | `Evidência direta` |
 | `Module` | 279 | `00000000-0000-0000-0000-000000000008` | `Evidência direta` |
 | `PackagedModule` | 16 | `c88fffcd-b6f8-0000-8fec-00b5497e2117` | `Evidência direta` |
@@ -304,6 +304,16 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Evidência direta`: a diferenca de `1117` para `1712` objetos entre os dois pacotes coincide com a entrada da camada fisica `Table`, enquanto o bloco de `Attributes` permaneceu estavel em `7646`.
 - `Inferência forte`: isso reforca que `Table/Index` entram como ampliacao da familia logica anterior, sem deslocar `Attribute` top-level para dentro de `Objects` nem eliminar o bloco `Attributes`.
 
+### Sintese operacional provisoria de `Table/Index`
+
+- `Evidência direta`: na trilha observada, `Table` aparece como objeto top-level exportavel, enquanto `Index` aparece embutido dentro de `Table`.
+- `Evidência direta`: pedir `Table + Index` na IDE nao criou objetos top-level adicionais de `Index`; a serializacao observada permaneceu centrada em `Table`.
+- `Evidência direta`: os nomes top-level de `Table` acompanham os nomes das `Transaction` correspondentes.
+- `Evidência direta`: em comparacao privada posterior de pares reais simples e densos da KB de origem, essa correspondencia nominal `Transaction` -> `Table` tambem se repetiu fora dos pacotes ja resumidos na base.
+- `Evidência direta`: na mesma comparacao privada, os `Index` seguiram aparecendo apenas no bloco interno `<Indexes>` do objeto fisico, e nao como objeto top-level separado.
+- `Inferência forte`: para ler a camada fisica desta base, o eixo primario de correlacao deve ser `Transaction -> Table`, tratando os `Index` como estrutura interna da `Table`.
+- `Inferência forte`: para evolucao metodologica da base, o pacote mais informativo nao e `Index` isolado, e sim combinacoes como `Transaction + Table`, `Transaction + Table + WorkWithForWeb + PatternSettings` e `Attribute + Domain + Transaction + SubtypeGroup + Table`.
+
 
 
 
@@ -485,10 +495,11 @@ Separar observação direta de leitura heurística preliminar.
 | 36f350de-f768-425f-ac20-773749f331bf | 250 | 100 | 0 | aparentemente obrigatorio | exemplos sanitizados |
 | babf62c5-0111-49e9-a1c3-cc004d90900a | 250 | 100 | 79.2 | aparentemente obrigatorio | exemplos sanitizados |
 
-## Index
+## Table
 
-- Evidência direta: Object/@type = 857ca50e-7905-0000-0007-c5d9ff2975ec em 228 objetos.
+- Evidência direta: Object/@type = 857ca50e-7905-0000-0007-c5d9ff2975ec em 228 objetos top-level de `Table`.
 - Evidência direta: média de Part por objeto: 2.
+- Evidência direta: nesses objetos, `Index` aparece embutido no bloco estrutural da `Table`, e nao como objeto top-level separado.
 - Inferência forte: classificações aparentemente obrigatorio/opcional/raro/vazio dependem da recorrência observada nesta KB.
 
 | PartType | ObjectsWithPart | PresencePct | EmptyPct | PreliminaryClass | exemplos sanitizados |
@@ -1007,10 +1018,11 @@ Dar base empírica para cautela em clonagem e preservação de contexto.
 - Evidência direta: exemplo citado: alias sanitizado em Image\\EXEMPLO-SANITIZADO.xml.
 - Evidência direta: exemplo citado: alias sanitizado em Image\\EXEMPLO-SANITIZADO.xml.
 
-## Index
+## Table
 
-- Evidência direta: 228 objetos analisados.
+- Evidência direta: 228 objetos top-level de `Table` analisados.
 - Evidência direta: objetos com parent: 0; com moduleGuid: 228.
+- Evidência direta: os indices reais observados nesta trilha aparecem embutidos dentro desses objetos de `Table`.
 - Inferência forte: atributos ligados a parent/module tendem a importar contexto estrutural do objeto.
 
 | Attribute | ObjectsWithAttribute | PresencePct | PresenceBucket | Reading |
@@ -1027,10 +1039,10 @@ Dar base empírica para cautela em clonagem e preservação de contexto.
 | user | 228 | 100 | quase sempre | papel ainda nao fechado |
 | versionDate | 228 | 100 | quase sempre | papel ainda nao fechado |
 
-- Evidência direta: exemplo citado: alias sanitizado em Index\\EXEMPLO-SANITIZADO.xml.
-- Evidência direta: exemplo citado: alias sanitizado em Index\\EXEMPLO-SANITIZADO.xml.
-- Evidência direta: exemplo citado: alias sanitizado em Index\\EXEMPLO-SANITIZADO.xml.
-- Evidência direta: exemplo citado: alias sanitizado em Index\\EXEMPLO-SANITIZADO.xml.
+- Evidência direta: exemplo citado: alias sanitizado em Table\\EXEMPLO-SANITIZADO.xml.
+- Evidência direta: exemplo citado: alias sanitizado em Table\\EXEMPLO-SANITIZADO.xml.
+- Evidência direta: exemplo citado: alias sanitizado em Table\\EXEMPLO-SANITIZADO.xml.
+- Evidência direta: exemplo citado: alias sanitizado em Table\\EXEMPLO-SANITIZADO.xml.
 
 ## Language
 
@@ -6899,11 +6911,11 @@ MTUtMDctMDNUMTQ6Mzg6MzQrMDA6MDCOGKHvAAAAAElFTkSuQmCC
 
 
 
-## Moldes sanitizados completos de Index
+## Moldes sanitizados completos de Table com Indexes embutidos
 
-### Molde sanitizado de Index 1 - `CadastroModeloExemplo`
+### Molde sanitizado de Table 1 - `CadastroModeloExemplo`
 
-- Perfil: Index enxuto, com chave simples, um indice unico e poucos indices auxiliares.
+- Perfil: Table enxuta, com chave simples, um indice unico e poucos indices auxiliares embutidos.
 - Uso operacional: boa referencia para tabelas pequenas com ordenacao basica e um indice descendente de apoio.
 
 ```xml
@@ -6981,7 +6993,7 @@ MTUtMDctMDNUMTQ6Mzg6MzQrMDA6MDCOGKHvAAAAAElFTkSuQmCC
 </Object>
 ```
 
-### Molde sanitizado de Index 2 - `RegistroBaseExemplo`
+### Molde sanitizado de Table 2 - `RegistroBaseExemplo`
 
 - Perfil: Index denso, com chave composta e varios `TableIndex` automaticos e de usuario.
 - Uso operacional: boa referencia para estruturas com muitos indices derivados e combinacoes de ordem crescente/descendente.

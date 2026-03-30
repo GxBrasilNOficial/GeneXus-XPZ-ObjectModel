@@ -1,3 +1,6 @@
 /*
 !/*.md
 !/.gitignore
+!/scripts/
+/scripts/*
+!/scripts/Sync-GeneXusXpzToXml.ps1

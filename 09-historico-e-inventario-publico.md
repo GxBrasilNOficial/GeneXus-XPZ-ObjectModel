@@ -20,6 +20,13 @@ Preservar rastreabilidade da consolidacao, inventario documental, inventario bru
 - `Evidência direta`: a raiz desta base passou a priorizar estado atual de trabalho, sem manter no corpo principal a arqueologia completa das rodadas de teste.
 - `Evidência direta`: o historico detalhado de validacoes, rodadas de importacao e reclassificacoes deve ficar separado em `historico/`, para nao competir com os `.md` operacionais da raiz.
 
+## Nota sobre o motor operacional compartilhado
+
+- `Evidência direta`: o script `scripts/Sync-GeneXusXpzToXml.ps1` e parte da infraestrutura operacional desta base publica.
+- `Evidência direta`: esse script pode ser consumido por wrappers e fluxos locais de projetos de producao que mantenham acervos versionados de XMLs extraidos de `XPZ`.
+- `Regra operacional`: esse arquivo nao deve ser apagado silenciosamente do repositório publico.
+- `Regra operacional`: se houver refatoracao, mudanca de local ou substituicao do motor, a alteracao deve ser documentada explicitamente e propagada aos consumidores externos antes de remover o arquivo anterior.
+
 ## Fontes consolidadas
 - 00-inventario-da-base-documental.md
 - 30-inventario-bruto-kb.md

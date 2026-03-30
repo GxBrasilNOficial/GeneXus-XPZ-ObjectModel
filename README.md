@@ -46,6 +46,12 @@ Se você quer entender a base rapidamente:
 - moldes sanitizados completos podem servir como ponto de partida em cenários específicos documentados na própria base; resumos textuais e exemplos incompletos não servem como fonte final de materialização
 - o conteúdo foi organizado para reduzir tentativa e erro, não para eliminar risco
 
+### Automação operacional
+
+- o script [`scripts/Sync-GeneXusXpzToXml.ps1`](/C:/Dev/Knowledge/GeneXus-XPZ-ObjectModel/scripts/Sync-GeneXusXpzToXml.ps1) faz parte da infraestrutura operacional desta base e nao deve ser removido do repositório público
+- esse script pode ser usado por projetos de produção que mantenham acervos versionados de XMLs extraidos de `XPZ`
+- se o motor precisar evoluir, a mudança deve preservar compatibilidade com esse uso ou ser acompanhada de atualização explícita dos wrappers consumidores
+
 ---
 
 ## Español

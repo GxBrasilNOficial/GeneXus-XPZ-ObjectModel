@@ -223,6 +223,14 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - nao substituir esse prefixo por GUID de `Attribute` top-level nem por GUID inline do `Level` da `Transaction`
 - se o objetivo incluir a camada fisica, lembrar que `Table` e `Index` seguem outra trilha: `Table` e top-level proprio e `Index` aparece embutido em `Table`
 
+### Table e Index
+
+- tratar `Table` como objeto top-level da camada fisica e `Index` como estrutura interna da `Table`
+- quando a pergunta envolver `Index`, consultar primeiro um molde comparavel de `Table`, nao um suposto corpus de `Index` isolado
+- preservar bloco de chave, `<Indexes>`, `Index/@Type`, `Index/@Source` e ordem dos `Member`
+- preferir pacotes comparaveis com `Transaction` junto quando a pergunta depender da ponte logica -> fisica
+- abortar se o caso exigir inventar indice novo, chave fisica nova ou tratar `Index` como top-level sem evidencia externa adicional
+
 ### WebPanel
 
 - identificar primeiro a familia estrutural usando `04-webpanel-familias-e-templates.md`

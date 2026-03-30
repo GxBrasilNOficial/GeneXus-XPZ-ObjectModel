@@ -187,6 +187,19 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Inferência forte`: para `WorkWithForWeb`, o aumento de risco operacional nao esta apenas no XML do pattern; ele tambem aparece como ampliacao do grafo de identidades e dependencias de contexto.
 - `Regra operacional`: ao montar pacote minimo com `WorkWithForWeb`, comparar sempre a lista de `ObjectsIdentityMapping` com a versao sem `WW`; o delta de identidades ajuda a separar dependencia real do pattern de ruido do contêiner.
 
+### Politica para `Table` e `Index`
+
+- `Evidência direta`: nesta trilha, `Table` aparece como familia top-level propria e `Index` aparece embutido dentro de `Table`.
+- `Evidência direta`: o export isolado de `Index` veio vazio, enquanto `Table + Index` repetiu a mesma serializacao top-level de `Table`.
+- `Evidência direta`: pacotes combinados com `Transaction` mostraram `Table` convivendo no mesmo `.xpz` com `Transaction`, `WorkWithForWeb`, `PatternSettings` e `DataSelector`.
+- `Evidência direta`: comparacao privada posterior com pares reais da KB de origem confirmou repeticao da correspondencia nominal entre `Transaction` e `Table`, tanto em caso simples quanto em caso mais denso.
+- `Inferência forte`: para engenharia reversa da camada fisica, a unidade minima util nao e `Index` solto, e sim `Table` comparavel, preferencialmente junto da `Transaction` correspondente.
+- `Regra operacional`: nao classificar `Index` como objeto top-level independente nesta trilha sem nova evidencia estrutural externa.
+- `Regra operacional`: ao materializar ou revisar `Table`, preservar o bloco de chave e o bloco `<Indexes>` integralmente, incluindo ordem dos `TableIndex`, `Index/@Type`, `Index/@Source` e ordem dos `Member`.
+- `Regra operacional`: quando a leitura exigir ponte com a camada logica, validar primeiro a correspondencia nominal e estrutural entre `Transaction` e `Table`; so depois analisar os `Index` embutidos.
+- `Regra operacional`: se o acervo privado ainda materializar esses objetos fisicos em pasta historica chamada `Index`, tratar isso como legado de extracao, e nao como prova de tipo top-level diferente.
+- `Regra operacional`: se o caso concreto depender de afirmar reassociacao fisica exata entre `Transaction`, `Table` e navegacao real da IDE, responder com cautela e separar explicitamente estrutura observada de comportamento runtime inferido.
+
 ### Politica para `Folder`
 
 - `Evidência direta`: os exemplos reais de `Folder` usam shape minimo e estavel com `Object/@type=\"00000000-0000-0000-0000-000000000006\"`.
@@ -882,6 +895,15 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - validar que `ContextVariable`, `LoadProcedure`, `Security`, `NotAuthorized` e referencias equivalentes apontem para objetos reais do destino
 - nao inventar `Pattern`, `LoadProcedure`, contexto de seguranca ou procedures auxiliares para "completar" o objeto
 - se o ambiente nao reconhecer o pattern ou os objetos referenciados, abortar em vez de tratar o XML como autocontido
+
+### Table e Index
+
+- tratar `Table` como objeto top-level da camada fisica e `Index` como estrutura interna embutida
+- preservar `Object/@type`, `guid`, `parent*`, `moduleGuid`, bloco de chave e inventario de `Part` do molde-base
+- preservar integralmente o bloco `<Indexes>`, sem reordenar `TableIndex`, `Index`, `Members` ou trocar `Type="Automatic|User|Unique|Duplicate"` por conveniencia
+- nao tentar materializar `Index` como objeto top-level isolado nesta trilha; quando o caso pedir indice, usar `Table` comparavel que ja o contenha
+- quando o objetivo for ponte com a camada logica, validar junto a `Transaction` correspondente em vez de analisar a `Table` como se fosse familia totalmente autonoma
+- se a mudanca exigir inferir indice inexistente, chave fisica nova ou correspondencia fisica nao visivel no molde comparavel, abortar
 
 ### Folder
 
