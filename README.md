@@ -50,6 +50,7 @@ Se você quer entender a base rapidamente:
 
 - o script [`scripts/Sync-GeneXusXpzToXml.ps1`](/C:/Dev/Knowledge/GeneXus-XPZ-ObjectModel/scripts/Sync-GeneXusXpzToXml.ps1) faz parte da infraestrutura operacional desta base e nao deve ser removido do repositório público
 - esse script pode ser usado por projetos de produção que mantenham acervos versionados de XMLs extraidos de `XPZ`
+- a pasta `scripts/` existe como apoio operacional e utilitario compartilhavel, mas nao e fonte normativa da documentacao consolidada da raiz
 - se o motor precisar evoluir, a mudança deve preservar compatibilidade com esse uso ou ser acompanhada de atualização explícita dos wrappers consumidores
 
 ---

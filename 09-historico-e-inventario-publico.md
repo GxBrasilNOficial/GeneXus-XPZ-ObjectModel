@@ -24,6 +24,7 @@ Preservar rastreabilidade da consolidacao, inventario documental, inventario bru
 
 - `Evidência direta`: o script `scripts/Sync-GeneXusXpzToXml.ps1` e parte da infraestrutura operacional desta base publica.
 - `Evidência direta`: esse script pode ser consumido por wrappers e fluxos locais de projetos de producao que mantenham acervos versionados de XMLs extraidos de `XPZ`.
+- `Regra editorial`: a pasta `scripts/` existe como apoio operacional e utilitario compartilhavel, mas nao funciona como fonte normativa da documentacao consolidada da raiz.
 - `Regra operacional`: esse arquivo nao deve ser apagado silenciosamente do repositório publico.
 - `Regra operacional`: se houver refatoracao, mudanca de local ou substituicao do motor, a alteracao deve ser documentada explicitamente e propagada aos consumidores externos antes de remover o arquivo anterior.
 
