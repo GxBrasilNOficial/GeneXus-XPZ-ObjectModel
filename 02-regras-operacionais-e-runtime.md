@@ -154,6 +154,8 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: ao gerar pacote minimo de `Transaction`, verificar primeiro se os atributos do `Level` ja existem na KB de destino; se nao existirem, incluir `Attributes` top-level correspondentes no mesmo pacote.
 - `Regra operacional`: erro em `ATTCUSTOMTYPE` de `sdt:Context`, `sdt:TransactionContext` ou `sdt:TransactionContext.Attribute` deve ser lido como falta de dependencia contextual, nao como falha do envelope XML.
 - `Regra operacional`: nao confiar que o GeneXus criara automaticamente atributos implicitos a partir do `Level`; no caso validado, a ausencia explicita levou a erro de validacao.
+- `Evidência direta`: em trilha posterior validada na IDE, um pacote misto com `4` `Attribute` top-level, `1` `Transaction` e `1` `WorkWithForWeb` importou com sucesso e concluiu tambem a geracao do pattern associado.
+- `Regra operacional`: quando a alteracao de `Transaction` impactar atributos exibidos, filtros, abas ou navegacao do pattern web, revisar tambem o `WorkWithForWeb` associado antes de considerar a frente fechada.
 
 ### Politica para `API`
 
@@ -174,6 +176,9 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Evidência direta`: nesses dois recortes, a IDE serializou `Attributes` como bloco top-level proprio no mesmo `.xpz` que tambem carrega `Objects`.
 - `Inferência forte`: quando a familia funcional inclui `Attribute` real, `Transaction`, `Domain` e `SubtypeGroup`, o formato normal observado fica mais forte com `Objects` + `Attributes`, e nao apenas com `Objects`.
 - `Regra operacional`: ao analisar ou materializar pacote centrado em `Attribute` top-level, preservar a separacao entre `Objects` e `Attributes`; nao rebaixar `Attribute` real para pseudo-objeto dentro de `<Objects>`.
+- `Evidência direta`: no caso publico validado de pacote misto, `Transaction` e `WorkWithForWeb` coexistiram em `<Objects>`, enquanto os atributos novos coexistiram em `<Attributes>`.
+- `Regra operacional`: em pacote misto com `Transaction`, `WorkWithForWeb` e atributos novos, manter `Transaction` e `WorkWithForWeb` em `<Objects>` e os atributos top-level em `<Attributes>`.
+- `Regra operacional`: se o pacote misto incluir `WorkWithForWeb`, preservar no bloco `Dependencies` a referencia de `Pattern` correspondente.
 - `Evidência direta`: no acervo extraido para filesystem Windows, apareceu ao menos um caso real de nome logico invalido como nome de arquivo (`ThemeClass` com `name="ImageHandCenter:hover"`), materializado em disco como `ImageHandCenter_hover.xml`.
 - `Regra operacional`: quando o nome logico do objeto ou atributo contiver caractere invalido para o filesystem alvo, aplicar normalizacao minima, deterministica e rastreavel apenas no nome do arquivo em disco, preservando o `name` interno do XML sem alteracao.
 - `Regra operacional`: na auditoria de completude entre o XML total e o acervo extraido, comparar por `tipo + nome logico` e considerar explicitamente a camada de normalizacao de filename quando houver caractere invalido para o filesystem.
@@ -1060,3 +1065,4 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - Hipótese: mesmo com anexos representativos, `WorkWithForWeb` continua entre os tipos mais sensiveis a `pattern`, `parent` transacional e contexto gerado; por isso, casos muito distantes do molde documentado ainda podem pedir paralelo bruto mais proximo
 - Hipótese: as familias `F3` e `F4` de `Transaction` ainda ficam mais seguras com molde bruto comparavel adicional, por terem densidade estrutural maior e ainda nao terem anexo completo proprio
 - Inferência forte: para o envelope externo do XPZ observado, a especificacao desta propria base ja e suficiente para evitar inventar `Objects.xml` isolado ou hierarquia externa sem prova local
+

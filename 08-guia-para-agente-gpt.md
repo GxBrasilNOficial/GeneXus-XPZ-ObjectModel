@@ -184,6 +184,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - preservar `Object/@type`, `guid`, `parent*`, `moduleGuid`, `Part type` e ordem das `Part`
 - editar somente nomes, descricoes e trechos internos sustentados pelo molde usado
 - preservar tambem os `<Attribute ...>` dentro de `<Level>` com nome interno preenchido, `guid`, `key` e `isNullable` quando existirem
+- verificar explicitamente se existe `WorkWithForWeb` associado e se a mudanca impacta atributos exibidos, filtros, abas ou navegacao do pattern web
 - abortar se a mudanca exigir inventar atributo inexistente na KB ou tipo de contexto nao existente
 
 ### API
@@ -222,6 +223,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - tratar o objeto como instancia de pattern por `Transaction`, nao como XML independente simples
 - usar referencias de atributo no formato estrutural real `adbb33c9-0906-4971-833c-998de27e0676-NomeDoAtributo`
 - nao substituir esse prefixo por GUID de `Attribute` top-level nem por GUID inline do `Level` da `Transaction`
+- se a frente introduzir atributos novos usados em `selection`, filtros, abas ou navegacao, tratar o pacote como caso misto `Transaction + WorkWithForWeb + Attribute`
 - se o objetivo incluir a camada fisica, lembrar que `Table` e `Index` seguem outra trilha: `Table` e top-level proprio e `Index` aparece embutido em `Table`
 
 ### Table e Index
@@ -251,6 +253,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - o objeto clonado deve continuar como XML bem-formado com raiz unica `<Object>`
 - blocos `Source` e `InnerHtml` que vierem em `CDATA` devem permanecer em `CDATA`
 - o agente deve incluir o objeto em `<Objects>` seguindo o envelope XPZ observado documentado em `02-regras-operacionais-e-runtime.md`
+- em pacote misto com `Transaction`, `WorkWithForWeb` e atributos novos, `Transaction` e `WorkWithForWeb` ficam em `<Objects>` e os atributos top-level ficam em `<Attributes>`
+- se houver `WorkWithForWeb` no pacote misto, preservar tambem a referencia de `Pattern` no bloco `Dependencies`
 - o agente deve tratar `ObjectsIdentityMapping` como mapeamento de contexto; nao repetir ali cada objeto exportado nem inventar pares `Object` -> `ObjectIdentity` 1:1
 - quando o objeto depender de `parentGuid` ou `moduleGuid` externos relevantes, o agente deve preferir manter no `ObjectsIdentityMapping` a identidade correspondente com o mesmo `Guid`
 - o agente deve preservar sempre preenchidos, no formato normal, `Source/Version/@name`, `Object/@name` e `ObjectIdentity/@Name`

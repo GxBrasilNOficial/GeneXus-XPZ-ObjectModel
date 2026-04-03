@@ -3294,6 +3294,91 @@ Esqueleto estrutural público:
   </Part>
 </Object>
 ```
+
+## Molde sanitizado de pacote misto `Transaction` + `WorkWithForWeb` + `Attribute`
+
+- Evidência direta: esta trilha validou um pacote misto contendo `4` `Attribute` top-level, `1` `Transaction` e `1` `WorkWithForWeb`.
+- Evidência direta: o pacote foi carregado com sucesso no `Load` e importado com sucesso na IDE do GeneXus.
+- Evidência direta: após a importação, a geração do pattern do `WorkWithForWeb` também foi concluída com sucesso.
+- Inferência forte: o caso é representativo para frentes em que a alteração de uma `Transaction` exige inclusão de atributos novos e revisão do `WorkWithForWeb` associado.
+- Hipótese: o valor público do caso está menos no conteúdo de negócio e mais no shape do envelope de importação e na coexistência válida entre `Objects`, `Attributes`, `Dependencies` e `ObjectsIdentityMapping`.
+
+### Molde sanitizado de pacote misto 1 - `XPZPacoteMistoTRNWWAtributosA`
+
+- Perfil: pacote de importação com `Transaction`, `WorkWithForWeb` e `Attribute` top-level no mesmo envelope.
+- Uso operacional: boa referência para frentes em que novos atributos precisam entrar junto da transação e do pattern web associado.
+
+Observação editorial:
+- o caso real foi validado em importação prática bem-sucedida
+- a versão pública preserva apenas o envelope, os tipos envolvidos e a relação estrutural entre os blocos
+- nomes de negócio, GUIDs reais e mapeamentos privados completos permanecem fora desta base pública
+
+Esqueleto estrutural público:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<ExportFile>
+  <KMWVersion>...</KMWVersion>
+  <Objects>
+    <Object>
+      <Source>
+        <FilePath>Transaction/TRNExemploPacoteMistoA.xml</FilePath>
+      </Source>
+    </Object>
+    <Object>
+      <Source>
+        <FilePath>WorkWithForWeb/WWExemploPacoteMistoA.xml</FilePath>
+      </Source>
+    </Object>
+  </Objects>
+  <Attributes>
+    <Attribute>
+      <Source>
+        <FilePath>Attribute/AtributoExemploPacoteMistoA.xml</FilePath>
+      </Source>
+    </Attribute>
+    <Attribute>
+      <Source>
+        <FilePath>Attribute/AtributoExemploPacoteMistoB.xml</FilePath>
+      </Source>
+    </Attribute>
+    <Attribute>
+      <Source>
+        <FilePath>Attribute/AtributoExemploPacoteMistoC.xml</FilePath>
+      </Source>
+    </Attribute>
+    <Attribute>
+      <Source>
+        <FilePath>Attribute/AtributoExemploPacoteMistoD.xml</FilePath>
+      </Source>
+    </Attribute>
+  </Attributes>
+  <Dependencies>
+    <Object Id="1db606f2-af09-4cf9-a3b5-b481519d28f6" Package="..." Type="Transaction" />
+    <Object Id="78cecefe-be7d-4980-86ce-8d6e91fba04b" Package="..." Type="WorkWithForWeb" />
+    <Object Id="adbb33c9-0906-4971-833c-998de27e0676" Package="..." Type="Attribute" />
+    <Object Id="78cecefe-be7d-4980-86ce-8d6e91fba04b" Package="df0eb164-d030-4b53-b022-0ea225fb61d6" Type="Pattern" Provider="GeneXus" Version="1.2" />
+  </Dependencies>
+  <ObjectsIdentityMapping>
+    <ObjectIdentity Name="TRNExemploPacoteMistoA" />
+    <ObjectIdentity Name="WWExemploPacoteMistoA" />
+    <ObjectIdentity Name="AtributoExemploPacoteMistoA" />
+    <ObjectIdentity Name="AtributoExemploPacoteMistoB" />
+    <ObjectIdentity Name="AtributoExemploPacoteMistoC" />
+    <ObjectIdentity Name="AtributoExemploPacoteMistoD" />
+    <ObjectIdentity Name="ModuloExemplo" />
+  </ObjectsIdentityMapping>
+</ExportFile>
+```
+
+### Leitura técnica do caso validado
+
+- Evidência direta: `Transaction` e `WorkWithForWeb` coexistiram em `<Objects>`.
+- Evidência direta: os atributos novos coexistiram em `<Attributes>`.
+- Evidência direta: a referência de `Pattern` do `WorkWithForWeb` esteve presente no bloco `Dependencies`.
+- Evidência direta: o pacote passou por `Load`, `Import` e `Pattern generation` com sucesso.
+- Inferência forte: esse shape já pode ser tratado como evidência pública representativa de pacote misto desse perfil.
+
 ### Molde sanitizado de SDT 1 - `sdtPeriodoExemplo`
 
 - Perfil: SDT enxuto com um nivel unico e dois itens simples baseados em dominio.
@@ -9544,3 +9629,4 @@ when &sdtRegistroParametros.ComDocumentoCobranca = SimOuNao.Nao;
     </Property>
   </Properties>
 </Object>```
+
