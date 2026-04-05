@@ -1,6 +1,7 @@
 /*
 !/*.md
 !/.gitignore
+!/.gitattributes
 !/scripts/
 /scripts/*
 !/scripts/Sync-GeneXusXpzToXml.ps1
