@@ -133,6 +133,12 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Evidência direta`: declarar `controlName` explicito em `<data>` pode reduzir ambiguidade estrutural no XML, mas isso nao garante que o nome fique disponivel como identificador manipulavel no source do objeto.
 - `Regra operacional`: em pacote delta GeneXus, quando ja existir pacote equivalente validado na IDE, reaproveitar o envelope completo desse pacote como molde; nao simplificar cabecalho, `Dependencies` ou `ObjectsIdentityMapping` por inferencia.
 
+#### Exemplos sanitizados minimos
+
+- `Exemplo sanitizado`: em um `WebPanel` de prompt com `simplegrid`, o layout expunha o controle com `controlName`, mas o filtro pesquisavel ficou materializado em outro `Part`, como linhas de condicao no `Source`; isso prova que o ponto real de persistencia precisa ser confirmado no XML antes de atribuir o `Conditions` a um bloco fixo.
+- `Exemplo sanitizado`: em outro `WebPanel` com `grid class="FreeStyleGrid"`, o mesmo criterio de filtro apareceu tanto no `ControlWhere` do layout quanto em `Part` estrutural separado; esse tipo de duplicidade explica por que `Load`, `Import` e `Specification` precisam continuar sendo validados como camadas distintas.
+- `Exemplo sanitizado`: em pacotes delta reais com um unico objeto, o envelope completo continuou incluindo `KMW`, `Source`, `Objects`, `Dependencies` e `ObjectsIdentityMapping`, mesmo quando os dois blocos finais estavam vazios; por isso, a forma segura e clonar o pacote equivalente validado, nao podar o fecho por "limpeza" manual.
+
 ### Modos de falha observados e correcoes
 
 - `Erro sanitizado`: declaracao `<?xml ...?>` duplicada dentro de `<Objects>` no `import_file.xml`.
