@@ -40,6 +40,7 @@ Do NOT use this skill for:
 - Abort if no comparable structural template exists and risk is high or very high
 - Clone conservatively: preserve `Object/@guid`, `parent*`, `moduleGuid`, all recurring Part types
 - Apply XPZ envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
+- Treat `runtime`, `Import File Load`, `Import`, and `Specification` as distinct validation layers; success in one does not authorize conclusions about the others
 - Generate valid `lastUpdate` timestamp (real local time, not placeholder)
 - Ensure all GUIDs are syntactically valid (no text placeholders like `"YOUR-GUID-HERE"`)
 - Validate XML structure before delivery
@@ -101,10 +102,11 @@ Reference files and when to load them:
    - All recurring Part types present
    - No text placeholder GUIDs remaining
    - Template and target share the same structural family
+   - When the case depends on IDE-oriented editing, prefer the syntax and structure accepted by the editor/importer, not only what appears to work at runtime
 9. Deliver XML with limitations block:
    - Which template was used
    - Confidence level
-   - What requires external IDE validation (import, build, runtime)
+   - What requires external IDE validation (`Import File Load`, `Import`, `Specification`, runtime)
 
 ---
 
@@ -128,6 +130,7 @@ Reference files and when to load them:
 
 - NEVER invent a Part type GUID not present in the selected template
 - NEVER affirm import or build success — state "requires external IDE validation"
+- NEVER treat `runtime`, `Import File Load`, `Import`, and `Specification` as interchangeable evidence
 - NEVER generate from a text description or markdown summary alone — requires comparable raw XML template
 - NEVER generate special KB block (`KnowledgeBase`, `Settings`) for normal single-object XPZ
 - ABORT if risk is high/very high and no internal comparable template is available
