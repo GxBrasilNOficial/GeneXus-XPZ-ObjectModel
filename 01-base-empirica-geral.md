@@ -70,7 +70,7 @@ Servir como base conceitual para os documentos empíricos e operacionais.
 | `DeploymentUnit` | 1 | `bf08dfb1-361c-4e7e-ad54-391e56e60b49` | `Evidência direta` |
 | `DesignSystem` | 2 | `78b3fa0e-174c-4b2b-8716-718167a428b5` | `Evidência direta` |
 | `Document` | 3 | `faeb588c-dcce-4dad-9af3-cdd11b961a32` | `Evidência direta` |
-| `Domain` | 592 | `00972a17-9975-449e-aab1-d26165d51393` | `Evidência direta` |
+| `Domain` | 593 | `00972a17-9975-449e-aab1-d26165d51393` | `Evidência direta` |
 | `ExternalObject` | 18 | `c163e562-42c6-4158-ad83-5b21a14cf30e` | `Evidência direta` |
 | `File` | 81 | `1132ac08-290f-4fd1-bd18-64777b7329d1` | `Evidência direta` |
 | `Folder` | 7 | `00000000-0000-0000-0000-000000000006` | `Evidência direta` |
@@ -313,7 +313,7 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 ### `Table + Domain + Transaction + SDT + API + Procedure + DataProvider`
 
 - `Evidência direta`: o export `XPZExemploCadeiaAPIA.xpz` veio com `3904` objetos e `0` atributos top-level.
-- `Evidência direta`: a distribuicao observada foi `2282` `Procedure`, `594` `SDT`, `592` `Domain`, `228` `Table`, `183` `Transaction`, `24` `DataProvider` e `1` `API`.
+- `Evidência direta`: a distribuicao observada foi `2282` `Procedure`, `594` `SDT`, `593` `Domain`, `228` `Table`, `183` `Transaction`, `24` `DataProvider` e `1` `API`.
 - `Evidência direta`: o `API` exportado nesse pacote e `APIExemploIntegracaoA`.
 - `Evidência direta`: o mesmo pacote prova que a trilha real de export da IDE para `API` relevante de negocio ja puxa junto uma massa grande de `Procedure`, `SDT`, `Domain`, `Table`, `Transaction` e `DataProvider`.
 - `Evidência direta`: no pacote, ha `Domain` enumerado como `DomainExemploTipoA`, com valores de negocio distintos no mesmo conjunto exportado.
@@ -517,14 +517,14 @@ Separar observação direta de leitura heurística preliminar.
 
 ## Domain
 
-- Evidência direta: Object/@type = 00972a17-9975-449e-aab1-d26165d51393 em 592 objetos.
+- Evidência direta: Object/@type = 00972a17-9975-449e-aab1-d26165d51393 em 593 objetos.
 - Evidência direta: média de Part por objeto: 2.
 - Inferência forte: classificações aparentemente obrigatorio/opcional/raro/vazio dependem da recorrência observada nesta KB.
 
 | PartType | ObjectsWithPart | PresencePct | EmptyPct | PreliminaryClass | exemplos sanitizados |
 | --- | --- | --- | --- | --- | --- |
-| ad3ca970-19d0-44e1-a7b7-db05556e820c | 592 | 100 | 0 | aparentemente obrigatorio | exemplos sanitizados |
-| babf62c5-0111-49e9-a1c3-cc004d90900a | 592 | 100 | 100 | aparentemente obrigatorio | exemplos sanitizados |
+| ad3ca970-19d0-44e1-a7b7-db05556e820c | 593 | 100 | 0 | aparentemente obrigatorio | exemplos sanitizados |
+| babf62c5-0111-49e9-a1c3-cc004d90900a | 593 | 100 | 100 | aparentemente obrigatorio | exemplos sanitizados |
 
 ## ExternalObject
 
@@ -964,25 +964,25 @@ Dar base empírica para cautela em clonagem e preservação de contexto.
 
 ## Domain
 
-- Evidência direta: 592 objetos analisados.
-- Evidência direta: objetos com parent: 3; com moduleGuid: 592.
+- Evidência direta: 593 objetos analisados.
+- Evidência direta: objetos com parent: 3; com moduleGuid: 593.
 - Inferência forte: atributos ligados a parent/module tendem a importar contexto estrutural do objeto.
 
 | Attribute | ObjectsWithAttribute | PresencePct | PresenceBucket | Reading |
 | --- | --- | --- | --- | --- |
-| checksum | 592 | 100 | quase sempre | papel ainda nao fechado |
-| description | 592 | 100 | quase sempre | papel ainda nao fechado |
-| fullyQualifiedName | 592 | 100 | quase sempre | papel ainda nao fechado |
-| guid | 592 | 100 | quase sempre | forte indicio de criticidade estrutural |
-| lastUpdate | 592 | 100 | quase sempre | papel ainda nao fechado |
-| moduleGuid | 592 | 100 | quase sempre | ligado a parent/module |
-| name | 592 | 100 | quase sempre | forte indicio de criticidade estrutural |
+| checksum | 593 | 100 | quase sempre | papel ainda nao fechado |
+| description | 593 | 100 | quase sempre | papel ainda nao fechado |
+| fullyQualifiedName | 593 | 100 | quase sempre | papel ainda nao fechado |
+| guid | 593 | 100 | quase sempre | forte indicio de criticidade estrutural |
+| lastUpdate | 593 | 100 | quase sempre | papel ainda nao fechado |
+| moduleGuid | 593 | 100 | quase sempre | ligado a parent/module |
+| name | 593 | 100 | quase sempre | forte indicio de criticidade estrutural |
 | parent | 3 | 0.5 | raro | ligado a parent/module |
-| parentGuid | 592 | 100 | quase sempre | ligado a parent/module |
+| parentGuid | 593 | 100 | quase sempre | ligado a parent/module |
 | parentType | 3 | 0.5 | raro | ligado a parent/module |
-| type | 592 | 100 | quase sempre | forte indicio de criticidade estrutural |
-| user | 592 | 100 | quase sempre | papel ainda nao fechado |
-| versionDate | 592 | 100 | quase sempre | papel ainda nao fechado |
+| type | 593 | 100 | quase sempre | forte indicio de criticidade estrutural |
+| user | 593 | 100 | quase sempre | papel ainda nao fechado |
+| versionDate | 593 | 100 | quase sempre | papel ainda nao fechado |
 
 - Evidência direta: exemplo citado: alias sanitizado em Domain\\EXEMPLO-SANITIZADO.xml.
 - Evidência direta: exemplo citado: alias sanitizado em Domain\\EXEMPLO-SANITIZADO.xml.
@@ -3584,12 +3584,14 @@ Leitura tecnica do caso:
 
 ## Moldes sanitizados completos de Domain
 
-- Evidência direta: o acervo usado nesta base contem 592 objetos Domain.
-- Inferência forte: o tipo se divide bem entre dominios escalares simples e dominios enumerados com IDEnumDefinedValues, o que justifica documentar um molde de cada perfil.
+- Evidência direta: o acervo usado nesta base contem 593 objetos Domain.
+- Evidência direta: 229 desses 593 objetos carregam `IDEnumDefinedValues`.
+- Evidência direta: entre os dominios enumerados, os perfis mais frequentes do corpus atual sao `bas:VarChar` com `AddEmptyItem=True` (87 casos), `bas:Character` sem `AddEmptyItem` (71 casos) e `bas:Numeric` com ou sem `AddEmptyItem` (28 casos somados).
+- Inferência forte: o tipo se divide bem entre dominios escalares simples e dominios enumerados com perfis recorrentes, o que justifica documentar um molde escalar e tres moldes enumerados representativos.
 
 ### Molde sanitizado de Domain 1 - `NumeroExemplo`
 
-- Perfil: Domain escalar simples baseado em as:Numeric.
+- Perfil: Domain escalar simples baseado em `bas:Numeric`.
 - Uso operacional: boa referencia para dominios pequenos sem enum e sem metadata adicional relevante.
 
 ```xml
@@ -3627,16 +3629,16 @@ Leitura tecnica do caso:
     </Property>
   </Properties>
 </Object>
-` 
+```
 
-### Molde sanitizado de Domain 2 - `TipoFluxoExemplo`
+### Molde sanitizado de Domain 2 - `DomainExemploPrazoA`
 
-- Perfil: Domain enumerado baseado em as:VarChar, com IDEnumDefinedValues e AddEmptyItem.
-- Uso operacional: boa referencia para dominios de selecao controlada e listas de valores declaradas no proprio objeto.
+- Perfil: Domain enumerado baseado em `bas:VarChar`, com `IDEnumDefinedValues` e `AddEmptyItem=True`.
+- Uso operacional: boa referencia para dominios de selecao controlada compactos, com item vazio explicito e rotulos de negocio curtos.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<Object parentGuid="afa47377-41d5-4ae8-9755-6f53150aa361" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2025-08-03T13:19:15.0000000Z" checksum="4687298b6e435629a409b96cbb475799" fullyQualifiedName="TipoFluxoExemplo" moduleGuid="afa47377-41d5-4ae8-9755-6f53150aa361" guid="ddeec0aa-63a3-450d-bd91-cb44da9360c5" name="TipoFluxoExemplo" type="00972a17-9975-449e-aab1-d26165d51393" description="Tipo Fluxo Exemplo">
+<Object parentGuid="afa47377-41d5-4ae8-9755-6f53150aa361" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2019-11-23T15:47:44.0000000Z" checksum="1e399c871195f8d88f96aca2a24e43ac" fullyQualifiedName="DomainExemploPrazoA" moduleGuid="afa47377-41d5-4ae8-9755-6f53150aa361" guid="6c56169c-5576-42a6-8257-f4aba9fab263" name="DomainExemploPrazoA" type="00972a17-9975-449e-aab1-d26165d51393" description="Domain Exemplo Prazo A">
   <Part type="ad3ca970-19d0-44e1-a7b7-db05556e820c">
     <Help>
       <HelpItem>
@@ -3657,7 +3659,7 @@ Leitura tecnica do caso:
   <Properties>
     <Property>
       <Name>Name</Name>
-      <Value>TipoFluxoExemplo</Value>
+      <Value>DomainExemploPrazoA</Value>
     </Property>
     <Property>
       <Name>ATTCUSTOMTYPE</Name>
@@ -3665,18 +3667,134 @@ Leitura tecnica do caso:
     </Property>
     <Property>
       <Name>Length</Name>
-      <Value>40</Value>
+      <Value>6</Value>
     </Property>
     <Property>
       <Name>AttMaxLen</Name>
-      <Value>40</Value>
+      <Value>6</Value>
     </Property>
     <Property>
       <Name>IDEnumDefinedValues</Name>
-      <Value>EntradaSimples, EntradaSimples, Entrada Simples; SaidaSimples, SaidaSimples, Saida Simples; AjusteInterno, AjusteInterno, Ajuste Interno; MovimentoAuxiliar, MovimentoAuxiliar, Movimento Auxiliar; ProducaoInterna, ProducaoInterna, Producao Interna; TransferenciaSaida, TransferenciaSaida, Transferencia de Saida; TransferenciaEntrada, TransferenciaEntrada, Transferencia de Entrada; ConsumoInterno, ConsumoInterno, Consumo Interno; Inventario, Inventario, Inventario; Reprocessamento, Reprocessamento, Reprocessamento</Value>
+      <Value>Avista, Avista, A Vista; Aprazo, Aprazo, A Prazo</Value>
     </Property>
     <Property>
       <Name>AddEmptyItem</Name>
+      <Value>True</Value>
+    </Property>
+    <Property>
+      <Name>IsDefault</Name>
+      <Value>False</Value>
+    </Property>
+  </Properties>
+</Object>
+```
+
+### Molde sanitizado de Domain 3 - `DomainExemploUfA`
+
+- Perfil: Domain enumerado baseado em `bas:Character`, com `IDEnumDefinedValues` e sem `AddEmptyItem`.
+- Uso operacional: boa referencia para dominios enumerados compactos, de codigo curto e sem item vazio adicional.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Object parentGuid="afa47377-41d5-4ae8-9755-6f53150aa361" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2019-11-23T15:47:41.0000000Z" checksum="" fullyQualifiedName="DomainExemploUfA" moduleGuid="afa47377-41d5-4ae8-9755-6f53150aa361" guid="c1f2a054-539e-4e42-9040-d6f4821fd482" name="DomainExemploUfA" type="00972a17-9975-449e-aab1-d26165d51393" description="Domain Exemplo Uf A">
+  <Part type="ad3ca970-19d0-44e1-a7b7-db05556e820c">
+    <Help>
+      <HelpItem>
+        <Language>88313f43-5eb2-0000-0028-e8d9f5bf9588-Portuguese</Language>
+        <Content />
+      </HelpItem>
+    </Help>
+    <Properties>
+      <Property>
+        <Name>IsDefault</Name>
+        <Value>False</Value>
+      </Property>
+    </Properties>
+  </Part>
+  <Part type="babf62c5-0111-49e9-a1c3-cc004d90900a">
+    <Properties />
+  </Part>
+  <Properties>
+    <Property>
+      <Name>Name</Name>
+      <Value>DomainExemploUfA</Value>
+    </Property>
+    <Property>
+      <Name>ATTCUSTOMTYPE</Name>
+      <Value>bas:Character</Value>
+    </Property>
+    <Property>
+      <Name>Length</Name>
+      <Value>9999</Value>
+    </Property>
+    <Property>
+      <Name>AttMaxLen</Name>
+      <Value>9999</Value>
+    </Property>
+    <Property>
+      <Name>IDEnumDefinedValues</Name>
+      <Value>AC, AC, AC; AL, AL, AL; AM, AM, AM; AP, AP, AP; BA, BA, BA; CE, CE, CE; DF, DF, DF; ES, ES, ES; GO, GO, GO; MA, MA, MA; MG, MG, MG; MS, MS, MS; MT, MT, MT; PA, PA, PA; PB, PB, PB; PE, PE, PE; PI, PI, PI; PR, PR, PR; RJ, RJ, RJ; RN, RN, RN; RO, RO, RO; RR, RR, RR; RS, RS, RS; SC, SC, SC; SE, SE, SE; SP, SP, SP; TO, TO, TO; EX, EX, EX</Value>
+    </Property>
+    <Property>
+      <Name>IsDefault</Name>
+      <Value>False</Value>
+    </Property>
+  </Properties>
+</Object>
+```
+
+### Molde sanitizado de Domain 4 - `DomainExemploOperacaoA`
+
+- Perfil: Domain enumerado baseado em `bas:Numeric`, com `Signed=True`, `IDEnumDefinedValues` e sem `AddEmptyItem`.
+- Uso operacional: boa referencia para dominios enumerados numericos, inclusive com valor negativo e metadata adicional no bloco de propriedades.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Object parentGuid="afa47377-41d5-4ae8-9755-6f53150aa361" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2019-11-23T15:47:35.0000000Z" checksum="802842c8dd4adb494e4040050b7c42fd" fullyQualifiedName="DomainExemploOperacaoA" moduleGuid="afa47377-41d5-4ae8-9755-6f53150aa361" guid="026175fd-e613-4beb-9995-7aa7ecf0a656" name="DomainExemploOperacaoA" type="00972a17-9975-449e-aab1-d26165d51393" description="Domain Exemplo Operacao A">
+  <Part type="ad3ca970-19d0-44e1-a7b7-db05556e820c">
+    <Help>
+      <HelpItem>
+        <Language>88313f43-5eb2-0000-0028-e8d9f5bf9588-Portuguese</Language>
+        <Content />
+      </HelpItem>
+    </Help>
+    <Properties>
+      <Property>
+        <Name>IsDefault</Name>
+        <Value>False</Value>
+      </Property>
+    </Properties>
+  </Part>
+  <Part type="babf62c5-0111-49e9-a1c3-cc004d90900a">
+    <Properties />
+  </Part>
+  <Properties>
+    <Property>
+      <Name>Name</Name>
+      <Value>DomainExemploOperacaoA</Value>
+    </Property>
+    <Property>
+      <Name>ATTCUSTOMTYPE</Name>
+      <Value>bas:Numeric</Value>
+    </Property>
+    <Property>
+      <Name>Length</Name>
+      <Value>2</Value>
+    </Property>
+    <Property>
+      <Name>AttMaxLen</Name>
+      <Value>2</Value>
+    </Property>
+    <Property>
+      <Name>Signed</Name>
+      <Value>True</Value>
+    </Property>
+    <Property>
+      <Name>IDEnumDefinedValues</Name>
+      <Value>0, Entrada, Entrada; 1, Saida, Saida; -1, SemFiltro, Sem Filtro</Value>
+    </Property>
+    <Property>
+      <Name>NotifyContextChange</Name>
       <Value>True</Value>
     </Property>
     <Property>
