@@ -938,6 +938,19 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - Inferência forte: para esta trilha, `Folder` deve ser lido como tipo XML estruturalmente aceito, enquanto `Category` deve ser lido como rotulo de agrupamento/exibicao da IDE.
 - Hipótese: o importador pode estar reutilizando o mesmo vocabulário visual da IDE ao relatar `Category`, sem implicar mudanca real do tipo estrutural importado.
 
+## Politica para identidade estrutural de objeto sob Folder ou Module
+
+- Evidência direta: no acervo real desta KB, `Procedure` em `Folder` aparece com `fullyQualifiedName` igual ao nome do objeto, enquanto a pasta aparece em `parent` e `parentGuid`.
+- Evidência direta: no acervo real desta KB, `WebPanel` em `Folder` segue o mesmo padrao: `fullyQualifiedName` sem prefixo da pasta, e `parent`/`parentGuid` apontando para o contêiner.
+- Evidência direta: no acervo real desta KB, objetos sob `Module` podem trazer qualificacao em `fullyQualifiedName`, como `General.Services.DirectionsServiceRequest`.
+- Evidência direta: tambem existe caso em que o objeto esta sob `Folder` dentro de `Module`; nesse perfil, o nome do modulo permanece em `fullyQualifiedName`, mas o nome da pasta continua restrito a `parent`.
+- Regra operacional: antes de serializar identidade de objeto, classificar primeiro o contêiner por `parentType`.
+- Regra operacional: se `parentType="00000000-0000-0000-0000-000000000008"`, tratar o contêiner como `Folder`; o nome da pasta nao deve ser promovido automaticamente para `fullyQualifiedName`.
+- Regra operacional: se `parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117"`, tratar o contêiner como `Module`; a qualificacao em `fullyQualifiedName` so pode ser mantida ou introduzida quando houver exemplar comparavel da mesma KB confirmando esse padrao.
+- Regra operacional: validar sempre em conjunto `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType` e `moduleGuid`; nao validar esses campos isoladamente.
+- Regra operacional: `fullyQualifiedName` nao deve ser derivado por concatenacao textual de `parent + "." + name`.
+- Regra operacional: se a trilha nao conseguir decidir, por exemplar comparavel, se o contêiner real e `Folder` ou `Module`, a geracao deve abortar antes da serializacao.
+
 ## Politica para WebPanel
 
 - Evidência direta: existem 1196 `WebPanel` no acervo.
@@ -959,6 +972,7 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - `Object/@type` coerente com o tipo clonado.
 - `Part type` recorrentes preservados.
 - `parent*` e `moduleGuid` preservados quando presentes no template.
+- `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType` e `moduleGuid` conferidos em conjunto contra exemplar comparavel.
 - Revisao manual dos campos textuais alterados.
 - Diff estrutural curto entre molde-base e clone.
 
@@ -1045,6 +1059,7 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - registrar separadamente o tipo estrutural do XML (`Folder`) e o rotulo exibido pela IDE/importador (`Category`, quando ocorrer)
 - nao reinterpretar `Category` da UI como prova de outro tipo XML concorrente sem evidencia estrutural adicional
 - se o objetivo depender da distincao funcional exata entre `Folder` e o rotulo `Category` na interface, tratar o caso como diferenca de nomenclatura da IDE ate prova contraria, e nao como falha de envelope
+- ao gerar objeto dentro de `Folder`, manter o nome da pasta em `parent`/`parentGuid`; nao inserir o nome da pasta em `fullyQualifiedName` sem evidencia direta de corpus
 
 ### WebPanel
 

@@ -87,6 +87,16 @@ Este documento registra padrões observáveis no inventário bruto e nos XMLs ex
 - `Inferência forte`: módulos e contêineres funcionam como eixo importante de organização do acervo.
 - `Evidência direta`: o inventário bruto também registra `moduleGuid` e `parentGuid`, o que reforça a presença de uma organização explícita por vínculos.
 
+## Padrões de identidade estrutural
+
+- `Evidência direta`: nesta KB, objetos sob `Folder` podem trazer `parent` preenchido sem repetir esse nome em `fullyQualifiedName`.
+- `Evidência direta`: em `Procedure` sob `Folder`, o padrão observado foi `fullyQualifiedName="NomeDoObjeto"` com `parent="NomeDaPasta"`.
+- `Evidência direta`: em `WebPanel` sob `Folder`, o padrão observado foi o mesmo: a pasta organiza o objeto em `parent`, mas nao qualifica o `fullyQualifiedName`.
+- `Evidência direta`: em objetos sob `Module`, o `fullyQualifiedName` pode aparecer qualificado pelo módulo.
+- `Evidência direta`: também há caso de objeto sob `Folder` dentro de `Module`; nesse perfil, a qualificação do módulo permanece em `fullyQualifiedName`, enquanto a pasta continua aparecendo apenas em `parent`.
+- `Inferência forte`: nesta trilha, `Folder` deve ser tratado primeiro como contêiner organizacional; ele nao deve ser promovido automaticamente a prefixo de namespace no `fullyQualifiedName`.
+- `Inferência forte`: a distinção correta entre `Folder` e `Module` depende de leitura conjunta de `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, não de heurística textual sobre o nome do contêiner.
+
 ## Padrões de referência entre objetos
 
 - `Evidência direta`: em `WebPanel\MODExemploAMenu.xml` o código referencia outros objetos nominais, como `wpEntradaMODExemploA`, `WWEntradaMODExemploA`, `WWPesagemMODExemploA` e `wpEscolhaPesagemMODExemploA`.
@@ -97,7 +107,6 @@ Este documento registra padrões observáveis no inventário bruto e nos XMLs ex
 
 - `Inferência forte`: para documentação e análise, vale registrar esses padrões como recorrências da KB.
 - `Hipótese`: para criação de objetos novos, essas recorrências podem servir como convenção inicial, mas isso ainda precisaria de validação com a equipe ou com a IDE da KB.
-
 
 
 

@@ -9599,6 +9599,95 @@ when &sdtRegistroParametros.ComDocumentoCobranca = SimOuNao.Nao;
 </Object>
 ```
 
+## Exemplos sanitizados de identidade estrutural em Folder e Module
+
+- Evidência direta: em `Procedure` sob `Folder`, o nome da pasta aparece em `parent`, mas nao entra em `fullyQualifiedName`.
+- Evidência direta: em `WebPanel` sob `Folder`, o padrao observado e o mesmo.
+- Evidência direta: em `Module`, o `fullyQualifiedName` pode ser qualificado pelo nome do modulo.
+- Evidência direta: em objeto sob `Folder` dentro de `Module`, o modulo pode permanecer em `fullyQualifiedName`, mas a pasta continua restrita a `parent`.
+- Inferência forte: a decisao correta entre `Folder` e `Module` depende da leitura conjunta de `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+
+### Exemplo sanitizado 1 - `PRCExemploFolderA`
+
+- Perfil: `Procedure` em `Folder`, sem prefixo da pasta em `fullyQualifiedName`.
+- Uso operacional: exemplar minimo para impedir serializacao do tipo `Pasta.Procedure` quando o contêiner real e apenas `Folder`.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Object parentGuid="GUID_PASTA_PROCEDURES" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2016-09-30T03:43:09.0000000Z" checksum="8b29660f938eb825e90dbc5b42faa4d0" fullyQualifiedName="PRCExemploFolderA" moduleGuid="afa47377-41d5-4ae8-9755-6f53150aa361" guid="GUID_PRC_EXEMPLO_FOLDER_A" name="PRCExemploFolderA" type="84a12160-f59b-4ad7-a683-ea4481ac23e9" description="Procedure Exemplo Folder A" parent="PastaProceduresExemplo" parentType="00000000-0000-0000-0000-000000000008">
+  <Part type="528d1c06-a9c2-420d-bd35-21dca83f12ff">
+    <Source><![CDATA[&Data = ctod(&DatetimeTexto)]]></Source>
+    <Properties>
+      <Property>
+        <Name>IsDefault</Name>
+        <Value>False</Value>
+      </Property>
+    </Properties>
+  </Part>
+</Object>
+```
+
+### Exemplo sanitizado 2 - `WPExemploFolderA`
+
+- Perfil: `WebPanel` em `Folder`, sem prefixo da pasta em `fullyQualifiedName`.
+- Uso operacional: exemplar minimo para validar que pasta organiza o objeto por `parent`, nao por namespace automatico.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Object parentGuid="GUID_PASTA_ABATE" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2026-04-09T11:18:17.0000000Z" checksum="1accc2250b948d6c23384fccaccbcc3f" fullyQualifiedName="WPExemploFolderA" moduleGuid="afa47377-41d5-4ae8-9755-6f53150aa361" guid="GUID_WP_EXEMPLO_FOLDER_A" name="WPExemploFolderA" type="c9584656-94b6-4ccd-890f-332d11fc2c25" description="WebPanel Exemplo Folder A" parent="PastaAbateExemplo" parentType="00000000-0000-0000-0000-000000000008">
+  <Part type="d24a58ad-57ba-41b7-9e6e-eaca3543c778">
+    <Source><![CDATA[<GxMultiForm rootId="2"><Form id="2" type="layout"><detail /></Form></GxMultiForm>]]></Source>
+    <Properties>
+      <Property>
+        <Name>IsDefault</Name>
+        <Value>False</Value>
+      </Property>
+    </Properties>
+  </Part>
+</Object>
+```
+
+### Exemplo sanitizado 3 - `PRCExemploModuloA`
+
+- Perfil: `Procedure` diretamente sob `Module`, com qualificacao de modulo em `fullyQualifiedName`.
+- Uso operacional: contraste minimo para provar que qualificacao por modulo nao pode ser extrapolada para `Folder`.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Object parentGuid="GUID_MODULE_GENERAL_SERVICES" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2019-07-26T18:37:24.0000000Z" checksum="ca9dbb87d6d7a0949fb671454d480699" fullyQualifiedName="ModuloExemplo.Services.PRCExemploModuloA" moduleGuid="GUID_MODULE_GENERAL_SERVICES" guid="GUID_PRC_EXEMPLO_MODULO_A" name="PRCExemploModuloA" type="84a12160-f59b-4ad7-a683-ea4481ac23e9" description="Procedure Exemplo Modulo A" parent="ModuloExemplo.Services" parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117">
+  <Part type="528d1c06-a9c2-420d-bd35-21dca83f12ff">
+    <Source><![CDATA[Do case
+Endcase]]></Source>
+    <Properties>
+      <Property>
+        <Name>IsDefault</Name>
+        <Value>False</Value>
+      </Property>
+    </Properties>
+  </Part>
+</Object>
+```
+
+### Exemplo sanitizado 4 - `PRCExemploFolderDentroModuloA`
+
+- Perfil: `Procedure` em `Folder` dentro de `Module`; o modulo permanece em `fullyQualifiedName`, mas a pasta continua em `parent`.
+- Uso operacional: contraexemplo minimo para evitar o erro de promover nome de pasta para o nome qualificado.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Object parentGuid="GUID_PASTA_SYNC_EXEMPLO" user="SANITIZED\\USER" versionDate="0001-01-01T00:00:00.0000000" lastUpdate="2016-01-04T13:40:16.0000000Z" checksum="19894cc8d64aaf194ad4af2e684da9c6" fullyQualifiedName="ModuloExemplo.Services.PRCExemploFolderDentroModuloA" moduleGuid="GUID_MODULE_GENERAL_SERVICES" guid="GUID_PRC_EXEMPLO_FOLDER_DENTRO_MODULO_A" name="PRCExemploFolderDentroModuloA" type="84a12160-f59b-4ad7-a683-ea4481ac23e9" description="Procedure Exemplo Folder Dentro Modulo A" parent="ModuloExemplo.Services.PastaSyncExemplo" parentType="00000000-0000-0000-0000-000000000008">
+  <Part type="528d1c06-a9c2-420d-bd35-21dca83f12ff">
+    <Source><![CDATA[]]></Source>
+    <Properties>
+      <Property>
+        <Name>IsDefault</Name>
+        <Value>False</Value>
+      </Property>
+    </Properties>
+  </Part>
+</Object>
+```
+
 ## Moldes sanitizados completos de Stencil
 
 ### Molde sanitizado de Stencil 1 - `StencilCardResumoExemplo`

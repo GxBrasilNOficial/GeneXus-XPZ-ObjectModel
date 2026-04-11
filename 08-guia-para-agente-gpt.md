@@ -181,6 +181,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 
 - Evidência direta: ao gerar `Transaction` ou `WebPanel`, o agente deve partir de um molde XML completo
 - Evidência direta: o agente nao deve materializar objeto final a partir de resumo textual sem XML completo
+- Evidência direta: identidade estrutural de objeto sob `Folder` ou `Module` deve ser decidida por exemplar comparavel da mesma KB, conferindo em conjunto `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType` e `moduleGuid`
+- Regra operacional: nome de `Folder` nao deve ser promovido para `fullyQualifiedName` por analogia; primeiro classificar o conteiner por `parentType`, depois seguir o padrao do exemplar comparavel
 - Inferência forte: para `WebPanel`, os anexos completos de `04-webpanel-familias-e-templates.md` ja podem servir como molde sanitizado documentado
 - Inferência forte: para `Transaction`, `05-transaction-familias-e-templates.md` ja contem moldes sanitizados completos para as familias `F1`, `F2`, `F5` e `F6`
 - Inferência forte: para `Procedure`, `DataProvider`, `DataSelector`, `Panel`, `API`, `WorkWithForWeb`, `SDT`, `Domain`, `Theme`, `PackagedModule`, `DesignSystem`, `ColorPalette`, `ThemeClass`, `ThemeColor`, `Image`, `Table`, `Document`, `ExternalObject`, `UserControl`, `Module`, `SubTypeGroup`, `PatternSettings`, `DataStore`, `Dashboard`, `DeploymentUnit`, `Generator`, `Language`, `Folder`, `Stencil` e `File`, `01-base-empirica-geral.md` ja contem moldes sanitizados completos representativos

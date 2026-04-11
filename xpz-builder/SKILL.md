@@ -94,11 +94,16 @@ Reference files and when to load them:
    - WebPanel → use closest family from [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md)
    - Other types → use sanitized representative from [08-guia-para-agente-gpt](../08-guia-para-agente-gpt.md) materialization rules
    - If the object has already returned from the KB via official XPZ processing, prefer the current XML in the official corpus over any older delta/import working copy when selecting the base for a new change
+   - Before cloning identity fields, classify the container from comparable corpus XML: `Folder` (`parentType="00000000-0000-0000-0000-000000000008"`) versus `Module` (`parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117"`)
 5. Apply conservative cloning:
    - Preserve `Object/@guid` (new GUID only for new objects, never reuse existing object's GUID)
    - Preserve `parent`, `parentGuid`, `parentType`, `moduleGuid`
    - Keep all recurring Part types present, even if content is empty
    - Do NOT invent Part types not present in the template
+   - Validate identity as a 6-field set before serializing: `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`
+   - Do NOT derive `fullyQualifiedName` by concatenating `parent + "." + name`
+   - If `parentType` is `Folder`, treat the folder name as container only; it must appear in `parent`/`parentGuid`, not be promoted automatically into `fullyQualifiedName`
+   - If `parentType` is `Module`, allow module qualification in `fullyQualifiedName` only when comparable corpus objects of the same KB confirm that pattern
    - For `WebPanel`, verify where each relevant property is actually persisted before editing: `Conditions` may live in its own `Part`, while `ControlWhere`, `ControlBaseTable`, `ControlOrder`, `ControlUnique`, `PATTERN_ELEMENT_CUSTOM_PROPERTIES`, and `WebUserControlProperties` often live inside serialized layout metadata; follow the operational rules in [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
    - For `WebPanel`, do NOT treat template defaults mentioning `Conditions` as proof that a real filter is materialized in the object
    - Before generating a new delta for an object that already returned from the KB, compare any intermediate import/delta copy against the official corpus XML and rebase on the official corpus if the working copy is stale
@@ -114,6 +119,7 @@ Reference files and when to load them:
    - All recurring Part types present
    - No text placeholder GUIDs remaining
    - Template and target share the same structural family
+   - Container identity matches comparable corpus evidence for `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
    - When the case depends on IDE-oriented editing, prefer the syntax and structure accepted by the editor/importer, not only what appears to work at runtime
    - Treat structural XML validation, package-envelope validation, and semantic-contract validation as separate checks
    - Well-formed XML and an acceptable envelope do NOT prove that signatures, formulas, or business meaning are correct
@@ -133,6 +139,7 @@ Reference files and when to load them:
 - [ ] Template selected from empirical corpus (not reconstructed from descriptions)
 - [ ] `Object/@guid` valid and appropriate (preserved or newly generated)
 - [ ] `parent*` and `moduleGuid` preserved from template or context
+- [ ] `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, and `moduleGuid` were checked together against comparable corpus XML
 - [ ] All recurring Part types present (even if empty)
 - [ ] No invented Part type GUIDs
 - [ ] Envelope complete: `<ExportFile>`, `<KMW>`, `<Source>`, `<Objects>`, `<Dependencies>`
@@ -148,9 +155,11 @@ Reference files and when to load them:
 - NEVER invent a Part type GUID not present in the selected template
 - NEVER affirm import or build success — state "requires external IDE validation"
 - NEVER treat `runtime`, `Import File Load`, `Import`, and `Specification` as interchangeable evidence
+- NEVER promote a `Folder` name into `fullyQualifiedName` by analogy or by string concatenation alone
 - NEVER propose a business filter over status, authorization, cancellation, invoicing, balance, availability, or similar functional meaning if the chosen field is still semantically justified only by its name or UI label
 - NEVER generate from a text description or markdown summary alone — requires comparable raw XML template
 - NEVER generate special KB block (`KnowledgeBase`, `Settings`) for normal single-object XPZ
 - ABORT if risk is high/very high and no internal comparable template is available
 - ABORT if type has fewer than 5 specimens in the corpus and no sanitized template exists
+- ABORT if container identity is unresolved between `Folder` and `Module` for the target object
 - Absolute rules in [00-readme-genexus-xpz-xml.md](../00-readme-genexus-xpz-xml.md) and [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) take precedence over all other heuristics

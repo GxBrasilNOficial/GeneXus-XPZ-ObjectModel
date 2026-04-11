@@ -43,8 +43,10 @@ Do NOT use this skill for:
 - Identify `Object/@type` and map to known object category using [01-base-empirica-geral](../01-base-empirica-geral.md)
 - Map Part types present in input against observed frequencies and known patterns
 - Classify object family when applicable: WebPanel families in [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md), Transaction families in [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md)
+- Classify container identity from `parentType` and check whether the object is under `Folder` or `Module`
 - Assign risk level using [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
 - Identify structural anomalies: unexpected Part types, missing recurring parts, malformed envelope
+- Identify identity anomalies involving `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
 - Declare confidence level for every conclusion: `Direct evidence` / `Strong inference` / `Hypothesis`
 - Never affirm import or build compatibility — structural analysis only
 
@@ -83,14 +85,17 @@ Reference files and when to load them:
 2. Locate `Object/@type` attribute → cross-reference against [01-base-empirica-geral](../01-base-empirica-geral.md) type catalog
 3. Enumerate Part types present (`<Part type="...">`) → compare against observed frequencies for that type
 4. Identify missing or unexpected Part types relative to the known structural pattern
-5. If type is WebPanel → load [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md) and classify family
-6. If type is Transaction → load [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md) and classify family (F1–F6)
-7. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-8. Report result:
+5. Read container identity fields (`fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`) and classify the container as `Folder`, `Module`, or unresolved from comparable corpus evidence
+6. If type is WebPanel → load [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md) and classify family
+7. If type is Transaction → load [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md) and classify family (F1–F6)
+8. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+9. Report result:
    - Object type and canonical name
+   - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
    - Risk level
    - Part types: present / expected / missing
+   - Identity fields: `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`
    - Confidence level for each conclusion
    - Any structural anomalies detected
 
@@ -100,6 +105,7 @@ Reference files and when to load them:
 
 - [ ] `Object/@type` identified and mapped to known category
 - [ ] Part types enumerated and compared against corpus frequencies
+- [ ] Container identity classified from `parentType` and comparable corpus evidence
 - [ ] Risk level stated with source reference
 - [ ] Family classified when type supports it (WebPanel, Transaction)
 - [ ] Confidence level declared for every conclusion
