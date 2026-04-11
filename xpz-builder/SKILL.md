@@ -102,6 +102,8 @@ Reference files and when to load them:
    - For `WebPanel`, verify where each relevant property is actually persisted before editing: `Conditions` may live in its own `Part`, while `ControlWhere`, `ControlBaseTable`, `ControlOrder`, `ControlUnique`, `PATTERN_ELEMENT_CUSTOM_PROPERTIES`, and `WebUserControlProperties` often live inside serialized layout metadata; follow the operational rules in [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
    - For `WebPanel`, do NOT treat template defaults mentioning `Conditions` as proof that a real filter is materialized in the object
    - Before generating a new delta for an object that already returned from the KB, compare any intermediate import/delta copy against the official corpus XML and rebase on the official corpus if the working copy is stale
+   - If a filter, business rule, or functional interpretation depends on a calculated or derived field, open the field formula/source and review the immediate chain of called procedures before defining the condition
+   - Do NOT conclude the semantic meaning of a calculated or derived field from its name, label, or mere XML presence
 6. Apply envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md):
    - Wrap in `<ExportFile>` with `<KMW>`, `<Source>`, `<Objects>`, `<Dependencies>`
    - Keep `Source/@kb` and `Source/Version/@guid` in valid GUID format
@@ -113,6 +115,10 @@ Reference files and when to load them:
    - No text placeholder GUIDs remaining
    - Template and target share the same structural family
    - When the case depends on IDE-oriented editing, prefer the syntax and structure accepted by the editor/importer, not only what appears to work at runtime
+   - Treat structural XML validation, package-envelope validation, and semantic-contract validation as separate checks
+   - Well-formed XML and an acceptable envelope do NOT prove that signatures, formulas, or business meaning are correct
+   - If a shared procedure changed its `parm(...)`, review all direct call sites explicitly before concluding the delta
+   - This review must include wrappers, business procedures, WorkWith filters, and formulas that call the procedure when applicable
 9. Deliver XML with limitations block:
    - Which template was used
    - Confidence level
@@ -132,6 +138,7 @@ Reference files and when to load them:
 - [ ] Envelope complete: `<ExportFile>`, `<KMW>`, `<Source>`, `<Objects>`, `<Dependencies>`
 - [ ] `lastUpdate` is a real timestamp, not a placeholder
 - [ ] `Source/@kb` and `Source/Version/@guid` are valid GUIDs
+- [ ] If a shared procedure changed its `parm(...)`, all relevant direct call sites were reviewed explicitly
 - [ ] Limitations block included in output
 
 ---
@@ -141,6 +148,7 @@ Reference files and when to load them:
 - NEVER invent a Part type GUID not present in the selected template
 - NEVER affirm import or build success — state "requires external IDE validation"
 - NEVER treat `runtime`, `Import File Load`, `Import`, and `Specification` as interchangeable evidence
+- NEVER propose a business filter over status, authorization, cancellation, invoicing, balance, availability, or similar functional meaning if the chosen field is still semantically justified only by its name or UI label
 - NEVER generate from a text description or markdown summary alone — requires comparable raw XML template
 - NEVER generate special KB block (`KnowledgeBase`, `Settings`) for normal single-object XPZ
 - ABORT if risk is high/very high and no internal comparable template is available

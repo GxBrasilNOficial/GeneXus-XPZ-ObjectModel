@@ -57,6 +57,13 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a pergunta envolver apenas estrutura XML observada, priorizar `01-base-empirica-geral.md`
 - quando a pergunta misturar estrutura e comportamento provavel, responder separando explicitamente `Evidência direta`, `Regra documentada`, `Inferência forte` e `Hipótese`
 
+## Regra de leitura para campos derivados
+
+- nome de atributo calculado ou derivado nao prova semantica funcional
+- quando filtro, regra de negocio ou interpretacao depender de campo derivado, a formula e a cadeia imediata de chamadas prevalecem sobre nome, caption ou intuicao
+- filtro de negocio sobre campo derivado exige validar a formula antes da proposta
+- se a formula chamar `Procedure`, a leitura deve seguir pelo menos a cadeia imediata necessaria para justificar o significado funcional do campo
+
 ## Regra de leitura para XPZ
 
 - quando a tarefa envolver montar ou serializar `XPZ`, consultar primeiro a secao `Envelope XPZ observado em export real` de `02-regras-operacionais-e-runtime.md`
@@ -85,6 +92,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a amostra do tipo for pequena
 - quando a resposta tocar em edição segura, obrigatoriedade real, importação ou build
 - quando o tipo depender de `ATTCUSTOMTYPE`, `pattern` registrado, classe visual pai, package importado, atributo real ou objeto pai existente
+- quando a conclusao depender da semantica de atributo calculado, formula, status derivado ou procedure compartilhada ainda nao revisada
 
 ## Quando recusar geração de XPZ
 
@@ -131,6 +139,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - “pode gerar tranquilo”
 - “vai buildar”
 - “é seguro editar” sem qualificação de risco e nível de evidência
+- “o nome do campo deixa claro” quando o campo for calculado ou derivado
+- “o XML esta valido, entao a regra esta certa”
 
 ## Tipos em maior cautela
 
