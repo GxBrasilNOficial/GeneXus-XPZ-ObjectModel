@@ -11,7 +11,7 @@ Invoca os scripts locais do repositório GeneXus ativo para sincronizar XMLs ind
 
 ## GUIDELINE
 
-Identificar a raiz do repositório pelo contexto, localizar os scripts de sincronização na pasta `scripts\`, montar o comando correto e executá-lo via Bash. Reportar o resultado de forma clara. Não alterar arquivos manualmente — delegar tudo ao script.
+Identificar a raiz do repositório pelo contexto, localizar os scripts de sincronização na pasta `scripts\`, montar o comando correto e executá-lo via Bash. Reportar o resultado de forma clara. Não alterar arquivos manualmente — delegar tudo ao script. Tratar `ObjetosDaKbEmXml` como snapshot oficial somente leitura para agentes e não antecipar manualmente nenhuma promoção para esse acervo.
 
 ## PATH RESOLUTION
 
@@ -78,11 +78,19 @@ Os wrappers seguem esta convenção de parâmetros:
 1. Identificar se é atualização diária ou conferência de full snapshot
 2. Resolver a raiz do repositório pelo contexto
 3. Ler o `README.md` local para identificar os nomes dos wrappers
-4. Confirmar o `InputPath` com o usuário se não foi fornecido
-5. Montar o comando com os parâmetros corretos
-6. Executar via Bash com `pwsh -File ...`
-7. Reportar: objetos criados, atualizados, ignorados, resíduos removidos e resumo Git
-8. Quando um objeto voltar da KB via `xpz` e for materializado no acervo oficial, tratar esse XML do acervo como a fonte mais confiável para alterações futuras; não reutilizar cópia intermediária/delta sem comparar com o acervo atualizado
+4. Distinguir explicitamente as áreas operacionais locais:
+   - `ObjetosDaKbEmXml` = snapshot oficial atualizado apenas pelo fluxo do script
+   - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = área de trabalho para XML local de importação manual
+   - `PacotesGeradosParaImportacaoNaKbNoGenexus` = área de pacotes gerados localmente
+5. Se detectar alterações locais indevidas em `ObjetosDaKbEmXml`, reportar isso como incidente de processo:
+   - Preservar o material de trabalho em `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+   - Restaurar `ObjetosDaKbEmXml` para a versão oficial do Git
+   - Registrar um manifesto dos itens preservados antes de retomar o fluxo normal
+6. Confirmar o `InputPath` com o usuário se não foi fornecido
+7. Montar o comando com os parâmetros corretos
+8. Executar via Bash com `pwsh -File ...`
+9. Reportar: objetos criados, atualizados, ignorados, resíduos removidos e resumo Git
+10. Quando um objeto voltar da KB via `xpz` e for materializado no acervo oficial, tratar esse XML do acervo como a fonte mais confiável para alterações futuras; não reutilizar cópia intermediária/delta sem comparar com o acervo atualizado
 
 ---
 
@@ -92,6 +100,9 @@ Os wrappers seguem esta convenção de parâmetros:
 - NUNCA assumir caminhos absolutos privados — sempre derivar da raiz do repositório
 - NUNCA assumir os nomes dos wrappers sem consultar o `README.md` local
 - NUNCA mover arquivos entre pastas de trabalho e acervo — responsabilidade do fluxo oficial
+- NUNCA tratar XML local gerado para importação manual como se já fosse snapshot oficial da KB
+- NUNCA criar, alterar, mover, renomear ou sobrescrever arquivos em `ObjetosDaKbEmXml` fora do fluxo oficial do script `.ps1`
+- NUNCA antecipar atualização manual de `ObjetosDaKbEmXml`
 - NUNCA reutilizar automaticamente artefato de importação/delta como base de nova alteração se o mesmo objeto já tiver voltado da KB e sido materializado no acervo oficial
 - Antes de gerar novo delta de objeto já retornado da KB, comparar a cópia intermediária com o XML atual do acervo e rebasear no acervo se houver defasagem
 - Se o script não for encontrado na raiz resolvida, reportar o erro e perguntar ao usuário antes de tentar qualquer alternativa

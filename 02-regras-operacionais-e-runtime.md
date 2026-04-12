@@ -70,6 +70,51 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: objeto reenviado apenas por dependencia ou composicao de pacote deve preservar o `lastUpdate` oficial do XML da KB.
 - `Regra operacional`: empacotamento nao deve prosseguir enquanto o `lastUpdate` do arquivo final nao tiver sido conferido no proprio XML salvo.
 
+## Topologia operacional do workspace
+
+- `Regra operacional`: `ObjetosDaKbEmXml` e o snapshot oficial da KB e deve ser tratado como somente leitura para agentes.
+- `Regra operacional`: agente nunca pode criar, alterar, mover, renomear ou sobrescrever arquivos em `ObjetosDaKbEmXml`.
+- `Regra operacional`: a unica origem oficial de atualizacao de `ObjetosDaKbEmXml` e o script `.ps1` do fluxo de sincronizacao alimentado por `XPZ` exportado pela IDE.
+- `Regra operacional`: XML gerado, clonado ou ajustado localmente nunca deve ser tratado como se ja fosse snapshot oficial da KB.
+- `Regra operacional`: `ObjetosGeradosParaImportacaoNaKbNoGenexus` e a area de trabalho para XMLs gerados, clonados, ajustados ou preservados para importacao manual na IDE.
+- `Regra operacional`: `PacotesGeradosParaImportacaoNaKbNoGenexus` e a area de saida para `import_file.xml` e demais pacotes gerados localmente.
+- `Regra operacional`: na area ativa de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, os XMLs candidatos do lote devem ficar juntos na raiz, sem subpastas por tipo, salvo regra local explicita do repositorio.
+- `Regra operacional`: agente nunca deve criar subpastas por tipo automaticamente em `ObjetosGeradosParaImportacaoNaKbNoGenexus`.
+- `Regra operacional`: agente nunca deve mover XMLs para `ArquivoMorto` sem pedido explicito do usuario.
+- `Regra operacional`: quando houver conflito entre habito anterior do agente e documentacao local do repositorio, a documentacao local prevalece.
+
+## Contaminacao de workspace e isolamento de lote
+
+- `Regra operacional`: antes de empacotar, listar os XMLs ativos na raiz de `ObjetosGeradosParaImportacaoNaKbNoGenexus` e tratar esse conjunto como lote candidato.
+- `Regra operacional`: se houver mais de um lote plausivel na pasta de geracao, o agente deve bloquear o empacotamento por contaminacao de workspace.
+- `Regra operacional`: o agente nao deve inferir o lote correto apenas por recencia se houver risco de mistura de frentes.
+- `Regra operacional`: o agente nao deve fechar pacote por inferencia quando houver mais de um lote plausivel no workspace.
+- `Regra operacional`: a ordem obrigatoria antes de empacotar e: isolar lote, classificar raizes, validar `lastUpdate`, validar BOM, validar manifesto e so entao serializar o pacote.
+- `Regra operacional`: se um pacote anterior perder validade por mudanca de direcao da frente, ele deve ser marcado como provisório ou obsoleto e deixar de ser tratado como candidato principal.
+
+## Protocolo para alteracoes indevidas no snapshot oficial
+
+- `Regra operacional`: se o agente detectar alteracoes locais preexistentes em `ObjetosDaKbEmXml`, deve presumir erro de processo ate esclarecimento em contrario.
+- `Regra operacional`: nesse cenario, o fluxo seguro e preservar esses XMLs em `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restaurar `ObjetosDaKbEmXml` para a versao oficial do Git e registrar manifesto dos itens preservados.
+- `Regra operacional`: o agente nao deve empacotar diretamente a partir de `ObjetosDaKbEmXml` alterado.
+
+## Checklist obrigatorio antes do empacotamento
+
+- `Regra operacional`: antes de empacotar, classificar cada XML ativo como `alterado na rodada` ou `reenviado sem mudanca por dependencia obrigatoria`.
+- `Regra operacional`: se o objeto foi realmente modificado nesta rodada, o `lastUpdate` deve refletir o instante real da ultima gravacao.
+- `Regra operacional`: se o objeto nao foi modificado e entrou apenas para dependencia obrigatoria ou composicao minima do pacote, o `lastUpdate` oficial anterior deve ser preservado.
+- `Regra operacional`: o empacotamento deve abortar quando houver divergencia entre a classificacao do item e o `lastUpdate` materializado.
+- `Regra operacional`: antes de empacotar, classificar a raiz top-level de cada XML ativo em `Object`, `Attribute` ou `outro tipo`.
+- `Regra operacional`: `Object` top-level deve entrar em `<Objects>`.
+- `Regra operacional`: `Attribute` top-level deve entrar em `<Attributes>`.
+- `Regra operacional`: nunca colocar `Attribute` top-level dentro de `<Objects>`.
+- `Regra operacional`: se surgir raiz top-level nao suportada pelo fluxo atual, o empacotamento deve abortar ou exigir tratamento explicito.
+- `Regra operacional`: XML gerado localmente deve ser salvo em UTF-8 sem BOM.
+- `Regra operacional`: antes de empacotar, verificar presenca de BOM UTF-8 no inicio de todos os XMLs ativos.
+- `Regra operacional`: se houver BOM, remover e registrar a correcao como higiene operacional.
+- `Regra operacional`: antes de gerar `import_file.xml` ou `.xpz`, produzir ou validar manifesto do lote com nome do arquivo, tipo de raiz, `guid`, `name`, `fullyQualifiedName` quando existir e `lastUpdate`.
+- `Regra operacional`: esse manifesto deve servir para conferencia humana e para bloquear mistura de frentes.
+
 ### Exemplo sanitizado do envelope observado
 
 ```xml

@@ -48,6 +48,13 @@ Do NOT use this skill for:
 - Apply XPZ envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
 - Treat `runtime`, `Import File Load`, `Import`, and `Specification` as distinct validation layers; success in one does not authorize conclusions about the others
 - Generate valid `lastUpdate` timestamp (real local time, not placeholder)
+- Treat `ObjetosDaKbEmXml` as official snapshot and read-only for agents
+- Use `ObjetosGeradosParaImportacaoNaKbNoGenexus` as the working area for locally generated or preserved XML
+- Use `PacotesGeradosParaImportacaoNaKbNoGenexus` as the destination area for locally generated packages
+- Detect workspace contamination before packaging and abort when more than one plausible batch is active
+- Build or validate a manifest for the candidate batch before packaging
+- Classify each active XML root as `Object`, `Attribute`, or unsupported before serializing the package
+- Validate UTF-8 without BOM hygiene on active XMLs before packaging
 - Reread and apply local repository documentation (`AGENTS.md`, `README.md`, and equivalent project docs) before packaging whenever the target KB/repository defines specific functional review rules, contracts, or operational flow
 - Ensure all GUIDs are syntactically valid (no text placeholders like `"YOUR-GUID-HERE"`)
 - Validate XML structure before delivery
@@ -86,18 +93,29 @@ Reference files and when to load them:
 ## WORKFLOW
 
 1. Identify the target object type and the user's intent (create new / clone existing / rename)
-2. Load [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md) → assign risk level
-3. Evaluate abort conditions:
+2. Reread local repository documentation and resolve the operational topology for this KB/repository:
+   - `ObjetosDaKbEmXml` = official snapshot, read-only for agents
+   - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = working area for local XMLs to import manually
+   - `PacotesGeradosParaImportacaoNaKbNoGenexus` = output area for locally generated packages
+3. List active XMLs in the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus` and treat them as the candidate batch
+4. Evaluate batch isolation before packaging:
+   - If more than one plausible batch is present in the workspace → **ABORT**
+   - Do NOT infer the correct batch only from recency when there is contamination risk
+   - If an older package lost validity after a change of direction, mark it as provisional/obsolete before continuing
+5. Check for improper local changes in `ObjetosDaKbEmXml`:
+   - If detected, preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, register a manifest of preserved items, and **ABORT** packaging until the snapshot is sane
+6. Load [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md) → assign risk level
+7. Evaluate abort conditions:
    - Risk is high/very high AND no comparable internal template exists → **ABORT**
    - Type is not in the empirical corpus → **ABORT**
    - User requests affirmation of import/build success → **REFUSE**, state limitation
-4. Locate template:
+8. Locate template:
    - Transaction → use family F1–F6 from [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md)
    - WebPanel → use closest family from [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md)
    - Other types → use sanitized representative from [08-guia-para-agente-gpt](../08-guia-para-agente-gpt.md) materialization rules
    - If the object has already returned from the KB via official XPZ processing, prefer the current XML in the official corpus over any older delta/import working copy when selecting the base for a new change
    - Before cloning identity fields, classify the container from comparable corpus XML: `Folder` (`parentType="00000000-0000-0000-0000-000000000008"`) versus `Module` (`parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117"`)
-5. Apply conservative cloning:
+9. Apply conservative cloning:
    - Preserve `Object/@guid` (new GUID only for new objects, never reuse existing object's GUID)
    - Preserve `parent`, `parentGuid`, `parentType`, `moduleGuid`
    - Keep all recurring Part types present, even if content is empty
@@ -115,22 +133,33 @@ Reference files and when to load them:
    - Each introduced `Source` construct must be anchored by layer-1 methodological evidence from this XPZ trail: explicit rule, sanitized example, or documented template
    - Local KB corpus may confirm or disambiguate the choice, but does NOT replace layer-1 methodological evidence
    - If an essential `Source` construct is still justified only by plausibility, generic GeneXus memory, or isolated local corpus evidence, rewrite it using documented patterns or **ABORT**
-6. Apply envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md):
+10. Apply envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md):
    - Wrap in `<ExportFile>` with `<KMW>`, `<Source>`, `<Objects>`, `<Dependencies>`
    - Keep `Source/@kb` and `Source/Version/@guid` in valid GUID format
    - Do NOT include special KB block unless explicitly documented as required
-7. Set `lastUpdate` to real local timestamp
-7.5. Audit `lastUpdate` after every local write:
+11. Set or preserve `lastUpdate` according to the batch-role classification:
+   - Classify each active XML as `modified in this round` or `reused unchanged for mandatory dependency closure`
+   - Modified object → set `lastUpdate` to the real local timestamp of the final write
+   - Unchanged dependency object → preserve the official `lastUpdate` from the official corpus XML
+   - If classification and materialized `lastUpdate` diverge → **ABORT**
+11.5. Audit `lastUpdate` after every local write:
    - After writing or rewriting an object XML, reopen the saved file and confirm the root `lastUpdate`
    - If the object was actually modified, `lastUpdate` must reflect the real instant of that last write
-   - If the object was not modified and is included only for dependency closure, preserve the official `lastUpdate` from the corpus XML
+   - If the object was not modified and is included only for mandatory dependency closure, preserve the official `lastUpdate` from the corpus XML
    - Do NOT continue to packaging until the saved-file header has been checked
-8. Reread and apply local repository documentation before packaging:
+12. Before packaging, classify active XML roots and validate packaging hygiene:
+   - `Object` top-level → serialize under `<Objects>`
+   - `Attribute` top-level → serialize under `<Attributes>`
+   - Unsupported root type → **ABORT** or require explicit treatment
+   - Validate UTF-8 without BOM on every active XML
+   - If BOM is present, remove it and register the correction
+   - Produce or validate a manifest containing file name, root type, `guid`, `name`, `fullyQualifiedName` when present, and `lastUpdate`
+13. Reread and apply local repository documentation before packaging:
    - Reopen `AGENTS.md`, `README.md`, and any equivalent local KB/repository documentation that defines project-specific functional review chains, contracts, or operational flow
    - Treat those local conventions as mandatory only for that repository, not as universal XPZ methodology
    - If the local documentation requires a functional review chain for the current change type, verify that chain end-to-end in the local XML before packaging
    - Do NOT continue to packaging while any applicable local rule remains pending, ambiguous, or inconsistent in the saved XML
-9. Validate:
+14. Validate:
    - XML is well-formed
    - All recurring Part types present
    - No text placeholder GUIDs remaining
@@ -149,7 +178,7 @@ Reference files and when to load them:
    - Do NOT conclude from an isolated line; use the terminal relevant stage of the log plus the set of blocking messages
    - If some objects failed and others succeeded, report the result as partial instead of collapsing it into full success or full package failure
    - Confirm before packaging that all applicable local repository rules were reread and satisfied in the saved XML
-10. Deliver XML with limitations block:
+15. Deliver XML with limitations block:
    - Which template was used
    - Confidence level
    - That the saved XML was reread and the persisted `lastUpdate` was confirmed after the final local write
@@ -170,9 +199,18 @@ Reference files and when to load them:
 - [ ] No invented Part type GUIDs
 - [ ] Envelope complete: `<ExportFile>`, `<KMW>`, `<Source>`, `<Objects>`, `<Dependencies>`
 - [ ] `lastUpdate` is a real timestamp, not a placeholder
+- [ ] Active XMLs were classified as `modified in this round` or `reused unchanged for mandatory dependency closure`
 - [ ] Every modified object XML was reread after writing and its saved `lastUpdate` was confirmed
 - [ ] Every unchanged object reused only for dependency closure preserved the official `lastUpdate`
 - [ ] Embedded objects in `import_file.xml` were checked for correct `lastUpdate` handling before delivery
+- [ ] `ObjetosDaKbEmXml` was treated as read-only official snapshot
+- [ ] Active XMLs were listed from the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+- [ ] Candidate batch was isolated; no workspace contamination remained
+- [ ] Root type of every active XML was classified before package serialization
+- [ ] No top-level `Attribute` was placed under `<Objects>`
+- [ ] UTF-8 BOM hygiene was checked on every active XML
+- [ ] Batch manifest was produced or validated before packaging
+- [ ] Any superseded package was marked as provisional/obsolete before continuing
 - [ ] Applicable local repository documentation was reread before packaging
 - [ ] Applicable local functional review chains, contracts, and operational rules were verified end-to-end in the saved XML before packaging
 - [ ] `Source/@kb` and `Source/Version/@guid` are valid GUIDs
@@ -197,6 +235,11 @@ Reference files and when to load them:
 - NEVER propose a business filter over status, authorization, cancellation, invoicing, balance, availability, or similar functional meaning if the chosen field is still semantically justified only by its name or UI label
 - NEVER treat plausible GeneXus `Source` as ready when its new syntax is not anchored in the methodological base of this trail
 - NEVER deliver XML or package with static, inherited, stale, or non-rechecked `lastUpdate`
+- NEVER create, alter, move, rename, or overwrite files in `ObjetosDaKbEmXml`
+- NEVER treat locally generated XML as if it were the official KB snapshot
+- NEVER create automatic subfolders by type under `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+- NEVER move files to `ArquivoMorto` without explicit user request
+- NEVER place a top-level `Attribute` under `<Objects>`
 - NEVER treat an IDE-side lateral error as proof that the XML/package structure failed
 - NEVER treat a successful package load as proof that Source, Specification, or runtime are valid
 - NEVER universalize a repository-specific functional review rule, contract, or operational convention as if it were a global rule of the shared XPZ methodology
@@ -205,6 +248,10 @@ Reference files and when to load them:
 - ABORT if risk is high/very high and no internal comparable template is available
 - ABORT if type has fewer than 5 specimens in the corpus and no sanitized template exists
 - ABORT if container identity is unresolved between `Folder` and `Module` for the target object
+- ABORT if more than one plausible batch is active in the workspace
+- ABORT if improper local changes are detected in `ObjetosDaKbEmXml` and the snapshot has not been sanitized yet
+- ABORT if classification of an item as modified vs unchanged dependency does not match the materialized `lastUpdate`
+- ABORT if an active XML has an unsupported top-level root type for the current package flow
 - ABORT if a modified object was rewritten locally but the saved-file `lastUpdate` was not verified before packaging
 - ABORT if applicable local repository documentation was not reread before packaging
 - ABORT if a local functional review chain, contract, or operational rule required by the target KB is still pending or inconsistent in the saved XML

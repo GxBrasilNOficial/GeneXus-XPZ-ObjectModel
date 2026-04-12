@@ -74,11 +74,19 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 ## Regra de leitura para XPZ
 
 - quando a tarefa envolver montar ou serializar `XPZ`, consultar primeiro a secao `Envelope XPZ observado em export real` de `02-regras-operacionais-e-runtime.md`
+- quando a tarefa envolver gerar, ajustar, preservar ou empacotar XMLs, distinguir explicitamente as tres areas operacionais do repositorio: `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- nesta trilha, `ObjetosDaKbEmXml` e snapshot oficial e somente leitura para agentes
+- nesta trilha, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e a area de trabalho para XMLs a importar manualmente na IDE
+- nesta trilha, `PacotesGeradosParaImportacaoNaKbNoGenexus` e a area de saida para pacotes gerados localmente
+- nesta trilha, a promocao para snapshot oficial ocorre apenas pelo script `.ps1` alimentado por `XPZ` exportado pela IDE
 - nao presumir `Objects.xml` isolado nem manifesto externo separado se isso nao estiver documentado no `02`
 - usar o envelope sanitizado documentado na base como referencia estrutural antes de pedir XML externo adicional
 - depois da bateria de importacao e da consulta ao acervo real, separar explicitamente `problema de envelope`, `problema de shape minimo` e `problema de dependencia da KB`
 - se existir export real comparavel da IDE para a mesma composicao de objetos, esse export deve prevalecer sobre envelope leve hipotetico
 - em pacote misto com `Transaction`, `WorkWithForWeb` e `Procedure`, preferir pacote embutido comparavel antes de tentar envelope por `FilePath`
+- se houver mais de um lote plausivel no workspace, o agente deve parar antes de empacotar e sinalizar contaminacao de workspace
+- o agente nao deve fechar pacote por inferencia, por recencia presumida ou por mistura implícita de frentes
+- a ordem obrigatoria e: isolar lote, classificar raizes, validar `lastUpdate`, validar BOM, validar manifesto e so entao empacotar
 
 ## Regra de leitura para logs de importacao
 
@@ -199,6 +207,15 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 
 - Evidência direta: ao gerar `Transaction` ou `WebPanel`, o agente deve partir de um molde XML completo
 - Evidência direta: o agente nao deve materializar objeto final a partir de resumo textual sem XML completo
+- Regra operacional: antes de empacotar, classificar cada XML ativo como `alterado na rodada` ou `reenviado sem mudanca por dependencia obrigatoria`
+- Regra operacional: se o objeto foi realmente alterado na rodada, o `lastUpdate` deve refletir o instante real da ultima gravacao
+- Regra operacional: se o objeto entrou apenas por dependencia obrigatoria ou composicao minima do pacote, o `lastUpdate` oficial anterior deve ser preservado
+- Regra operacional: o agente deve abortar o empacotamento quando houver divergencia entre a classificacao do item e o `lastUpdate` materializado
+- Regra operacional: antes de serializar o pacote, classificar as raizes top-level em `Object`, `Attribute` ou `outro tipo`
+- Regra operacional: `Object` top-level entra em `<Objects>` e `Attribute` top-level entra em `<Attributes>`
+- Regra operacional: raiz top-level nao suportada deve bloquear o empacotamento ate tratamento explicito
+- Regra operacional: XML gerado localmente deve ser salvo em UTF-8 sem BOM; se houver BOM, remover e registrar a correcao
+- Regra operacional: antes de gerar `import_file.xml` ou `.xpz`, produzir ou validar manifesto do lote com arquivo, tipo de raiz, `guid`, `name`, `fullyQualifiedName` quando existir e `lastUpdate`
 - Evidência direta: identidade estrutural de objeto sob `Folder` ou `Module` deve ser decidida por exemplar comparavel da mesma KB, conferindo em conjunto `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType` e `moduleGuid`
 - Regra operacional: nome de `Folder` nao deve ser promovido para `fullyQualifiedName` por analogia; primeiro classificar o conteiner por `parentType`, depois seguir o padrao do exemplar comparavel
 - Evidência direta: compatibilidade de `Source` deve ser decidida primeiro pela propria trilha XPZ, usando regra explicita, exemplo sanitizado ou molde documentado, mesmo quando a KB ainda tiver corpus pequeno

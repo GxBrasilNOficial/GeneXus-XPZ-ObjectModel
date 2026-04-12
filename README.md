@@ -58,6 +58,13 @@ Se você quer entender a base rapidamente:
 - existe uma pasta privada separada, `GeneXus-XPZ-PrivateMap`, usada apenas para rastreabilidade editorial privada entre aliases públicos e artefatos reais; a fonte publicada continua sendo esta raiz
 - todo novo exemplo sanitizado incorporado na base pública deve receber anotação correspondente no `GeneXus-XPZ-PrivateMap`, ligando o trecho público aos objetos ou pacotes reais de origem
 
+### Topologia operacional
+
+- `ObjetosDaKbEmXml`: snapshot oficial da KB; somente leitura para agentes
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabalho para XMLs gerados, ajustados ou preservados para importação manual na IDE
+- `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de saída para `import_file.xml` e demais pacotes gerados localmente
+- a promoção para `ObjetosDaKbEmXml` ocorre apenas pelo fluxo oficial do script `.ps1` alimentado por `XPZ` exportado pela IDE
+
 ### Automação operacional
 
 - o script `scripts/Sync-GeneXusXpzToXml.ps1` faz parte da infraestrutura operacional desta base e nao deve ser removido do repositório público
@@ -122,6 +129,13 @@ Si quieres entender la base rápidamente:
 - moldes sanitizados completos pueden servir como punto de partida en escenarios específicos documentados en la propia base; resúmenes textuales y ejemplos incompletos no sirven como fuente final de materialización
 - el contenido fue organizado para reducir prueba y error, no para eliminar riesgo
 
+### Topología operativa
+
+- `ObjetosDaKbEmXml`: snapshot oficial de la KB; solo lectura para agentes
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabajo para XMLs generados, ajustados o preservados para importación manual en la IDE
+- `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de salida para `import_file.xml` y demás paquetes generados localmente
+- la promoción hacia `ObjetosDaKbEmXml` ocurre solo por el flujo oficial del script `.ps1` alimentado por el `XPZ` exportado por la IDE
+
 ---
 
 ## English
@@ -177,3 +191,10 @@ If you want to understand the repository quickly:
 - the base already includes documented import tests in controlled cases, but that still does not remove risk
 - complete sanitized templates can serve as a starting point in specific scenarios documented in the base itself; textual summaries and incomplete examples are not valid as the final source for materialization
 - the content is meant to reduce trial and error, not to eliminate risk
+
+### Operational Topology
+
+- `ObjetosDaKbEmXml`: official KB snapshot; read-only for agents
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus`: working area for XMLs generated, adjusted, or preserved for manual IDE import
+- `PacotesGeradosParaImportacaoNaKbNoGenexus`: output area for `import_file.xml` and other locally generated packages
+- promotion into `ObjetosDaKbEmXml` happens only through the official `.ps1` script flow fed by the XPZ exported from the IDE

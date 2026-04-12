@@ -11,7 +11,7 @@ Gera, recompõe e atualiza documentação Markdown a partir do acervo XML do rep
 
 ## GUIDELINE
 
-Identificar a raiz do repositório pelo contexto, localizar os scripts documentais em `scripts\`, resolver caminhos de entrada e saída a partir do cenário atual e delegar a geração ou atualização aos scripts apropriados. Evitar edição manual de `.md` longos quando houver fluxo automatizável.
+Identificar a raiz do repositório pelo contexto, localizar os scripts documentais em `scripts\`, resolver caminhos de entrada e saída a partir do cenário atual e delegar a geração ou atualização aos scripts apropriados. Evitar edição manual de `.md` longos quando houver fluxo automatizável. Ao documentar acervo XML, distinguir snapshot oficial de artefato local de trabalho.
 
 ## PATH RESOLUTION
 
@@ -98,8 +98,9 @@ Se o repositório ainda mantiver wrappers especializados, eles devem ser tratado
 3. Localizar `scripts\` e confirmar a existência do script adequado
 4. Confirmar ou derivar caminhos de entrada e saída
 5. Executar o script com parâmetros explícitos
-6. Reler o início do arquivo gerado ou alterado, a seção modificada e a transição seguinte
-7. Reportar o que foi criado, atualizado ou substituído
+6. Se a documentação citar XML vindo de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, rotular isso como artefato de trabalho e não como snapshot oficial
+7. Reler o início do arquivo gerado ou alterado, a seção modificada e a transição seguinte
+8. Reportar o que foi criado, atualizado ou substituído
 
 ---
 
@@ -109,4 +110,5 @@ Se o repositório ainda mantiver wrappers especializados, eles devem ser tratado
 - NUNCA editar `.md` longos manualmente se houver script apropriado
 - NUNCA reescrever uma seção sem identificar corretamente o título-alvo
 - NUNCA esconder que o conteúdo foi gerado a partir de XMLs sanitizados ou acervo real quando isso for relevante
+- NUNCA tratar `ObjetosGeradosParaImportacaoNaKbNoGenexus` como se fosse snapshot oficial da KB sem rotulagem explícita
 - Se o script esperado não existir, reportar o problema antes de improvisar uma edição manual ampla
