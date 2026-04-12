@@ -97,11 +97,11 @@ Reference files and when to load them:
    - `ObjetosDaKbEmXml` = official snapshot, read-only for agents
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = working area for local XMLs to import manually
    - `PacotesGeradosParaImportacaoNaKbNoGenexus` = output area for locally generated packages
-3. List active XMLs in the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus` and treat them as the candidate batch
+3. When the task is packaging, list active XMLs in the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus` and treat them as the candidate batch
 4. Evaluate batch isolation before packaging:
    - If more than one plausible batch is present in the workspace → **ABORT**
    - Do NOT infer the correct batch only from recency when there is contamination risk
-   - If an older package lost validity after a change of direction, mark it as provisional/obsolete before continuing
+   - If an older package lost validity after a change of direction, either rename it with prefix `OBSOLETO_` or register a local manifest stating that package X was replaced by package Y before continuing
 5. Check for improper local changes in `ObjetosDaKbEmXml`:
    - If detected, preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, register a manifest of preserved items, and **ABORT** packaging until the snapshot is sane
 6. Load [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md) → assign risk level
@@ -139,6 +139,7 @@ Reference files and when to load them:
    - Do NOT include special KB block unless explicitly documented as required
 11. Set or preserve `lastUpdate` according to the batch-role classification:
    - Classify each active XML as `modified in this round` or `reused unchanged for mandatory dependency closure`
+   - If any textual change was persisted in the final XML, classify the item as `modified in this round`
    - Modified object → set `lastUpdate` to the real local timestamp of the final write
    - Unchanged dependency object → preserve the official `lastUpdate` from the official corpus XML
    - If classification and materialized `lastUpdate` diverge → **ABORT**
@@ -204,13 +205,13 @@ Reference files and when to load them:
 - [ ] Every unchanged object reused only for dependency closure preserved the official `lastUpdate`
 - [ ] Embedded objects in `import_file.xml` were checked for correct `lastUpdate` handling before delivery
 - [ ] `ObjetosDaKbEmXml` was treated as read-only official snapshot
-- [ ] Active XMLs were listed from the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+- [ ] When the task was packaging, active XMLs were listed from the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus`
 - [ ] Candidate batch was isolated; no workspace contamination remained
 - [ ] Root type of every active XML was classified before package serialization
 - [ ] No top-level `Attribute` was placed under `<Objects>`
 - [ ] UTF-8 BOM hygiene was checked on every active XML
 - [ ] Batch manifest was produced or validated before packaging
-- [ ] Any superseded package was marked as provisional/obsolete before continuing
+- [ ] Any superseded package was either renamed with prefix `OBSOLETO_` or replaced in a local manifest before continuing
 - [ ] Applicable local repository documentation was reread before packaging
 - [ ] Applicable local functional review chains, contracts, and operational rules were verified end-to-end in the saved XML before packaging
 - [ ] `Source/@kb` and `Source/Version/@guid` are valid GUIDs
