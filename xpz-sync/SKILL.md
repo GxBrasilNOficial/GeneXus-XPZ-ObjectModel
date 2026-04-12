@@ -85,7 +85,8 @@ Os wrappers seguem esta convenção de parâmetros:
 5. Se detectar alterações locais indevidas em `ObjetosDaKbEmXml`, reportar isso como incidente de processo:
    - Preservar o material de trabalho em `ObjetosGeradosParaImportacaoNaKbNoGenexus`
    - Restaurar `ObjetosDaKbEmXml` para a versão oficial do Git
-   - Registrar um manifesto dos itens preservados antes de retomar o fluxo normal
+   - Apresentar na conversa um manifesto estruturado dos itens preservados antes de retomar o fluxo normal
+   - Salvar esse manifesto em arquivo apenas quando a rastreabilidade local do incidente exigir isso
 6. Confirmar o `InputPath` com o usuário se não foi fornecido
 7. Montar o comando com os parâmetros corretos
 8. Executar via Bash com `pwsh -File ...`

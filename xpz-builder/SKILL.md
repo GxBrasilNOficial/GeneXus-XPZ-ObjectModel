@@ -52,7 +52,8 @@ Do NOT use this skill for:
 - Use `ObjetosGeradosParaImportacaoNaKbNoGenexus` as the working area for locally generated or preserved XML
 - Use `PacotesGeradosParaImportacaoNaKbNoGenexus` as the destination area for locally generated packages
 - Detect workspace contamination before packaging and abort when more than one plausible batch is active
-- Build or validate a manifest for the candidate batch before packaging
+- Build or validate a manifest for the candidate batch before packaging, treating the manifest first as structured output in the conversation
+- Name locally generated packages for IDE import using the preferred pattern `FrenteCurta_YYYYMMDD_nn`
 - Classify each active XML root as `Object`, `Attribute`, or unsupported before serializing the package
 - Validate UTF-8 without BOM hygiene on active XMLs before packaging
 - Reread and apply local repository documentation (`AGENTS.md`, `README.md`, and equivalent project docs) before packaging whenever the target KB/repository defines specific functional review rules, contracts, or operational flow
@@ -101,9 +102,9 @@ Reference files and when to load them:
 4. Evaluate batch isolation before packaging:
    - If more than one plausible batch is present in the workspace → **ABORT**
    - Do NOT infer the correct batch only from recency when there is contamination risk
-   - If an older package lost validity after a change of direction, either rename it with prefix `OBSOLETO_` or register a local manifest stating that package X was replaced by package Y before continuing
+   - If an older package lost validity after a change of direction, either rename it with prefix `OBSOLETO_` or present a structured manifest in the conversation stating that package X was replaced by package Y; save that manifest as a local file only when local traceability is concretely needed
 5. Check for improper local changes in `ObjetosDaKbEmXml`:
-   - If detected, preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, register a manifest of preserved items, and **ABORT** packaging until the snapshot is sane
+   - If detected, preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, present a structured manifest of preserved items in the conversation, save it as a local file when incident traceability requires it, and **ABORT** packaging until the snapshot is sane
 6. Load [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md) → assign risk level
 7. Evaluate abort conditions:
    - Risk is high/very high AND no comparable internal template exists → **ABORT**
@@ -154,7 +155,12 @@ Reference files and when to load them:
    - Unsupported root type → **ABORT** or require explicit treatment
    - Validate UTF-8 without BOM on every active XML
    - If BOM is present, remove it and register the correction
-   - Produce or validate a manifest containing file name, root type, `guid`, `name`, `fullyQualifiedName` when present, and `lastUpdate`
+   - Prefer package names in the form `FrenteCurta_YYYYMMDD_nn`
+   - `FrenteCurta` must be short, human-readable, and semantically strong
+   - `nn` is only the short incremental round counter for that front on that date, not semantic versioning
+   - Do NOT default to name-only, date-only/time-only, excessively long conversation descriptions, or always overwriting the same package name
+   - Produce or validate a manifest in the conversation containing at minimum: batch front or short description, batch origin, total XML count, `Objects` count, `Attributes` count, included files list or summary, `lastUpdate` applied or preserved, generated package, superseded package when present, and risk/pending notes
+   - Save that manifest as a file only when there is an incident involving `ObjetosDaKbEmXml`, package supersession that needs local traceability, explicit user request, or real need for future handoff outside the immediate conversation
 13. Reread and apply local repository documentation before packaging:
    - Reopen `AGENTS.md`, `README.md`, and any equivalent local KB/repository documentation that defines project-specific functional review chains, contracts, or operational flow
    - Treat those local conventions as mandatory only for that repository, not as universal XPZ methodology
@@ -210,8 +216,10 @@ Reference files and when to load them:
 - [ ] Root type of every active XML was classified before package serialization
 - [ ] No top-level `Attribute` was placed under `<Objects>`
 - [ ] UTF-8 BOM hygiene was checked on every active XML
-- [ ] Batch manifest was produced or validated before packaging
-- [ ] Any superseded package was either renamed with prefix `OBSOLETO_` or replaced in a local manifest before continuing
+- [ ] Generated package name followed the preferred `FrenteCurta_YYYYMMDD_nn` pattern when applicable
+- [ ] Batch manifest was produced or validated before packaging, by default in the conversation
+- [ ] Any superseded package was either renamed with prefix `OBSOLETO_` or recorded in a structured manifest in the conversation before continuing
+- [ ] Manifest file was created only when there was a concrete operational reason
 - [ ] Applicable local repository documentation was reread before packaging
 - [ ] Applicable local functional review chains, contracts, and operational rules were verified end-to-end in the saved XML before packaging
 - [ ] `Source/@kb` and `Source/Version/@guid` are valid GUIDs
@@ -241,6 +249,8 @@ Reference files and when to load them:
 - NEVER create automatic subfolders by type under `ObjetosGeradosParaImportacaoNaKbNoGenexus`
 - NEVER move files to `ArquivoMorto` without explicit user request
 - NEVER place a top-level `Attribute` under `<Objects>`
+- NEVER treat `OBSOLETO_` as the default naming convention for normal package generation
+- NEVER default to package names that are only subject, only date/time, excessively long conversation prose, or permanent overwrite of the same file name
 - NEVER treat an IDE-side lateral error as proof that the XML/package structure failed
 - NEVER treat a successful package load as proof that Source, Specification, or runtime are valid
 - NEVER universalize a repository-specific functional review rule, contract, or operational convention as if it were a global rule of the shared XPZ methodology

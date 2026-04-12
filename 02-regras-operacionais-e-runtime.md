@@ -90,12 +90,17 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: o agente nao deve inferir o lote correto apenas por recencia se houver risco de mistura de frentes.
 - `Regra operacional`: o agente nao deve fechar pacote por inferencia quando houver mais de um lote plausivel no workspace.
 - `Regra operacional`: a ordem obrigatoria antes de empacotar e: isolar lote, classificar raizes, validar `lastUpdate`, validar BOM, validar manifesto e so entao serializar o pacote.
+- `Regra operacional`: manifesto deve ser tratado primeiro como saida estruturada na propria conversa, e nao como arquivo fisico por padrao.
+- `Regra operacional`: nome de pacote local gerado para importacao na IDE deve priorizar clareza humana e separacao de frentes paralelas, preferindo o padrao `FrenteCurta_YYYYMMDD_nn`.
+- `Regra operacional`: nesse padrao, `FrenteCurta` e uma descricao curta, legivel e semanticamente forte da frente; `YYYYMMDD` e a data local da geracao; `nn` e apenas o contador curto e incremental da rodada daquela frente no mesmo dia.
+- `Regra operacional`: `nn` nao representa versao semantica profunda nem historico de release; ele representa somente o candidato curto daquela frente naquele dia.
+- `Regra operacional`: nao usar como padrao nome so com assunto, nome so com data ou hora, descricao excessivamente longa da conversa ou sobrescrita recorrente do mesmo nome de pacote.
 - `Regra operacional`: se um pacote anterior perder validade por mudanca de direcao da frente, ele deve ser marcado como provisório ou obsoleto e deixar de ser tratado como candidato principal.
 
 ## Protocolo para alteracoes indevidas no snapshot oficial
 
 - `Regra operacional`: se o agente detectar alteracoes locais preexistentes em `ObjetosDaKbEmXml`, deve presumir erro de processo ate esclarecimento em contrario.
-- `Regra operacional`: nesse cenario, o fluxo seguro e preservar esses XMLs em `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restaurar `ObjetosDaKbEmXml` para a versao oficial do Git e registrar manifesto dos itens preservados.
+- `Regra operacional`: nesse cenario, o fluxo seguro e preservar esses XMLs em `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restaurar `ObjetosDaKbEmXml` para a versao oficial do Git e registrar manifesto dos itens preservados; esse manifesto pode ficar na conversa, mas deve virar arquivo quando a rastreabilidade local do incidente for necessaria.
 - `Regra operacional`: o agente nao deve empacotar diretamente a partir de `ObjetosDaKbEmXml` alterado.
 
 ## Checklist obrigatorio antes do empacotamento
@@ -112,8 +117,10 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: XML gerado localmente deve ser salvo em UTF-8 sem BOM.
 - `Regra operacional`: antes de empacotar, verificar presenca de BOM UTF-8 no inicio de todos os XMLs ativos.
 - `Regra operacional`: se houver BOM, remover e registrar a correcao como higiene operacional.
-- `Regra operacional`: antes de gerar `import_file.xml` ou `.xpz`, produzir ou validar manifesto do lote com nome do arquivo, tipo de raiz, `guid`, `name`, `fullyQualifiedName` quando existir e `lastUpdate`.
+- `Regra operacional`: antes de gerar `import_file.xml` ou `.xpz`, produzir ou validar manifesto do lote, preferencialmente na propria conversa, com frente ou descricao curta do lote, origem do lote, quantidade total de XMLs, quantidade de `Objects`, quantidade de `Attributes`, lista ou resumo dos arquivos incluidos, `lastUpdate` aplicado ou preservado, pacote gerado, pacote anterior substituido quando houver e observacoes de risco ou pendencia.
+- `Regra operacional`: salvar manifesto em arquivo nao e o comportamento padrao; isso so deve ocorrer quando houver incidente de processo envolvendo `ObjetosDaKbEmXml`, substituicao de pacote com necessidade real de rastreabilidade local, pedido explicito do usuario ou necessidade concreta de retomada futura fora da conversa imediata.
 - `Regra operacional`: esse manifesto deve servir para conferencia humana e para bloquear mistura de frentes.
+- `Regra operacional`: quando houver pacote anterior da mesma frente com risco real de confusao, o prefixo `OBSOLETO_` pode ser usado como ferramenta de contencao; isso nao faz parte da convencao principal de nome do pacote.
 
 ### Exemplo sanitizado do envelope observado
 
