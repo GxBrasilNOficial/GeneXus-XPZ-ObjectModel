@@ -308,6 +308,9 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra documentada`: quando um `For each` declara uma `Base Transaction`, a tabela associada passa a ser a `Base Table`, e atributos usados no corpo, filtros e ordens precisam estar na `Extended Table` correspondente.
 - `Regra documentada`: GeneXus tambem pode determinar a `Base Table` implicitamente a partir dos atributos presentes, inclusive em grids e eventos `Load`.
 - `Inferência forte`: logo, objetos com muitos atributos de diferentes contextos, FKs paralelas ou multiplos niveis tendem a ser mais sensiveis a efeitos de `Extended Table`, filtros condicionais e custo de navegacao.
+- `Regra operacional`: em `For each`, a analise pratica e sempre sobre a `Base Table` determinada, seja ela explicita no cabeçalho ou implicita pelo conjunto de atributos usados no bloco.
+- `Regra operacional`: se a `Base Table` for implicita, o conjunto coerente de atributos do corpo, `Where`, `Order` e demais referencias que participam da navegacao determina a tabela base; atributos fora dessa tabela ou fora do contexto coerente de `Extended Table`/subtype nao devem ser aceitos no bloco.
+- `Regra operacional`: ao revisar um `For each`, checar primeiro a tabela base real e so depois validar se cada atributo pertence a essa base ou ao contexto coerente da navegacao.
 
 ### Navegacao, filtros e loops
 

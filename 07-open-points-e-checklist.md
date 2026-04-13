@@ -202,6 +202,14 @@ Orientar futuras coletas de templates comparáveis.
 - `Evidência direta`: a trilha tambem confirmou, em pacote misto embutido comparavel, que o erro `Value cannot be null. Parameter name: g` nao exigia inventar `ObjectsIdentityMapping`; o problema estava no uso do envelope leve errado para aquela composicao.
 - `Inferência forte`: futuras analises devem priorizar combinacoes de familias relacionadas, e nao apenas tipos isolados.
 
+## Erros recorrentes
+
+### `For each` com Base Table incoerente
+
+- `Causa`: assumir a `Base Table` pelo nome do objeto ou por leitura parcial do bloco, sem confirmar a determinacao explicita ou implicita.
+- `Consequência`: aceitar atributos que nao pertencem a `Base Table`/`Extended Table` coerente, gerando analise errada ou ajuste de `Source` fora da navegacao real.
+- `Regra de checagem`: antes de validar atributos do bloco, identificar a `Base Table` determinada do `For each` e verificar cada referencia contra essa base e seu contexto coerente de navegacao.
+
 
 
 
