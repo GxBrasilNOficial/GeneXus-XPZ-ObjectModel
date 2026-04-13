@@ -87,6 +87,7 @@ Os wrappers seguem esta convenção de parâmetros:
    - Restaurar `ObjetosDaKbEmXml` para a versão oficial do Git
    - Apresentar na conversa um manifesto estruturado dos itens preservados antes de retomar o fluxo normal
    - Salvar esse manifesto em arquivo apenas quando a rastreabilidade local do incidente exigir isso
+   - Abortar imediatamente o fluxo normal até a restauração do snapshot oficial e a abertura do incidente de processo
 6. Confirmar o `InputPath` com o usuário se não foi fornecido
 7. Montar o comando com os parâmetros corretos
 8. Executar via Bash com `pwsh -File ...`
@@ -104,6 +105,7 @@ Os wrappers seguem esta convenção de parâmetros:
 - NUNCA tratar XML local gerado para importação manual como se já fosse snapshot oficial da KB
 - NUNCA criar, alterar, mover, renomear ou sobrescrever arquivos em `ObjetosDaKbEmXml` fora do fluxo oficial do script `.ps1`
 - NUNCA antecipar atualização manual de `ObjetosDaKbEmXml`
+- NUNCA prosseguir com sync normal quando `ObjetosDaKbEmXml` estiver dirty fora do fluxo oficial; primeiro preserve, restaure e trate como incidente de processo
 - NUNCA reutilizar automaticamente artefato de importação/delta como base de nova alteração se o mesmo objeto já tiver voltado da KB e sido materializado no acervo oficial
 - Antes de gerar novo delta de objeto já retornado da KB, comparar a cópia intermediária com o XML atual do acervo e rebasear no acervo se houver defasagem
 - Se o script não for encontrado na raiz resolvida, reportar o erro e perguntar ao usuário antes de tentar qualquer alternativa

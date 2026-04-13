@@ -88,6 +88,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - o agente nao deve fechar pacote por inferencia, por recencia presumida ou por mistura implícita de frentes
 - a ordem obrigatoria e: isolar lote, classificar raizes, validar `lastUpdate`, validar BOM, validar manifesto e so entao empacotar
 - manifesto nao implica automaticamente arquivo fisico; por padrao, ele deve ser apresentado na propria conversa
+- para `WorkWithWeb` com ruído comprovado de `Load Code` em `Selection` e/ou tabs de `View`, registrar isso como nao funcional no manifesto e nao generalizar para todo caso de `WorkWithWeb`
 - ao gerar pacote local para importacao na IDE, preferir nome no formato `FrenteCurta_YYYYMMDD_nn`
 - `nn` representa apenas a rodada curta daquela frente naquele dia; nao representa versao semantica profunda
 - `OBSOLETO_` nao e convencao principal de nome; usar so como contencao de risco quando dois pacotes da mesma frente puderem ser confundidos

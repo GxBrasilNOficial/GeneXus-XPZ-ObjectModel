@@ -47,6 +47,9 @@ Do NOT use this skill for:
 - Clone conservatively: preserve `Object/@guid`, `parent*`, `moduleGuid`, all recurring Part types
 - Apply XPZ envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
 - Treat `runtime`, `Import File Load`, `Import`, and `Specification` as distinct validation layers; success in one does not authorize conclusions about the others
+- Validate `Source` compatibility by methodology first: GeneXus semantic rules plus the XPZ trail and `nexa`; use KB corpus search only as fallback when the methodological base does not cover the case
+- Classify each package candidate by content delta, separating requested functional change from metadata, reserialization, or known noise before packaging
+- Require explicit confirmation when a candidate item is only metadata, reserialization, or noise and would otherwise be kept in the package
 - Generate valid `lastUpdate` timestamp (real local time, not placeholder)
 - Treat `ObjetosDaKbEmXml` as official snapshot and read-only for agents
 - Use `ObjetosGeradosParaImportacaoNaKbNoGenexus` as the working area for locally generated or preserved XML
@@ -60,6 +63,7 @@ Do NOT use this skill for:
 - Ensure all GUIDs are syntactically valid (no text placeholders like `"YOUR-GUID-HERE"`)
 - Validate XML structure before delivery
 - Declare confidence level and limitations explicitly at the end of every output
+- Keep `WorkWithWeb` noise that is already proven in this trail as non-functional in the manifest, especially `Load Code` in `Selection` and the affected `View` tabs; do not generalize this to unrelated `WorkWithWeb` cases
 
 ---
 

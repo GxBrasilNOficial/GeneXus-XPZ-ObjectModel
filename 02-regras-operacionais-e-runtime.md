@@ -87,6 +87,24 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: o mesmo nome pode existir simultaneamente em tipos diferentes; antes de agir sobre um objeto, confirmar em qual pasta o arquivo realmente existe no acervo local.
 - `Regra operacional`: agente nao deve inferir tipo de objeto apenas por contexto funcional, nome parecido ou conversa anterior; a pasta real e a evidência direta minima para localizar o artefato correto.
 
+## Compatibilidade de `Source`
+
+- `Regra operacional`: validar compatibilidade de funcao, assinatura e tipo primeiro pela metodologia desta trilha e pela semantica GeneXus consolidada em `nexa`; a KB local entra como reforco apenas quando os exemplos metodologicos nao cobrirem o caso.
+- `Regra operacional`: nao exigir busca ampla no acervo inteiro da KB como padrao para validar um `Source`; se a base metodologica ja cobrir o padrao, ela prevalece.
+- `Regra operacional`: quando a cobertura vier apenas de melhor esforco, declarar explicitamente que a compatibilidade nao esta garantida e elevar o risco metodologico.
+
+## Delta estrito
+
+- `Regra operacional`: antes de empacotar, classificar cada objeto candidato como `mudanca funcional solicitada` ou `apenas metadado/reeserializacao/ruido`.
+- `Regra operacional`: se o objeto for apenas metadado, reserializacao ou ruido, exigir confirmacao explicita para mante-lo no pacote.
+- `Regra operacional`: o delta deve ser estrito pelo conteudo do pacote, nao por `git diff` abstrato.
+
+## Ruido conhecido de `WorkWithWeb`
+
+- `Evidência direta`: em casos comprovados desta frente, houve ruido nao funcional em `WorkWithWeb` associado a `Load Code` no atributo de `Selection` e/ou em tabs de `View`.
+- `Regra operacional`: esse ruido deve ser tratado como inevitavel apenas nesses pontos comprovados, sem generalizar para todo `WorkWithWeb`.
+- `Regra operacional`: quando esse ruido aparecer, registrar no manifesto como nao funcional para triagem de comparacao; nao orientar correcao manual como se fosse defeito de estrutura.
+
 ## Contaminacao de workspace e isolamento de lote
 
 - `Regra operacional`: antes de empacotar, listar os XMLs ativos na raiz de `ObjetosGeradosParaImportacaoNaKbNoGenexus` e tratar esse conjunto como lote candidato.
