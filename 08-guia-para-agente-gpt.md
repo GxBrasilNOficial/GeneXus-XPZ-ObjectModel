@@ -73,10 +73,17 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 
 ## Regra de leitura para XPZ
 
+- antes de usar `xpz-sync`, `xpz-builder` ou `xpz-doc-builder` em fluxo dependente de repositorio, confirmar que a pasta paralela da KB esta montada e validada; se nao estiver, usar `xpz-kb-parallel-setup` primeiro
 - quando a tarefa envolver montar ou serializar `XPZ`, consultar primeiro a secao `Envelope XPZ observado em export real` de `02-regras-operacionais-e-runtime.md`
+- distinguir sempre a pasta nativa da KB da pasta paralela da KB; nesta trilha, os `XPZ`, os XMLs materializados e os artefatos de importacao vivem na pasta paralela da KB, nao dentro da pasta nativa da KB
 - quando a tarefa envolver gerar, ajustar, preservar ou empacotar XMLs, distinguir explicitamente as tres areas operacionais do repositorio: `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- na carga inicial, considerar tambem `XpzExportadosPelaIDE` como pasta de entrada padrão, `scripts` como pasta de wrappers e as demais pastas como estrutura funcional padrão quando o usuario nao informar nomes alternativos
+- se alguma dessas pastas ainda nao existir, criar nesta ordem: `scripts`, `XpzExportadosPelaIDE`, `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus`, `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- se `XpzExportadosPelaIDE` ainda nao existir, perguntar onde o usuario quer salvar os `.xpz`
+- se `ObjetosDaKbEmXml` ainda nao existir, tratar a KB como ainda nao materializada e parar antes de assumir snapshot
 - nesta trilha, `ObjetosDaKbEmXml` e snapshot oficial e somente leitura para agentes
 - nesta trilha, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e a area de trabalho para XMLs a importar manualmente na IDE
+- nesta trilha, os arquivos ativos de `ObjetosGeradosParaImportacaoNaKbNoGenexus` devem ficar na raiz da pasta, sem subpastas, quando fizerem parte do lote de importacao
 - nesta trilha, `PacotesGeradosParaImportacaoNaKbNoGenexus` e a area de saida para pacotes gerados localmente
 - nesta trilha, a promocao para snapshot oficial ocorre apenas pelo script `.ps1` alimentado por `XPZ` exportado pela IDE
 - nao presumir `Objects.xml` isolado nem manifesto externo separado se isso nao estiver documentado no `02`
@@ -218,6 +225,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - Regra operacional: o agente deve abortar o empacotamento quando houver divergencia entre a classificacao do item e o `lastUpdate` materializado
 - Regra operacional: antes de serializar o pacote, classificar as raizes top-level em `Object`, `Attribute` ou `outro tipo`
 - Regra operacional: `Object` top-level entra em `<Objects>` e `Attribute` top-level entra em `<Attributes>`
+- Regra operacional: em pacote de `Transaction` nova, os atributos referenciados no `Level` devem entrar em `<Attributes>` quando o pacote precisar cria-los ou fornece-los ao destino; nao serializar esses atributos como `Domain` ou outro objeto em `<Objects>`
 - Regra operacional: raiz top-level nao suportada deve bloquear o empacotamento ate tratamento explicito
 - Regra operacional: XML gerado localmente deve ser salvo em UTF-8 sem BOM; se houver BOM, remover e registrar a correcao
 - Regra operacional: antes de gerar `import_file.xml` ou `.xpz`, produzir ou validar manifesto do lote, por padrao na propria conversa, com frente ou descricao curta do lote, origem do lote, quantidade total de XMLs, quantidade de `Objects`, quantidade de `Attributes`, lista ou resumo dos arquivos incluidos, `lastUpdate` aplicado ou preservado, pacote gerado, pacote anterior substituido quando houver e observacoes de risco ou pendencia
@@ -242,6 +250,17 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - preservar `Object/@type`, `guid`, `parent*`, `moduleGuid`, `Part type` e ordem das `Part`
 - editar somente nomes, descricoes e trechos internos sustentados pelo molde usado
 - preservar tambem os `<Attribute ...>` dentro de `<Level>` com nome interno preenchido, `guid`, `key` e `isNullable` quando existirem
+- antes de empacotar `Transaction` nova, validar coerencia cruzada obrigatoria entre `Level` e `<Attributes>`
+- cada `Level/Attribute@guid` deve existir em `<Attributes>/Attribute@guid`
+- cada `Level/Attribute` por nome deve existir em `<Attributes>/Attribute@name`
+- `DescriptionAttribute`, quando presente, deve apontar para atributo existente no mesmo `Level` e tambem presente em `<Attributes>`
+- se qualquer item acima falhar, abortar antes do pacote final com mensagem objetiva
+- pacote minimo canonico para `Transaction` nova:
+  - `<Objects>` = `Transaction`
+  - `<Attributes>` = atributos da `Transaction`, no minimo PK e atributo de descricao/exibicao quando usados pelo shape escolhido
+  - `<Dependencies>` = apenas o que o shape realmente exigir
+- `TransactionOrObject`, quando aparecer em export comparavel, pode coexistir como auxiliar em `<Objects>`, mas nao substitui a obrigatoriedade de `<Attributes>`
+- erros como `Cannot convert Domain to Attribute`, `Attribute 'X' in 'Transaction Y' does not exist` e `DescriptionAttribute ... could not be found in level attributes` devem ser tratados como falha de construcao do pacote, nao como detalhe a validar depois
 - verificar explicitamente se existe `WorkWithForWeb` associado e se a mudanca impacta atributos exibidos, filtros, abas ou navegacao do pattern web
 - abortar se a mudanca exigir inventar atributo inexistente na KB ou tipo de contexto nao existente
 

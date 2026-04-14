@@ -13,6 +13,8 @@ Gera, recompõe e atualiza documentação Markdown a partir do acervo XML do rep
 
 Identificar a raiz do repositório pelo contexto, localizar os scripts documentais em `scripts\`, resolver caminhos de entrada e saída a partir do cenário atual e delegar a geração ou atualização aos scripts apropriados. Evitar edição manual de `.md` longos quando houver fluxo automatizável. Ao documentar acervo XML, distinguir snapshot oficial de artefato local de trabalho.
 
+Se a documentação depender da pasta paralela da KB e essa estrutura ainda não estiver montada ou validada, parar e usar `xpz-kb-parallel-setup` antes de gerar ou atualizar documentação.
+
 ## PATH RESOLUTION
 
 - Este `SKILL.md` fica dentro de uma subpasta de skill sob a raiz do repositório.
@@ -94,19 +96,21 @@ Se o repositório ainda mantiver wrappers especializados, eles devem ser tratado
 ## WORKFLOW
 
 1. Identificar se o pedido é `inventory`, `advanced-docs` ou `update-section`
-2. Resolver a raiz do repositório pelo contexto
-3. Localizar `scripts\` e confirmar a existência do script adequado
-4. Confirmar ou derivar caminhos de entrada e saída
-5. Executar o script com parâmetros explícitos
-6. Se a documentação citar XML vindo de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, rotular isso como artefato de trabalho e não como snapshot oficial
-7. Reler o início do arquivo gerado ou alterado, a seção modificada e a transição seguinte
-8. Reportar o que foi criado, atualizado ou substituído
+2. Se a pasta paralela da KB ainda não estiver montada, validada ou mapeada para este repositório → **ABORT** e usar `xpz-kb-parallel-setup`
+3. Resolver a raiz do repositório pelo contexto
+4. Localizar `scripts\` e confirmar a existência do script adequado
+5. Confirmar ou derivar caminhos de entrada e saída
+6. Executar o script com parâmetros explícitos
+7. Se a documentação citar XML vindo de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, rotular isso como artefato de trabalho e não como snapshot oficial
+8. Reler o início do arquivo gerado ou alterado, a seção modificada e a transição seguinte
+9. Reportar o que foi criado, atualizado ou substituído
 
 ---
 
 ## CONSTRAINTS
 
 - NUNCA assumir caminhos absolutos privados
+- NUNCA gerar documentação operacional dependente da pasta paralela da KB enquanto essa estrutura ainda estiver indefinida ou não validada
 - NUNCA editar `.md` longos manualmente se houver script apropriado
 - NUNCA reescrever uma seção sem identificar corretamente o título-alvo
 - NUNCA esconder que o conteúdo foi gerado a partir de XMLs sanitizados ou acervo real quando isso for relevante

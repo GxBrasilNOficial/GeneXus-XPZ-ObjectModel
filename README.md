@@ -2,7 +2,7 @@
 
 ## Português (BR)
 
-Este repositório existe para sustentar e operacionalizar skills para agentes dedicadas ao ecossistema `XPZ`/XML de GeneXus, em especial `xpz-reader`, `xpz-builder`, `xpz-sync`, `xpz-doc-builder` e `xpz-daemon`.
+Este repositório existe para sustentar e operacionalizar skills para agentes dedicadas ao ecossistema `XPZ`/XML de GeneXus, em especial `xpz-reader`, `xpz-builder`, `xpz-sync`, `xpz-doc-builder`, `xpz-daemon` e `xpz-kb-parallel-setup`.
 
 A documentação consolidada e os scripts desta raiz funcionam como base metodológica e operacional dessas skills, com foco em:
 
@@ -35,6 +35,7 @@ Os documentos principais foram consolidados em 10 arquivos Markdown para facilit
 - `xpz-sync`: orquestração de sincronização e conferência do acervo XML a partir de parâmetros explícitos e scripts em `scripts/`
 - `xpz-daemon`: instalação e gerenciamento de um monitor persistente que observa pastas de XPZ e dispara sincronização automaticamente ao detectar novos arquivos
 - `xpz-doc-builder`: geração e recomposição de documentação Markdown a partir do acervo XML e de moldes sanitizados
+- `xpz-kb-parallel-setup`: preparação e validação da estrutura inicial da pasta paralela da KB
 
 ### Leitura recomendada para humanos
 
@@ -60,10 +61,41 @@ Se você quer entender a base rapidamente:
 
 ### Topologia operacional
 
+- nesta trilha, a pasta nativa da KB GeneXus e diferente da pasta paralela da KB
+- a pasta paralela da KB e a pasta de trabalho que concentra `XPZ` exportados pela IDE, XMLs materializados pelo fluxo oficial e artefatos preparados para importação posterior
+
 - `ObjetosDaKbEmXml`: snapshot oficial da KB; somente leitura para agentes
+- `XpzExportadosPelaIDE`: pasta onde o usuário grava tanto o `XPZ` completo da Carga Inicial quanto os `XPZ` incrementais do dia a dia
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabalho para XMLs gerados, ajustados ou preservados para importação manual na IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de saída para `import_file.xml` e demais pacotes gerados localmente
 - a promoção para `ObjetosDaKbEmXml` ocorre apenas pelo fluxo oficial do script `.ps1` alimentado por `XPZ` exportado pela IDE
+- `ObjetosDaKbEmXml` nao deve ser atualizado por edição manual; ele e atualizado pelo fluxo do `.ps1` a partir dos `XPZ` disponibilizados na pasta paralela da KB
+
+### Carga inicial
+
+- quando o usuário não informar nomes alternativos, a KB deve assumir estas subpastas padrão:
+  - `ObjetosDaKbEmXml`
+  - `XpzExportadosPelaIDE`
+  - `scripts`
+  - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  - `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- `XpzExportadosPelaIDE` é a pasta de entrada onde o usuário do GeneXus grava os `.xpz` que serão processados
+- depois de processado com sucesso pelo fluxo oficial, o `.xpz` pode ser renomeado para `processado_<nome-original>.xpz`
+- `scripts` concentra os wrappers `.ps1` que tratam os `XPZ`
+- a Carga Inicial pode usar um `XPZ` completo novo a qualquer momento para reatualizar `ObjetosDaKbEmXml`
+- a mesma estrutura também vale para `XPZ` parciais com objetos alterados desde a última atualização
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus` guarda objetos temporários destinados à importação manual na IDE
+- os arquivos ativos em `ObjetosGeradosParaImportacaoNaKbNoGenexus` devem ficar na raiz dessa pasta, sem subpastas, quando fizerem parte do lote a ser incorporado ao pacote
+- `PacotesGeradosParaImportacaoNaKbNoGenexus` guarda o pacote `.xml` e, quando necessário, também `.xpz`, que será importado pela IDE
+- `AGENTS.md` e `README.md` podem existir na raiz ou em subpastas quando houver anotação operacional pertinente
+- se alguma dessas subpastas ainda não existir, a ordem recomendada de criação é:
+  1. `scripts`
+  2. `XpzExportadosPelaIDE`
+  3. `ObjetosDaKbEmXml`
+  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- quando `XpzExportadosPelaIDE` ainda não existir, o agente deve perguntar onde o usuário pretende salvar os `.xpz` antes de prosseguir com o processamento
+- quando `ObjetosDaKbEmXml` ainda não existir, o agente deve tratar isso como KB ainda não materializada e parar antes de assumir qualquer snapshot
 
 ### Automação operacional
 
@@ -77,7 +109,7 @@ Se você quer entender a base rapidamente:
 
 ## Español
 
-Este repositorio reúne documentación consolidada sobre análisis estructural de objetos GeneXus a partir de XMLs extraídos de `XPZ`, con foco en skills para agentes dedicadas al ecosistema `XPZ`/XML de GeneXus, en especial `xpz-reader`, `xpz-builder`, `xpz-sync`, `xpz-doc-builder` y `xpz-daemon`.
+Este repositorio reúne documentación consolidada sobre análisis estructural de objetos GeneXus a partir de XMLs extraídos de `XPZ`, con foco en skills para agentes dedicadas al ecosistema `XPZ`/XML de GeneXus, en especial `xpz-reader`, `xpz-builder`, `xpz-sync`, `xpz-doc-builder`, `xpz-daemon` y `xpz-kb-parallel-setup`.
 
 - lectura e interpretación de estructura XML
 - familias estructurales de objetos
@@ -108,6 +140,7 @@ Los documentos principales fueron consolidados en 10 archivos Markdown para faci
 - `xpz-sync`: orquestación de sincronización y verificación del acervo XML a partir de parámetros explícitos y scripts en `scripts/`
 - `xpz-daemon`: instalación y gestión de un monitor persistente que observa carpetas de XPZ y dispara sincronización automáticamente al detectar nuevos archivos
 - `xpz-doc-builder`: generación y recomposición de documentación Markdown a partir del acervo XML y de moldes sanitizados
+- `xpz-kb-parallel-setup`: preparación y validación de la estructura inicial de la carpeta paralela de la KB
 
 ### Lectura recomendada para humanos
 
@@ -140,7 +173,7 @@ Si quieres entender la base rápidamente:
 
 ## English
 
-This repository contains consolidated documentation about structural analysis of GeneXus objects based on XML extracted from `XPZ`, with emphasis on skills for agents dedicated to the `XPZ`/XML ecosystem of GeneXus, especially `xpz-reader`, `xpz-builder`, `xpz-sync`, `xpz-doc-builder`, and `xpz-daemon`.
+This repository contains consolidated documentation about structural analysis of GeneXus objects based on XML extracted from `XPZ`, with emphasis on skills for agents dedicated to the `XPZ`/XML ecosystem of GeneXus, especially `xpz-reader`, `xpz-builder`, `xpz-sync`, `xpz-doc-builder`, `xpz-daemon`, and `xpz-kb-parallel-setup`.
 
 - reading and interpreting XML structure
 - structural object families
@@ -171,6 +204,7 @@ The main documentation has been consolidated into 10 Markdown files to make read
 - `xpz-sync`: orchestration of synchronization and verification of the XML archive from explicit parameters and scripts in `scripts/`
 - `xpz-daemon`: installation and management of a persistent monitor that watches XPZ folders and automatically triggers synchronization when new files are detected
 - `xpz-doc-builder`: generation and recomposition of Markdown documentation from the XML archive and sanitized templates
+- `xpz-kb-parallel-setup`: preparation and validation of the initial KB parallel-folder structure
 
 ### Recommended reading for humans
 

@@ -51,6 +51,7 @@ Do NOT use this skill for:
 - Confirm the real folder where the XML exists before citing, comparing, or using a local object as evidence
 - Declare confidence level for every conclusion: `Direct evidence` / `Strong inference` / `Hypothesis`
 - Never affirm import or build compatibility — structural analysis only
+- When the task depends on a local KB parallel folder structure, require that structure to be clarified or validated first via `xpz-kb-parallel-setup`
 
 ---
 
@@ -84,15 +85,16 @@ Reference files and when to load them:
 ## WORKFLOW
 
 1. Receive XML input or fragment from user
-2. Locate `Object/@type` attribute → cross-reference against [01-base-empirica-geral](../01-base-empirica-geral.md) type catalog
-3. Enumerate Part types present (`<Part type="...">`) → compare against observed frequencies for that type
-4. Identify missing or unexpected Part types relative to the known structural pattern
-5. Read container identity fields (`fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`) and classify the container as `Folder`, `Module`, or unresolved from comparable corpus evidence
-6. When the task depends on locating an object in a local GeneXus repository, confirm the object by `type + name` and verify the actual folder where the file exists before proceeding
-7. If type is WebPanel → load [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md) and classify family
-8. If type is Transaction → load [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md) and classify family (F1–F6)
-9. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-10. Report result:
+2. If the task depends on locating files in a local KB parallel folder structure and that structure is still undefined, ambiguous, or unvalidated → **ABORT** and use `xpz-kb-parallel-setup` first
+3. Locate `Object/@type` attribute → cross-reference against [01-base-empirica-geral](../01-base-empirica-geral.md) type catalog
+4. Enumerate Part types present (`<Part type="...">`) → compare against observed frequencies for that type
+5. Identify missing or unexpected Part types relative to the known structural pattern
+6. Read container identity fields (`fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`) and classify the container as `Folder`, `Module`, or unresolved from comparable corpus evidence
+7. When the task depends on locating an object in a local GeneXus repository, confirm the object by `type + name` and verify the actual folder where the file exists before proceeding
+8. If type is WebPanel → load [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md) and classify family
+9. If type is Transaction → load [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md) and classify family (F1–F6)
+10. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+11. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
@@ -125,4 +127,5 @@ Reference files and when to load them:
 - ABORT analysis if XML is too malformed to identify `Object/@type`
 - When sample is small or type is rare, state it explicitly before concluding
 - When object lookup depends on a local repository, ABORT if the file was not confirmed in the folder implied by the validated object type
+- When repository-backed analysis depends on the KB parallel folder structure, ABORT if that structure was not clarified or validated first
 - Absolute rules in [00-readme-genexus-xpz-xml.md](../00-readme-genexus-xpz-xml.md) take precedence over all heuristics

@@ -144,6 +144,29 @@ Permitir escolha repetivel de template interno real, reduzindo risco de vazament
 - Regra operacional: para primeiro pacote minimo de `Transaction` na familia `F1`, preferir nao incluir `DescriptionAttribute`, `AttributeProperties` nem variaveis de contexto como `Context` e `TrnContext` antes da primeira importacao bem-sucedida.
 - Inferencia forte: adicionar elementos estruturais antes de validar o shape minimo aumenta a chance de erro sem ganho proporcional de validacao incremental.
 
+### Pacote minimo canonico para `Transaction` nova
+
+- Regra operacional: o pacote minimo canonico de `Transaction` nova coloca a `Transaction` em `<Objects>` e os atributos referenciados pelo `Level` em `<Attributes>`.
+- Regra operacional: para shape minimo, incluir em `<Attributes>` pelo menos o atributo chave e o atributo de descricao/exibicao quando esse atributo for usado pelo shape da `Transaction`.
+- Regra operacional: `Attribute` inline em `Level` nao substitui o `Attribute` top-level correspondente em `<Attributes>`.
+- Regra operacional: `TransactionOrObject`, quando aparecer em export comparavel, pode coexistir como auxiliar em `<Objects>`, mas nao substitui a obrigatoriedade de `<Attributes>`.
+- Hard gate: cada `Level/Attribute@guid` deve existir em `<Attributes>/Attribute@guid`.
+- Hard gate: cada `Level/Attribute` por nome deve existir em `<Attributes>/Attribute@name`.
+- Hard gate: `DescriptionAttribute`, quando presente, deve apontar para atributo do mesmo `Level` e esse atributo tambem deve existir em `<Attributes>`.
+- Hard gate: se qualquer item acima falhar, abortar o pacote antes da tentativa de importacao.
+
+### Erros de importacao que este pacote minimo evita
+
+- `Cannot convert Domain to Attribute`
+  - leitura operacional: atributo exigido pela `Transaction` foi empacotado com tipo top-level errado
+  - correcao esperada: manter a `Transaction` em `<Objects>` e os atributos novos em `<Attributes>`
+- `Attribute 'TesteId' in 'Teste' does not exist`
+  - leitura operacional: o `Level` referencia atributo ausente na KB de destino e ausente em `<Attributes>`
+  - correcao esperada: incluir o `Attribute` top-level correspondente em `<Attributes>` com `guid` e `name` coerentes
+- `DescriptionAttribute ... could not be found in level attributes`
+  - leitura operacional: `DescriptionAttribute` aponta para atributo que nao esta no mesmo `Level` e/ou nao foi entregue em `<Attributes>`
+  - correcao esperada: apontar `DescriptionAttribute` para atributo real do mesmo `Level` e inclui-lo em `<Attributes>` quando o pacote precisar cria-lo ou fornece-lo
+
 ## Familia 2 - Um nivel com apoio estrutural moderado
 
 - Evidencia direta: 41 objetos com `1 Level` e entre 7 e 11 blocos `AttributeProperties`.

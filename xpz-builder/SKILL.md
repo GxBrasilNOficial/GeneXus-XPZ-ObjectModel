@@ -13,6 +13,8 @@ Generates GeneXus XML objects for XPZ packaging using conservative cloning from 
 
 Generate or clone GeneXus XPZ objects only from comparable structural templates. Abort when a suitable template does not exist. Never invent structure.
 
+If the flow depends on a KB parallel folder structure and that structure is not yet mounted or validated, stop and use `xpz-kb-parallel-setup` first.
+
 ## PATH RESOLUTION
 
 - This `SKILL.md` lives inside a skill subfolder under the repository root.
@@ -37,6 +39,8 @@ Do NOT use this skill for:
 - Generating KnowledgeBase-level exports or full KB backups
 - Affirming that generated XPZ will import or build without errors
 
+If the main need is to prepare or validate the initial folder structure around the KB before any packaging flow, use `xpz-kb-parallel-setup`.
+
 ---
 
 ## RESPONSIBILITIES
@@ -52,12 +56,28 @@ Do NOT use this skill for:
 - Require explicit confirmation when a candidate item is only metadata, reserialization, or noise and would otherwise be kept in the package
 - Generate valid `lastUpdate` timestamp (real local time, not placeholder)
 - Treat `ObjetosDaKbEmXml` as official snapshot and read-only for agents
+- When the user does not provide alternative names, assume these standard KB subfolders for initial load:
+  - `ObjetosDaKbEmXml`
+  - `XpzExportadosPelaIDE`
+  - `scripts`
+  - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  - `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- If some subfolders do not exist yet, prefer creating them in this order:
+  1. `scripts`
+  2. `XpzExportadosPelaIDE`
+  3. `ObjetosDaKbEmXml`
+  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- If `XpzExportadosPelaIDE` does not exist yet, ask where the user wants to store exported `.xpz` files
+- If `ObjetosDaKbEmXml` does not exist yet, stop and treat the KB as not yet materialized
 - Use `ObjetosGeradosParaImportacaoNaKbNoGenexus` as the working area for locally generated or preserved XML
+- Keep active XMLs for the current import batch in the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus`, without subfolders
 - Use `PacotesGeradosParaImportacaoNaKbNoGenexus` as the destination area for locally generated packages
 - Detect workspace contamination before packaging and abort when more than one plausible batch is active
 - Build or validate a manifest for the candidate batch before packaging, treating the manifest first as structured output in the conversation
 - Name locally generated packages for IDE import using the preferred pattern `FrenteCurta_YYYYMMDD_nn`
 - Classify each active XML root as `Object`, `Attribute`, or unsupported before serializing the package
+- For a new `Transaction` package, treat top-level `Attribute` items referenced by the `Level` as mandatory package members under `<Attributes>`, never as `Domain`/object payload under `<Objects>`
 - Validate UTF-8 without BOM hygiene on active XMLs before packaging
 - Reread and apply local repository documentation (`AGENTS.md`, `README.md`, and equivalent project docs) before packaging whenever the target KB/repository defines specific functional review rules, contracts, or operational flow
 - Ensure all GUIDs are syntactically valid (no text placeholders like `"YOUR-GUID-HERE"`)
@@ -98,23 +118,25 @@ Reference files and when to load them:
 ## WORKFLOW
 
 1. Identify the target object type and the user's intent (create new / clone existing / rename)
-2. Reread local repository documentation and resolve the operational topology for this KB/repository:
+2. If the KB parallel folder structure is not yet mounted, not yet validated, or still ambiguous for this repository → **ABORT** and use `xpz-kb-parallel-setup` first
+3. Reread local repository documentation and resolve the operational topology for this KB/repository:
    - `ObjetosDaKbEmXml` = official snapshot, read-only for agents
+   - `XpzExportadosPelaIDE` = input area where the user stores `.xpz` exported by the IDE
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = working area for local XMLs to import manually
    - `PacotesGeradosParaImportacaoNaKbNoGenexus` = output area for locally generated packages
-3. When the task is packaging, list active XMLs in the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus` and treat them as the candidate batch
-4. Evaluate batch isolation before packaging:
+4. When the task is packaging, list active XMLs in the root of `ObjetosGeradosParaImportacaoNaKbNoGenexus` and treat them as the candidate batch
+5. Evaluate batch isolation before packaging:
    - If more than one plausible batch is present in the workspace → **ABORT**
    - Do NOT infer the correct batch only from recency when there is contamination risk
    - If an older package lost validity after a change of direction, either rename it with prefix `OBSOLETO_` or present a structured manifest in the conversation stating that package X was replaced by package Y; save that manifest as a local file only when local traceability is concretely needed
-5. Check for improper local changes in `ObjetosDaKbEmXml`:
+6. Check for improper local changes in `ObjetosDaKbEmXml`:
    - If detected, preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, present a structured manifest of preserved items in the conversation, save it as a local file when incident traceability requires it, and **ABORT** packaging until the snapshot is sane
-6. Load [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md) → assign risk level
-7. Evaluate abort conditions:
+7. Load [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md) → assign risk level
+8. Evaluate abort conditions:
    - Risk is high/very high AND no comparable internal template exists → **ABORT**
    - Type is not in the empirical corpus → **ABORT**
    - User requests affirmation of import/build success → **REFUSE**, state limitation
-8. Locate template:
+9. Locate template:
    - Transaction → use family F1–F6 from [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md)
    - WebPanel → use closest family from [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md)
    - Other types → use sanitized representative from [08-guia-para-agente-gpt](../08-guia-para-agente-gpt.md) materialization rules
@@ -157,6 +179,13 @@ Reference files and when to load them:
    - `Object` top-level → serialize under `<Objects>`
    - `Attribute` top-level → serialize under `<Attributes>`
    - Unsupported root type → **ABORT** or require explicit treatment
+   - For `Transaction`, every attribute referenced by `Level/Attribute` must exist as top-level `Attribute` under `<Attributes>` when the package is meant to create or complete those attributes in the target KB
+   - Do NOT serialize those required attributes as `Domain` or any other object type under `<Objects>`
+   - Canonical minimum valid package for a new `Transaction`:
+     - `<Objects>` = the `Transaction`
+     - `<Attributes>` = at minimum the PK and the description/display attribute used by the `Transaction`
+     - `<Dependencies>` = only what the selected shape really requires
+   - `TransactionOrObject`, when present in a comparable export, may be included as an auxiliary object in `<Objects>`, but it does NOT replace the mandatory top-level `<Attributes>` required by the `Transaction`
    - Validate UTF-8 without BOM on every active XML
    - If BOM is present, remove it and register the correction
    - Prefer package names in the form `FrenteCurta_YYYYMMDD_nn`
@@ -185,6 +214,15 @@ Reference files and when to load them:
    - If a shared procedure changed its `parm(...)`, review all direct call sites explicitly before concluding the delta
    - This review must include wrappers, business procedures, WorkWith filters, and formulas that call the procedure when applicable
    - When import logs are available, classify each message by stage and failure category before concluding anything
+   - For `Transaction`, run a semantic pre-import gate before final packaging:
+     - each `Level/Attribute@guid` must exist in `<Attributes>/Attribute@guid`
+     - each `Level/Attribute` name must exist in `<Attributes>/Attribute@name`
+     - each `DescriptionAttribute`, when present, must exist in the same `Level` and also in `<Attributes>`
+     - if any of these checks fails → **ABORT** with an objective error message before generating the final package
+   - Treat the following pre-import errors as hard blockers that require rebuilding the package, not as recoverable warnings:
+     - `Cannot convert Domain to Attribute`
+     - `Attribute 'X' in 'Transaction Y' does not exist`
+     - `DescriptionAttribute ... could not be found in level attributes`
    - Separate at minimum: XML/package structural error, object identity/serialization error, Source syntax/semantic error, IDE-side lateral error, non-blocking warning, and terminal import success
    - Do NOT conclude from an isolated line; use the terminal relevant stage of the log plus the set of blocking messages
    - If some objects failed and others succeeded, report the result as partial instead of collapsing it into full success or full package failure
@@ -219,6 +257,10 @@ Reference files and when to load them:
 - [ ] Candidate batch was isolated; no workspace contamination remained
 - [ ] Root type of every active XML was classified before package serialization
 - [ ] No top-level `Attribute` was placed under `<Objects>`
+- [ ] For `Transaction`, every `Level/Attribute@guid` exists in `<Attributes>/Attribute@guid`
+- [ ] For `Transaction`, every `Level/Attribute` name exists in `<Attributes>/Attribute@name`
+- [ ] For `Transaction`, every `DescriptionAttribute` present exists in the same `Level` and also in `<Attributes>`
+- [ ] For `Transaction`, no required `Attribute` was serialized as `Domain` or other object type under `<Objects>`
 - [ ] UTF-8 BOM hygiene was checked on every active XML
 - [ ] Generated package name followed the preferred `FrenteCurta_YYYYMMDD_nn` pattern when applicable
 - [ ] Batch manifest was produced or validated before packaging, by default in the conversation
@@ -250,10 +292,27 @@ Reference files and when to load them:
 - NEVER deliver XML or package with static, inherited, stale, or non-rechecked `lastUpdate`
 - NEVER create, alter, move, rename, or overwrite files in `ObjetosDaKbEmXml`
 - NEVER treat locally generated XML as if it were the official KB snapshot
+- NEVER create subfolders in `ObjetosGeradosParaImportacaoNaKbNoGenexus` for the active import batch
 - NEVER create automatic subfolders by type under `ObjetosGeradosParaImportacaoNaKbNoGenexus`
 - NEVER move files to `ArquivoMorto` without explicit user request
 - NEVER place a top-level `Attribute` under `<Objects>`
+- NEVER serialize a required `Transaction` attribute as `Domain` under `<Objects>` when the package is supposed to create or supply that attribute
+- NEVER ignore `Cannot convert Domain to Attribute`, `Attribute 'X' in 'Transaction Y' does not exist`, or `DescriptionAttribute ... could not be found in level attributes`; these are blocking package-construction errors for this trail
 - NEVER treat `OBSOLETO_` as the default naming convention for normal package generation
+
+---
+
+## TRANSACTION ERROR EXAMPLES
+
+- `Cannot convert Domain to Attribute`
+  - Meaning in this trail: the package exposed a required `Transaction` attribute with the wrong top-level kind
+  - Expected correction: keep the `Transaction` in `<Objects>` and place the required top-level `Attribute` nodes in `<Attributes>`
+- `Attribute 'TesteId' in 'Teste' does not exist`
+  - Meaning in this trail: the `Transaction` level references an attribute that is missing from the target and also missing from `<Attributes>` in the package
+  - Expected correction: add the missing top-level `Attribute` to `<Attributes>` with consistent `guid` and `name`
+- `DescriptionAttribute ... could not be found in level attributes`
+  - Meaning in this trail: `DescriptionAttribute` points to an attribute that is not present in the same `Level` and/or is absent from `<Attributes>`
+  - Expected correction: point `DescriptionAttribute` to a real attribute of the same `Level` and include that attribute in `<Attributes>` when the package must create or supply it
 - NEVER default to package names that are only subject, only date/time, excessively long conversation prose, or permanent overwrite of the same file name
 - NEVER treat an IDE-side lateral error as proof that the XML/package structure failed
 - NEVER treat a successful package load as proof that Source, Specification, or runtime are valid

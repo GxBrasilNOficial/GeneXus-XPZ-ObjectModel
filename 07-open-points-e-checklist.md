@@ -202,6 +202,21 @@ Orientar futuras coletas de templates comparáveis.
 - `Evidência direta`: a trilha tambem confirmou, em pacote misto embutido comparavel, que o erro `Value cannot be null. Parameter name: g` nao exigia inventar `ObjectsIdentityMapping`; o problema estava no uso do envelope leve errado para aquela composicao.
 - `Inferência forte`: futuras analises devem priorizar combinacoes de familias relacionadas, e nao apenas tipos isolados.
 
+## Pendência de refatoração
+
+- `Inferência forte`: os arquivos `.md` desta base repetem informações em diferentes pontos:
+  - definições de pastas operacionais (ObjetosDaKbEmXml, XpzExportadosPelaIDE, etc.) aparecem em quase todas as skills
+  - regras de envelope XPZ repetem-se em xpz-builder, xpz-sync e xpz-doc-builder
+  - validações de Transaction ↔ Attributes duplicam-se em xpz-builder e xpz-reader
+- `Hipótese`: essa repetição causa dificuldade de manutenção, risco de inconsistência e documentos muito longos
+- `Regra operacional`: deduplicar informações repetidas, substituindo por referências aos documentos canônicos:
+  - pastas operacionais → referenciar a seção de topologia operacional do README.md
+  - envelope XPZ → referenciar 02-regras-operacionais-e-runtime.md
+  - validações de Transaction → referenciar a seção relevante de 05-transaction-familias-e-templates.md
+- `Regra operacional`: cada skill deve conter apenas suas próprias responsibilities, constraints e workflow, não a genealogia completa da base
+
+---
+
 ## Erros recorrentes
 
 ### `For each` com Base Table incoerente
