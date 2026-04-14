@@ -11,7 +11,7 @@ Invoca os scripts locais do repositório GeneXus ativo para sincronizar XMLs ind
 
 ## GUIDELINE
 
-Identificar a raiz do repositório pelo contexto, localizar os scripts de sincronização na pasta `scripts\`, montar o comando correto e executá-lo via Bash. Reportar o resultado de forma clara. Não alterar arquivos manualmente — delegar tudo ao script. Tratar `ObjetosDaKbEmXml` como snapshot oficial somente leitura para agentes e não antecipar manualmente nenhuma promoção para esse acervo. Distinguir sempre a pasta nativa da KB da pasta paralela da KB.
+Identificar a raiz do repositório pelo contexto, localizar os scripts de sincronização na pasta `scripts\`, montar o comando correto e executá-lo via Bash. Reportar o resultado de forma clara. Não alterar arquivos manualmente — delegar tudo ao script. Tratar `ObjetosDaKbEmXml` como snapshot oficial somente leitura para agentes e não antecipar manualmente nenhuma promoção para esse acervo. Distinguir sempre a pasta nativa da KB da pasta paralela da KB. Se houver edição detectada ou pretendida em `ObjetosDaKbEmXml` para delta ainda não reexportado oficialmente pela KB, tratar isso como erro explícito de processo.
 
 Os nomes das pastas sao apenas padroes sugeridos quando o usuario nao informar outros. O que manda e a funcao da pasta no fluxo.
 
@@ -132,19 +132,22 @@ Os wrappers seguem esta convenção de parâmetros:
 3. Resolver a raiz do repositório pelo contexto
 4. Ler o `README.md` local para identificar os nomes dos wrappers
 5. Distinguir explicitamente as áreas operacionais locais:
-   - `ObjetosDaKbEmXml` = snapshot oficial atualizado apenas pelo fluxo do script
-   - `ObjetosDaKbEmXml` = materializacao de `XPZ` completo ou parcial da IDE em XMLs individuais por objeto
+   - `ObjetosDaKbEmXml` = snapshot oficial da KB, materializado em XMLs individuais por objeto e atualizado apenas pelo fluxo oficial do script
    - `XpzExportadosPelaIDE` = entrada dos `.xpz` exportados pela IDE
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = área de trabalho para XML local de importação manual
    - `PacotesGeradosParaImportacaoNaKbNoGenexus` = área de pacotes gerados localmente
    - `scripts` = wrappers `.ps1` que tratam os `XPZ`
-6. Se o usuario informou nomes alternativos para as pastas, registrar o mapeamento entre nome real e funcao em `AGENTS.md` da pasta paralela da KB e, quando fizer sentido para humanos, tambem em `README.md`
+   - se o objeto ainda não voltou da KB por export oficial, o trabalho deve permanecer em `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+6. Se o usuario informou nomes alternativos para as pastas, reportar na conversa o mapeamento entre nome real e funcao
+   - documentar isso em arquivo somente quando a documentação local exigir ou quando o usuário pedir
 7. Se detectar alterações locais indevidas em `ObjetosDaKbEmXml`, reportar isso como incidente de processo:
    - Preservar o material de trabalho em `ObjetosGeradosParaImportacaoNaKbNoGenexus`
    - Restaurar `ObjetosDaKbEmXml` para a versão oficial do Git
    - Apresentar na conversa um manifesto estruturado dos itens preservados antes de retomar o fluxo normal
    - Salvar esse manifesto em arquivo apenas quando a rastreabilidade local do incidente exigir isso
    - Abortar imediatamente o fluxo normal até a restauração do snapshot oficial e a abertura do incidente de processo
+   - Não tratar esse caso como detalhe operacional; ele bloqueia o fluxo até saneamento explícito do snapshot oficial
+   - Se o usuário estiver em frente de delta ainda não reexportado pela KB, orientar explicitamente que o trabalho continue em `ObjetosGeradosParaImportacaoNaKbNoGenexus`, não no acervo oficial
 8. Confirmar o `InputPath` com o usuário se não foi fornecido
 9. Quando o fluxo envolver materializacao de `XPZ` completo:
    - quebrar o `full.xml` em XMLs individuais por objeto
@@ -205,6 +208,7 @@ PastaParalelaDaKb/
 - NUNCA criar, alterar, mover, renomear ou sobrescrever arquivos em `ObjetosDaKbEmXml` fora do fluxo oficial do script `.ps1`
 - NUNCA antecipar atualização manual de `ObjetosDaKbEmXml`
 - NUNCA prosseguir com sync normal quando `ObjetosDaKbEmXml` estiver dirty fora do fluxo oficial; primeiro preserve, restaure e trate como incidente de processo
+- NUNCA tratar edição detectada ou pretendida em `ObjetosDaKbEmXml` para delta ainda não reexportado oficialmente pela KB como detalhe operacional; isso é erro explícito de processo
 - NUNCA assumir subpastas em `ObjetosGeradosParaImportacaoNaKbNoGenexus` como lote ativo de importacao; o lote ativo deve estar na raiz da pasta
 - NUNCA reutilizar automaticamente artefato de importação/delta como base de nova alteração se o mesmo objeto já tiver voltado da KB e sido materializado no acervo oficial
 - NUNCA criar script novo se o repositorio ja tiver fluxo oficial previsto nas skills ou em `scripts/`
