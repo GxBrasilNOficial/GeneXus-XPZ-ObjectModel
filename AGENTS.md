@@ -1,0 +1,33 @@
+# AGENTS.md
+
+## Leitura obrigatória
+
+- Ler primeiro o `README.md` local antes de agir.
+- Reler a documentação local quando o contexto da conversa ficar longo, ambíguo ou perder aderência às convenções da raiz.
+
+## README trilíngue
+
+- A seção `Português (BR)` do `README.md` é a fonte editorial primária.
+- Toda alteração de conteúdo, estrutura, regra operacional ou nomenclatura feita na seção `Português (BR)` deve ser refletida também nas seções `Español` e `English`.
+- Não concluir edição do `README.md` com traduções parciais, defasadas ou estruturalmente inconsistentes sem apontar a pendência de forma explícita.
+
+## Escopo da raiz
+
+- Esta raiz é a base metodológica e operacional compartilhada das skills de `XPZ`/XML de GeneXus.
+- Regras locais desta raiz devem ser tratadas como regras do repositório; não promovê-las automaticamente a regra universal fora desta base sem evidência documental correspondente.
+
+## Edição segura de Markdown
+
+- Em `.md` longos ou estruturados, preferir edições pequenas, locais e ancoradas por seção.
+- Após cada gravação, reler o início do arquivo, a seção alterada e a transição para a seção seguinte.
+- Se uma edição automática produzir resultado inesperado, parar e voltar para uma estratégia mais localizada.
+
+## Alinhamento entre documentos
+
+- Ao alterar nomenclatura, fluxo ou regra operacional, verificar impacto pelo menos em `README.md`, `02-regras-operacionais-e-runtime.md`, `08-guia-para-agente-gpt.md` e nas skills afetadas.
+- Não deixar convenções conflitantes entre a base compartilhada e as skills quando a mudança fizer parte da mesma frente.
+
+## Idioma
+
+- Responder ao usuário em português, salvo pedido explícito em outro idioma.
+- Quando citar conteúdo técnico originalmente em inglês, traduzir ao explicar sempre que isso melhorar a compreensão.

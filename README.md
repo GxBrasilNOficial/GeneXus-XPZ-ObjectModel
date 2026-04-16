@@ -1,5 +1,13 @@
 # Knowledge GeneXus
 
+## Manutenção trilíngue do README
+
+- a seção `Português (BR)` é a fonte editorial primária do `README.md`
+- toda alteração de conteúdo, estrutura, regra operacional ou nomenclatura feita na seção `Português (BR)` deve ser refletida também nas seções `Español` e `English`
+- não deixar traduções parciais, defasadas ou estruturalmente incompletas em relação à versão em português
+- ao editar apenas uma das três seções, validar explicitamente se as outras duas continuam consistentes
+- se a atualização completa das três línguas não puder ser feita na mesma frente, sinalizar isso como pendência explícita antes de concluir
+
 ## Português (BR)
 
 Este repositório existe para sustentar e operacionalizar skills para agentes dedicadas ao ecossistema `XPZ`/XML de GeneXus, em especial `xpz-reader`, `xpz-builder`, `xpz-sync`, `xpz-doc-builder`, `xpz-daemon` e `xpz-kb-parallel-setup`.
@@ -171,10 +179,16 @@ Si quieres entender la base rápidamente:
 - la base ya incorpora pruebas documentadas de importación en casos controlados, pero eso no elimina el riesgo
 - moldes sanitizados completos pueden servir como punto de partida en escenarios específicos documentados en la propia base; resúmenes textuales y ejemplos incompletos no sirven como fuente final de materialización
 - el contenido fue organizado para reducir prueba y error, no para eliminar riesgo
+- existe una carpeta privada separada, `GeneXus-XPZ-PrivateMap`, usada solo para trazabilidad editorial privada entre aliases públicos y artefactos reales; la fuente publicada sigue siendo esta raíz
+- todo nuevo ejemplo sanitizado incorporado en la base pública debe recibir una anotación correspondiente en `GeneXus-XPZ-PrivateMap`, vinculando el trecho público con los objetos o paquetes reales de origen
 
 ### Topología operativa
 
+- en esta trilha, la carpeta nativa de la KB GeneXus es distinta de la carpeta paralela de la KB
+- la carpeta paralela de la KB es la carpeta de trabajo que concentra `XPZ` exportados por la IDE, XMLs materializados por el flujo oficial y artefactos preparados para importación posterior
+
 - `ObjetosDaKbEmXml`: snapshot oficial de la KB; solo lectura para agentes
+- `XpzExportadosPelaIDE`: carpeta donde el usuario graba tanto el `XPZ` completo de la Carga Inicial como los `XPZ` incrementales del día a día
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabajo para XMLs generados, ajustados o preservados para importación manual en la IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de salida para `import_file.xml` y demás paquetes generados localmente
 - en `ObjetosGeradosParaImportacaoNaKbNoGenexus`, cada frente activa debe usar su propia subcarpeta con el formato `NomeCurto_GUID_YYYYMMDD`
@@ -182,9 +196,47 @@ Si quieres entender la base rápidamente:
 - en `PacotesGeradosParaImportacaoNaKbNoGenexus`, los paquetes deben permanecer en la raíz, sin subcarpetas, usando el formato `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml`
 - `nn` representa solo la ronda corta del paquete en esa frente; no representa versión semántica
 - la promoción hacia `ObjetosDaKbEmXml` ocurre solo por el flujo oficial del script `.ps1` alimentado por el `XPZ` exportado por la IDE
+- `ObjetosDaKbEmXml` no debe actualizarse por edición manual; se actualiza por el flujo del `.ps1` a partir de los `XPZ` disponibilizados en la carpeta paralela de la KB
 - si el objeto todavía no volvió de la KB por export oficial, el trabajo debe ocurrir en `ObjetosGeradosParaImportacaoNaKbNoGenexus`
 - una edición detectada o pretendida en `ObjetosDaKbEmXml` para un delta aún no reexportado oficialmente por la KB debe tratarse como error explícito de proceso, no como detalle operativo
 - `AGENTS.md`, `README.md` y documentación equivalente de la KB funcionan como capa obligatoria de especialización local; sus reglas valen para ese repositorio y no deben promoverse automáticamente a la metodología compartida de XPZ
+
+### Carga inicial
+
+- cuando el usuario no informe nombres alternativos, la KB debe asumir estas subcarpetas estándar:
+  - `ObjetosDaKbEmXml`
+  - `XpzExportadosPelaIDE`
+  - `scripts`
+  - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  - `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- `XpzExportadosPelaIDE` es la carpeta de entrada donde el usuario de GeneXus graba los `.xpz` que serán procesados
+- después de procesado con éxito por el flujo oficial, el `.xpz` puede renombrarse a `processado_<nome-original>.xpz`
+- `scripts` concentra los wrappers `.ps1` que tratan los `XPZ`
+- la Carga Inicial puede usar un `XPZ` completo nuevo en cualquier momento para reactualizar `ObjetosDaKbEmXml`
+- la misma estructura también vale para `XPZ` parciales con objetos alterados desde la última actualización
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus` guarda objetos temporales destinados a la importación manual en la IDE
+- cada frente activa en `ObjetosGeradosParaImportacaoNaKbNoGenexus` debe tener su propia subcarpeta `NomeCurto_GUID_YYYYMMDD`
+- esa subcarpeta de la frente es la unidad activa de la frente de trabajo
+- al retomar una frente existente, reutilizar la misma subcarpeta de la frente en vez de crear otra
+- `PacotesGeradosParaImportacaoNaKbNoGenexus` guarda el paquete `.xml` y, cuando sea necesario, también `.xpz`, que será importado por la IDE
+- `PacotesGeradosParaImportacaoNaKbNoGenexus` debe permanecer plano, sin subcarpetas por frente; el vínculo con la frente queda solo en el prefijo `NomeCurto_GUID_YYYYMMDD` sumado a `nn`
+- `AGENTS.md` y `README.md` pueden existir en la raíz o en subcarpetas cuando haya anotación operativa pertinente
+- si alguna de esas subcarpetas todavía no existe, el orden recomendado de creación es:
+  1. `scripts`
+  2. `XpzExportadosPelaIDE`
+  3. `ObjetosDaKbEmXml`
+  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- cuando `XpzExportadosPelaIDE` todavía no exista, el agente debe preguntar dónde el usuario pretende guardar los `.xpz` antes de continuar con el procesamiento
+- cuando `ObjetosDaKbEmXml` todavía no exista, el agente debe tratar esto como KB aún no materializada y detenerse antes de asumir cualquier snapshot
+
+### Automación operativa
+
+- el script `scripts/Sync-GeneXusXpzToXml.ps1` forma parte de la infraestructura operativa de esta base y no debe ser removido del repositorio público
+- ese script puede ser usado por proyectos de producción que mantengan acervos versionados de XML extraídos de `XPZ`
+- la carpeta `scripts/` existe como apoyo operativo, analítico y editorial compartible, pero no es fuente normativa de la documentación consolidada de la raíz
+- los scripts públicos de esta raíz deben operar por parámetros explícitos de entrada y salida, sin depender de rutas absolutas privadas
+- si el motor necesita evolucionar, el cambio debe preservar compatibilidad con ese uso o venir acompañado de actualización explícita de los wrappers consumidores
 
 ---
 
@@ -242,10 +294,16 @@ If you want to understand the repository quickly:
 - the base already includes documented import tests in controlled cases, but that still does not remove risk
 - complete sanitized templates can serve as a starting point in specific scenarios documented in the base itself; textual summaries and incomplete examples are not valid as the final source for materialization
 - the content is meant to reduce trial and error, not to eliminate risk
+- there is a separate private folder, `GeneXus-XPZ-PrivateMap`, used only for private editorial traceability between public aliases and real artifacts; the published source remains this root
+- every new sanitized example incorporated into the public base must receive a corresponding note in `GeneXus-XPZ-PrivateMap`, linking the public excerpt to the real source objects or packages
 
 ### Operational Topology
 
+- in this trail, the native GeneXus KB folder is different from the KB parallel folder
+- the KB parallel folder is the working folder that concentrates `XPZ` exported by the IDE, XMLs materialized by the official flow, and artifacts prepared for later import
+
 - `ObjetosDaKbEmXml`: official KB snapshot; read-only for agents
+- `XpzExportadosPelaIDE`: folder where the user stores both the full Initial Load `XPZ` and the day-to-day incremental `XPZ` files
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: working area for XMLs generated, adjusted, or preserved for manual IDE import
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: output area for `import_file.xml` and other locally generated packages
 - in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, each active front must use its own subfolder in the format `NomeCurto_GUID_YYYYMMDD`
@@ -253,6 +311,44 @@ If you want to understand the repository quickly:
 - in `PacotesGeradosParaImportacaoNaKbNoGenexus`, packages must remain in the root, without subfolders, using the format `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml`
 - `nn` represents only the short package round for that front; it is not semantic versioning
 - promotion into `ObjetosDaKbEmXml` happens only through the official `.ps1` script flow fed by the XPZ exported from the IDE
+- `ObjetosDaKbEmXml` must not be updated by manual editing; it is updated by the `.ps1` flow from the XPZ files made available in the KB parallel folder
 - if the object has not yet returned from the KB by official export, the work must happen in `ObjetosGeradosParaImportacaoNaKbNoGenexus`
 - detected or intended editing in `ObjetosDaKbEmXml` for a delta that has not yet been officially re-exported by the KB must be treated as an explicit process error, not as an operational detail
 - `AGENTS.md`, `README.md`, and equivalent KB documentation act as the mandatory local specialization layer; their rules apply to that repository and must not be automatically promoted to the shared XPZ methodology
+
+### Initial load
+
+- when the user does not provide alternative names, the KB must assume these standard subfolders:
+  - `ObjetosDaKbEmXml`
+  - `XpzExportadosPelaIDE`
+  - `scripts`
+  - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  - `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- `XpzExportadosPelaIDE` is the input folder where the GeneXus user stores the `.xpz` files that will be processed
+- after being successfully processed by the official flow, the `.xpz` can be renamed to `processado_<nome-original>.xpz`
+- `scripts` concentrates the `.ps1` wrappers that handle the `XPZ`
+- the Initial Load can use a new full `XPZ` at any time to refresh `ObjetosDaKbEmXml`
+- the same structure also applies to partial `XPZ` files with objects changed since the last update
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus` stores temporary objects intended for manual IDE import
+- each active front in `ObjetosGeradosParaImportacaoNaKbNoGenexus` must have its own `NomeCurto_GUID_YYYYMMDD` subfolder
+- that front subfolder is the active unit of the working front
+- when resuming an existing front, reuse the same front subfolder instead of creating another one
+- `PacotesGeradosParaImportacaoNaKbNoGenexus` stores the `.xml` package and, when needed, also `.xpz`, which will be imported by the IDE
+- `PacotesGeradosParaImportacaoNaKbNoGenexus` must remain flat, without subfolders by front; the link to the front exists only in the `NomeCurto_GUID_YYYYMMDD` prefix plus `nn`
+- `AGENTS.md` and `README.md` may exist in the root or in subfolders when there is relevant operational annotation
+- if any of those subfolders does not exist yet, the recommended creation order is:
+  1. `scripts`
+  2. `XpzExportadosPelaIDE`
+  3. `ObjetosDaKbEmXml`
+  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- when `XpzExportadosPelaIDE` does not exist yet, the agent must ask where the user intends to save the `.xpz` files before continuing with processing
+- when `ObjetosDaKbEmXml` does not exist yet, the agent must treat this as a KB not yet materialized and stop before assuming any snapshot
+
+### Operational automation
+
+- the script `scripts/Sync-GeneXusXpzToXml.ps1` is part of the operational infrastructure of this base and must not be removed from the public repository
+- that script can be used by production projects that keep versioned XML archives extracted from `XPZ`
+- the `scripts/` folder exists as shared operational, analytical, and editorial support, but it is not the normative source of the consolidated root documentation
+- the public scripts in this root must operate through explicit input and output parameters, without depending on private absolute paths
+- if the engine needs to evolve, the change must preserve compatibility with that use or be accompanied by explicit updates to the consuming wrappers
