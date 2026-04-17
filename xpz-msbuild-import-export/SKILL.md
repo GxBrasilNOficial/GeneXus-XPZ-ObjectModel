@@ -60,6 +60,8 @@ Do NOT use esta skill para:
 - Registrar `stdout`, `stderr`, `exitCode`, caminho do `.msbuild` temporário e caminho do log
 - Privilegiar `PreviewMode` e, quando suportado pela task carregada, `UpdateFile` antes de importação real
 - Tratar `ImportKBInformation`, `UpdateFile` e defaults internos de importação/exportação como sensíveis e dependentes da assinatura efetiva da task `Import`
+- Preservar `importedItems` como lista em qualquer diagnóstico JSON, mesmo quando houver apenas um item
+- Quando a task carregada não expuser `UpdateFile` nem `ImportKBInformation`, o wrapper de preview deve bloquear esses parâmetros cedo
 - Exigir confirmação explícita antes de importação real
 - Recomendar reabertura da KB na IDE oficial após testes relevantes para observar warning, marca de versão ou outro efeito colateral
 

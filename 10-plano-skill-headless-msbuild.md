@@ -561,6 +561,7 @@ Saídas esperadas dos scripts:
 - caminho do log gerado
 - caminho do `.msbuild` temporário gerado
 - artefatos produzidos, quando houver
+- `importedItems` deve sair sempre como lista no JSON, inclusive quando houver apenas um item
 - indicação explícita de:
   - sucesso operacional
   - falha operacional

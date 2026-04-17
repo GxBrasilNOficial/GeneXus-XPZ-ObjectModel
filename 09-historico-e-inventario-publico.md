@@ -40,6 +40,9 @@ Preservar rastreabilidade da consolidacao, inventario documental, inventario bru
 - `Evidência direta`: essa skill permanece experimental e, nesta fase, ja inclui a implementacao inicial de `scripts/Test-GeneXusMsBuildSetup.ps1` como probe nao invasivo de ambiente.
 - `Evidência direta`: essa skill tambem ja inclui a implementacao inicial de `scripts/Open-GeneXusKbHeadless.ps1` para abertura e fechamento controlados da KB com captura de contexto.
 - `Evidência direta`: essa skill tambem ja inclui a implementacao inicial de `scripts/Test-GeneXusXpzImportPreview.ps1` para `PreviewMode` de importacao sem alteracao real da KB, validada nesta conversa com `XPZ` real.
+- `Evidência direta`: `Open-GeneXusKbHeadless.ps1` foi validado com `C:\KBs\Teste1`, `VersionName=Teste1` e `EnvironmentName=NETSQLServer`.
+- `Evidência direta`: `Test-GeneXusXpzImportPreview.ps1` foi validado com `C:\Dev\Knowledge\GeneXus-XPZ-Skills\Temp\Teste1_Full_20260417a.xpz`.
+- `Evidência direta`: o `PreviewMode` executado nessa validacao nao alterou a KB.
 - `Evidência direta`: na instalacao validada nesta conversa, `IncludeItems` e `ExcludeItems` funcionaram em `PreviewMode`, enquanto `UpdateFile` e `ImportKBInformation` ficaram bloqueados por ausencia de propriedade publica correspondente na task `Import` carregada.
 - `Evidência direta`: os scripts previstos para exportacao efetiva e importacao efetiva continuam nao materializados nesta fase.
 - `Regra editorial`: a existencia dessa skill nao promove a trilha `MSBuild` a fluxo oficial da base nem altera automaticamente o comportamento das skills `xpz-*` existentes.

@@ -35,6 +35,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Evidência direta`: `PreviewMode` foi validado operacionalmente com `XPZ` real nesta frente, sem alteracao real da KB.
 - `Evidência direta`: `IncludeItems` e `ExcludeItems` tiveram efeito operacional observavel em `PreviewMode` nesta instalacao.
 - `Regra operacional`: quando houver diagnostico estruturado de preview headless, `importedItems` deve permanecer lista mesmo quando so um item for retornado.
+- `Regra operacional`: quando a task `Genexus.MsBuild.Tasks.Import` nao expuser `UpdateFile` nem `ImportKBInformation`, o wrapper deve bloquear cedo esses parametros quando explicitamente pedidos.
 - `Regra operacional`: wrappers e scripts permanentes ficam em `scripts`; artefatos efemeros de execucao, logs auxiliares e diretorios temporarios de rodada devem preferir `Temp`.
 - `Regra operacional`: em trilha `MSBuild`, distinguir sempre `sucesso operacional da chamada`, `preview apenas` e `confirmacao funcional posterior na IDE`.
 
