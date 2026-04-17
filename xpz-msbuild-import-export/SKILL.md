@@ -1,6 +1,6 @@
 ---
 name: xpz-msbuild-import-export
-description: Skill experimental para importação e exportação de XPZ via MSBuild, com execução sem interface gráfica, parâmetros explícitos, rastreabilidade e gates de segurança
+description: Skill experimental para importação e exportação de XPZ via MSBuild, com execução sem interface gráfica, parâmetros explícitos, rastreabilidade e gates (pontos de liberação ou bloqueio) de segurança
 ---
 
 # xpz-msbuild-import-export
@@ -13,7 +13,7 @@ Esta skill não substitui o fluxo oficial atual da trilha paralela da KB, não d
 
 ## GUIDELINE
 
-Orquestre operações de `XPZ` via `MSBuild` com parâmetros explícitos, coleta rastreável de evidências e aborto seguro antes de operações sensíveis. Priorize descoberta de ambiente, `PreviewMode`, `UpdateFile` e validação posterior. Nunca trate importação real como padrão.
+Orquestre operações de `XPZ` via `MSBuild` com parâmetros explícitos, coleta rastreável de evidências e aborto seguro antes de operações sensíveis. Priorize descoberta de ambiente, `PreviewMode`, `UpdateFile` quando suportado pela task carregada, `IncludeItems`/`ExcludeItems` para recortes controlados e validação posterior. Nunca trate importação real como padrão.
 
 ## PATH RESOLUTION
 
@@ -30,7 +30,7 @@ Use esta skill para:
 - abrir a `Knowledge Base` por `OpenKnowledgeBase`
 - confirmar versão ativa e `Environment` ativo
 - executar preview de importação com `PreviewMode`
-- gerar `UpdateFile` para análise prévia de impacto
+- gerar `UpdateFile`, quando suportado pela task carregada, para análise prévia de impacto
 - exportar `XPZ` com parâmetros explícitos
 - importar `XPZ` apenas em fase explicitamente autorizada de teste controlado
 - classificar resultado em sucesso operacional versus confirmação funcional pendente
@@ -48,14 +48,18 @@ Do NOT use esta skill para:
 
 - Usar [10-plano-skill-headless-msbuild](../10-plano-skill-headless-msbuild.md) como base principal desta frente
 - Validar explicitamente `KbPath`, `GeneXusDir`, `MsBuildPath`, `WorkingDirectory`, `LogPath` e `Genexus.Tasks.targets`
+- Tratar `Test-GeneXusMsBuildSetup.ps1` como probe (sondagem técnica inicial) não invasivo, anterior a qualquer abertura de KB
 - Tratar `C:\Program Files (x86)` como estritamente somente leitura
 - Garantir que logs, temporários, `.msbuild` e artefatos sejam gerados fora de `C:\Program Files (x86)`
+- Preferir `Temp` como destino de artefatos efêmeros de execução e manter `scripts` como pasta de wrappers permanentes
 - Distinguir claramente:
   - sucesso operacional da chamada
   - efeito funcional observado depois no GeneXus
+- Exigir que o probe (sondagem técnica inicial) devolva diagnóstico estruturado com `status`, `summary`, `resolvedPaths`, `checks`, `blockingReasons`, `warnings` e `strategyTrace`
+- Preferir `JSON` como formato canônico inicial desse diagnóstico
 - Registrar `stdout`, `stderr`, `exitCode`, caminho do `.msbuild` temporário e caminho do log
-- Privilegiar `PreviewMode` e `UpdateFile` antes de importação real
-- Tratar `ImportKBInformation` e defaults internos de importação/exportação como sensíveis
+- Privilegiar `PreviewMode` e, quando suportado pela task carregada, `UpdateFile` antes de importação real
+- Tratar `ImportKBInformation`, `UpdateFile` e defaults internos de importação/exportação como sensíveis e dependentes da assinatura efetiva da task `Import`
 - Exigir confirmação explícita antes de importação real
 - Recomendar reabertura da KB na IDE oficial após testes relevantes para observar warning, marca de versão ou outro efeito colateral
 
@@ -85,15 +89,34 @@ Arquivos de referência e quando carregar:
 
 ## EXPECTED INTERFACE
 
-Esta skill assume, como interface operacional futura, scripts pequenos e explicitamente parametrizados. Eles não devem ser tratados como já implementados sem confirmação explícita.
+Esta skill assume, como interface operacional, scripts pequenos e explicitamente parametrizados. `Test-GeneXusMsBuildSetup.ps1`, `Open-GeneXusKbHeadless.ps1` e `Test-GeneXusXpzImportPreview.ps1` já foram materializados nesta fase; os demais não devem ser tratados como já implementados sem confirmação explícita.
 
-Scripts esperados:
+Estado atual da materialização:
+
+- `Test-GeneXusMsBuildSetup.ps1`: implementado como probe (sondagem técnica inicial) não invasivo
+- `Open-GeneXusKbHeadless.ps1`: implementado para abertura e fechamento controlados da KB, com contexto ativo e sem import/export
+- `Test-GeneXusXpzImportPreview.ps1`: implementado para `PreviewMode` de importação e já validado nesta conversa com XPZ real
+- os demais scripts permanecem apenas como contrato
+
+Scripts nesta frente:
 
 - `Test-GeneXusMsBuildSetup.ps1`
+  - status atual: implementado como probe (sondagem técnica inicial) não invasivo
 - `Open-GeneXusKbHeadless.ps1`
+  - status atual: implementado para abertura e fechamento controlados da KB
 - `Test-GeneXusXpzImportPreview.ps1`
+  - status atual: implementado para `PreviewMode` sem importação real, com `IncludeItems` e `ExcludeItems` validados nesta instalação
 - `Invoke-GeneXusXpzExport.ps1`
 - `Invoke-GeneXusXpzImport.ps1`
+
+Contrato inicial específico de `Test-GeneXusMsBuildSetup.ps1`:
+
+- obrigatórios: `-WorkingDirectory`, `-LogPath`
+- opcionais: `-GeneXusDir`, `-MsBuildPath`, `-KbPath`, `-VerboseLog`
+- códigos de saída contratuais:
+  - `0` para `apto para prosseguir`
+  - `10` a `16` para bloqueios operacionais esperados com diagnóstico estruturado
+  - `90` para falha interna do script antes de diagnóstico completo
 
 Parâmetros transversais esperados:
 
@@ -128,38 +151,42 @@ Parâmetros específicos de importação:
 
 ---
 
-## WORKFLOW
+## WORKFLOW (fluxo de trabalho)
 
 1. Reler a documentação local aplicável e usar [10-plano-skill-headless-msbuild](../10-plano-skill-headless-msbuild.md) como referência principal
 2. Validar se o cenário é compatível com uso experimental e ambiente controlado
 3. Confirmar que `C:\Program Files (x86)` será tratada como somente leitura
-4. Validar:
+4. Executar primeiro um probe (sondagem técnica inicial) não invasivo para validar:
    - `KbPath`
    - `GeneXusDir`
    - `MsBuildPath`
    - `WorkingDirectory`
    - `LogPath`
    - existência de `Genexus.Tasks.targets`
-5. Localizar `MSBuild.exe` por estratégia explícita de fallback e registrar qual caminho foi usado
-6. Abrir a KB e confirmar versão ativa e `Environment` ativo quando aplicável
-7. Se o objetivo for inspeção, priorizar:
+5. Resolver `GeneXusDir` e `MsBuildPath` por ordem explícita de precedência e fallback, registrando origem e descarte de candidatos quando aplicável
+6. Classificar o resultado do probe (sondagem técnica inicial) como `apto para prosseguir` ou `não apto para prosseguir`
+   O diagnóstico deve incluir `status`, `summary`, `resolvedPaths`, `checks`, `blockingReasons`, `warnings` e `strategyTrace`.
+   Preferir `JSON` como formato canônico inicial.
+7. Só depois abrir a KB e confirmar versão ativa e `Environment` ativo quando aplicável
+8. Se o objetivo for inspeção, priorizar:
    - `PreviewMode`
-   - `UpdateFile`
-8. Se o objetivo for exportação, executar com parâmetros explícitos e conferir o artefato gerado
-9. Se o objetivo for importação real, exigir autorização explícita e ambiente controlado
-10. Capturar e relatar:
+   - `UpdateFile`, quando suportado pela task carregada
+9. Se o objetivo for exportação, executar com parâmetros explícitos e conferir o artefato gerado
+10. Se o objetivo for importação real, exigir autorização explícita e ambiente controlado
+11. Capturar e relatar:
    - `exitCode`
    - resumo de `stdout`
    - resumo de `stderr`
    - caminho do `.msbuild`
    - caminho do log
    - artefatos gerados ou consumidos
-11. Classificar o resultado como:
+12. Classificar o resultado como:
+   - `não apto para prosseguir`
    - `sucesso operacional`
    - `falha operacional`
    - `preview apenas`
    - `operação concluída, porém pendente de confirmação funcional`
-12. Recomendar o próximo passo seguro, incluindo reabertura da KB na IDE quando o teste exigir observação posterior
+13. Recomendar o próximo passo seguro, incluindo reabertura da KB na IDE quando o teste exigir observação posterior
 
 ---
 
@@ -167,7 +194,11 @@ Parâmetros específicos de importação:
 
 - [ ] A skill foi tratada como experimental
 - [ ] `C:\Program Files (x86)` permaneceu estritamente somente leitura
+- [ ] O probe (sondagem técnica inicial) não invasivo ocorreu antes de qualquer abertura de KB
+- [ ] O probe (sondagem técnica inicial) devolveu diagnóstico estruturado completo
+- [ ] O probe (sondagem técnica inicial) respeitou o contrato de parâmetros obrigatórios, opcionais e `exitCode`
 - [ ] `KbPath`, `GeneXusDir`, `MsBuildPath`, `WorkingDirectory` e `LogPath` foram explicitados
+- [ ] `GeneXusDir` e `MsBuildPath` foram resolvidos por precedência e fallback rastreáveis
 - [ ] `Genexus.Tasks.targets` foi validado
 - [ ] `PreviewMode` foi priorizado quando a intenção era inspeção
 - [ ] Importação real só ocorreu com autorização explícita

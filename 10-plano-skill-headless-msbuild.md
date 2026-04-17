@@ -4,7 +4,13 @@
 
 Documento provisório de planejamento.
 
-Já existe um `SKILL.md` contratual materializado em `xpz-msbuild-import-export/SKILL.md`, ainda em status experimental e sem implementação dos futuros `.ps1`.
+Já existe um `SKILL.md` contratual materializado em `xpz-msbuild-import-export/SKILL.md`, ainda em status experimental.
+
+Também já existe uma implementação controlada de `scripts/Test-GeneXusMsBuildSetup.ps1`, restrita ao probe (sondagem técnica inicial) de ambiente, sem abertura de KB, sem `.msbuild` operacional e sem importação ou exportação.
+
+Também já existe uma implementação inicial de `scripts/Open-GeneXusKbHeadless.ps1`, restrita à abertura e ao fechamento controlados da KB, com posicionamento opcional de versão e `Environment`, captura de saída e leitura do contexto ativo, ainda sem importação ou exportação.
+
+Também já existe uma implementação inicial de `scripts/Test-GeneXusXpzImportPreview.ps1`, restrita ao `PreviewMode` de importação com saída em `JSON`, sem alteração real da KB e já validada nesta conversa com `XPZ` real.
 
 Este plano ainda não define a implementação final da skill, não altera o comportamento das skills `xpz-*` existentes e não oficializa uma nova trilha operacional.
 
@@ -27,7 +33,7 @@ Registrar as diretrizes iniciais para uma futura skill experimental dedicada à 
 - substituir o fluxo oficial atual da trilha paralela da KB
 - depender de GeneXus Server como requisito operacional da futura skill
 - prometer sucesso funcional de importação, build, reorg ou consistência sem validação externa
-- implementar agora `.ps1` ou integração com as skills existentes
+- implementar agora importação/exportação operacional ou integração ampla com as skills existentes
 
 ## Princípios De Segurança
 
@@ -69,6 +75,32 @@ Regras aplicáveis:
 - localizar `MSBuild`
 - validar existência dos arquivos `Genexus.Tasks.targets` e equivalentes necessários
 - validar caminhos de KB informados
+
+### 1A. Probe (sondagem técnica inicial) Não Invasivo
+
+Antes de qualquer abertura de `Knowledge Base`, a frente passa a assumir um probe (sondagem técnica inicial) exclusivamente de descoberta de ambiente.
+
+Objetivo do probe (sondagem técnica inicial):
+
+- confirmar que a instalação do GeneXus foi localizada
+- confirmar que `MSBuild.exe` foi localizado por estratégia explícita de fallback
+- confirmar a existência de `Genexus.Tasks.targets`
+- confirmar que `WorkingDirectory` e `LogPath` apontam para fora de `C:\Program Files (x86)`
+- confirmar que os caminhos informados existem e são coerentes com a fase pedida
+
+Saída mínima esperada do probe (sondagem técnica inicial):
+
+- classificação `apto para prosseguir` ou `não apto para prosseguir`
+- motivo explícito em caso de bloqueio
+- caminhos efetivamente resolvidos para `GeneXusDir`, `MsBuildPath`, `WorkingDirectory` e `LogPath`
+
+O probe (sondagem técnica inicial) não deve:
+
+- abrir a KB
+- gerar `.msbuild` operacional
+- executar `OpenKnowledgeBase`, `Export` ou `Import`
+- criar arquivos em `C:\Program Files (x86)`
+- tratar ausência de caminho explícito como autorização para inferência silenciosa
 
 ### 2. Acesso À KB
 
@@ -436,6 +468,19 @@ Com base na documentação offline da instalação oficial, ficam confirmados pa
 - verificar se a execução via `MSBuild` deixa rastros laterais relevantes no diretório de trabalho ou em arquivos de log associados ao host
 - verificar se a KB continua abrindo normalmente na IDE após operações headless, sem warning ou marcas indesejadas de host
 
+## Achado Empírico Da Instalação Atual
+
+Na instalação validada nesta conversa, a reflexão do assembly `Genexus.MsBuild.Tasks.dll` mostrou que a task `Genexus.MsBuild.Tasks.Import` expõe publicamente `PreviewMode`, `IncludeItems` e `ExcludeItems`, mas não expõe `UpdateFile` nem `ImportKBInformation` como propriedades públicas configuráveis.
+
+Consequências práticas imediatas:
+
+- o wrapper de preview não deve emitir `UpdateFile` por padrão nesta instalação
+- `ImportKBInformation` não deve ser emitido por padrão nesta instalação
+- quando o usuário pedir `UpdateFile` ou `ImportKBInformation`, a frente deve tratar isso como capacidade dependente da assinatura efetiva da task carregada, não apenas da documentação offline
+- o teste 4 do plano permanece metodologicamente válido, mas nesta instalação ficou bloqueado por incompatibilidade observada da task carregada
+- `IncludeItems` e `ExcludeItems` tiveram efeito operacional confirmado em `PreviewMode` nesta instalação
+- o contrato do diagnóstico do wrapper deve preservar `importedItems` sempre como lista, inclusive quando houver apenas um item retornado
+
 ## Checklist Inicial De Requisitos Da Futura Skill
 
 - usar `MSBuild` como host principal da execução operacional
@@ -521,6 +566,247 @@ Saídas esperadas dos scripts:
   - falha operacional
   - operação apenas em preview
   - operação concluída, porém ainda pendente de confirmação funcional
+
+### Contrato Inicial De `Test-GeneXusMsBuildSetup.ps1`
+
+Nesta fase, o primeiro script da trilha deve ser apenas um probe (sondagem técnica inicial) de ambiente.
+
+Escopo permitido:
+
+- resolver `GeneXusDir`
+- resolver `MsBuildPath`
+- validar presença de `Genexus.Tasks.targets`
+- validar existência de `KbPath`, quando ele for informado para fases posteriores
+- validar que `WorkingDirectory` e `LogPath` ficam fora de `C:\Program Files (x86)`
+- devolver diagnóstico estruturado e abortar cedo quando houver ambiguidade
+
+Escopo proibido:
+
+- abrir ou fechar `Knowledge Base`
+- selecionar versão ou `Environment`
+- gerar arquivo `.msbuild` para execução operacional
+- invocar tasks de importação ou exportação
+- produzir artefato persistente além do log explicitamente solicitado fora de `C:\Program Files (x86)`
+
+Parâmetros mínimos esperados neste probe (sondagem técnica inicial):
+
+- `-GeneXusDir`
+- `-MsBuildPath`
+- `-KbPath`
+- `-WorkingDirectory`
+- `-LogPath`
+- `-VerboseLog`
+
+Assinatura contratual inicial do futuro script:
+
+Parâmetros obrigatórios:
+
+- `-WorkingDirectory`
+- `-LogPath`
+
+Parâmetros opcionais:
+
+- `-GeneXusDir`
+- `-MsBuildPath`
+- `-KbPath`
+- `-VerboseLog`
+
+Critério de obrigatoriedade nesta fase:
+
+- `WorkingDirectory` e `LogPath` são obrigatórios porque o probe precisa validar diretórios seguros e rastreabilidade mínima
+- `GeneXusDir` e `MsBuildPath` podem ser omitidos apenas porque esta fase já define fallback explícito
+- `KbPath` pode ser omitido quando o objetivo for apenas validar host e instalação antes de amarrar uma KB específica
+- `VerboseLog` é opcional e deve afetar detalhamento, não o resultado lógico do probe
+
+Códigos de saída contratuais iniciais:
+
+- `0`
+  - probe concluído com `status = apto para prosseguir`
+- `10`
+  - probe concluído com `status = não apto para prosseguir` por ausência ou invalidez de `GeneXusDir`
+- `11`
+  - probe concluído com `status = não apto para prosseguir` por ausência ou invalidez de `MsBuildPath`
+- `12`
+  - probe concluído com `status = não apto para prosseguir` por ausência de `Genexus.Tasks.targets`
+- `13`
+  - probe concluído com `status = não apto para prosseguir` por `WorkingDirectory` inseguro
+- `14`
+  - probe concluído com `status = não apto para prosseguir` por `LogPath` inseguro
+- `15`
+  - probe concluído com `status = não apto para prosseguir` por `KbPath` inválido, quando informado
+- `16`
+  - probe concluído com `status = não apto para prosseguir` por ambiguidade não resolvida em fallback
+- `90`
+  - falha interna do próprio script antes de gerar diagnóstico completo
+
+Regra de uso dos códigos de saída:
+
+- códigos `10` a `16` representam bloqueio operacional esperado e devem vir acompanhados de diagnóstico estruturado
+- código `90` representa falha do script como ferramenta, não apenas bloqueio do ambiente
+- não reutilizar `0` para cenários bloqueados só porque o script conseguiu escrever log
+- o campo `status` do diagnóstico e o `exitCode` precisam ser coerentes entre si
+
+Resultado esperado:
+
+- `apto para prosseguir` quando todos os pré-requisitos mínimos estiverem válidos
+- `não apto para prosseguir` quando faltar host, target, diretório seguro ou caminho coerente
+- sem qualquer inferência de sucesso funcional, pois o probe (sondagem técnica inicial) ainda não toca a KB
+
+Formato esperado do diagnóstico estruturado:
+
+- `status`
+  - valores esperados: `apto para prosseguir` ou `não apto para prosseguir`
+- `summary`
+  - resumo curto e legível do resultado
+- `resolvedPaths`
+  - deve listar pelo menos `GeneXusDir`, `MsBuildPath`, `KbPath`, `WorkingDirectory` e `LogPath`
+- `checks`
+  - coleção de verificações com nome, resultado e observação curta
+  - verificações mínimas:
+    - localização da instalação do GeneXus
+    - localização do `MSBuild.exe`
+    - presença de `Genexus.Tasks.targets`
+    - existência de `KbPath`, quando informado
+    - confirmação de que `WorkingDirectory` está fora de `C:\Program Files (x86)`
+    - confirmação de que `LogPath` está fora de `C:\Program Files (x86)`
+- `blockingReasons`
+  - lista explícita dos motivos que impediram prosseguir, quando houver
+- `warnings`
+  - lista de alertas não bloqueantes, quando houver
+- `strategyTrace`
+  - registro curto do fallback adotado para resolver `MsBuildPath` e caminhos sensíveis
+
+Forma de uso do diagnóstico:
+
+- se `status` for `não apto para prosseguir`, a trilha para antes de qualquer abertura de KB
+- se `status` for `apto para prosseguir`, o diagnóstico vira evidência de entrada para a fase seguinte
+- ausência de campo crítico deve ser tratada como diagnóstico incompleto, não como sucesso implícito
+
+Ordem de resolução e fallback de `GeneXusDir`:
+
+1. usar `-GeneXusDir` quando informado explicitamente
+2. se não vier informado, tentar localizar instalação oficial em caminhos conhecidos do GeneXus 18
+3. validar nesse diretório a existência de `Genexus.Tasks.targets`
+4. abortar se houver mais de uma instalação plausível e nenhuma regra explícita para desempate
+5. abortar se o diretório encontrado não contiver os artefatos mínimos esperados
+
+Regras adicionais para `GeneXusDir`:
+
+- não inferir uma instalação alternativa só porque existe um nome parecido
+- não tratar documentação offline isolada como evidência suficiente de instalação válida
+- registrar no `strategyTrace` se o valor veio de parâmetro explícito ou de fallback
+
+Ordem de resolução e fallback de `MsBuildPath`:
+
+1. usar `-MsBuildPath` quando informado explicitamente
+2. se não vier informado, tentar caminhos conhecidos de `MSBuild.exe` em instalações compatíveis do Visual Studio ou Build Tools
+3. se houver mais de um caminho válido, preferir o host mais específico e atual que permaneça compatível com a trilha
+4. registrar qual caminho foi escolhido e quais candidatos foram descartados
+5. abortar se nenhum caminho válido for encontrado
+
+Regras adicionais para `MsBuildPath`:
+
+- não considerar `dotnet msbuild` como substituto implícito nesta fase
+- não promover shell alias ou comando parcial a caminho validado
+- o caminho final precisa apontar para executável real verificável pelo probe
+- registrar no `strategyTrace` a ordem dos fallbacks tentados
+
+Exemplo canônico inicial em `JSON`:
+
+```json
+{
+  "status": "apto para prosseguir",
+  "summary": "GeneXus, MSBuild e diretórios seguros validados.",
+  "resolvedPaths": {
+    "GeneXusDir": "C:\\GeneXus\\GeneXus18",
+    "MsBuildPath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+    "KbPath": "D:\\GX\\KbLaboratorio",
+    "WorkingDirectory": "D:\\GX\\HeadlessProbe\\work",
+    "LogPath": "D:\\GX\\HeadlessProbe\\logs\\probe.log"
+  },
+  "checks": [
+    {
+      "name": "GeneXus installation",
+      "result": "ok",
+      "detail": "Diretório informado encontrado."
+    },
+    {
+      "name": "MSBuild host",
+      "result": "ok",
+      "detail": "MSBuild localizado por fallback em Visual Studio Build Tools."
+    },
+    {
+      "name": "Genexus.Tasks.targets",
+      "result": "ok",
+      "detail": "Arquivo localizado dentro da instalação do GeneXus."
+    },
+    {
+      "name": "KbPath",
+      "result": "ok",
+      "detail": "KB encontrada no caminho informado."
+    },
+    {
+      "name": "WorkingDirectory outside Program Files x86",
+      "result": "ok",
+      "detail": "Diretório de trabalho fora da árvore somente leitura."
+    },
+    {
+      "name": "LogPath outside Program Files x86",
+      "result": "ok",
+      "detail": "Destino de log fora da árvore somente leitura."
+    }
+  ],
+  "blockingReasons": [],
+  "warnings": [],
+  "strategyTrace": [
+    "GeneXusDir usado conforme parâmetro explícito.",
+    "MsBuildPath não informado; fallback aplicado em caminhos conhecidos do Visual Studio.",
+    "KbPath validado apenas por existência de diretório nesta fase."
+  ]
+}
+```
+
+Exemplo canônico inicial em caso bloqueado:
+
+```json
+{
+  "status": "não apto para prosseguir",
+  "summary": "Probe bloqueado por host MSBuild ausente e LogPath inseguro.",
+  "resolvedPaths": {
+    "GeneXusDir": "C:\\GeneXus\\GeneXus18",
+    "MsBuildPath": null,
+    "KbPath": "D:\\GX\\KbLaboratorio",
+    "WorkingDirectory": "D:\\GX\\HeadlessProbe\\work",
+    "LogPath": "C:\\Program Files (x86)\\GeneXus\\GeneXus18\\probe.log"
+  },
+  "checks": [
+    {
+      "name": "GeneXus installation",
+      "result": "ok",
+      "detail": "Diretório informado encontrado."
+    },
+    {
+      "name": "MSBuild host",
+      "result": "fail",
+      "detail": "Nenhum caminho conhecido de MSBuild foi encontrado."
+    },
+    {
+      "name": "LogPath outside Program Files x86",
+      "result": "fail",
+      "detail": "LogPath aponta para árvore estritamente somente leitura."
+    }
+  ],
+  "blockingReasons": [
+    "MSBuild.exe não localizado.",
+    "LogPath dentro de C:\\Program Files (x86)."
+  ],
+  "warnings": [],
+  "strategyTrace": [
+    "GeneXusDir usado conforme parâmetro explícito.",
+    "MsBuildPath não informado; fallback aplicado em caminhos conhecidos do Visual Studio sem sucesso."
+  ]
+}
+```
 
 Restrições de desenho:
 

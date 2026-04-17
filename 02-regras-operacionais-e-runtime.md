@@ -27,6 +27,17 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Inferência forte`: certos sinais estruturais do XML permitem falar em risco runtime relativo, desde que a fala seja qualificada e nao prometa comportamento real sem teste.
 - `Hipótese`: quanto mais denso o objeto em `events`, `grid`, `Level`, `AttributeProperties`, `parent`, `pattern` e links contextuais, maior tende a ser a sensibilidade a navegacao, carga de dados e comportamento nao trivial em execucao.
 
+## Achados empiricos da trilha experimental via MSBuild
+
+- `Evidência direta`: na instalacao validada nesta frente, a task `Genexus.MsBuild.Tasks.Import` expos publicamente `PreviewMode`, `IncludeItems` e `ExcludeItems`.
+- `Evidência direta`: na mesma instalacao, a task `Import` nao expos `UpdateFile` nem `ImportKBInformation` como propriedades publicas configuraveis.
+- `Regra operacional`: em automacao headless via `MSBuild`, o agente nao deve assumir que parametros documentados offline estao disponiveis na task efetivamente carregada; deve validar a assinatura real antes de emitir parametros sensiveis.
+- `Evidência direta`: `PreviewMode` foi validado operacionalmente com `XPZ` real nesta frente, sem alteracao real da KB.
+- `Evidência direta`: `IncludeItems` e `ExcludeItems` tiveram efeito operacional observavel em `PreviewMode` nesta instalacao.
+- `Regra operacional`: quando houver diagnostico estruturado de preview headless, `importedItems` deve permanecer lista mesmo quando so um item for retornado.
+- `Regra operacional`: wrappers e scripts permanentes ficam em `scripts`; artefatos efemeros de execucao, logs auxiliares e diretorios temporarios de rodada devem preferir `Temp`.
+- `Regra operacional`: em trilha `MSBuild`, distinguir sempre `sucesso operacional da chamada`, `preview apenas` e `confirmacao funcional posterior na IDE`.
+
 ## Evidencia complementar de gerador local
 
 - `Evidência direta`: a pasta local `C:\Dev\Test\from-anywhere-to-GeneXus` contem um gerador simplificado que monta XML de importacao GeneXus usando um envelope com `ExportFile`, `KMW`, `Source`, `Objects`, `Dependencies` e `ObjectsIdentityMapping`.

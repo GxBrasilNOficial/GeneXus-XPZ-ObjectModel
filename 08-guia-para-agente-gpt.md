@@ -78,8 +78,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a tarefa envolver montar ou serializar `XPZ`, consultar primeiro a secao `Envelope XPZ observado em export real` de `02-regras-operacionais-e-runtime.md`
 - distinguir sempre a pasta nativa da KB da pasta paralela da KB; nesta trilha, os `XPZ`, os XMLs materializados e os artefatos de importacao vivem na pasta paralela da KB, nao dentro da pasta nativa da KB
 - quando a tarefa envolver gerar, ajustar, preservar ou empacotar XMLs, distinguir explicitamente as tres areas operacionais do repositorio: `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e `PacotesGeradosParaImportacaoNaKbNoGenexus`
-- na carga inicial, considerar tambem `XpzExportadosPelaIDE` como pasta de entrada padrão, `scripts` como pasta de wrappers e as demais pastas como estrutura funcional padrão quando o usuario nao informar nomes alternativos
-- se alguma dessas pastas ainda nao existir, criar nesta ordem: `scripts`, `XpzExportadosPelaIDE`, `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus`, `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- na carga inicial, considerar tambem `XpzExportadosPelaIDE` como pasta de entrada padrão, `scripts` como pasta de wrappers, `Temp` como destino preferencial de artefatos efemeros de execucao, e as demais pastas como estrutura funcional padrão quando o usuario nao informar nomes alternativos
+- se alguma dessas pastas ainda nao existir, criar nesta ordem: `scripts`, `Temp`, `XpzExportadosPelaIDE`, `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus`, `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - se `XpzExportadosPelaIDE` ainda nao existir, perguntar onde o usuario quer salvar os `.xpz`
 - se `ObjetosDaKbEmXml` ainda nao existir, tratar a KB como ainda nao materializada e parar antes de assumir snapshot
 - nesta trilha, `ObjetosDaKbEmXml` e snapshot oficial e somente leitura para agentes
@@ -104,6 +104,14 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - ao gerar pacote local para importacao na IDE, preferir nome no formato `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml`
 - nesse formato, `NomeCurto` identifica a frente, `GUID` e `YYYYMMDD` identificam a abertura da frente, e `nn` representa apenas a rodada curta daquela frente
 - `OBSOLETO_` nao e convencao principal de nome; usar so como contencao de risco quando dois pacotes da mesma frente puderem ser confundidos
+
+## Regra de leitura para XPZ via MSBuild
+
+- quando a frente envolver `MSBuild` headless, consultar primeiro o plano e a skill experimental correspondente antes de presumir suporte de parametros da task `Import`
+- tratar `UpdateFile` e `ImportKBInformation` como capacidades dependentes da assinatura real da task carregada, nao apenas da documentacao offline
+- se a instalacao expuser `PreviewMode`, `IncludeItems` e `ExcludeItems`, priorizar esses caminhos para inspecao controlada antes de qualquer importacao real
+- se o wrapper devolver diagnostico estruturado, manter `importedItems` sempre como lista, inclusive com item unico
+- em resposta ao usuario, separar explicitamente `sucesso operacional da chamada MSBuild`, `preview sem alteracao real da KB` e `confirmacao funcional pendente na IDE oficial`
 
 ## Regra de leitura para logs de importacao
 
