@@ -336,14 +336,21 @@ Condições que descaracterizam ambiente controlado:
 
 ## Critério Para Confiar Na Futura Skill
 
-A futura skill só poderá deixar o status experimental quando houver evidência mínima repetível, com registro de:
+A skill já pode ser tratada como `done experimental` quando houver, de forma repetível e documentada:
 
-- pré-requisitos validados
-- chamadas executadas com sucesso operacional
-- logs consistentes
-- artefatos gerados conforme esperado
-- limitações conhecidas documentadas
-- pelo menos um conjunto de testes controlados de importação e exportação analisado com calma
+- pré-requisitos validados por probe (sondagem técnica inicial) e resolução explícita de caminhos
+- abertura headless da KB com contexto ativo coerente
+- exportação headless validada com artefato gerado e log consistente
+- `PreviewMode` validado com `importedItems` preservado quando aplicável
+- importação real validada ao menos em KBs de teste controladas, com separação clara entre sucesso operacional e confirmação funcional
+- limitações conhecidas documentadas por classe de exceção, e não misturadas com defeito central do wrapper
+
+A skill só poderá deixar o status experimental quando, além do `done experimental`, houver evidência suficiente de promoção, com registro de:
+
+- repetibilidade em KBs de perfis distintos, inclusive sem depender de `GeneXus Server`
+- critério claro para interpretar `exitCode`, `stdout`, `stderr`, `importedItems` e warnings estruturais
+- janela segura e bem entendida para KBs grandes, sem confundir timeout do invocador com falha do `MSBuild`
+- reabertura e observação posterior na IDE oficial em casos relevantes, sem efeito colateral novo
 
 ## Regra De Publicação
 
@@ -846,10 +853,20 @@ Restrições de desenho:
 
 ## Próximo Marco Esperado
 
-Revisar este plano após leitura da nova fonte e, só então, detalhar:
+O próximo marco já não é provar o mecanismo básico do wrapper. Essa etapa ficou empiricamente validada em múltiplas KBs, inclusive com um caso de grande porte.
 
-- critérios de entrada e saída por fase
-- formato do futuro `SKILL.md`
-- formato e escopo dos futuros scripts `.ps1`
-- protocolo de testes
-- critérios de promoção futura
+O próximo marco passa a ser fechar o critério explícito de encerramento e promoção da skill experimental, com registro de:
+
+- definição objetiva de `done experimental`
+- limites operacionais já conhecidos e como classificá-los no diagnóstico
+- critérios para promoção futura além do status experimental
+- exceções que não devem ser confundidas com defeito central do wrapper
+
+Classificação mínima que a documentação da skill deve espelhar a partir daqui:
+
+- problema de conteúdo da KB/`XPZ`, como `Teste1`
+- validação funcional incompleta por dependência externa ou licença, como `ShowcaseUnanimo`
+- execução longa em KB grande, como `FabricaBrasil18Test`
+- warning estrutural por extensão ausente, como `WebPanelDesigner`/`K2B Object Designer`
+
+Enquanto essa consolidação não estiver espelhada na skill e nos critérios de promoção, a frente continua experimental, porém com mecanismo central já validado.

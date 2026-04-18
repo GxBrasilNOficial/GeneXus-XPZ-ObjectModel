@@ -9,6 +9,32 @@ Skill experimental para operações de importação e exportação de `XPZ` do G
 
 Esta skill não substitui o fluxo oficial atual da trilha paralela da KB, não depende de `GeneXus Server` e não trata sucesso operacional como evidência suficiente de sucesso funcional.
 
+No estado atual, o mecanismo central desta skill já foi validado operacionalmente em múltiplas KBs. O próximo passo desta frente não é mais provar exportação, `PreviewMode` e importação real como capacidade basal, e sim deixar explícitos:
+
+- o que conta como `done experimental`
+- quais limites conhecidos ainda impedem promoção além do status experimental
+- como classificar exceções sem confundi-las com defeito central do wrapper
+
+Exceções já mapeadas que a skill deve tratar explicitamente:
+
+- conteúdo inconsistente da KB/`XPZ`, como `Teste1`
+- validação funcional incompleta por `GeneXus Server` ou licença, como `ShowcaseUnanimo`
+- execução longa em KB grande, como `FabricaBrasil18Test`
+- warning estrutural por extensão ausente, como `WebPanelDesigner`/`K2B Object Designer`
+
+Critério atual de `done experimental` desta skill:
+
+- probe (sondagem técnica inicial), abertura headless, exportação, `PreviewMode` e importação real já validados em KBs de teste controladas
+- classificação explícita entre sucesso operacional, validação funcional incompleta e problema de conteúdo da KB/`XPZ`
+- logs, artefatos e parâmetros sensíveis rastreáveis
+- limites conhecidos já documentados e não tratados como surpresa operacional
+
+Promoção além do status experimental ainda depende de:
+
+- critério estável para KBs com dependência externa, licença ou extensão ausente
+- interpretação madura de execução longa em KB grande
+- confiança suficiente para uso fora de ambiente de experimento controlado
+
 ---
 
 ## GUIDELINE
