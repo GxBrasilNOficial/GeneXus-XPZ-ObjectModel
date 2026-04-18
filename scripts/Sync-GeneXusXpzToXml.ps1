@@ -27,6 +27,10 @@ Caminho opcional para salvar um relatório JSON com o resultado.
 
 .PARAMETER KeepReport
 Mantem o relatorio JSON mesmo quando a execucao termina sem erro.
+
+.PARAMETER ExpectedItems
+Lista opcional de itens esperados para comparacao com o retorno oficial do XPZ,
+no formato `Tipo:Nome`.
 .EXAMPLE
 .\Sync-GeneXusXpzToXml.ps1 -InputPath C:\Exports\MeuPacote.xpz -DestinationRoot C:\Acervo\ObjetosDaKbEmXml
 
@@ -48,6 +52,8 @@ param(
     [string]$ReportPath,
 
     [switch]$KeepReport,
+
+    [string[]]$ExpectedItems = @(),
 
     [string]$KbMetadataPath = ""
 )
@@ -192,6 +198,134 @@ function Get-DestinationTypeMap {
     }
 
     return $map
+}
+
+function Convert-ExpectedItemsToComparison {
+    param(
+        [string[]]$ExpectedItems,
+        [object[]]$ActualItems
+    )
+
+    $rawExpectedItems = New-Object System.Collections.Generic.List[string]
+    foreach ($entry in @($ExpectedItems)) {
+        if ($null -eq $entry) {
+            continue
+        }
+
+        foreach ($part in ($entry -split '[,\r\n;]+')) {
+            $normalizedPart = $part.Trim()
+            if (-not [string]::IsNullOrWhiteSpace($normalizedPart)) {
+                $rawExpectedItems.Add($normalizedPart) | Out-Null
+            }
+        }
+    }
+
+    if ($rawExpectedItems.Count -eq 0) {
+        return $null
+    }
+
+    $expectedKeys = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    $expectedEntries = New-Object System.Collections.Generic.List[object]
+    foreach ($rawItem in $rawExpectedItems) {
+        $separatorIndex = $rawItem.IndexOf(':')
+        if ($separatorIndex -lt 1 -or $separatorIndex -ge ($rawItem.Length - 1)) {
+            throw "Invalid ExpectedItems entry '$rawItem'. Use the format 'Tipo:Nome'."
+        }
+
+        $folderType = $rawItem.Substring(0, $separatorIndex).Trim()
+        $logicalName = $rawItem.Substring($separatorIndex + 1).Trim()
+        if ([string]::IsNullOrWhiteSpace($folderType) -or [string]::IsNullOrWhiteSpace($logicalName)) {
+            throw "Invalid ExpectedItems entry '$rawItem'. Use the format 'Tipo:Nome'."
+        }
+
+        $key = "$folderType|$logicalName"
+        if ($expectedKeys.Add($key)) {
+            $expectedEntries.Add([pscustomobject]@{
+                FolderType = $folderType
+                LogicalName = $logicalName
+                Key = $key
+            }) | Out-Null
+        }
+    }
+
+    $actualKeys = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    $actualMap = @{}
+    foreach ($item in $ActualItems) {
+        $key = "$($item.FolderType)|$($item.LogicalName)"
+        [void]$actualKeys.Add($key)
+        if (-not $actualMap.ContainsKey($key)) {
+            $actualMap[$key] = [pscustomobject]@{
+                FolderType = $item.FolderType
+                LogicalName = $item.LogicalName
+                PackageSection = $item.PackageSection
+            }
+        }
+    }
+
+    $expectedReturned = New-Object System.Collections.Generic.List[object]
+    $expectedMissing = New-Object System.Collections.Generic.List[object]
+    foreach ($expectedEntry in $expectedEntries) {
+        if ($actualKeys.Contains($expectedEntry.Key)) {
+            $expectedReturned.Add([pscustomobject]@{
+                FolderType = $expectedEntry.FolderType
+                LogicalName = $expectedEntry.LogicalName
+            }) | Out-Null
+        } else {
+            $expectedMissing.Add([pscustomobject]@{
+                FolderType = $expectedEntry.FolderType
+                LogicalName = $expectedEntry.LogicalName
+            }) | Out-Null
+        }
+    }
+
+    $additionalOfficial = New-Object System.Collections.Generic.List[object]
+    foreach ($actualKey in $actualMap.Keys | Sort-Object) {
+        if (-not $expectedKeys.Contains($actualKey)) {
+            $additionalOfficial.Add($actualMap[$actualKey]) | Out-Null
+        }
+    }
+
+    return [pscustomobject]@{
+        ExpectedItemsProvided = $true
+        ExpectedItems = @($expectedEntries | ForEach-Object {
+            [pscustomobject]@{
+                FolderType = $_.FolderType
+                LogicalName = $_.LogicalName
+            }
+        })
+        ExpectedReturned = @($expectedReturned)
+        ExpectedMissing = @($expectedMissing)
+        AdditionalOfficial = @($additionalOfficial)
+    }
+}
+
+function Format-ExpectedItemsSummary {
+    param([object]$ExpectedComparison)
+
+    if ($null -eq $ExpectedComparison) {
+        return $null
+    }
+
+    $expectedCount = @($ExpectedComparison.ExpectedItems).Count
+    $expectedReturnedCount = @($ExpectedComparison.ExpectedReturned).Count
+    $expectedMissingCount = @($ExpectedComparison.ExpectedMissing).Count
+    $additionalOfficialCount = @($ExpectedComparison.AdditionalOfficial).Count
+
+    $lines = New-Object System.Collections.Generic.List[string]
+    $lines.Add(
+        "Comparativo da frente: $expectedCount esperados; $expectedReturnedCount voltaram; $expectedMissingCount nao voltaram; $additionalOfficialCount adicionais oficiais da KB."
+    ) | Out-Null
+    $lines.Add("A materializacao oficial seguiu normalmente. O comparativo e complementar.") | Out-Null
+
+    if ($additionalOfficialCount -gt 0) {
+        $lines.Add("Itens adicionais podem representar retorno oficial adicional da KB ou mudanca paralela legitima.") | Out-Null
+    }
+
+    if ($expectedMissingCount -gt 0) {
+        $lines.Add("Itens esperados ausentes devem ser investigados no contexto da frente, sem bloquear o sync.") | Out-Null
+    }
+
+    return ($lines -join [Environment]::NewLine)
 }
 
 function Get-KbSourceMetadataSnapshot {
@@ -714,6 +848,7 @@ try {
 
     $typeMap = Get-DestinationTypeMap -Root $DestinationRoot
     $items = Convert-PackageToItems -XmlDocument $packageXml -TypeMap $typeMap
+    $expectedComparison = Convert-ExpectedItemsToComparison -ExpectedItems $ExpectedItems -ActualItems $items
 
     $objectsBlockCount = @($items | Where-Object { $_.PackageSection -eq "Objects" }).Count
     $attributesBlockCount = @($items | Where-Object { $_.PackageSection -eq "Attributes" }).Count
@@ -750,6 +885,11 @@ try {
         MismatchesAfterVerification = $verification.Mismatch.Count
         FullSnapshotMissing = if ($null -ne $fullSnapshotResult) { $fullSnapshotResult.MissingKeys.Count } else { $null }
         FullSnapshotExtra = if ($null -ne $fullSnapshotResult) { $fullSnapshotResult.ExtraKeys.Count } else { $null }
+        ExpectedItemsProvided = ($null -ne $expectedComparison)
+        ExpectedItemsCount = if ($null -ne $expectedComparison) { $expectedComparison.ExpectedItems.Count } else { 0 }
+        ExpectedReturnedCount = if ($null -ne $expectedComparison) { $expectedComparison.ExpectedReturned.Count } else { $null }
+        ExpectedMissingCount = if ($null -ne $expectedComparison) { $expectedComparison.ExpectedMissing.Count } else { $null }
+        AdditionalOfficialCount = if ($null -ne $expectedComparison) { $expectedComparison.AdditionalOfficial.Count } else { $null }
     }
 
     $report = [pscustomobject]@{
@@ -757,6 +897,7 @@ try {
         Missing = $verification.Missing
         Mismatch = $verification.Mismatch
         FullSnapshot = $fullSnapshotResult
+        ExpectedComparison = $expectedComparison
         Writes = $writeResults
         Warnings = @($warnings)
         KbMetadataStatus = if ($null -ne $metadataResult) { $metadataResult.MetadataStatus } else { "not-requested" }
@@ -768,6 +909,12 @@ try {
     }
 
     $summary | Format-List | Out-String | Write-Output
+
+    $expectedSummary = Format-ExpectedItemsSummary -ExpectedComparison $expectedComparison
+    if (-not [string]::IsNullOrWhiteSpace($expectedSummary)) {
+        Write-Output ""
+        Write-Output $expectedSummary
+    }
 
     if ($verification.Missing.Count -gt 0 -or $verification.Mismatch.Count -gt 0) {
         throw "Verification failed after materialization. Missing=$($verification.Missing.Count), Mismatch=$($verification.Mismatch.Count)."

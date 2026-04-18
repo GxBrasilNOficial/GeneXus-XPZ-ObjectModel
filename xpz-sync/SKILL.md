@@ -118,6 +118,7 @@ Os wrappers seguem esta convenção de parâmetros:
 - `-FullSnapshot` *(switch)* — compara snapshot completo do acervo
 - `-ReportPath` *(opcional)* — salva relatório JSON
 - `-KeepReport` *(switch)* — mantém relatório mesmo sem erro
+- `-ExpectedItems` *(opcional)* — lista de itens esperados da frente atual no formato `Tipo:Nome`, usada apenas para classificação comparativa entre foco esperado e retorno oficial da KB
 - `-KbMetadataPath` *(opcional)* — salva metadados da KB em formato Markdown
 - se esse parâmetro estiver ativo no wrapper local, `kb-source-metadata.md` faz parte normal do fluxo e pode ser reescrito a cada processamento
 - se o `XPZ` vier com `Source` vazio, incompleto ou ausente, o wrapper deve preservar valores estáveis conhecidos e emitir warning de refresh parcial; isso não invalida o sync de objetos
@@ -160,9 +161,10 @@ Os wrappers seguem esta convenção de parâmetros:
    - organizar por tipo amigavel de objeto GeneXus
    - usar nomes amigaveis de objeto como nome principal dos XMLs
 10. Quando o fluxo envolver `XPZ` parcial:
-   - atualizar a mesma pasta com funcao de acervo materializado
-   - nao desviar a materializacao para a pasta de geracao para importacao
-   - se o mesmo arquivo `XPZ` for reexportado/atualizado e reprocessado, tratar o novo processamento pelo conteúdo e pelo `lastUpdate` resultante, não pela memória do processamento anterior
+    - atualizar a mesma pasta com funcao de acervo materializado
+    - nao desviar a materializacao para a pasta de geracao para importacao
+    - se o mesmo arquivo `XPZ` for reexportado/atualizado e reprocessado, tratar o novo processamento pelo conteúdo e pelo `lastUpdate` resultante, não pela memória do processamento anterior
+    - se houver `-ExpectedItems`, usar esse contexto apenas para comparar foco esperado versus retorno oficial; a materialização continua seguindo tudo que a KB devolveu oficialmente
 11. Montar o comando com os parâmetros corretos
 12. Executar via Bash com `pwsh -File ...`
 13. Se o processamento foi concluído com sucesso, permitir renomear o `.xpz` consumido para `processado_<nome-original>.xpz`
@@ -173,6 +175,8 @@ Os wrappers seguem esta convenção de parâmetros:
     - se `kb-source-metadata.md` tiver sido reescrito pelo wrapper, tratar isso como artefato normal do fluxo, não como evidência automática de mudança funcional na frente
     - se o pacote tiver `Source` parcial, separar claramente `sync de objetos aceito` de `refresh de metadado parcial` e preservar os valores estáveis já conhecidos
     - se o `XPZ` oficial da KB trouxer objetos adicionais fora do foco imediato da frente, reportar isso como inesperado para a frente atual, mas tratar como possível mudança paralela legítima vinda da IDE/KB até evidência em contrário
+    - se `-ExpectedItems` tiver sido informado, classificar explicitamente `itens esperados que voltaram`, `itens esperados que nao voltaram` e `retorno oficial adicional da KB`
+    - se `-ExpectedItems` tiver sido informado, emitir tambem um resumo humano curto no console/handoff, sem alarmismo e sem tratar adicionais oficiais ou esperados ausentes como falha automatica
 15. Quando um objeto voltar da KB via `xpz` e for materializado no acervo oficial, tratar esse XML do acervo como a fonte mais confiável para alterações futuras; não reutilizar cópia intermediária/delta sem comparar com o acervo atualizado
 16. Ao preparar commit ou handoff após o `sync`, separar explicitamente:
     - artefato da frente atual = resultado que o processamento atual confirmou como pertencente à frente em curso

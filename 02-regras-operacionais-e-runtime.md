@@ -182,6 +182,8 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: o agente deve sinalizar os itens inesperados sem presumir, por si so, erro de processo, contaminacao indevida ou violacao da trilha.
 - `Regra operacional`: a distincao minima obrigatoria e entre `artefato da frente atual`, `mudanca paralela legitima vinda da KB/IDE` e `mudanca lateral indevida do proprio agente fora do escopo`.
 - `Regra operacional`: regras de contaminacao, incidente de processo e restauracao do snapshot oficial se aplicam a alteracao lateral indevida do agente ou a edicao manual indevida do acervo, nao ao simples fato de um `XPZ` oficial trazer retorno adicional da KB.
+- `Regra operacional`: quando o contexto da frente estiver disponivel, o `sync` pode comparar opcionalmente um conjunto esperado de itens contra o retorno oficial da KB, classificando `esperados que voltaram`, `esperados que nao voltaram` e `retorno oficial adicional da KB`.
+- `Regra operacional`: essa classificacao comparativa e complementar; ela nao substitui nem bloqueia a materializacao oficial do que veio no `XPZ`.
 
 ## Checklist obrigatorio antes do empacotamento
 
