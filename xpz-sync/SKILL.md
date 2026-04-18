@@ -166,15 +166,17 @@ Os wrappers seguem esta convenção de parâmetros:
 12. Executar via Bash com `pwsh -File ...`
 13. Se o processamento foi concluído com sucesso, permitir renomear o `.xpz` consumido para `processado_<nome-original>.xpz`
 14. Reportar: objetos criados, atualizados, ignorados, resíduos removidos e resumo Git
-   - explicar que `updated` significa que o wrapper materializou conteúdo mais novo/relevante para o acervo naquele processamento
-   - explicar que `unchanged` significa que o item já tinha no acervo oficial conteúdo compatível ou mais novo, tipicamente com `lastUpdate` igual ou superior ao XML vindo do `XPZ`
-   - se o mesmo `XPZ` tiver sido reprocessado após atualização do arquivo, deixar explícito que a comparação relevante é com o conteúdo do insumo reprocessado e com o estado atual do acervo, não com o relatório antigo
-   - se `kb-source-metadata.md` tiver sido reescrito pelo wrapper, tratar isso como artefato normal do fluxo, não como evidência automática de mudança funcional na frente
+    - explicar que `updated` significa que o wrapper materializou conteúdo mais novo/relevante para o acervo naquele processamento
+    - explicar que `unchanged` significa que o item já tinha no acervo oficial conteúdo compatível ou mais novo, tipicamente com `lastUpdate` igual ou superior ao XML vindo do `XPZ`
+    - se o mesmo `XPZ` tiver sido reprocessado após atualização do arquivo, deixar explícito que a comparação relevante é com o conteúdo do insumo reprocessado e com o estado atual do acervo, não com o relatório antigo
+    - se `kb-source-metadata.md` tiver sido reescrito pelo wrapper, tratar isso como artefato normal do fluxo, não como evidência automática de mudança funcional na frente
 15. Quando um objeto voltar da KB via `xpz` e for materializado no acervo oficial, tratar esse XML do acervo como a fonte mais confiável para alterações futuras; não reutilizar cópia intermediária/delta sem comparar com o acervo atualizado
 16. Ao preparar commit ou handoff após o `sync`, separar explicitamente:
-   - artefato da frente atual = resultado que o processamento atual confirmou como pertencente à frente em curso
-   - mudança paralela pré-existente = arquivo ou diferença já existente no workspace antes desta frente ou sem vínculo com o lote atual
-   - não agrupar no mesmo commit da frente atual mudanças paralelas pré-existentes sem decisão explícita
+    - artefato da frente atual = resultado que o processamento atual confirmou como pertencente à frente em curso
+    - mudança paralela pré-existente = arquivo ou diferença já existente no workspace antes desta frente ou sem vínculo com o lote atual
+    - não agrupar no mesmo commit da frente atual mudanças paralelas pré-existentes sem decisão explícita
+17. O resumo Git do item anterior e apenas informativo; nao autoriza `git add`, `commit` ou `push`
+18. Se o usuario nao pedir fechamento Git de forma explicita, o fluxo deve terminar no handoff tecnico e, no maximo, sugerir proximos passos sem executar publicacao
 
 ---
 

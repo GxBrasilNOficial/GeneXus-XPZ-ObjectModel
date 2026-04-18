@@ -98,6 +98,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - o agente deve distinguir explicitamente `mesmo objeto` de `mesma frente`
 - reusar precedente estrutural de pacote nao autoriza herdar automaticamente a identidade nominal da frente anterior
 - quando a continuidade da frente nao estiver fechada por evidencia direta ou confirmacao explicita do usuario, o agente deve explicitar a ambiguidade antes de nomear pasta ou pacote
+- frente validada tecnicamente nao implica publicacao Git; a conclusao tecnica e apenas `validado_tecnicamente` ate o usuario autorizar o fechamento
+- enquanto nao houver autorizacao explicita, o agente pode sugerir os proximos passos de Git e publicacao, mas nao pode executar `git add`, `commit` ou `push`
 - a ordem obrigatoria e: isolar lote, classificar raizes, validar `lastUpdate`, validar BOM, validar manifesto e so entao empacotar
 - manifesto nao implica automaticamente arquivo fisico; por padrao, ele deve ser apresentado na propria conversa
 - para `WorkWithWeb` com ruído comprovado de `Load Code` em `Selection` e/ou tabs de `View`, registrar isso como nao funcional no manifesto e nao generalizar para todo caso de `WorkWithWeb`

@@ -125,6 +125,14 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: o agente nao deve absorver mudanca extra nao pedida no pacote apenas porque ela apareceu no XML ativo, no diff local ou na reserializacao.
 - `Regra operacional`: o delta deve ser estrito pelo conteudo do pacote, nao por `git diff` abstrato.
 
+## Fechamento tecnico e Git
+
+- `Regra operacional`: concluir `sync`, importacao, exportacao, materializacao, validacao ou build gera apenas o estado `validado_tecnicamente`; isso nao autoriza automaticamente `git add`, `commit` ou `push`.
+- `Regra operacional`: o agente pode sugerir proximos passos de Git e publicacao quando isso for oportuno, mas sugestao nao equivale a execucao.
+- `Regra operacional`: qualquer acao de fechamento ou publicacao em Git so pode ser executada com autorizacao explicita do usuario.
+- `Regra operacional`: enquanto houver frente tecnicamente validada sem decisao de publicacao, o estado operacional preferido e `aguardando_decisao_de_fechamento`.
+- `Regra operacional`: a documentacao local da pasta de trabalho pode declarar override mais especifico para fechamento e publicacao, mas a regra padrao desta base permanece em vigor ate essa override ser explicitada.
+
 ## Gate visual de `Source`
 
 - `Regra operacional`: quando houver edicao de `Source`, releia o trecho salvo antes do empacotamento.
