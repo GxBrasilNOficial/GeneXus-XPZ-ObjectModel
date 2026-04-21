@@ -224,6 +224,38 @@
       "expected_rule": "workwith_link_webpanel",
       "should_exist": false,
       "expectation": "WorkWithForWeb explicit link must not create a relation for unresolved WebPanel"
+    },
+    {
+      "id": "phase2-case-29-workwith-prompt-webpanel-compra-gado",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "WebPanel:promptCompraGado",
+      "expected_rule": "workwith_prompt_webpanel",
+      "should_exist": true,
+      "expectation": "WorkWithForWeb prompt attribute must create a direct relation to WebPanel prompt"
+    },
+    {
+      "id": "phase2-case-30-workwith-prompt-webpanel-fornecedor",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "WebPanel:promptFornecedorDeGado",
+      "expected_rule": "workwith_prompt_webpanel",
+      "should_exist": true,
+      "expectation": "Second WorkWithForWeb prompt attribute must create a direct relation to WebPanel prompt"
+    },
+    {
+      "id": "phase2-case-31-workwith-prompt-webpanel-gta",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "WebPanel:promptGTA",
+      "expected_rule": "workwith_prompt_webpanel",
+      "should_exist": true,
+      "expectation": "WorkWithForWeb prompt attribute for GTA must create a direct relation to WebPanel prompt"
+    },
+    {
+      "id": "phase2-case-32-workwith-prompt-webpanel-unknown-does-not-create-relation",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "WebPanel:ObjetoInexistenteParaNaoIndexar",
+      "expected_rule": "workwith_prompt_webpanel",
+      "should_exist": false,
+      "expectation": "WorkWithForWeb prompt attribute must not create a relation for unresolved WebPanel"
     }
   ]
 }

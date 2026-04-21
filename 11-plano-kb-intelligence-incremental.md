@@ -38,7 +38,9 @@ Ainda na mesma data, a Fase 2 recebeu um quinto incremento controlado: vinculaca
 
 Depois disso, a Fase 2 recebeu um sexto incremento controlado: links explicitos de `WorkWithForWeb` para `WebPanel` por tag interna `<link webpanel="Nome">`.
 
-Continuam fora destes incrementos: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject`, vinculacoes explicitas de `Transaction` e links explicitos de `WebPanel`, `for each`, `.Load(...)`, resolucao semantica de `CustomType` para `SDT` ou `Domain`, e inferencias por layout ou comentarios.
+Na sequencia, a Fase 2 recebeu um setimo incremento controlado: prompts explicitos de `WorkWithForWeb` para `WebPanel` por atributo `prompt="guid-Nome"`.
+
+Continuam fora destes incrementos: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject`, vinculacoes explicitas de `Transaction`, links explicitos de `WebPanel` e prompts explicitos de `WebPanel`, `for each`, `.Load(...)`, resolucao semantica de `CustomType` para `SDT` ou `Domain`, e inferencias por layout ou comentarios.
 
 ## Principios da frente
 
@@ -186,7 +188,7 @@ Caso conhecido obrigatorio para a bateria:
 
 So iniciar depois da Fase 1 validada.
 
-Estado em 2026-04-21: fase aberta e ja ampliada de forma controlada para `DataProvider` como origem e destino direto, actions de `WorkWithForWeb` por `gxobject`, vinculacoes explicitas `WorkWithForWeb` -> `Transaction`, links explicitos `WorkWithForWeb` -> `WebPanel`, e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
+Estado em 2026-04-21: fase aberta e ja ampliada de forma controlada para `DataProvider` como origem e destino direto, actions de `WorkWithForWeb` por `gxobject`, vinculacoes explicitas `WorkWithForWeb` -> `Transaction`, links explicitos `WorkWithForWeb` -> `WebPanel`, prompts explicitos `WorkWithForWeb` -> `WebPanel`, e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
 
 Possiveis ampliacoes:
 
@@ -347,6 +349,29 @@ Gate minimo:
 - manter os casos anteriores da Fase 2 passando
 - adicionar casos reais positivos para `WorkWithForWeb` linkando `WebPanel`
 - adicionar caso que prove canonizacao de nome do `WebPanel`
+- adicionar caso negativo para `WebPanel` inexistente
+
+### Setimo incremento - prompts explicitos de `WorkWithForWeb` para `WebPanel`
+
+Escopo aceito:
+
+- origem: `WorkWithForWeb`
+- destino: `WebPanel`
+- regra: `workwith_prompt_webpanel`
+- evidencia: `WorkWith prompt`
+- confianca: `direct`
+
+Fora do setimo incremento:
+
+- inferir prompt por nome de atributo ou caption
+- interpretar parametros ou contrato funcional do prompt
+- tratar prompts nao resolvidos como relacoes
+
+Gate minimo:
+
+- manter os 15 casos reais da Fase 1 passando
+- manter os casos anteriores da Fase 2 passando
+- adicionar casos reais positivos para `WorkWithForWeb` apontando prompts `WebPanel`
 - adicionar caso negativo para `WebPanel` inexistente
 
 ## Fase 3 - suporte a agentes de programacao
