@@ -370,6 +370,7 @@ def validation_report(
     source_root: Path,
     objects_by_type: dict[str, dict[str, ObjectInfo]],
     evidences: list[Evidence],
+    validation_cases_path: Path | None,
 ) -> dict[str, object]:
     def has_relation(source_type: str, source_name: str, target_type: str, target_name: str, rule: str) -> bool:
         return any(
@@ -381,68 +382,19 @@ def validation_report(
             for evidence in evidences
         )
 
-    cases = [
-        {
-            "id": "case-1-webpanel-procedure-dot-call",
-            "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
-            "target": "Procedure:procPlanilhaVolumeMovimento",
-            "expected_rule": "procedure_dot_call",
-            "status": "passed"
-            if has_relation(
-                "WebPanel",
-                "wpRelatoriosDeMovimentosDeVolumes",
-                "Procedure",
-                "procPlanilhaVolumeMovimento",
-                "procedure_dot_call",
-            )
-            else "failed",
-        },
-        {
-            "id": "case-2-procedure-direct-call",
-            "source": "Procedure:PreenchXmlNFE",
-            "target": "Procedure:procLeParteDeStringXml",
-            "expected_rule": "procedure_direct_call",
-            "status": "passed"
-            if has_relation(
-                "Procedure",
-                "PreenchXmlNFE",
-                "Procedure",
-                "procLeParteDeStringXml",
-                "procedure_direct_call",
-            )
-            else "failed",
-        },
-        {
-            "id": "case-3-comment-does-not-create-relation",
-            "source": "Procedure:PreenchXmlNFE",
-            "target": "Procedure:procCodigoDeBarrasDobson2of5",
-            "status": "failed"
-            if has_relation(
-                "Procedure",
-                "PreenchXmlNFE",
-                "Procedure",
-                "procCodigoDeBarrasDobson2of5",
-                "procedure_direct_call",
-            )
-            else "passed",
-            "expectation": "comment-only procedure reference must not create a direct relation",
-        },
-        {
-            "id": "case-4-visual-layout-does-not-create-relation",
-            "source": "WebPanel:promptCompradorDeGado",
-            "target": "Procedure:procEmpresaLiberadaProUsuario",
-            "status": "failed"
-            if has_relation(
-                "WebPanel",
-                "promptCompradorDeGado",
-                "Procedure",
-                "procEmpresaLiberadaProUsuario",
-                "procedure_direct_call",
-            )
-            else "passed",
-            "expectation": "visual-layout Source reference must not create a direct relation",
-        },
-    ]
+    cases: list[dict[str, object]] = []
+    if validation_cases_path:
+        raw_cases = json.loads(validation_cases_path.read_text(encoding="utf-8"))
+        for raw_case in raw_cases.get("cases", []):
+            source_type, source_name = split_typed_name(raw_case["source"])
+            target_type, target_name = split_typed_name(raw_case["target"])
+            expected_rule = raw_case["expected_rule"]
+            should_exist = bool(raw_case.get("should_exist", True))
+            relation_exists = has_relation(source_type, source_name, target_type, target_name, expected_rule)
+            passed = relation_exists if should_exist else not relation_exists
+            case_result = dict(raw_case)
+            case_result["status"] = "passed" if passed else "failed"
+            cases.append(case_result)
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -450,8 +402,16 @@ def validation_report(
         "objects_read_by_type": {key: len(value) for key, value in objects_by_type.items()},
         "objects_written": sum(len(value) for value in objects_by_type.values()),
         "relations_written": len(evidences),
+        "validation_cases_path": str(validation_cases_path) if validation_cases_path else None,
         "cases": cases,
     }
+
+
+def split_typed_name(value: str) -> tuple[str, str]:
+    if ":" not in value:
+        raise ValueError(f"Expected typed name in Type:Name format: {value}")
+    object_type, name = value.split(":", 1)
+    return object_type, name
 
 
 def parse_args() -> argparse.Namespace:
@@ -459,6 +419,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--source-root", required=True, type=Path)
     parser.add_argument("--output-path", required=True, type=Path)
     parser.add_argument("--validation-report-path", type=Path)
+    parser.add_argument("--validation-cases-path", type=Path)
     return parser.parse_args()
 
 
@@ -481,7 +442,11 @@ def main() -> int:
     )
     write_index(args.output_path.resolve(), source_root, objects, evidences)
 
-    report = validation_report(source_root, objects_by_type, evidences)
+    validation_cases_path = args.validation_cases_path.resolve() if args.validation_cases_path else None
+    if validation_cases_path and not validation_cases_path.exists():
+        raise SystemExit(f"ValidationCasesPath not found: {validation_cases_path}")
+
+    report = validation_report(source_root, objects_by_type, evidences, validation_cases_path)
     if args.validation_report_path:
         report_path = args.validation_report_path.resolve()
         report_path.parent.mkdir(parents=True, exist_ok=True)

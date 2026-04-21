@@ -15,6 +15,9 @@
 
 .PARAMETER ValidationReportPath
     Optional JSON validation report path.
+
+.PARAMETER ValidationCasesPath
+    Optional JSON file with validation cases for the current KB.
 #>
 
 param(
@@ -24,7 +27,9 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$OutputPath,
 
-    [string]$ValidationReportPath
+    [string]$ValidationReportPath,
+
+    [string]$ValidationCasesPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -52,6 +57,9 @@ $arguments = @(
 
 if ($ValidationReportPath) {
     $arguments += @("--validation-report-path", $ValidationReportPath)
+}
+if ($ValidationCasesPath) {
+    $arguments += @("--validation-cases-path", $ValidationCasesPath)
 }
 
 & $python.Source @arguments

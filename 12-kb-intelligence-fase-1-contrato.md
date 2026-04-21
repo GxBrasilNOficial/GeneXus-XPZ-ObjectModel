@@ -65,6 +65,7 @@ Parametros minimos esperados:
 - `-SourceRoot`: raiz do acervo XML, normalmente `...\ObjetosDaKbEmXml`
 - `-OutputPath`: caminho do SQLite gerado
 - `-ValidationReportPath`: caminho opcional para relatorio pequeno de validacao
+- `-ValidationCasesPath`: caminho opcional para casos de validacao da KB atual
 
 O script nao deve depender de caminho absoluto privado como valor fixo.
 
@@ -76,8 +77,11 @@ A primeira implementacao operacional da Fase 1 fica em:
 - `scripts/New-KbIntelligenceIndex.py`
 - `scripts/Query-KbIntelligenceIndex.ps1`
 - `scripts/Query-KbIntelligenceIndex.py`
+- `scripts/kb-intelligence-fabricabrasil.phase1.validation-cases.json`
 
 Os wrappers PowerShell preservam o padrao operacional atual do repositorio. Os motores Python usam `sqlite3` da biblioteca padrao para gravar e consultar o banco tecnico.
+
+Os casos de validacao ficam fora do motor generico. O arquivo de casos de `FabricaBrasil` existe como laboratorio explicito da Fase 1, nao como requisito universal para outras KBs.
 
 ## Artefato principal
 
