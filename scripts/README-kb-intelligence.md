@@ -5,7 +5,11 @@ guia operacional
 
 ## Escopo atual
 
-Estes scripts implementam a Fase 1 do KB Intelligence e os incrementos aprovados da Fase 2:
+Estes scripts implementam a Fase 1 do KB Intelligence e os incrementos aprovados da Fase 2.
+
+A Fase 3 foi aberta por contrato em `..\14-kb-intelligence-fase-3-contrato.md` para formalizar o uso operacional por agentes e o comando `impact-basic`.
+
+Escopo de extracao atual:
 
 - origens por `Source` efetivo: `Procedure`, `WebPanel` e `DataProvider`
 - destinos por `Source` efetivo: `Procedure`, `WebPanel` e `DataProvider`
@@ -109,6 +113,38 @@ O local operacional padrao dentro da pasta paralela da KB e `KbIntelligence\kb-i
   -Format text
 ```
 
+## Triagem de impacto basico
+
+O comando `impact-basic` resume dependentes diretos e dependencias diretas do objeto, ainda sem alterar o escopo de extracao.
+
+```powershell
+.\scripts\Query-KbIntelligenceIndex.ps1 `
+  -IndexPath "C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence.sqlite" `
+  -Query impact-basic `
+  -ObjectType Procedure `
+  -ObjectName procPlanilhaVolumeMovimento `
+  -Limit 10 `
+  -Format text
+```
+
+Para auditar uma relacao especifica retornada por `impact-basic`, use `show-evidence`.
+
+Essa consulta representa impacto tecnico direto baseado no indice. Ela nao prova impacto runtime completo.
+
+## Validar consultas da Fase 3
+
+Depois de gerar ou localizar um indice SQLite, valide o comportamento operacional de `impact-basic` com:
+
+```powershell
+.\scripts\Test-KbIntelligenceQueries.ps1 `
+  -IndexPath "C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence.sqlite" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-fabricabrasil.phase3.validation-cases.json" `
+  -ValidationReportPath "C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence-phase3-validation.json" `
+  -FailOnValidationFailure
+```
+
+Os casos de validacao da Fase 3 conferem comportamento de consulta. Eles nao regeneram o indice nem substituem a bateria de extracao da Fase 2.
+
 ## Saidas
 
 - `json`: formato padrao para consumo por agentes e automacoes
@@ -121,5 +157,7 @@ O local operacional padrao dentro da pasta paralela da KB e `KbIntelligence\kb-i
 - ignorar pastas `ArquivoMorto`, salvo pedido explicito do usuario para analise historica
 - tratar o SQLite como derivado e regeneravel
 - manter o XML oficial como fonte normativa
+- antes de alterar objeto GeneXus coberto pelo indice, executar `impact-basic`
+- tratar `impact-basic` como impacto tecnico direto, nao como prova funcional completa
 - usar a linha e o `snippet` apenas como evidencia tecnica, nao como prova funcional completa
 - quando a mudanca exigir semantica GeneXus, abrir o XML e revisar o `Source` efetivo

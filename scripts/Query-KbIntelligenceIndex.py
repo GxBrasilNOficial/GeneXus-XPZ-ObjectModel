@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Query the Phase 1 KB Intelligence SQLite index."""
+"""Query the KB Intelligence SQLite index."""
 
 from __future__ import annotations
 
@@ -172,6 +172,32 @@ def what_uses(conn: sqlite3.Connection, object_type: str, object_name: str, limi
     }
 
 
+def impact_basic(conn: sqlite3.Connection, object_type: str, object_name: str, limit: int | None) -> dict[str, object]:
+    info = object_info(conn, object_type, object_name)
+    if info.get("found") is False:
+        return {
+            "query": "impact-basic",
+            "object": {"type": object_type, "name": object_name},
+            "found": False,
+            "notice": "Impacto tecnico direto baseado no indice; nao representa impacto runtime completo.",
+        }
+
+    incoming = who_uses(conn, object_type, object_name, limit)
+    outgoing = what_uses(conn, object_type, object_name, limit)
+    return {
+        "query": "impact-basic",
+        "object": info["object"],
+        "found": True,
+        "incoming_relations": info.get("incoming_relations", 0),
+        "outgoing_relations": info.get("outgoing_relations", 0),
+        "incoming_shown": incoming.get("shown", 0),
+        "outgoing_shown": outgoing.get("shown", 0),
+        "dependents": incoming.get("results", []),
+        "dependencies": outgoing.get("results", []),
+        "notice": "Impacto tecnico direto baseado no indice; nao representa impacto runtime completo.",
+    }
+
+
 def show_evidence(
     conn: sqlite3.Connection,
     relation_id: int | None,
@@ -246,6 +272,8 @@ def format_text(result: dict[str, object]) -> str:
     if isinstance(obj, dict):
         if result.get("found") is False:
             lines.append(f"{query}: {obj.get('type')}:{obj.get('name')} not found")
+            if query == "impact-basic":
+                lines.append(str(result.get("notice")))
             return "\n".join(lines)
         lines.append(f"{query}: {obj.get('type')}:{obj.get('name')}")
     else:
@@ -259,6 +287,36 @@ def format_text(result: dict[str, object]) -> str:
         lines.append(f"last_update: {obj.get('last_update')}")
         lines.append(f"incoming_relations: {result.get('incoming_relations', 0)}")
         lines.append(f"outgoing_relations: {result.get('outgoing_relations', 0)}")
+        return "\n".join(lines)
+
+    if query == "impact-basic" and isinstance(obj, dict):
+        lines.append(f"file: {obj.get('file_path')}")
+        lines.append(f"last_update: {obj.get('last_update')}")
+        lines.append(f"incoming_relations: {result.get('incoming_relations', 0)}")
+        lines.append(f"outgoing_relations: {result.get('outgoing_relations', 0)}")
+        lines.append(str(result.get("notice")))
+        for section, title in (("dependents", "dependents"), ("dependencies", "dependencies")):
+            rows = result.get(section, [])
+            shown_key = "incoming_shown" if section == "dependents" else "outgoing_shown"
+            total_key = "incoming_relations" if section == "dependents" else "outgoing_relations"
+            lines.append(f"{title}: {result.get(shown_key, 0)}/{result.get(total_key, 0)}")
+            if not isinstance(rows, list) or not rows:
+                lines.append("  (no results)")
+                continue
+            for row in rows:
+                if not isinstance(row, dict):
+                    continue
+                source = f"{row.get('source_type')}:{row.get('source_name')}"
+                target = f"{row.get('target_type')}:{row.get('target_name')}"
+                lines.append(
+                    f"  - #{row.get('relation_id')} {source} -> {target} "
+                    f"[{row.get('relation_kind')}, {row.get('confidence')}]"
+                )
+                lines.append(
+                    f"    {row.get('source_file')}:{row.get('line')} "
+                    f"{row.get('evidence_role')} via {row.get('extractor_rule')}"
+                )
+                lines.append(f"    {row.get('snippet')}")
         return "\n".join(lines)
 
     total = result.get("total", 0)
@@ -294,7 +352,11 @@ def format_text(result: dict[str, object]) -> str:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Query a KB Intelligence SQLite index.")
     parser.add_argument("--index-path", required=True, type=Path)
-    parser.add_argument("--query", required=True, choices=["object-info", "search-objects", "who-uses", "what-uses", "show-evidence"])
+    parser.add_argument(
+        "--query",
+        required=True,
+        choices=["object-info", "search-objects", "who-uses", "what-uses", "show-evidence", "impact-basic"],
+    )
     parser.add_argument("--object-type")
     parser.add_argument("--object-name")
     parser.add_argument("--relation-id", type=int)
@@ -330,6 +392,10 @@ def main() -> int:
             if not args.object_type or not args.object_name:
                 raise SystemExit("what-uses requires --object-type and --object-name.")
             result = what_uses(conn, args.object_type, args.object_name, args.limit)
+        elif args.query == "impact-basic":
+            if not args.object_type or not args.object_name:
+                raise SystemExit("impact-basic requires --object-type and --object-name.")
+            result = impact_basic(conn, args.object_type, args.object_name, args.limit)
         else:
             result = show_evidence(
                 conn,

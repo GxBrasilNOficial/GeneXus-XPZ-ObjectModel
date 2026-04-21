@@ -46,6 +46,8 @@ Na sequencia, a Fase 2 recebeu um nono incremento controlado: atributos de condi
 
 A Fase 2 fica consolidada com estes nove incrementos validados.
 
+Em 2026-04-21, a Fase 3 foi aberta, implementada e encerrada como camada operacional de consulta para agentes, sem ampliar extracao. O incremento consolidou `impact-basic`, validacao automatizada propria de consulta e guia de uso operacional.
+
 Continuam fora da Fase 2: semantica completa de `Transaction`, semantica de `WorkWithForWeb` alem dos recortes ja cobertos, `for each`, `.Load(...)`, resolucao semantica de `CustomType` para `SDT` ou `Domain`, e inferencias por layout ou comentarios.
 
 ## Principios da frente
@@ -429,15 +431,17 @@ Gate minimo:
 
 ## Fase 3 - suporte a agentes de programacao
 
-So iniciar depois de existir banco tecnico confiavel.
+Aberta por contrato em `14-kb-intelligence-fase-3-contrato.md`, depois do encerramento validado da Fase 2.
 
-Entregas possiveis:
+Estado em 2026-04-21: implementada e encerrada, com registro em `historico/2026-04-kb-intelligence-fase-3-encerramento.md`.
 
-- comando `who-uses`
-- comando `what-uses`
-- comando `show-evidence`
-- comando `impact-basic`
-- guia para agente consultar o indice antes de alterar `Procedure`, `WebPanel`, `Transaction` ou objetos relacionados
+A Fase 3 nao amplia o escopo de extracao. Ela formaliza o uso operacional do indice tecnico por agentes antes de alterar objetos GeneXus.
+
+Entregas:
+
+- manter os comandos `search-objects`, `object-info`, `who-uses`, `what-uses`, `show-evidence` e `impact-basic`
+- documentar guia para agente consultar o indice antes de alterar `Procedure`, `WebPanel`, `DataProvider`, `Transaction`, `WorkWithForWeb` ou objetos relacionados
+- deixar claro que `impact-basic` representa impacto tecnico direto baseado no indice, nao impacto runtime completo
 
 Esta fase deve priorizar respostas curtas, baratas e rastreaveis.
 
@@ -500,7 +504,6 @@ Ele deve ser preservado apenas como registro historico e substituido por este pl
 
 - decidir futuramente se `CustomType:<valor>` deve ser resolvido semanticamente para `SDT`, `Domain` ou outro tipo GeneXus
 - decidir futuramente se `for each` e `.Load(...)` devem entrar em fase propria, com classificacao separada e cautela runtime
-- se abrir Fase 3, definir o contrato do `impact-basic` e o guia operacional para agentes consultarem o indice antes de alterar objetos
 - definir nome final da frente tecnica ou skill futura
 - confirmar politica de snapshots pequenos para validacao em Git
 - manter como decisao tecnica futura a estrategia de calculo de linha exata em XML com `CDATA`

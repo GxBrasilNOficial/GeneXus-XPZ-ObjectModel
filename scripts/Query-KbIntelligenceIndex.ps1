@@ -1,7 +1,7 @@
 #requires -version 5.1
 <#
 .SYNOPSIS
-    Queries a Phase 1 KB Intelligence SQLite index.
+    Queries a KB Intelligence SQLite index.
 #>
 
 param(
@@ -9,7 +9,7 @@ param(
     [string]$IndexPath,
 
     [Parameter(Mandatory = $true)]
-    [ValidateSet("object-info", "search-objects", "who-uses", "what-uses", "show-evidence")]
+    [ValidateSet("object-info", "search-objects", "who-uses", "what-uses", "show-evidence", "impact-basic")]
     [string]$Query,
 
     [string]$ObjectType,

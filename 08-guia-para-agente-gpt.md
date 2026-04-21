@@ -70,6 +70,14 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - filtro de negocio sobre campo derivado exige validar a formula antes da proposta
 - se a formula chamar `Procedure`, a leitura deve seguir pelo menos a cadeia imediata necessaria para justificar o significado funcional do campo
 
+## Regra de uso do KB Intelligence
+
+- quando uma pasta paralela de KB expuser `KbIntelligence\kb-intelligence.sqlite`, o agente deve usar o indice para triagem tecnica antes de alterar objetos GeneXus cobertos pelo contrato da Fase 3
+- a triagem operacional deve consultar `object-info`, `who-uses`, `what-uses` e `show-evidence`, ou `impact-basic` quando esse comando estiver disponivel
+- `impact-basic` e a triagem equivalente representam impacto tecnico direto baseado no indice; nao provam impacto runtime completo
+- o indice nao substitui `ObjetosDaKbEmXml`, que continua sendo a fonte normativa e somente leitura
+- se a mudanca exigir semantica GeneXus, o agente deve abrir o XML oficial e revisar o trecho relevante antes de concluir
+
 ## Regra de leitura para compatibilidade de `Source`
 
 - `Source` que parece GeneXus valido nao prova compatibilidade operacional
