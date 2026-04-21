@@ -420,6 +420,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-path", required=True, type=Path)
     parser.add_argument("--validation-report-path", type=Path)
     parser.add_argument("--validation-cases-path", type=Path)
+    parser.add_argument("--fail-on-validation-failure", action="store_true")
     return parser.parse_args()
 
 
@@ -453,6 +454,10 @@ def main() -> int:
         report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     print(json.dumps(report, indent=2, ensure_ascii=False))
+    if args.fail_on_validation_failure:
+        failed_cases = [case for case in report["cases"] if case.get("status") == "failed"]
+        if failed_cases:
+            return 2
     return 0
 
 

@@ -18,6 +18,9 @@
 
 .PARAMETER ValidationCasesPath
     Optional JSON file with validation cases for the current KB.
+
+.PARAMETER FailOnValidationFailure
+    Return a non-zero exit code when any validation case fails.
 #>
 
 param(
@@ -29,7 +32,9 @@ param(
 
     [string]$ValidationReportPath,
 
-    [string]$ValidationCasesPath
+    [string]$ValidationCasesPath,
+
+    [switch]$FailOnValidationFailure
 )
 
 $ErrorActionPreference = "Stop"
@@ -60,6 +65,9 @@ if ($ValidationReportPath) {
 }
 if ($ValidationCasesPath) {
     $arguments += @("--validation-cases-path", $ValidationCasesPath)
+}
+if ($FailOnValidationFailure) {
+    $arguments += "--fail-on-validation-failure"
 }
 
 & $python.Source @arguments

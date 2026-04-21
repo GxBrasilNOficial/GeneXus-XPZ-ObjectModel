@@ -66,6 +66,7 @@ Parametros minimos esperados:
 - `-OutputPath`: caminho do SQLite gerado
 - `-ValidationReportPath`: caminho opcional para relatorio pequeno de validacao
 - `-ValidationCasesPath`: caminho opcional para casos de validacao da KB atual
+- `-FailOnValidationFailure`: falhar com exit code diferente de zero quando algum caso de validacao falhar
 
 O script nao deve depender de caminho absoluto privado como valor fixo.
 
@@ -339,6 +340,7 @@ A Fase 1 so pode ser marcada como pronta quando:
 - o caso `procPlanilhaVolumeMovimento.Call(...)` for capturado corretamente
 - comentarios e layout visual nao gerarem relacoes diretas falsas
 - o relatorio de validacao registrar sucesso, falha ou pendencia de cada caso
+- a rodada oficial com casos de validacao usar `-FailOnValidationFailure`
 
 ## Relatorio de validacao
 
