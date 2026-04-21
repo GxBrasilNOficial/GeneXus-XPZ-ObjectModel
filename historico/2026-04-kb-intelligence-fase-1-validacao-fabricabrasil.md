@@ -19,7 +19,7 @@ medio
 `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml`
 
 ## Objetivo
-Registrar a primeira validacao operacional da Fase 1 do KB Intelligence contra uma pasta paralela real, usando apenas `Procedure` e `WebPanel` como escopo inicial.
+Registrar as rodadas de validacao operacional da Fase 1 do KB Intelligence contra uma pasta paralela real, usando apenas `Procedure` e `WebPanel` como escopo inicial.
 
 ## Comandos executados
 
@@ -70,6 +70,8 @@ Os artefatos em `Temp` sao derivados e nao foram versionados.
 
 ## Casos de validacao
 
+A rodada inicial continha 5 casos. Em seguida, a validacao foi ampliada para 15 casos reais escolhidos no acervo da KB, mantendo o mesmo recorte de Fase 1 e sem incluir novos tipos de objeto.
+
 ### Caso 1 - WebPanel chamando Procedure por `.Call(...)`
 
 - origem: `WebPanel:wpRelatoriosDeMovimentosDeVolumes`
@@ -119,6 +121,18 @@ Este caso evita repetir o falso negativo observado no experimento anterior em `C
 - regra observada: `procedure_direct_call`
 - expectativa: nao criar relacao direta a partir de `Source` visual/layout
 - resultado: `passed`
+
+### Casos 5 a 15 - Ampliacao com relacoes reais
+
+A ampliacao cobriu:
+
+- chamadas diretas de `Procedure` em expressoes e atribuicoes
+- chamadas diretas aninhadas
+- chamadas por `.Call(...)` com nomes curtos e longos
+- links de `Procedure` para `WebPanel` por `.Link(...)`
+- chamadas diretas de `Procedure` dentro de `WebPanel`
+
+Todos os 15 casos passaram com `-FailOnValidationFailure`.
 
 ## Gate negativo
 

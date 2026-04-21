@@ -40,6 +40,94 @@
       "expected_rule": "procedure_direct_call",
       "should_exist": false,
       "expectation": "visual-layout Source reference must not create a direct relation"
+    },
+    {
+      "id": "case-5-procedure-direct-call-where",
+      "source": "Procedure:ExportWWOperacaoAjustada",
+      "target": "Procedure:procEmpresaCentroCusto",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "procedure call used in a where expression must create a direct relation"
+    },
+    {
+      "id": "case-6-procedure-direct-call-temp-path",
+      "source": "Procedure:planilhaEntradaDeTransferencia",
+      "target": "Procedure:procPathTemporalStoragePublic",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "procedure call in assignment must create a direct relation"
+    },
+    {
+      "id": "case-7-procedure-direct-call-nested",
+      "source": "Procedure:planilhaEntradaDeTransferencia",
+      "target": "Procedure:procUrlVisualizadorOffice",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "nested direct procedure call must create a direct relation"
+    },
+    {
+      "id": "case-8-procedure-dot-call-short-name",
+      "source": "Procedure:IsAuthorized",
+      "target": "Procedure:LoadContext",
+      "expected_rule": "procedure_dot_call",
+      "should_exist": true,
+      "expectation": "short procedure name with .Call(...) must create a direct relation"
+    },
+    {
+      "id": "case-9-procedure-dot-call-long-name",
+      "source": "Procedure:procGtaConsultaPeloCodigoDeBarra",
+      "target": "Procedure:procGtaConsultaPeloCodigoDeBarraNaADAFdoGoias",
+      "expected_rule": "procedure_dot_call",
+      "should_exist": true,
+      "expectation": "long procedure name with .Call(...) must create a direct relation"
+    },
+    {
+      "id": "case-10-procedure-dot-call-html-parser",
+      "source": "Procedure:procGtaTrataHtmlADADdaAlagoas",
+      "target": "Procedure:procCapturaDadosDaTagHtml",
+      "expected_rule": "procedure_dot_call",
+      "should_exist": true,
+      "expectation": "repeated .Call(...) references must create direct relations"
+    },
+    {
+      "id": "case-11-procedure-to-webpanel-link",
+      "source": "Procedure:ListPrograms",
+      "target": "WebPanel:WWAbateOrdem",
+      "expected_rule": "webpanel_dot_link",
+      "should_exist": true,
+      "expectation": "WebPanel .Link() in procedure Source must create a direct relation"
+    },
+    {
+      "id": "case-12-procedure-to-webpanel-link-second",
+      "source": "Procedure:ListPrograms",
+      "target": "WebPanel:WWAnimal",
+      "expected_rule": "webpanel_dot_link",
+      "should_exist": true,
+      "expectation": "second WebPanel .Link() case must create a direct relation"
+    },
+    {
+      "id": "case-13-webpanel-procedure-direct-download",
+      "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
+      "target": "Procedure:procDownloadArquivoFisico",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "WebPanel direct procedure call must create a direct relation"
+    },
+    {
+      "id": "case-14-webpanel-procedure-direct-nested",
+      "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
+      "target": "Procedure:procTipoDeConteudoDeArquivoPelaExtencao",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "nested direct procedure call in WebPanel Source must create a direct relation"
+    },
+    {
+      "id": "case-15-webpanel-procedure-direct-url",
+      "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
+      "target": "Procedure:procUrlVisualizadorOffice",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "direct procedure call inside WebPanel expression must create a direct relation"
     }
   ]
 }
