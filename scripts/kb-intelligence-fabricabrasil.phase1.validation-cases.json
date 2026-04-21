@@ -18,6 +18,14 @@
       "expectation": "procLeParteDeStringXml(...) in effective Source must create a direct relation"
     },
     {
+      "id": "case-2b-procedure-direct-call-canonical-case",
+      "source": "Procedure:PreenchXmlNFE",
+      "target": "Procedure:ProcCodigodeBarraCode128",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "ProcCodigodeBarraCode128(...) must resolve to the canonical Procedure file name despite casing"
+    },
+    {
       "id": "case-3-comment-does-not-create-relation",
       "source": "Procedure:PreenchXmlNFE",
       "target": "Procedure:procCodigoDeBarrasDobson2of5",

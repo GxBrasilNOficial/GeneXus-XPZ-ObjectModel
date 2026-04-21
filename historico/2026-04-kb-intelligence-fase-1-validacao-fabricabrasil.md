@@ -62,7 +62,7 @@ Teste negativo controlado de falha de validacao:
 - `Procedure` lidas: 2302
 - `WebPanel` lidos: 1198
 - objetos gravados no SQLite: 3500
-- relacoes gravadas: 19229
+- relacoes gravadas: 19364
 - artefato principal: `.\\Temp\\kb-intelligence-phase1.sqlite`
 - relatorio de validacao: `.\\Temp\\kb-intelligence-phase1-validation.json`
 
@@ -94,6 +94,14 @@ Este caso evita repetir o falso negativo observado no experimento anterior em `C
 - destino: `Procedure:procLeParteDeStringXml`
 - regra esperada: `procedure_direct_call`
 - expectativa: criar relacao direta
+- resultado: `passed`
+
+### Caso 2b - Procedure com diferenca de maiusculas/minusculas
+
+- origem: `Procedure:PreenchXmlNFE`
+- destino: `Procedure:ProcCodigodeBarraCode128`
+- regra esperada: `procedure_direct_call`
+- expectativa: resolver chamada `ProcCodigodeBarraCode128(...)` para o nome canonico do arquivo
 - resultado: `passed`
 
 ### Caso 3 - Comentario nao deve gerar relacao direta

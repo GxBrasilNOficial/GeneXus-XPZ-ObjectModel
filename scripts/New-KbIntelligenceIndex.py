@@ -25,9 +25,9 @@ from typing import Iterable
 SOURCE_RE = re.compile(r"<Source(?:\s[^>]*)?>(?P<body>.*?)</Source>", re.IGNORECASE | re.DOTALL)
 CDATA_RE = re.compile(r"^\s*<!\[CDATA\[(?P<body>.*)\]\]>\s*$", re.DOTALL)
 LAST_UPDATE_RE = re.compile(r'\blastUpdate="([^"]+)"')
-PROCEDURE_DIRECT_RE = re.compile(r"\b(?P<name>proc[A-Za-z_][A-Za-z0-9_]*)\s*\(")
-PROCEDURE_DOT_CALL_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Call\s*\(")
-WEBPANEL_DOT_LINK_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Link\s*\(")
+PROCEDURE_DIRECT_RE = re.compile(r"\b(?P<name>proc[A-Za-z_][A-Za-z0-9_]*)\s*\(", re.IGNORECASE)
+PROCEDURE_DOT_CALL_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Call\s*\(", re.IGNORECASE)
+WEBPANEL_DOT_LINK_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Link\s*\(", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -170,6 +170,8 @@ def extract_evidence(
     webpanel_names: set[str],
 ) -> list[Evidence]:
     evidences: list[Evidence] = []
+    procedure_lookup = {name.lower(): name for name in procedure_names}
+    webpanel_lookup = {name.lower(): name for name in webpanel_names}
 
     for source in source_objects:
         xml_text = read_text(source.path)
@@ -181,8 +183,9 @@ def extract_evidence(
                 line_no = block.start_line + offset
 
                 for match in PROCEDURE_DOT_CALL_RE.finditer(cleaned):
-                    target_name = match.group("name")
-                    if target_name in procedure_names:
+                    matched_name = match.group("name")
+                    target_name = procedure_lookup.get(matched_name.lower())
+                    if target_name:
                         add_evidence(
                             evidences,
                             source=source,
@@ -191,13 +194,14 @@ def extract_evidence(
                             relation_kind="calls_procedure",
                             line=line_no,
                             column=match.start("name") + 1,
-                            snippet=line,
+                            snippet=cleaned,
                             extractor_rule="procedure_dot_call",
                         )
 
                 for match in PROCEDURE_DIRECT_RE.finditer(cleaned):
-                    target_name = match.group("name")
-                    if target_name in procedure_names:
+                    matched_name = match.group("name")
+                    target_name = procedure_lookup.get(matched_name.lower())
+                    if target_name:
                         add_evidence(
                             evidences,
                             source=source,
@@ -206,13 +210,14 @@ def extract_evidence(
                             relation_kind="calls_procedure",
                             line=line_no,
                             column=match.start("name") + 1,
-                            snippet=line,
+                            snippet=cleaned,
                             extractor_rule="procedure_direct_call",
                         )
 
                 for match in WEBPANEL_DOT_LINK_RE.finditer(cleaned):
-                    target_name = match.group("name")
-                    if target_name in webpanel_names:
+                    matched_name = match.group("name")
+                    target_name = webpanel_lookup.get(matched_name.lower())
+                    if target_name:
                         add_evidence(
                             evidences,
                             source=source,
@@ -221,7 +226,7 @@ def extract_evidence(
                             relation_kind="calls_webpanel",
                             line=line_no,
                             column=match.start("name") + 1,
-                            snippet=line,
+                            snippet=cleaned,
                             extractor_rule="webpanel_dot_link",
                         )
 
