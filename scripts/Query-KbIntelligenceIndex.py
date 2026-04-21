@@ -18,10 +18,54 @@ def fetch_all(conn: sqlite3.Connection, sql: str, params: tuple[object, ...]) ->
     return [row_to_dict(cursor, row) for row in cursor.fetchall()]
 
 
+def fetch_one(conn: sqlite3.Connection, sql: str, params: tuple[object, ...]) -> dict[str, object] | None:
+    cursor = conn.execute(sql, params)
+    row = cursor.fetchone()
+    if row is None:
+        return None
+    return row_to_dict(cursor, row)
+
+
 def limit_rows(rows: list[dict[str, object]], limit: int | None) -> list[dict[str, object]]:
     if limit is None or limit <= 0:
         return rows
     return rows[:limit]
+
+
+def object_info(conn: sqlite3.Connection, object_type: str, object_name: str) -> dict[str, object]:
+    obj = fetch_one(
+        conn,
+        """
+        SELECT object_id, type, name, file_path, last_update, file_hash
+        FROM objects
+        WHERE type = ? AND name = ?
+        """,
+        (object_type, object_name),
+    )
+    if obj is None:
+        return {
+            "query": "object-info",
+            "object": {"type": object_type, "name": object_name},
+            "found": False,
+        }
+
+    outgoing = fetch_one(
+        conn,
+        "SELECT COUNT(*) AS count FROM relations WHERE source_object_id = ?",
+        (obj["object_id"],),
+    )
+    incoming = fetch_one(
+        conn,
+        "SELECT COUNT(*) AS count FROM relations WHERE target_type = ? AND target_name = ?",
+        (object_type, object_name),
+    )
+    return {
+        "query": "object-info",
+        "object": obj,
+        "found": True,
+        "outgoing_relations": outgoing["count"] if outgoing else 0,
+        "incoming_relations": incoming["count"] if incoming else 0,
+    }
 
 
 def who_uses(conn: sqlite3.Connection, object_type: str, object_name: str, limit: int | None) -> dict[str, object]:
@@ -168,9 +212,19 @@ def format_text(result: dict[str, object]) -> str:
     query = result.get("query")
     obj = result.get("object")
     if isinstance(obj, dict):
+        if result.get("found") is False:
+            lines.append(f"{query}: {obj.get('type')}:{obj.get('name')} not found")
+            return "\n".join(lines)
         lines.append(f"{query}: {obj.get('type')}:{obj.get('name')}")
     else:
         lines.append(str(query))
+
+    if query == "object-info" and isinstance(obj, dict):
+        lines.append(f"file: {obj.get('file_path')}")
+        lines.append(f"last_update: {obj.get('last_update')}")
+        lines.append(f"incoming_relations: {result.get('incoming_relations', 0)}")
+        lines.append(f"outgoing_relations: {result.get('outgoing_relations', 0)}")
+        return "\n".join(lines)
 
     total = result.get("total", 0)
     shown = result.get("shown", 0)
@@ -201,7 +255,7 @@ def format_text(result: dict[str, object]) -> str:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Query a KB Intelligence SQLite index.")
     parser.add_argument("--index-path", required=True, type=Path)
-    parser.add_argument("--query", required=True, choices=["who-uses", "what-uses", "show-evidence"])
+    parser.add_argument("--query", required=True, choices=["object-info", "who-uses", "what-uses", "show-evidence"])
     parser.add_argument("--object-type")
     parser.add_argument("--object-name")
     parser.add_argument("--relation-id", type=int)
@@ -221,7 +275,11 @@ def main() -> int:
 
     conn = sqlite3.connect(args.index_path)
     try:
-        if args.query == "who-uses":
+        if args.query == "object-info":
+            if not args.object_type or not args.object_name:
+                raise SystemExit("object-info requires --object-type and --object-name.")
+            result = object_info(conn, args.object_type, args.object_name)
+        elif args.query == "who-uses":
             if not args.object_type or not args.object_name:
                 raise SystemExit("who-uses requires --object-type and --object-name.")
             result = who_uses(conn, args.object_type, args.object_name, args.limit)

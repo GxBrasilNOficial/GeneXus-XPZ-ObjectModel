@@ -232,6 +232,23 @@ Se forem detectados durante desenvolvimento, devem ir para relatorio como candid
 
 A implementacao futura deve expor pelo menos estas consultas:
 
+### `object-info`
+
+Entrada:
+
+- `ObjectType`
+- `ObjectName`
+- `Format` opcional: `json` ou `text`
+
+Saida minima:
+
+- objeto consultado
+- se foi encontrado
+- arquivo XML relativo
+- `last_update`
+- quantidade de relacoes de entrada
+- quantidade de relacoes de saida
+
 ### `who-uses`
 
 Entrada:

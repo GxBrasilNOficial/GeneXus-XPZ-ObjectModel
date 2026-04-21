@@ -27,6 +27,17 @@ Eles nao substituem o acervo XML em `ObjetosDaKbEmXml` e nao provam comportament
 
 Para outra KB, troque `-SourceRoot`, `-OutputPath` e, se aplicavel, `-ValidationCasesPath`.
 
+## Localizar um objeto
+
+```powershell
+.\scripts\Query-KbIntelligenceIndex.ps1 `
+  -IndexPath ".\Temp\kb-intelligence-phase1.sqlite" `
+  -Query object-info `
+  -ObjectType Procedure `
+  -ObjectName procPlanilhaVolumeMovimento `
+  -Format text
+```
+
 ## Consultar quem usa um objeto
 
 ```powershell
