@@ -19,7 +19,7 @@ medio
 `C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml`
 
 ## Objetivo
-Registrar as primeiras ampliacoes controladas da Fase 2 do KB Intelligence, adicionando `DataProvider` como origem e destino em `Source` efetivo, actions de `WorkWithForWeb` com `gxobject` resolvido e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
+Registrar as primeiras ampliacoes controladas da Fase 2 do KB Intelligence, adicionando `DataProvider` como origem e destino em `Source` efetivo, actions de `WorkWithForWeb` com `gxobject` resolvido, vinculacoes explicitas de `WorkWithForWeb` para `Transaction` e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
 
 ## Escopo
 
@@ -30,14 +30,15 @@ Incluido nesta rodada:
 - destinos mantidos para origem `DataProvider`: `Procedure` e `WebPanel`
 - origem: `WorkWithForWeb` por action com `gxobject`
 - destinos de action: `Procedure` e `WebPanel`
+- destino explicito de `WorkWithForWeb`: `Transaction`
 - alvo literal: `CustomType:<valor>` por `ATTCUSTOMTYPE`
-- regras: `procedure_direct_call`, `procedure_dot_call`, `webpanel_dot_link`, `dataprovider_direct_call`, `workwith_action_gxobject` e `attcustomtype_property`
-- evidencias: `Source efetivo`, `WorkWith action` e `Property ATTCUSTOMTYPE`
+- regras: `procedure_direct_call`, `procedure_dot_call`, `webpanel_dot_link`, `dataprovider_direct_call`, `workwith_action_gxobject`, `workwith_transaction_binding` e `attcustomtype_property`
+- evidencias: `Source efetivo`, `WorkWith action`, `WorkWith transaction` e `Property ATTCUSTOMTYPE`
 
 Continuam fora:
 
 - semantica completa de `Transaction`
-- `WorkWithForWeb` alem de actions `gxobject`
+- `WorkWithForWeb` alem de actions `gxobject` e vinculacoes explicitas de `Transaction`
 - `for each`
 - `.Load(...)`
 - resolucao semantica de `CustomType` para `SDT`, `Domain` ou outro tipo GeneXus
@@ -98,9 +99,9 @@ Geracao do indice canonico da pasta paralela:
 - `WorkWithForWeb` lidos: 183
 - `Transaction` lidas: 183
 - objetos gravados no SQLite: 3890
-- relacoes gravadas: 32752
+- relacoes gravadas: 33076
 - casos de regressao da Fase 1: 15 `passed`
-- casos de validacao da Fase 2: 21 `passed`
+- casos de validacao da Fase 2: 24 `passed`
 
 ## Casos de validacao da Fase 2
 
@@ -121,6 +122,8 @@ A bateria propria da Fase 2 cobriu:
 - `ATTCUSTOMTYPE` em `Transaction`
 - `ATTCUSTOMTYPE` em `Procedure`
 - `CustomType` inexistente sem relacao criada
+- vinculacao explicita de `WorkWithForWeb` para `Transaction`
+- `Transaction` inexistente sem relacao criada
 
 ## Consultas reais executadas
 
@@ -178,8 +181,12 @@ A bateria propria da Fase 2 cobriu:
 
 - evidencia direta em `Transaction/AbateOrdem.xml`, linha 1134, por `attcustomtype_property`
 
+`show-evidence` para `WorkWithForWeb:WorkWithWebAbateOrdem` -> `Transaction:AbateOrdem`:
+
+- evidencia direta em `WorkWithForWeb/WorkWithWebAbateOrdem.xml`, por `workwith_transaction_binding`
+
 ## Conclusao
 
-Os quatro primeiros incrementos da Fase 2 foram implementados e validados: `DataProvider` como origem, `DataProvider` como destino de chamada direta, actions de `WorkWithForWeb` por `gxobject`, e `ATTCUSTOMTYPE` como `CustomType` literal.
+Os cinco primeiros incrementos da Fase 2 foram implementados e validados: `DataProvider` como origem, `DataProvider` como destino de chamada direta, actions de `WorkWithForWeb` por `gxobject`, vinculacoes explicitas de `WorkWithForWeb` para `Transaction`, e `ATTCUSTOMTYPE` como `CustomType` literal.
 
-Continuam fora: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject`, `for each`, `.Load(...)` e resolucao semantica de `CustomType` para `SDT` ou `Domain`.
+Continuam fora: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject` e vinculacoes explicitas de `Transaction`, `for each`, `.Load(...)` e resolucao semantica de `CustomType` para `SDT` ou `Domain`.

@@ -3,9 +3,10 @@
 Build a minimal GeneXus KB intelligence SQLite index.
 
 Phase 2 current scope:
-- sources: Procedure, WebPanel, DataProvider
-- targets: Procedure, WebPanel
-- evidence: effective Source only
+- Source relations among Procedure, WebPanel and DataProvider
+- WorkWithForWeb action gxobject links to Procedure and WebPanel
+- WorkWithForWeb explicit transaction binding
+- literal ATTCUSTOMTYPE CustomType values
 """
 
 from __future__ import annotations
@@ -36,6 +37,7 @@ ATTCUSTOMTYPE_PROPERTY_RE = re.compile(
     r"<Property>\s*<Name>ATTCUSTOMTYPE</Name>\s*<Value>(?P<value>.*?)</Value>\s*</Property>",
     re.IGNORECASE | re.DOTALL,
 )
+WORKWITH_TRANSACTION_RE = re.compile(r"<transaction\b[^>]*\btransaction=\"(?P<value>[^\"]+)\"", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -352,6 +354,41 @@ def extract_workwith_action_evidence(
     return evidences
 
 
+def extract_workwith_transaction_evidence(
+    workwith_objects: Iterable[ObjectInfo],
+    transaction_names: set[str],
+) -> list[Evidence]:
+    evidences: list[Evidence] = []
+    transaction_lookup = case_insensitive_lookup(transaction_names, "Transaction")
+
+    for source in workwith_objects:
+        xml_text = read_text(source.path)
+        for match in WORKWITH_TRANSACTION_RE.finditer(xml_text):
+            raw_target_name = gxobject_name(html.unescape(match.group("value")))
+            if not raw_target_name:
+                continue
+            target_name = transaction_lookup.get(raw_target_name.lower())
+            if not target_name:
+                continue
+            add_evidence(
+                evidences,
+                source=source,
+                target_type="Transaction",
+                target_name=target_name,
+                relation_kind="workwith_references_transaction",
+                line=line_number_at(xml_text, match.start()),
+                column=1,
+                snippet=match.group(0),
+                extractor_rule="workwith_transaction_binding",
+                evidence_role="WorkWith transaction",
+            )
+
+    unique: dict[tuple[str, str, str, int], Evidence] = {}
+    for evidence in evidences:
+        unique[(evidence.source_name, evidence.target_name, evidence.extractor_rule, evidence.line)] = evidence
+    return list(unique.values())
+
+
 def normalize_custom_type(value: str) -> str:
     return " ".join(html.unescape(value).strip().split())
 
@@ -602,8 +639,17 @@ def main() -> int:
         procedure_names=set(procedures),
         webpanel_names=set(webpanels),
     )
+    workwith_transaction_evidences = extract_workwith_transaction_evidence(
+        workwiths.values(),
+        transaction_names=set(transactions),
+    )
     custom_type_evidences = extract_attcustomtype_evidence(objects)
-    evidences = [*source_evidences, *workwith_evidences, *custom_type_evidences]
+    evidences = [
+        *source_evidences,
+        *workwith_evidences,
+        *workwith_transaction_evidences,
+        *custom_type_evidences,
+    ]
     write_index(args.output_path.resolve(), source_root, objects, evidences)
 
     validation_cases_path = args.validation_cases_path.resolve() if args.validation_cases_path else None

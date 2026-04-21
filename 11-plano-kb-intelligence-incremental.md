@@ -34,7 +34,9 @@ Na mesma data, a Fase 2 recebeu um segundo incremento pequeno: `DataProvider` co
 
 Na mesma data, a Fase 2 recebeu mais dois incrementos controlados: actions de `WorkWithForWeb` com atributo `gxobject` resolvido para `Procedure` ou `WebPanel`, e propriedades `ATTCUSTOMTYPE` indexadas como alvo literal `CustomType:<valor>`.
 
-Continuam fora destes incrementos: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject`, `for each`, `.Load(...)`, resolucao semantica de `CustomType` para `SDT` ou `Domain`, e inferencias por layout ou comentarios.
+Ainda na mesma data, a Fase 2 recebeu um quinto incremento controlado: vinculacao explicita de `WorkWithForWeb` para `Transaction` por tag interna `<transaction transaction="guid-Nome">`.
+
+Continuam fora destes incrementos: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject` e vinculacoes explicitas de `Transaction`, `for each`, `.Load(...)`, resolucao semantica de `CustomType` para `SDT` ou `Domain`, e inferencias por layout ou comentarios.
 
 ## Principios da frente
 
@@ -182,7 +184,7 @@ Caso conhecido obrigatorio para a bateria:
 
 So iniciar depois da Fase 1 validada.
 
-Estado em 2026-04-21: fase aberta e ja ampliada de forma controlada para `DataProvider` como origem e destino direto, actions de `WorkWithForWeb` por `gxobject`, e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
+Estado em 2026-04-21: fase aberta e ja ampliada de forma controlada para `DataProvider` como origem e destino direto, actions de `WorkWithForWeb` por `gxobject`, vinculacoes explicitas `WorkWithForWeb` -> `Transaction`, e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
 
 Possiveis ampliacoes:
 
@@ -295,6 +297,30 @@ Gate minimo:
 - manter os casos anteriores da Fase 2 passando
 - adicionar casos reais positivos em `Transaction` e `Procedure`
 - adicionar caso negativo para `CustomType` inexistente
+
+### Quinto incremento - vinculacao explicita de `WorkWithForWeb` com `Transaction`
+
+Escopo aceito:
+
+- origem: `WorkWithForWeb`
+- destino: `Transaction`
+- regra: `workwith_transaction_binding`
+- evidencia: `WorkWith transaction`
+- confianca: `direct`
+
+Fora do quinto incremento:
+
+- interpretar semantica completa da `Transaction`
+- inferir relacao por nome do arquivo ou por convencao `WorkWithWeb<Transacao>`
+- inferir entidade por atributo, filtro, `Selection` ou grid
+- tratar `for each` como relacao de entidade
+
+Gate minimo:
+
+- manter os 15 casos reais da Fase 1 passando
+- manter os casos anteriores da Fase 2 passando
+- adicionar casos reais positivos para `WorkWithForWeb` referenciando `Transaction`
+- adicionar caso negativo para `Transaction` inexistente
 
 ## Fase 3 - suporte a agentes de programacao
 

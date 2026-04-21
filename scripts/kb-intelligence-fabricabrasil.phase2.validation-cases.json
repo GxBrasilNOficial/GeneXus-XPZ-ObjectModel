@@ -168,6 +168,30 @@
       "expected_rule": "attcustomtype_property",
       "should_exist": false,
       "expectation": "Absent ATTCUSTOMTYPE value must not create a relation"
+    },
+    {
+      "id": "phase2-case-22-workwith-transaction-binding-abate-ordem",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "Transaction:AbateOrdem",
+      "expected_rule": "workwith_transaction_binding",
+      "should_exist": true,
+      "expectation": "WorkWithForWeb explicit transaction binding must create a direct relation to its Transaction"
+    },
+    {
+      "id": "phase2-case-23-workwith-transaction-binding-animal",
+      "source": "WorkWithForWeb:WorkWithWebAnimal",
+      "target": "Transaction:Animal",
+      "expected_rule": "workwith_transaction_binding",
+      "should_exist": true,
+      "expectation": "Second WorkWithForWeb explicit transaction binding must create a direct relation to its Transaction"
+    },
+    {
+      "id": "phase2-case-24-workwith-transaction-binding-unknown-does-not-create-relation",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "Transaction:ObjetoInexistenteParaNaoIndexar",
+      "expected_rule": "workwith_transaction_binding",
+      "should_exist": false,
+      "expectation": "WorkWithForWeb transaction binding must not create a relation for an unresolved Transaction"
     }
   ]
 }

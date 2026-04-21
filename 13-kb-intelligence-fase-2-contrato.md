@@ -25,6 +25,8 @@ O terceiro alvo da Fase 2 e action de `WorkWithForWeb` com atributo `gxobject` r
 
 O quarto alvo da Fase 2 e propriedade `ATTCUSTOMTYPE` como alvo literal `CustomType:<valor>`.
 
+O quinto alvo da Fase 2 e vinculacao explicita de `WorkWithForWeb` para `Transaction`.
+
 Destinos do primeiro incremento continuam limitados a:
 
 - `Procedure`
@@ -43,6 +45,10 @@ Origem do terceiro incremento:
 Origem do quarto incremento:
 
 - objetos ja coletados pelo indice
+
+Origem do quinto incremento:
+
+- `WorkWithForWeb`
 
 ## Padroes aceitos
 
@@ -64,12 +70,16 @@ O quarto incremento adiciona:
 
 - `attcustomtype_property`
 
-Toda relacao deve vir de evidencia direta nomeada, com arquivo, linha, snippet, regra e confianca. Em `Source` efetivo, a evidencia deve continuar classificada como `Source efetivo`; em actions de `WorkWithForWeb`, como `WorkWith action`; em `ATTCUSTOMTYPE`, como `Property ATTCUSTOMTYPE`.
+O quinto incremento adiciona:
+
+- `workwith_transaction_binding`
+
+Toda relacao deve vir de evidencia direta nomeada, com arquivo, linha, snippet, regra e confianca. Em `Source` efetivo, a evidencia deve continuar classificada como `Source efetivo`; em actions de `WorkWithForWeb`, como `WorkWith action`; em vinculacoes de `WorkWithForWeb` para `Transaction`, como `WorkWith transaction`; em `ATTCUSTOMTYPE`, como `Property ATTCUSTOMTYPE`.
 
 ## Fora do incremento
 
 - semantica completa de `Transaction`
-- `WorkWithForWeb` alem de actions `gxobject` resolvidas
+- `WorkWithForWeb` alem de actions `gxobject` resolvidas e vinculacoes explicitas de `Transaction`
 - `for each`
 - `.Load(...)`
 - resolucao semantica de `CustomType` para `SDT`, `Domain` ou outro tipo GeneXus
@@ -92,6 +102,8 @@ Antes de considerar este incremento pronto:
 - a bateria deve incluir caso negativo para action sem alvo resolvido no recorte aprovado
 - a bateria deve incluir casos positivos de `ATTCUSTOMTYPE` em `Transaction` e `Procedure`
 - a bateria deve incluir caso negativo de `CustomType` inexistente
+- a bateria deve incluir casos positivos de vinculacao explicita `WorkWithForWeb` -> `Transaction`
+- a bateria deve incluir caso negativo de `Transaction` inexistente
 - a validacao deve ser executada contra `FabricaBrasil` com `-FailOnValidationFailure`
 
 ## Decisoes adiaveis
