@@ -178,6 +178,41 @@ C:\Dev\Prod\Gx_FabricaBrasil\ArquivoMorto\Mapeamento
 
 Tambem foram ajustados `README.md` e `AGENTS.md` da pasta paralela para registrar que `ArquivoMorto` deve ser ignorado por agentes ou tratado como nao confiavel, salvo pedido explicito de analise historica.
 
+## Fechamento do local canonico
+
+Em 2026-04-21, foi gerado e validado o indice canonico da Fase 1 na pasta paralela real:
+
+```text
+C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence.sqlite
+```
+
+Tambem foi gerado o relatorio derivado:
+
+```text
+C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence-validation.json
+```
+
+A geracao usou `ObjetosDaKbEmXml` como fonte normativa e os 15 casos reais de `scripts\kb-intelligence-fabricabrasil.phase1.validation-cases.json`, com `-FailOnValidationFailure`.
+
+Resultado da rodada canonica:
+
+- `Procedure` lidas: 2302
+- `WebPanel` lidos: 1198
+- objetos gravados no SQLite: 3500
+- relacoes gravadas: 19364
+- 15 casos de validacao: `passed`
+
+Consultas reais executadas contra o indice canonico:
+
+- `object-info` para `WebPanel:wpRelatoriosDeMovimentosDeVolumes`: objeto localizado em `WebPanel/wpRelatoriosDeMovimentosDeVolumes.xml`, com 9 relacoes de saida
+- `what-uses` para `WebPanel:wpRelatoriosDeMovimentosDeVolumes`: 9 relacoes diretas retornadas
+- `who-uses` para `Procedure:procPlanilhaVolumeMovimento`: 2 usos diretos retornados
+- `show-evidence` para `WebPanel:wpRelatoriosDeMovimentosDeVolumes` -> `Procedure:procPlanilhaVolumeMovimento`: evidencia direta na linha 131 por `procedure_dot_call`
+
+Foi criado `C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\README.md` para orientar agentes a tratar o SQLite como derivado e regeneravel, mantendo `ObjetosDaKbEmXml` como fonte normativa.
+
+A Fase 2 nao foi iniciada nesta rodada.
+
 ## Limites desta validacao
 
 - nao cobre `Transaction`
@@ -190,6 +225,6 @@ Tambem foram ajustados `README.md` e `AGENTS.md` da pasta paralela para registra
 
 ## Conclusao
 
-A Fase 1 tem uma implementacao operacional validada para o recorte `Procedure` e `WebPanel`, com SQLite derivado, evidencia rastreavel, consulta por agente e gate de validacao.
+A Fase 1 tem uma implementacao operacional validada para o recorte `Procedure` e `WebPanel`, com SQLite derivado, evidencia rastreavel, consulta por agente, gate de validacao e local canonico em `KbIntelligence`.
 
-Antes de expandir novos tipos de objeto, a frente deve fechar o local canonico `KbIntelligence`, a regra de `ArquivoMorto` e a instrucao correspondente no `AGENTS.md` da pasta paralela.
+Antes de expandir novos tipos de objeto, deve haver decisao explicita de abertura da Fase 2.
