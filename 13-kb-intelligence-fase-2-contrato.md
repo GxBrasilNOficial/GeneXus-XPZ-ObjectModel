@@ -31,6 +31,8 @@ O sexto alvo da Fase 2 e link explicito de `WorkWithForWeb` para `WebPanel`.
 
 O setimo alvo da Fase 2 e prompt explicito de `WorkWithForWeb` para `WebPanel`.
 
+O oitavo alvo da Fase 2 e condicao de `WorkWithForWeb` com chamada direta para `Procedure`.
+
 Destinos do primeiro incremento continuam limitados a:
 
 - `Procedure`
@@ -59,6 +61,10 @@ Origem do sexto incremento:
 - `WorkWithForWeb`
 
 Origem do setimo incremento:
+
+- `WorkWithForWeb`
+
+Origem do oitavo incremento:
 
 - `WorkWithForWeb`
 
@@ -94,12 +100,16 @@ O setimo incremento adiciona:
 
 - `workwith_prompt_webpanel`
 
-Toda relacao deve vir de evidencia direta nomeada, com arquivo, linha, snippet, regra e confianca. Em `Source` efetivo, a evidencia deve continuar classificada como `Source efetivo`; em actions de `WorkWithForWeb`, como `WorkWith action`; em vinculacoes de `WorkWithForWeb` para `Transaction`, como `WorkWith transaction`; em links explicitos de `WorkWithForWeb` para `WebPanel`, como `WorkWith link`; em prompts explicitos de `WorkWithForWeb` para `WebPanel`, como `WorkWith prompt`; em `ATTCUSTOMTYPE`, como `Property ATTCUSTOMTYPE`.
+O oitavo incremento adiciona:
+
+- `workwith_condition_procedure`
+
+Toda relacao deve vir de evidencia direta nomeada, com arquivo, linha, snippet, regra e confianca. Em `Source` efetivo, a evidencia deve continuar classificada como `Source efetivo`; em actions de `WorkWithForWeb`, como `WorkWith action`; em vinculacoes de `WorkWithForWeb` para `Transaction`, como `WorkWith transaction`; em links explicitos de `WorkWithForWeb` para `WebPanel`, como `WorkWith link`; em prompts explicitos de `WorkWithForWeb` para `WebPanel`, como `WorkWith prompt`; em condicoes de `WorkWithForWeb` com chamada de `Procedure`, como `WorkWith condition`; em `ATTCUSTOMTYPE`, como `Property ATTCUSTOMTYPE`.
 
 ## Fora do incremento
 
 - semantica completa de `Transaction`
-- `WorkWithForWeb` alem de actions `gxobject` resolvidas, vinculacoes explicitas de `Transaction`, links explicitos de `WebPanel` e prompts explicitos de `WebPanel`
+- `WorkWithForWeb` alem de actions `gxobject` resolvidas, vinculacoes explicitas de `Transaction`, links explicitos de `WebPanel`, prompts explicitos de `WebPanel` e condicoes com chamada direta de `Procedure`
 - `for each`
 - `.Load(...)`
 - resolucao semantica de `CustomType` para `SDT`, `Domain` ou outro tipo GeneXus
@@ -129,6 +139,8 @@ Antes de considerar este incremento pronto:
 - a bateria deve incluir caso negativo de `WebPanel` inexistente
 - a bateria deve incluir casos positivos de prompt explicito `WorkWithForWeb` -> `WebPanel`
 - a bateria deve incluir caso negativo de prompt para `WebPanel` inexistente
+- a bateria deve incluir casos positivos de condicao `WorkWithForWeb` chamando `Procedure`
+- a bateria deve incluir caso negativo de condicao para `Procedure` inexistente
 - a validacao deve ser executada contra `FabricaBrasil` com `-FailOnValidationFailure`
 
 ## Decisoes adiaveis

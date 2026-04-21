@@ -5,6 +5,7 @@ Build a minimal GeneXus KB intelligence SQLite index.
 Phase 2 current scope:
 - Source relations among Procedure, WebPanel and DataProvider
 - WorkWithForWeb action gxobject links to Procedure and WebPanel
+- WorkWithForWeb condition expressions to Procedure
 - WorkWithForWeb explicit link tags to WebPanel
 - WorkWithForWeb explicit prompt attributes to WebPanel
 - WorkWithForWeb explicit transaction binding
@@ -33,6 +34,7 @@ PROCEDURE_DOT_CALL_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*C
 WEBPANEL_DOT_LINK_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Link\s*\(", re.IGNORECASE)
 INDEXED_SOURCE_TYPES = ("Procedure", "WebPanel", "DataProvider")
 ACTION_RE = re.compile(r"<action\b(?P<attrs>[^>]*)>", re.IGNORECASE | re.DOTALL)
+CONDITION_RE = re.compile(r"<condition\b(?P<attrs>[^>]*)>", re.IGNORECASE | re.DOTALL)
 ATTR_RE = re.compile(r'(?P<name>[A-Za-z_][A-Za-z0-9_]*)="(?P<value>[^"]*)"')
 GXOBJECT_RE = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}-(?P<name>.+)$")
 ATTCUSTOMTYPE_PROPERTY_RE = re.compile(
@@ -356,6 +358,44 @@ def extract_workwith_action_evidence(
             )
 
     return evidences
+
+
+def extract_workwith_condition_evidence(
+    workwith_objects: Iterable[ObjectInfo],
+    procedure_names: set[str],
+) -> list[Evidence]:
+    evidences: list[Evidence] = []
+    procedure_lookup = case_insensitive_lookup(procedure_names, "Procedure")
+
+    for source in workwith_objects:
+        xml_text = read_text(source.path)
+        for condition_match in CONDITION_RE.finditer(xml_text):
+            attrs = parse_attributes(condition_match.group("attrs"))
+            condition_value = attrs.get("value")
+            if not condition_value:
+                continue
+
+            for procedure_match in PROCEDURE_DIRECT_RE.finditer(condition_value):
+                target_name = procedure_lookup.get(procedure_match.group("name").lower())
+                if not target_name:
+                    continue
+                add_evidence(
+                    evidences,
+                    source=source,
+                    target_type="Procedure",
+                    target_name=target_name,
+                    relation_kind="workwith_condition_calls_procedure",
+                    line=line_number_at(xml_text, condition_match.start()),
+                    column=1,
+                    snippet=condition_match.group(0),
+                    extractor_rule="workwith_condition_procedure",
+                    evidence_role="WorkWith condition",
+                )
+
+    unique: dict[tuple[str, str, str, int], Evidence] = {}
+    for evidence in evidences:
+        unique[(evidence.source_name, evidence.target_name, evidence.extractor_rule, evidence.line)] = evidence
+    return list(unique.values())
 
 
 def extract_workwith_transaction_evidence(
@@ -711,6 +751,10 @@ def main() -> int:
         procedure_names=set(procedures),
         webpanel_names=set(webpanels),
     )
+    workwith_condition_evidences = extract_workwith_condition_evidence(
+        workwiths.values(),
+        procedure_names=set(procedures),
+    )
     workwith_transaction_evidences = extract_workwith_transaction_evidence(
         workwiths.values(),
         transaction_names=set(transactions),
@@ -727,6 +771,7 @@ def main() -> int:
     evidences = [
         *source_evidences,
         *workwith_evidences,
+        *workwith_condition_evidences,
         *workwith_transaction_evidences,
         *workwith_webpanel_link_evidences,
         *workwith_prompt_evidences,

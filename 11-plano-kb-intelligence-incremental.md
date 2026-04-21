@@ -40,7 +40,9 @@ Depois disso, a Fase 2 recebeu um sexto incremento controlado: links explicitos 
 
 Na sequencia, a Fase 2 recebeu um setimo incremento controlado: prompts explicitos de `WorkWithForWeb` para `WebPanel` por atributo `prompt="guid-Nome"`.
 
-Continuam fora destes incrementos: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject`, vinculacoes explicitas de `Transaction`, links explicitos de `WebPanel` e prompts explicitos de `WebPanel`, `for each`, `.Load(...)`, resolucao semantica de `CustomType` para `SDT` ou `Domain`, e inferencias por layout ou comentarios.
+Na sequencia, a Fase 2 recebeu um oitavo incremento controlado: expressoes de condicao de `WorkWithForWeb` chamando `Procedure` por `<condition value="...procNome(...)...">`.
+
+Continuam fora destes incrementos: semantica completa de `Transaction`, `WorkWithForWeb` alem de actions `gxobject`, vinculacoes explicitas de `Transaction`, links explicitos de `WebPanel`, prompts explicitos de `WebPanel` e condicoes com chamada direta de `Procedure`, `for each`, `.Load(...)`, resolucao semantica de `CustomType` para `SDT` ou `Domain`, e inferencias por layout ou comentarios.
 
 ## Principios da frente
 
@@ -188,7 +190,7 @@ Caso conhecido obrigatorio para a bateria:
 
 So iniciar depois da Fase 1 validada.
 
-Estado em 2026-04-21: fase aberta e ja ampliada de forma controlada para `DataProvider` como origem e destino direto, actions de `WorkWithForWeb` por `gxobject`, vinculacoes explicitas `WorkWithForWeb` -> `Transaction`, links explicitos `WorkWithForWeb` -> `WebPanel`, prompts explicitos `WorkWithForWeb` -> `WebPanel`, e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
+Estado em 2026-04-21: fase aberta e ja ampliada de forma controlada para `DataProvider` como origem e destino direto, actions de `WorkWithForWeb` por `gxobject`, vinculacoes explicitas `WorkWithForWeb` -> `Transaction`, links explicitos `WorkWithForWeb` -> `WebPanel`, prompts explicitos `WorkWithForWeb` -> `WebPanel`, condicoes de `WorkWithForWeb` -> `Procedure`, e propriedades `ATTCUSTOMTYPE` como alvo literal `CustomType`.
 
 Possiveis ampliacoes:
 
@@ -373,6 +375,29 @@ Gate minimo:
 - manter os casos anteriores da Fase 2 passando
 - adicionar casos reais positivos para `WorkWithForWeb` apontando prompts `WebPanel`
 - adicionar caso negativo para `WebPanel` inexistente
+
+### Oitavo incremento - condicoes de `WorkWithForWeb` chamando `Procedure`
+
+Escopo aceito:
+
+- origem: `WorkWithForWeb`
+- destino: `Procedure`
+- regra: `workwith_condition_procedure`
+- evidencia: `WorkWith condition`
+- confianca: `direct`
+
+Fora do oitavo incremento:
+
+- interpretar semantica de filtros, atributos ou operadores da condicao
+- inferir relacao por nome de atributo usado na condicao
+- tratar chamadas dinamicas ou procedures nao resolvidas como relacoes
+
+Gate minimo:
+
+- manter os 15 casos reais da Fase 1 passando
+- manter os casos anteriores da Fase 2 passando
+- adicionar casos reais positivos para `WorkWithForWeb` chamando `Procedure` em `<condition value="...">`
+- adicionar caso negativo para `Procedure` inexistente
 
 ## Fase 3 - suporte a agentes de programacao
 

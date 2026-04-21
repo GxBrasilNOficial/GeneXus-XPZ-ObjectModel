@@ -256,6 +256,38 @@
       "expected_rule": "workwith_prompt_webpanel",
       "should_exist": false,
       "expectation": "WorkWithForWeb prompt attribute must not create a relation for unresolved WebPanel"
+    },
+    {
+      "id": "phase2-case-33-workwith-condition-procedure-company-session",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "Procedure:procLeEmpresaSessao",
+      "expected_rule": "workwith_condition_procedure",
+      "should_exist": true,
+      "expectation": "WorkWithForWeb condition expression with direct Procedure call must create a direct relation"
+    },
+    {
+      "id": "phase2-case-34-workwith-condition-procedure-federal-registration",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "Procedure:procPessoaInscricaoFederal",
+      "expected_rule": "workwith_condition_procedure",
+      "should_exist": true,
+      "expectation": "Second WorkWithForWeb condition Procedure call must create a direct relation"
+    },
+    {
+      "id": "phase2-case-35-workwith-condition-procedure-animal-volume",
+      "source": "WorkWithForWeb:WorkWithWebAnimal",
+      "target": "Procedure:procAnimalTemVolume",
+      "expected_rule": "workwith_condition_procedure",
+      "should_exist": true,
+      "expectation": "WorkWithForWeb condition Procedure calls must be indexed across different WorkWithForWeb objects"
+    },
+    {
+      "id": "phase2-case-36-workwith-condition-unknown-does-not-create-relation",
+      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "target": "Procedure:ObjetoInexistenteParaNaoIndexar",
+      "expected_rule": "workwith_condition_procedure",
+      "should_exist": false,
+      "expectation": "WorkWithForWeb condition expression must not create a relation for unresolved Procedure"
     }
   ]
 }
