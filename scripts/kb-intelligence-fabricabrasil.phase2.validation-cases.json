@@ -1,0 +1,69 @@
+{
+  "description": "Validation cases for KB Intelligence Phase 2 using DataProvider as the first controlled expansion in the FabricaBrasil parallel KB.",
+  "cases": [
+    {
+      "id": "phase2-case-1-dataprovider-procedure-direct-left",
+      "source": "DataProvider:dpCargaPedidos",
+      "target": "Procedure:procESQUERDA",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "DataProvider effective Source direct procedure call must create a direct relation"
+    },
+    {
+      "id": "phase2-case-2-dataprovider-procedure-direct-right",
+      "source": "DataProvider:dpCargaPedidos",
+      "target": "Procedure:procDIREITA",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "Second direct procedure call in the same DataProvider must create a direct relation"
+    },
+    {
+      "id": "phase2-case-3-dataprovider-procedure-direct-recent-links",
+      "source": "DataProvider:dpGamMenuSidebarItems",
+      "target": "Procedure:procRecentLinksLoad",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "DataProvider assignment from direct procedure call must create a direct relation"
+    },
+    {
+      "id": "phase2-case-4-dataprovider-procedure-direct-where",
+      "source": "DataProvider:dpSdtTributacaoDadosBasicosSelecaoConformeParametros",
+      "target": "Procedure:procTributacaoTemTipoRomaneio",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": true,
+      "expectation": "DataProvider where expression with direct procedure call must create a direct relation"
+    },
+    {
+      "id": "phase2-case-5-dataprovider-webpanel-link",
+      "source": "DataProvider:dpFixoSidebarItems",
+      "target": "WebPanel:WWEmbarqueSaida",
+      "expected_rule": "webpanel_dot_link",
+      "should_exist": true,
+      "expectation": "DataProvider effective Source WebPanel .Link() must create a direct relation"
+    },
+    {
+      "id": "phase2-case-6-dataprovider-webpanel-link-with-params",
+      "source": "DataProvider:dpFixoSidebarItems",
+      "target": "WebPanel:wpEtiquetaInterna",
+      "expected_rule": "webpanel_dot_link",
+      "should_exist": true,
+      "expectation": "DataProvider effective Source WebPanel .Link(...) with parameters must create a direct relation"
+    },
+    {
+      "id": "phase2-case-7-dataprovider-comment-does-not-create-procedure-relation",
+      "source": "DataProvider:dpFixoSidebarItems",
+      "target": "Procedure:procRecentLinksLoad",
+      "expected_rule": "procedure_direct_call",
+      "should_exist": false,
+      "expectation": "comment-only procedure reference in DataProvider must not create a direct relation"
+    },
+    {
+      "id": "phase2-case-8-dataprovider-comment-does-not-create-webpanel-relation",
+      "source": "DataProvider:dpFixoSidebarItems",
+      "target": "WebPanel:NucleoMenu",
+      "expected_rule": "webpanel_dot_link",
+      "should_exist": false,
+      "expectation": "comment-only WebPanel .Link() in DataProvider must not create a direct relation"
+    }
+  ]
+}

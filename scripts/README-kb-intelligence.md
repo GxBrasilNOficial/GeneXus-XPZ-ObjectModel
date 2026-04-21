@@ -5,12 +5,14 @@ guia operacional
 
 ## Escopo atual
 
-Estes scripts implementam a Fase 1 do KB Intelligence:
+Estes scripts implementam a Fase 1 do KB Intelligence e o primeiro incremento da Fase 2:
 
-- origem: `Procedure` e `WebPanel`
+- origem: `Procedure`, `WebPanel` e `DataProvider`
 - destino: `Procedure` e `WebPanel`
 - relacoes: chamadas diretas em `Source efetivo`
 - artefato principal: SQLite derivado
+
+O incremento atual da Fase 2 cobre apenas `DataProvider` como origem. Ele nao cobre `Transaction`, `WorkWithForWeb`, `for each`, `.Load(...)` nem `DataProvider` como destino.
 
 Eles nao substituem o acervo XML em `ObjetosDaKbEmXml` e nao provam comportamento runtime.
 
@@ -26,6 +28,17 @@ Eles nao substituem o acervo XML em `ObjetosDaKbEmXml` e nao provam comportament
 ```
 
 Para outra KB, troque `-SourceRoot`, `-OutputPath` e, se aplicavel, `-ValidationCasesPath`.
+
+Para validar o primeiro incremento da Fase 2 em `FabricaBrasil`, use:
+
+```powershell
+.\scripts\New-KbIntelligenceIndex.ps1 `
+  -SourceRoot "C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml" `
+  -OutputPath "C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence.sqlite" `
+  -ValidationReportPath "C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence-validation.json" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-fabricabrasil.phase2.validation-cases.json" `
+  -FailOnValidationFailure
+```
 
 O local operacional padrao dentro da pasta paralela da KB e `KbIntelligence\kb-intelligence.sqlite`. Este banco e derivado e regeneravel; a fonte normativa continua sendo `ObjetosDaKbEmXml`.
 

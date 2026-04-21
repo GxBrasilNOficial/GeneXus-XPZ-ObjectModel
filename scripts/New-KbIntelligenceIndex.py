@@ -2,8 +2,8 @@
 """
 Build a minimal GeneXus KB intelligence SQLite index.
 
-Phase 1 scope:
-- sources: Procedure, WebPanel
+Phase 2 current scope:
+- sources: Procedure, WebPanel, DataProvider
 - targets: Procedure, WebPanel
 - evidence: effective Source only
 """
@@ -28,6 +28,7 @@ LAST_UPDATE_RE = re.compile(r'\blastUpdate="([^"]+)"')
 PROCEDURE_DIRECT_RE = re.compile(r"\b(?P<name>proc[A-Za-z_][A-Za-z0-9_]*)\s*\(", re.IGNORECASE)
 PROCEDURE_DOT_CALL_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Call\s*\(", re.IGNORECASE)
 WEBPANEL_DOT_LINK_RE = re.compile(r"\b(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Link\s*\(", re.IGNORECASE)
+INDEXED_SOURCE_TYPES = ("Procedure", "WebPanel", "DataProvider")
 
 
 @dataclass(frozen=True)
@@ -326,8 +327,8 @@ def write_index(
             [
                 ("generated_at", generated_at),
                 ("source_root", str(source_root)),
-                ("phase", "1"),
-                ("scope", "Procedure,WebPanel"),
+                ("phase", "2"),
+                ("scope", "Procedure,WebPanel,DataProvider"),
             ],
         )
 
@@ -448,12 +449,13 @@ def main() -> int:
 
     procedures = collect_objects(source_root, "Procedure")
     webpanels = collect_objects(source_root, "WebPanel")
-    objects_by_type = {"Procedure": procedures, "WebPanel": webpanels}
-    objects = [*procedures.values(), *webpanels.values()]
+    data_providers = collect_objects(source_root, "DataProvider")
+    objects_by_type = {"Procedure": procedures, "WebPanel": webpanels, "DataProvider": data_providers}
+    objects = [*procedures.values(), *webpanels.values(), *data_providers.values()]
 
     evidences = extract_evidence(
         source_root,
-        objects,
+        [obj for obj in objects if obj.object_type in INDEXED_SOURCE_TYPES],
         procedure_names=set(procedures),
         webpanel_names=set(webpanels),
     )

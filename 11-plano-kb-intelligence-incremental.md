@@ -24,6 +24,14 @@ Este plano substitui a sugestao externa `Plano_GeneXus_KB_Intelligence_v1.md` co
 - a primeira entrega estrutural deve ser um banco tecnico reutilizavel, nao uma pagina Markdown manual nem um RAG
 - a documentacao versionada deve cobrir metodo, schema, scripts, testes e validacoes; artefatos derivados grandes devem ser regeneraveis a partir dos XMLs oficiais
 
+## Estado atual da frente
+
+Em 2026-04-21, a Fase 1 foi concluida e validada na KB real `FabricaBrasil`, com local canonico operacional em `C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence.sqlite`.
+
+A Fase 2 foi aberta em 2026-04-21, com primeiro incremento limitado a `DataProvider` como nova origem de relacoes em `Source` efetivo.
+
+Continuam fora deste incremento: `Transaction`, `WorkWithForWeb`, `for each`, `.Load(...)`, actions estruturadas de `WorkWithForWeb` e inferencias por layout ou comentarios.
+
 ## Principios da frente
 
 - passos pequenos e validaveis prevalecem sobre cobertura ampla rapida
@@ -170,6 +178,8 @@ Caso conhecido obrigatorio para a bateria:
 
 So iniciar depois da Fase 1 validada.
 
+Estado em 2026-04-21: fase aberta, com primeiro alvo aprovado como `DataProvider` enquanto origem. Destinos continuam limitados a `Procedure` e `WebPanel`, usando as mesmas regras seguras de `Source` efetivo da Fase 1.
+
 Possiveis ampliacoes:
 
 - `DataProvider`
@@ -186,6 +196,30 @@ Cada novo tipo ou padrao deve entrar com:
 - regra de extracao nomeada
 - teste de regressao
 - classificacao de evidencia
+
+### Primeiro incremento - `DataProvider` como origem
+
+Escopo aceito:
+
+- origem: `DataProvider`
+- destinos: `Procedure` e `WebPanel`
+- regras: `procedure_direct_call`, `procedure_dot_call` e `webpanel_dot_link`
+- evidencia: `Source efetivo`
+- confianca: `direct`
+
+Fora do primeiro incremento:
+
+- inferir relacoes por `for each`
+- inferir relacoes por `.Load(...)`
+- interpretar estrutura semantica completa do `DataProvider`
+- tratar `DataProvider` como destino
+- ampliar `Transaction` ou `WorkWithForWeb`
+
+Gate minimo:
+
+- manter os 15 casos reais da Fase 1 passando
+- adicionar casos reais positivos e negativos para `DataProvider`
+- validar que comentario em `DataProvider` nao cria relacao direta
 
 ## Fase 3 - suporte a agentes de programacao
 
@@ -258,9 +292,8 @@ Ele deve ser preservado apenas como registro historico e substituido por este pl
 
 ## Proximas decisoes abertas
 
-- nome final da frente tecnica ou skill futura
-- linguagem principal dos scripts compartilhados
-- local dos scripts genericos nesta raiz
-- local dos adaptadores por KB real
-- estrategia de calculo de linha exata em XML com `CDATA`
-- politica de snapshots pequenos para validacao em Git
+- decidir o segundo alvo da Fase 2 somente depois de validar e registrar o incremento de `DataProvider`
+- se abrir Fase 3, definir o contrato do `impact-basic` e o guia operacional para agentes consultarem o indice antes de alterar objetos
+- definir nome final da frente tecnica ou skill futura
+- confirmar politica de snapshots pequenos para validacao em Git
+- manter como decisao tecnica futura a estrategia de calculo de linha exata em XML com `CDATA`
