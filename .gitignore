@@ -2,6 +2,8 @@
 !/*.md
 !/.gitignore
 !/.gitattributes
+!/historico/
+!/historico/**
 !/scripts/
 !/xpz-*/
 !/xpz-*/**
