@@ -519,6 +519,8 @@ O status operacional consolidado da primeira entrega da Fase 6 ficou registrado 
 
 A primeira estabilizacao curta de `functional-trace-basic` ficou registrada em `25-kb-intelligence-fase-6-estabilizacao-curta.md`. O achado principal foi que literais `CustomType` ainda aparecem na trilha mesmo quando ha relacao resolvida equivalente, o que preserva rastreabilidade mas pode gerar ruido em respostas funcionais curtas.
 
+Depois do ajuste conservador, a verificacao pos-filtro ficou registrada em `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`. O resultado confirmou que a consulta oculta apenas literais `CustomType` redundantes quando ha relacao resolvida equivalente, mantendo relacoes resolvidas, literais externos ou primitivos, chamadas e tabelas.
+
 ## Versionamento recomendado
 
 Versionar:
