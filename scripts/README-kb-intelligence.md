@@ -241,6 +241,14 @@ Depois de gerar ou localizar um indice SQLite, valide o comportamento operaciona
 
 Os casos de validacao da Fase 3 conferem comportamento de consulta. Eles nao regeneram o indice nem substituem a bateria de extracao da Fase 2.
 
+## Cuidado com validacoes SQLite no Windows
+
+Depois de gerar um SQLite temporario novo, prefira executar validacoes em sequencia contra esse arquivo. Evite rodar validacoes paralelas contra o mesmo banco recem-gerado.
+
+Se houver necessidade real de paralelizar, use copias temporarias independentes do SQLite para cada validacao.
+
+Falhas transitorias de acesso, lock ou tabela ainda nao visivel no Windows devem ser reexecutadas primeiro em sequencia antes de serem tratadas como falha real de contrato ou regressao do indice.
+
 ## Validar inventario ampliado da Fase 4
 
 Depois de regenerar o indice, valide a presenca de tipos ampliados com:

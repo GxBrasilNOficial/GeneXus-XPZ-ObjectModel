@@ -11,7 +11,7 @@ Gera, recompõe e atualiza documentação Markdown a partir do acervo XML do rep
 
 ## GUIDELINE
 
-Identificar a raiz do repositório pelo contexto, localizar os scripts documentais em `scripts\`, resolver caminhos de entrada e saída a partir do cenário atual e delegar a geração ou atualização aos scripts apropriados. Evitar edição manual de `.md` longos quando houver fluxo automatizável. Ao documentar acervo XML, distinguir snapshot oficial de artefato local de trabalho.
+Identificar a raiz do repositório pelo contexto, localizar os scripts documentais em `scripts\`, resolver caminhos de entrada e saída a partir do cenário atual e delegar a geração ou atualização aos scripts apropriados. Evitar edição manual de `.md` longos quando houver fluxo automatizável. Se não houver script documental apropriado para o tipo de contrato, roteiro ou exemplo a registrar, edição manual pequena de Markdown é aceitável; a edição deve ser local, ancorada por seção, sem substituição ampla em `.md` longo, e seguida de releitura do início do arquivo, da seção alterada e da transição seguinte. Ao documentar acervo XML, distinguir snapshot oficial de artefato local de trabalho.
 
 Se a documentação depender da pasta paralela da KB e essa estrutura ainda não estiver montada ou validada, parar e usar `xpz-kb-parallel-setup` antes de gerar ou atualizar documentação.
 
@@ -108,9 +108,10 @@ Se o repositório ainda mantiver wrappers especializados, eles devem ser tratado
 7. Se a documentação citar XML vindo de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, rotular isso como artefato de trabalho e não como snapshot oficial
 8. Quando a documentação gerar ou preservar links de linha para XML GeneXus, rotular o papel do trecho citado: `Source efetivo`, `Rules/parm`, `metadado XML`, `chamada no chamador` ou `assinatura no chamado`
 9. Se a documentação afirmar que objeto A chama objeto B, validar que o link de linha aponta para o `Source` efetivo de A ou para metadado explícito de chamada em A; linha de `parm(...)` em B deve ser descrita apenas como assinatura do chamado
-10. Se usar saída do KB Intelligence, declarar que a fonte imediata é índice técnico derivado e que a fonte normativa continua sendo o XML oficial em `ObjetosDaKbEmXml`
-11. Reler o início do arquivo gerado ou alterado, a seção modificada e a transição seguinte
-12. Reportar o que foi criado, atualizado ou substituído
+10. Se usar saída do KB Intelligence, declarar que a fonte imediata é índice técnico derivado e que a fonte normativa continua sendo o XML oficial em `ObjetosDaKbEmXml`; quando houver evidência citada, preservar referência ao XML oficial, papel do trecho citado e nível de confiança
+11. Quando a documentação tiver natureza funcional, separar explicitamente `Evidencia direta`, `Leitura adicional do XML`, `Inferencia forte` e `Hipotese`
+12. Reler o início do arquivo gerado ou alterado, a seção modificada e a transição seguinte
+13. Reportar o que foi criado, atualizado ou substituído
 
 ---
 
