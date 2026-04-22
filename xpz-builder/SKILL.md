@@ -444,6 +444,18 @@ Reference files and when to load them:
 
 ---
 
+## PACKAGE EXAMPLES
+
+- Sanitized single-object `Domain` import package:
+  - active XML lives in `ObjetosGeradosParaImportacaoNaKbNoGenexus\NomeCurto_GUID_YYYYMMDD\ObjetoExemplo.xml`
+  - package output lives flat in `PacotesGeradosParaImportacaoNaKbNoGenexus\NomeCurto_GUID_YYYYMMDD_01.import_file.xml`
+  - the object payload is embedded under `<Objects>`, without an inner XML declaration
+  - `<Dependencies />` may be empty, but remains present in the envelope
+  - `<ObjectsIdentityMapping>` may contain only the root module identity when that is the only required context in the comparable package
+  - the same XML must not be copied into `ObjetosDaKbEmXml`; promotion to that official snapshot only happens after IDE export and the official sync flow
+
+---
+
 ## TRANSACTION ERROR EXAMPLES
 
 - `Cannot convert Domain to Attribute`

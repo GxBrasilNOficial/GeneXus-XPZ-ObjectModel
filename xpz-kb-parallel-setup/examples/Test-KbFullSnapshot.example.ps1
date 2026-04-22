@@ -10,6 +10,9 @@ snapshot completo mantido em `ObjetosDaKbEmXml`.
 Lista opcional de itens esperados no formato `Tipo:Nome`, repassada ao wrapper
 diário para comparar foco esperado versus retorno oficial da KB.
 
+.PARAMETER NoGitSummary
+Suprime resumo local de alterações Git produzido pelo wrapper diário.
+
 .EXAMPLE
 .\Test-KbFullSnapshot.ps1 -InputPath C:\Exports\FullKb.xpz -ExpectedItems 'Transaction:Cliente'
 
@@ -25,7 +28,9 @@ param(
 
     [string[]]$ExpectedItems = @(),
 
-    [switch]$KeepReport
+    [switch]$KeepReport,
+
+    [switch]$NoGitSummary
 )
 
 Set-StrictMode -Version Latest
@@ -54,6 +59,10 @@ if ($KeepReport) {
 
 if ($ExpectedItems.Count -gt 0) {
     $params.ExpectedItems = @($ExpectedItems)
+}
+
+if ($NoGitSummary) {
+    $params.NoGitSummary = $true
 }
 
 & $wrapperPath @params

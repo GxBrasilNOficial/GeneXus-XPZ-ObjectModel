@@ -331,6 +331,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Exemplo sanitizado`: em `WPExemploGridEstruturalA`, um grid tradicional persistiu `ControlBaseTable`, `ControlOrder`, `ControlWhere` e `ControlUnique` no layout, dentro de `PATTERN_ELEMENT_CUSTOM_PROPERTIES`, sem depender de propriedade plana no objeto.
 - `Exemplo sanitizado`: em `WPExemploComboDinamicoA`, o `Dynamic Combo Box` persistiu `ControlWhere` no layout e configuracao complementar em `WebUserControlProperties`; isso mostra que filtro de combo dinamico nao deve ser confundido com `Conditions` materializado.
 - `Exemplo sanitizado`: em pacotes delta reais com um unico objeto, o envelope completo continuou incluindo `KMW`, `Source`, `Objects`, `Dependencies` e `ObjectsIdentityMapping`, mesmo quando os dois blocos finais estavam vazios; por isso, a forma segura e clonar o pacote equivalente validado, nao podar o fecho por "limpeza" manual.
+- `Exemplo sanitizado`: em uma pasta paralela de KB de teste, dois pacotes unitarios de `Domain` gerados para importacao manual mantiveram o objeto completo embutido em `<Objects>`, `Dependencies` vazio e `ObjectsIdentityMapping` contendo apenas o modulo raiz; isso reforca que pacote pequeno nao deve ser reduzido a XML individual de objeto nem promovido manualmente ao acervo oficial.
 
 ### Modos de falha observados e correcoes
 

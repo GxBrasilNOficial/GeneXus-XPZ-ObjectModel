@@ -125,6 +125,11 @@ Do NOT use this skill for:
   - [Update-KbFromXpz.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Update-KbFromXpz.example.ps1)
   - [Test-KbFullSnapshot.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Test-KbFullSnapshot.example.ps1)
   - [Notify-TaskComplete.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Notify-TaskComplete.example.ps1)
+- Os exemplos sanitizados de wrappers incorporam uma trilha real de pasta paralela da KB com:
+  - metadados da KB gravados em `kb-source-metadata.md`
+  - resumo Git limitado ao acervo oficial quando houver mudanca material
+  - limpeza localizada de residuos de objeto renomeado por `guid`, preservando o XML com nome atual e `lastUpdate` mais confiavel
+  - repasse opcional de `ExpectedItems` para distinguir foco esperado e retorno oficial adicional
 
 ---
 

@@ -225,7 +225,13 @@ PastaParalelaDaKb/
     AjusteVolumes_12345678-1234-1234-1234-123456789abc_20260414_01.import_file.xml
   scripts/
     Sync-GeneXusXpzToXml.ps1
+  kb-source-metadata.md
 ```
+
+O arquivo `kb-source-metadata.md`, quando exposto pelo wrapper local via
+`-KbMetadataPath`, e artefato normal de processamento e pode ser reescrito em
+cada sync. Ele deve preservar valores estaveis conhecidos quando o `XPZ` atual
+vier com metadados de `Source` vazios ou parciais.
 
 ---
 

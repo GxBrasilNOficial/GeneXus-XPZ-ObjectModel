@@ -515,13 +515,13 @@ Consequências práticas imediatas:
 
 ## Achado Empírico Sobre Filtro De Data Na Exportação
 
-Na KB de teste `wsEducacaoSpTeste`, a IDE do GeneXus exportou um `XPZ` parcial usando o filtro visual `Modified = After Date/time` com `Date/time = 24/03/2026 23:59`.
+Na KB de teste sanitizada `KB_Teste_Paralela_A`, a IDE do GeneXus exportou um `XPZ` parcial usando o filtro visual `Modified = After Date/time` com `Date/time = 24/03/2026 23:59`.
 
 O `XPZ` gerado pela IDE continha somente os objetos resultantes da seleção:
 
-- `Domain:CodigoExtraLong`, com `lastUpdate="2026-04-18T01:52:00.0000000Z"`
-- `Domain:DescricaoSuperLonga`, com `lastUpdate="2026-04-18T12:59:55.0000000Z"`
-- `Domain:TipoCorte`, com `lastUpdate="2026-04-18T13:27:27.0000000Z"`
+- `Domain:DomainExemploCodigoLongoA`, com `lastUpdate="2026-04-18T01:52:00.0000000Z"`
+- `Domain:DomainExemploDescricaoLongaA`, com `lastUpdate="2026-04-18T12:59:55.0000000Z"`
+- `Domain:DomainExemploTipoCorteA`, com `lastUpdate="2026-04-18T13:27:27.0000000Z"`
 
 O pacote não preservou a condição do filtro; buscas no XML interno não encontraram `After Date`, `Date/time`, `24/03/2026`, `2026-03-24`, `ExportAtTimestamp` ou `Modified`. Isso indica que a IDE aplica o filtro antes de montar o `XPZ`; o artefato final contém apenas o resultado da seleção e o `lastUpdate` de cada objeto exportado.
 
@@ -530,7 +530,7 @@ Na mesma instalação, a reflexão da task `Genexus.MsBuild.Tasks.Export` mostro
 - `ExportAtTimestamp="2026-03-24T23:59:00"` foi aceito pelo `MSBuild`, abriu a KB, mas a task `Export` falhou internamente com `Referência de objeto não definida para uma instância de um objeto`.
 - `ExportAtTimestamp="24/03/2026 23:59:00"` foi rejeitado pelo `MSBuild` como valor inválido para `System.DateTime`.
 - `ExportAtTimestamp` também falhou quando usado junto com `Objects` explícito.
-- a exportação sem `ExportAtTimestamp`, usando `Objects="Domain:CodigoExtraLong,DescricaoSuperLonga,TipoCorte"`, concluiu com sucesso e gerou um `XPZ` com os mesmos objetos, `lastUpdate` e checksums observados no pacote parcial da IDE.
+- a exportação sem `ExportAtTimestamp`, usando `Objects="Domain:DomainExemploCodigoLongoA,DomainExemploDescricaoLongaA,DomainExemploTipoCorteA"`, concluiu com sucesso e gerou um `XPZ` com os mesmos objetos, `lastUpdate` e checksums observados no pacote parcial da IDE.
 
 Conclusão operacional desta frente:
 
