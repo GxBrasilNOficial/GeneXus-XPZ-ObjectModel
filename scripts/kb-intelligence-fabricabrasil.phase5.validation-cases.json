@@ -200,6 +200,38 @@
       "expected_rule": "table_index_member_attribute",
       "should_exist": false,
       "expectation": "Existing Attribute absent from the Table indexes must not create a table_index_member_attribute relation"
+    },
+    {
+      "id": "phase5-case-26-sdt-item-attcustomtype-resolves-sdt-country-continent",
+      "source": "SDT:CountryInfoServicetCountryCodeAndNameGroupedByContinent",
+      "target": "SDT:CountryInfoServicetContinent",
+      "expected_rule": "sdt_item_attcustomtype_resolved_sdt",
+      "should_exist": true,
+      "expectation": "SDT Item ATTCUSTOMTYPE with sdt: prefix must create an SDT to SDT relation when the target exists"
+    },
+    {
+      "id": "phase5-case-27-sdt-item-attcustomtype-resolves-sdt-cte",
+      "source": "SDT:CTe_cteProc",
+      "target": "SDT:CTe_TCTe",
+      "expected_rule": "sdt_item_attcustomtype_resolved_sdt",
+      "should_exist": true,
+      "expectation": "SDT Item ATTCUSTOMTYPE extraction must work across different SDT families"
+    },
+    {
+      "id": "phase5-case-28-sdt-bas-type-does-not-resolve-sdt",
+      "source": "SDT:Context",
+      "target": "SDT:Context",
+      "expected_rule": "sdt_item_attcustomtype_resolved_sdt",
+      "should_exist": false,
+      "expectation": "SDT Item ATTCUSTOMTYPE with bas: prefix must not create an SDT to SDT relation"
+    },
+    {
+      "id": "phase5-case-29-sdt-does-not-link-unlisted-sdt",
+      "source": "SDT:CTe_cteProc",
+      "target": "SDT:Context",
+      "expected_rule": "sdt_item_attcustomtype_resolved_sdt",
+      "should_exist": false,
+      "expectation": "Existing SDT not declared as an SDT Item ATTCUSTOMTYPE target must not create a relation"
     }
   ]
 }

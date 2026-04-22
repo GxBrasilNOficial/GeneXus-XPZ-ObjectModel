@@ -62,6 +62,7 @@ INDEX_MEMBER_RE = re.compile(
     r"<Member\b(?P<attrs>[^>]*)>(?P<name>.*?)</Member>",
     re.IGNORECASE | re.DOTALL,
 )
+SDT_ITEM_RE = re.compile(r"<Item\b(?P<attrs>[^>]*)>(?P<body>.*?)</Item>", re.IGNORECASE | re.DOTALL)
 WORKWITH_TRANSACTION_RE = re.compile(r"<transaction\b[^>]*\btransaction=\"(?P<value>[^\"]+)\"", re.IGNORECASE)
 WORKWITH_WEBPANEL_LINK_RE = re.compile(r"<link\b[^>]*\bwebpanel=\"(?P<name>[^\"]+)\"", re.IGNORECASE)
 WORKWITH_PROMPT_RE = re.compile(r"\bprompt=\"(?P<value>[^\"]+)\"", re.IGNORECASE)
@@ -657,6 +658,47 @@ def extract_attcustomtype_resolved_evidence(
     return evidences
 
 
+def extract_sdt_item_attcustomtype_resolved_sdt_evidence(
+    source_objects: Iterable[ObjectInfo],
+    sdt_names: set[str],
+) -> list[Evidence]:
+    evidences: list[Evidence] = []
+    seen: set[tuple[str, str]] = set()
+    sdt_lookup = case_insensitive_lookup(sdt_names, "SDT")
+    for source in source_objects:
+        xml_text = read_text(source.path)
+        for item_match in SDT_ITEM_RE.finditer(xml_text):
+            item_body = item_match.group("body")
+            match = ATTCUSTOMTYPE_PROPERTY_RE.search(item_body)
+            if not match:
+                continue
+            custom_type = normalize_custom_type(match.group("value"))
+            if not custom_type.lower().startswith("sdt:"):
+                continue
+            raw_sdt_name = custom_type.split(":", 1)[1].strip()
+            target_name = sdt_lookup.get(raw_sdt_name.lower())
+            if not target_name:
+                continue
+            pair_key = (source.name.lower(), target_name.lower())
+            if pair_key in seen:
+                continue
+            seen.add(pair_key)
+            match_start = item_match.start("body") + match.start()
+            add_evidence(
+                evidences,
+                source=source,
+                target_type="SDT",
+                target_name=target_name,
+                relation_kind="has_sdt_item_type",
+                line=line_number_at(xml_text, match_start),
+                column=1,
+                snippet=match.group(0),
+                extractor_rule="sdt_item_attcustomtype_resolved_sdt",
+                evidence_role="SDT Item ATTCUSTOMTYPE",
+            )
+    return evidences
+
+
 def extract_attribute_idbasedon_domain_evidence(
     source_objects: Iterable[ObjectInfo],
     domain_names: set[str],
@@ -1066,6 +1108,10 @@ def main() -> int:
         sdt_names=set(objects_by_type.get("SDT", {})),
         domain_names=set(objects_by_type.get("Domain", {})),
     )
+    sdt_item_attcustomtype_resolved_sdt_evidences = extract_sdt_item_attcustomtype_resolved_sdt_evidence(
+        objects_by_type.get("SDT", {}).values(),
+        sdt_names=set(objects_by_type.get("SDT", {})),
+    )
     attribute_idbasedon_domain_evidences = extract_attribute_idbasedon_domain_evidence(
         attributes.values(),
         domain_names=set(objects_by_type.get("Domain", {})),
@@ -1096,6 +1142,7 @@ def main() -> int:
         *workwith_prompt_evidences,
         *custom_type_evidences,
         *resolved_custom_type_evidences,
+        *sdt_item_attcustomtype_resolved_sdt_evidences,
         *attribute_idbasedon_domain_evidences,
         *transaction_level_attribute_evidences,
         *transaction_level_table_evidences,

@@ -190,7 +190,6 @@ Exemplos conceituais:
 
 ## Incrementos futuros possiveis
 
-- `SDT` -> membros ou tipos internos
 - relacoes por `for each`, com classificacao separada e cautela runtime
 - relacoes por `.Load(...)`, com classificacao separada e cautela runtime
 
@@ -226,6 +225,38 @@ Exemplos conceituais:
 - inferir chave estrangeira, navegacao, cardinalidade ou plano SQL
 - substituir ou remover a regra `table_key_attribute`
 - prometer semantica funcional alem de participacao estrutural em indice
+
+## Incremento 7 aprovado - resolver `SDT` -> `SDT` por `ATTCUSTOMTYPE` de item
+
+### Escopo aceito
+
+- origem: objetos `SDT`
+- evidencia:
+  - propriedade `ATTCUSTOMTYPE` dentro de elementos internos `<Item>`
+- destino resolvido:
+  - `SDT`, somente quando o valor tiver prefixo `sdt:` e o SDT existir no inventario local
+- regra proposta:
+  - `sdt_item_attcustomtype_resolved_sdt`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando um item interno de `SDT` declarar `ATTCUSTOMTYPE` apontando para outro `SDT` existente, o indice deve criar relacao direta do `SDT` de origem para o `SDT` usado como tipo do item.
+
+Exemplos conceituais:
+
+- `SDT:CTe_cteProc` com item `sdt:CTe_TCTe` pode resolver para `SDT:CTe_TCTe`
+- `SDT:CountryInfoServicetCountryCodeAndNameGroupedByContinent` com item `sdt:CountryInfoServicetContinent` pode resolver para `SDT:CountryInfoServicetContinent`
+- `SDT:Context` com itens `bas:*` nao deve gerar relacao `SDT` -> `SDT`
+
+### Fora do incremento 7
+
+- criar objeto proprio para membro de `SDT`
+- resolver tipos `bas:*`
+- resolver `Domain` a partir de item de `SDT` sem evidencia real aprovada
+- inferir uso runtime, serializacao ou contrato de API
+- expandir estrutura interna completa do `SDT`
 
 ## Fora do escopo geral da Fase 5
 
