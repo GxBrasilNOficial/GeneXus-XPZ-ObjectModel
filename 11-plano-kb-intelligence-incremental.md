@@ -515,6 +515,8 @@ Depois disso, foi preparado e implementado o contrato da consulta auxiliar `func
 
 A consulta recebeu exemplos operacionais proprios em `23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md`, cobrindo os mesmos tres casos reais da bateria da Fase 6.
 
+O status operacional consolidado da primeira entrega da Fase 6 ficou registrado em `24-kb-intelligence-fase-6-status-operacional.md`, com limites preservados e proximos gates recomendados.
+
 ## Versionamento recomendado
 
 Versionar:
