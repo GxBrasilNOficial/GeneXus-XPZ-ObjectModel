@@ -104,6 +104,38 @@
       "expected_rule": "transaction_level_attribute",
       "should_exist": false,
       "expectation": "Transaction Level extraction must not create a relation to an unresolved Attribute"
+    },
+    {
+      "id": "phase5-case-14-table-key-attribute-abate-ordem-empresa",
+      "source": "Table:AbateOrdem",
+      "target": "Attribute:AbateOrdemEmpresaId",
+      "expected_rule": "table_key_attribute",
+      "should_exist": true,
+      "expectation": "Table Key Item element must create a Table to Attribute relation for a primary key attribute"
+    },
+    {
+      "id": "phase5-case-15-table-key-attribute-abate-ordem-id",
+      "source": "Table:AbateOrdem",
+      "target": "Attribute:AbateOrdemId",
+      "expected_rule": "table_key_attribute",
+      "should_exist": true,
+      "expectation": "Second Table Key Item element must create a Table to Attribute relation for a composite primary key"
+    },
+    {
+      "id": "phase5-case-16-table-index-member-does-not-create-key-relation",
+      "source": "Table:AbateOrdem",
+      "target": "Attribute:AbateOrdemData",
+      "expected_rule": "table_key_attribute",
+      "should_exist": false,
+      "expectation": "Index member not declared inside Table Key must not create a table_key_attribute relation"
+    },
+    {
+      "id": "phase5-case-17-table-does-not-link-missing-key-attribute",
+      "source": "Table:AbateOrdem",
+      "target": "Attribute:ObjetoInexistenteParaNaoIndexar",
+      "expected_rule": "table_key_attribute",
+      "should_exist": false,
+      "expectation": "Table Key extraction must not create a relation to an unresolved Attribute"
     }
   ]
 }

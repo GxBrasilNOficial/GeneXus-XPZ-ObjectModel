@@ -126,10 +126,41 @@ Exemplos conceituais:
 - inferir participacao em indice, chave estrangeira ou regra runtime
 - criar relacao para atributo ausente do inventario local
 
+## Incremento 4 aprovado - resolver `Table` -> `Attribute` por `Key`
+
+### Escopo aceito
+
+- origem: objetos `Table`
+- evidencia:
+  - elementos estruturais `<Key>/<Item>`
+- destino resolvido:
+  - `Attribute`, somente quando o atributo existir no inventario local
+- regra proposta:
+  - `table_key_attribute`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando uma `Table` declarar atributos em sua chave primaria, o indice deve criar relacoes diretas da tabela para esses atributos.
+
+Exemplos conceituais:
+
+- `Table:AbateOrdem` pode resolver para `Attribute:AbateOrdemEmpresaId`
+- `Table:AbateOrdem` pode resolver para `Attribute:AbateOrdemId`
+
+### Fora do incremento 4
+
+- usar membros de indice como composicao completa da tabela
+- inferir atributos nao chave
+- inferir chave estrangeira ou relacao runtime
+- criar relacao para atributo ausente do inventario local
+- tratar `<Members>/<Member>` como `table_key_attribute`
+
 ## Incrementos futuros possiveis
 
 - `Transaction` -> `Table`
-- `Table` -> `Attribute`
+- `Table` -> `Attribute` por membros de indice, com regra separada de chave primaria
 - `SDT` -> membros ou tipos internos
 - relacoes por `for each`, com classificacao separada e cautela runtime
 - relacoes por `.Load(...)`, com classificacao separada e cautela runtime
