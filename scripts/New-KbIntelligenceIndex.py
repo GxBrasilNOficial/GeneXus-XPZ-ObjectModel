@@ -1038,6 +1038,7 @@ def resolve_custom_type_target(
     custom_type: str,
     sdt_lookup: dict[str, str],
     domain_lookup: dict[str, str],
+    external_object_lookup: dict[str, str],
 ) -> tuple[str, str] | None:
     if ":" not in custom_type:
         return None
@@ -1050,6 +1051,11 @@ def resolve_custom_type_target(
         target_name = domain_lookup.get(raw_name.lower())
         if target_name:
             return "Domain", target_name
+    if prefix.lower() == "exo":
+        normalized_name = raw_name.split(",", 1)[0].strip()
+        target_name = external_object_lookup.get(normalized_name.lower())
+        if target_name:
+            return "ExternalObject", target_name
     return None
 
 
@@ -1057,17 +1063,24 @@ def extract_attcustomtype_resolved_evidence(
     source_objects: Iterable[ObjectInfo],
     sdt_names: set[str],
     domain_names: set[str],
+    external_object_names: set[str],
 ) -> list[Evidence]:
     evidences: list[Evidence] = []
     sdt_lookup = case_insensitive_lookup(sdt_names, "SDT")
     domain_lookup = case_insensitive_lookup(domain_names, "Domain")
+    external_object_lookup = case_insensitive_lookup(external_object_names, "ExternalObject")
     for source in source_objects:
         xml_text = read_text(source.path)
         for match in ATTCUSTOMTYPE_PROPERTY_RE.finditer(xml_text):
             custom_type = normalize_custom_type(match.group("value"))
             if not custom_type:
                 continue
-            resolved = resolve_custom_type_target(custom_type, sdt_lookup, domain_lookup)
+            resolved = resolve_custom_type_target(
+                custom_type,
+                sdt_lookup,
+                domain_lookup,
+                external_object_lookup,
+            )
             if not resolved:
                 continue
             target_type, target_name = resolved
@@ -1485,10 +1498,15 @@ def main() -> int:
     procedures = objects_by_type.get("Procedure", {})
     webpanels = objects_by_type.get("WebPanel", {})
     data_providers = objects_by_type.get("DataProvider", {})
+    apis = objects_by_type.get("API", {})
+    data_selectors = objects_by_type.get("DataSelector", {})
+    domains = objects_by_type.get("Domain", {})
+    sdts = objects_by_type.get("SDT", {})
     workwiths = objects_by_type.get("WorkWithForWeb", {})
     transactions = objects_by_type.get("Transaction", {})
     attributes = objects_by_type.get("Attribute", {})
     tables = objects_by_type.get("Table", {})
+    external_objects = objects_by_type.get("ExternalObject", {})
     objects = [obj for by_name in objects_by_type.values() for obj in by_name.values()]
 
     source_evidences = extract_evidence(
@@ -1557,6 +1575,10 @@ def main() -> int:
         *procedures.values(),
         *webpanels.values(),
         *data_providers.values(),
+        *apis.values(),
+        *data_selectors.values(),
+        *domains.values(),
+        *sdts.values(),
         *workwiths.values(),
         *transactions.values(),
     ]
@@ -1565,6 +1587,7 @@ def main() -> int:
         relation_scope_objects,
         sdt_names=set(objects_by_type.get("SDT", {})),
         domain_names=set(objects_by_type.get("Domain", {})),
+        external_object_names=set(external_objects),
     )
     sdt_item_attcustomtype_resolved_sdt_evidences = extract_sdt_item_attcustomtype_resolved_sdt_evidence(
         objects_by_type.get("SDT", {}).values(),

@@ -502,6 +502,174 @@ Exemplos conceituais:
 - inferir `.Load(...)`, `.Save()`, `.Delete()`, `.Check()`, `.Success()`, `.Fail()`, commit, rollback ou mensagens
 - provar sucesso da insercao/atualizacao ou comportamento runtime
 
+## Incremento 15 aprovado - resolver `exo:` de `ATTCUSTOMTYPE` para `ExternalObject`
+
+### Escopo aceito
+
+- origem: objetos ja cobertos por `ATTCUSTOMTYPE` na Fase 2
+- evidencia:
+  - `Property ATTCUSTOMTYPE`
+- destino resolvido:
+  - `ExternalObject`, somente quando o valor tiver prefixo `exo:` e o nome do objeto existir no inventario local
+- regra proposta:
+  - `attcustomtype_resolved_object`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando `ATTCUSTOMTYPE` apontar para valor com prefixo `exo:` e o nome antes de eventual sufixo apos virgula corresponder a um `ExternalObject` existente no inventario local, o indice deve criar relacao resolvida para `ExternalObject`.
+
+Essa relacao representa evidencia estrutural de tipo externo declarado em propriedade. Ela nao prova chamada efetiva de metodo, dependencia runtime completa, carga de modulo externo nem disponibilidade do provider fora do inventario local.
+
+Exemplos conceituais:
+
+- `Procedure:procBuscaCoordenadasDeUmBairro` com `exo:MapLinkAddressFinder` pode resolver para `ExternalObject:MapLinkAddressFinder`
+- `Procedure:procExtraiArquivosDoZip` com `exo:ZipFile` pode resolver para `ExternalObject:ZipFile`
+- `Procedure:GAM_CheckUserActivationMethod` com `exo:GAMApplication, GeneXusSecurity` nao deve resolver se `ExternalObject:GAMApplication` nao existir no inventario local
+
+### Fora do incremento 15
+
+- inferir `ExternalObject` pelo nome da variavel, receptor ou metodo chamado
+- resolver `ext:*` para `ExternalObject`
+- criar relacao para nomes `exo:` ausentes do inventario local
+- inferir modulo, namespace, provider ou vendor a partir do sufixo apos virgula
+- provar uso runtime efetivo do `ExternalObject`
+
+## Incremento 16 aprovado - ampliar `ATTCUSTOMTYPE` resolvido para origem `API` e `DataSelector`
+
+### Escopo aceito
+
+- origem:
+  - `API`
+  - `DataSelector`
+- evidencia:
+  - `Property ATTCUSTOMTYPE`
+- destino resolvido:
+  - `SDT`, somente quando o valor tiver prefixo `sdt:` e o objeto existir no inventario local
+- regra proposta:
+  - `attcustomtype_resolved_object`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando um objeto `API` ou `DataSelector` declarar `ATTCUSTOMTYPE` com prefixo `sdt:` apontando para um `SDT` existente no inventario local, o indice deve criar relacao resolvida para esse `SDT`.
+
+Essa relacao representa evidencia estrutural de tipo declarado em propriedade. Ela nao prova serializacao efetiva, contrato runtime completo, uso funcional do tipo nem disponibilidade de tipos externos fora do inventario local.
+
+Exemplos conceituais:
+
+- `API:apiPDV_Integracao` com `sdt:sdtProdutoDadosBasicos` pode resolver para `SDT:sdtProdutoDadosBasicos`
+- `API:apiPDV_Integracao` com `sdt:sdtTributacaoDadosBasicosSelecao` pode resolver para `SDT:sdtTributacaoDadosBasicosSelecao`
+- `DataSelector:dsRelatoriosDeTitulosViaLancamentos` com `sdt:sdtTituloParametros` pode resolver para `SDT:sdtTituloParametros`
+- `API:apiPDV_Integracao` com `sdt:Messages, GeneXus.Common` nao deve resolver se `SDT:Messages, GeneXus.Common` nao existir no inventario local
+
+### Fora do incremento 16
+
+- ampliar a origem para `SDT`, `Domain`, `Attribute`, `PackagedModule` ou outros tipos fora deste recorte
+- resolver `bas:*`, `ext:*` ou `exo:*` adicionais por esta ampliacao de origem
+- inferir `SDT` pelo nome da variavel, parametro ou metodo
+- criar relacao para `SDT` ausente do inventario local
+- provar uso runtime efetivo do `SDT`
+
+## Incremento 17 aprovado - ampliar `ATTCUSTOMTYPE` resolvido para origem `Domain`
+
+### Escopo aceito
+
+- origem:
+  - `Domain`
+- evidencia:
+  - `Property ATTCUSTOMTYPE`
+- destino resolvido:
+  - `SDT`, somente quando o valor tiver prefixo `sdt:` e o objeto existir no inventario local
+- regra proposta:
+  - `attcustomtype_resolved_object`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando um objeto `Domain` declarar `ATTCUSTOMTYPE` com prefixo `sdt:` apontando para um `SDT` existente no inventario local, o indice deve criar relacao resolvida para esse `SDT`.
+
+Essa relacao representa evidencia estrutural de tipo declarado em propriedade. Ela nao prova serializacao efetiva, contrato runtime completo, uso funcional do tipo nem disponibilidade de tipos externos fora do inventario local.
+
+Exemplos conceituais:
+
+- `Domain:BCBwscmArrayOffWSSerieVO` com `sdt:sdtBCBwscmWSSerieVO` pode resolver para `SDT:sdtBCBwscmWSSerieVO`
+- `Domain:CountryInfoServiceArrayOftContinent` com `sdt:CountryInfoServicetContinent` pode resolver para `SDT:CountryInfoServicetContinent`
+- `Domain:CountryInfoServiceArrayOftCountryCodeAndName` com `sdt:CountryInfoServicetCountryCodeAndName` pode resolver para `SDT:CountryInfoServicetCountryCodeAndName`
+- `Domain:FB_APIs` com `sdt:Messages, GeneXus.Common` nao deve resolver se `SDT:Messages, GeneXus.Common` nao existir no inventario local
+
+### Fora do incremento 17
+
+- ampliar a origem para `SDT`, `Attribute`, `PackagedModule` ou outros tipos fora deste recorte
+- resolver `bas:*`, `ext:*` ou `exo:*` adicionais por esta ampliacao de origem
+- inferir `SDT` pelo nome do dominio, variavel, parametro ou metodo
+- criar relacao para `SDT` ausente do inventario local
+- provar uso runtime efetivo do `SDT`
+
+## Incremento 18 aprovado - ampliar `ATTCUSTOMTYPE` resolvido para origem `SDT` top-level
+
+### Escopo aceito
+
+- origem:
+  - `SDT`
+- evidencia:
+  - `Property ATTCUSTOMTYPE` top-level do objeto
+- destino resolvido:
+  - `SDT`, somente quando o valor tiver prefixo `sdt:` e o objeto existir no inventario local
+- regra proposta:
+  - `attcustomtype_resolved_object`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando um objeto `SDT` declarar `ATTCUSTOMTYPE` top-level com prefixo `sdt:` apontando para um `SDT` existente no inventario local, o indice deve criar relacao resolvida para esse `SDT`.
+
+Essa relacao representa evidencia estrutural de tipo declarado em propriedade no nivel do proprio `SDT`. Ela nao prova serializacao efetiva, uso funcional completo nem substitui a regra separada de item interno de `SDT`.
+
+Exemplos conceituais:
+
+- `SDT:ActionGroupItem` com `sdt:ActionGroupItem` pode resolver para `SDT:ActionGroupItem`
+- `SDT:CountryInfoServicetCountryCodeAndNameGroupedByContinent` com `sdt:CountryInfoServicetContinent` pode resolver para `SDT:CountryInfoServicetContinent`
+- `SDT:CTe_cteProc` com `sdt:CTe_TCTe` pode resolver para `SDT:CTe_TCTe`
+- `SDT:Context` com tipos `bas:*` nao deve resolver para `SDT`
+
+### Fora do incremento 18
+
+- item interno de `SDT`, que continua coberto separadamente por `sdt_item_attcustomtype_resolved_sdt`
+- ampliar a origem para `Attribute`, `PackagedModule` ou outros tipos fora deste recorte
+- resolver `bas:*`, `ext:*` ou `exo:*` adicionais por esta ampliacao de origem
+- inferir `SDT` por nome de variavel, parametro, membro ou metodo
+- criar relacao para `SDT` ausente do inventario local
+- provar uso runtime efetivo do `SDT`
+
+## Posicao consolidada apos o incremento 18
+
+O eixo incremental de `ATTCUSTOMTYPE` ficou metodologicamente maduro ate o limite de sinal forte encontrado no acervo atual da KB `FabricaBrasil`.
+
+Depois do incremento 18, a triagem adicional indicou:
+
+- `Attribute`, `PackagedModule` e `Stencil` ainda possuem ocorrencias brutas de `ATTCUSTOMTYPE`, mas sem novos alvos resolviveis com a mesma regra conservadora hoje usada para `SDT`, `Domain` e `ExternalObject`
+- `ext:*` continua relevante como valor literal de propriedade, mas nao como alvo resolvido para objeto local do inventario
+- `Success()`, `Fail()` e `GetMessages()` em variavel `bc:*` nao abriram novos pares `origem -> Transaction` fora dos pares ja cobertos por `.Load(...)`, `.Save()`, `.Delete()`, `.Check()`, `.Insert()` e `.Update()`
+
+Medicao consolidada da triagem de BC em `Procedure`, `WebPanel` e `DataProvider`:
+
+- `Success()`: `371` ocorrencias, `280` pares unicos resolviveis, `0` pares unicos fora da cobertura forte ja existente
+- `Fail()`: `48` ocorrencias, `43` pares unicos resolviveis, `0` pares unicos fora da cobertura forte ja existente
+- `GetMessages()`: `419` ocorrencias, `306` pares unicos resolviveis, `0` pares unicos fora da cobertura forte ja existente
+
+Conclusao operacional:
+
+- nao aprovar incremento 19 apenas para `Success()`, `Fail()` ou `GetMessages()`
+- nao ampliar `ATTCUSTOMTYPE` resolvido para novos tipos de origem sem evidencia estrutural nova e casos reais adicionais
+- tratar a subtrilha atual como consolidada, e nao como aberta para extensao mecanica
+
+Se houver continuacao da Fase 5 depois deste ponto, ela deve entrar por familia nova de relacao ou por contrato explicito de evidencia mais fraca, com justificativa propria.
+
 ## Fora do escopo geral da Fase 5
 
 - suporte funcional por agentes
