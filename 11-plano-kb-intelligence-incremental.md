@@ -477,6 +477,8 @@ O escopo validado ate aqui cobre:
 - `Procedure`/`WebPanel` para `Table` pelo prefixo de `for each <Nome>.<Membro>` qualificado
 - `Procedure`/`WebPanel`/`DataProvider` para `Transaction` por `.Load(...)`, `.Save()`, `.Delete()`, `.Check()`, `.Insert()` e `.Update()` de variavel BC com `ATTCUSTOMTYPE` `bc:*` resolvido, mantendo colecoes fora do incremento de `.Insert()`/`.Update()`
 
+Para novas propostas de incremento no eixo `ATTCUSTOMTYPE`, a triagem deve separar primeiro os valores por prefixo real observado no acervo, em vez de decidir por volume bruto agregado. Prefixos com semanticas diferentes, como `bas:`, `sdt:`, `bc:`, `exo:` e `ext:`, devem ser tratados como subtrilhas distintas antes de qualquer proposta metodologica nova.
+
 Tambem ficou medido e registrado que `Success()`, `Fail()` e `GetMessages()` em variavel `bc:*` nao acrescentam pares novos `origem -> Transaction` fora da cobertura forte ja existente, e por isso nao justificam um incremento 19 no mesmo eixo.
 
 Entregas possiveis:

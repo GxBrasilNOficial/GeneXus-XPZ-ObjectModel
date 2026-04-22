@@ -75,6 +75,51 @@ Para validar os incrementos aprovados da Fase 2 em `FabricaBrasil`, use:
 
 O local operacional padrao dentro da pasta paralela da KB e `KbIntelligence\kb-intelligence.sqlite`. Este banco e derivado e regeneravel; a fonte normativa continua sendo `ObjetosDaKbEmXml`.
 
+## Triagem exploratoria no PowerShell
+
+Use consultas curtas e auditaveis quando precisar medir massa de padrao antes de propor novo incremento. Em Windows, prefira etapas pequenas a um one-liner longo.
+
+Ordem sugerida de triagem:
+
+1. contar ocorrencias brutas
+2. agrupar por valor ou prefixo relevante
+3. abrir amostra curta de casos reais positivos e negativos
+
+Contar ocorrencias textuais de `ATTCUSTOMTYPE` no acervo:
+
+```powershell
+Get-ChildItem -Path "C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml" -Recurse -File |
+  Select-String -Pattern 'ATTCUSTOMTYPE' |
+  Measure-Object
+```
+
+Agrupar valores de `ATTCUSTOMTYPE` por prefixo observavel:
+
+```powershell
+Get-ChildItem -Path "C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml" -Recurse -File |
+  Select-String -Pattern 'ATTCUSTOMTYPE="([^"]+)"' -AllMatches |
+  ForEach-Object { $_.Matches } |
+  ForEach-Object { ($_.Groups[1].Value -split ':', 2)[0].ToLower() } |
+  Group-Object |
+  Sort-Object Count -Descending
+```
+
+Abrir amostra curta de valores reais antes de decidir contrato:
+
+```powershell
+Get-ChildItem -Path "C:\Dev\Prod\Gx_FabricaBrasil\ObjetosDaKbEmXml" -Recurse -File |
+  Select-String -Pattern 'ATTCUSTOMTYPE="([^"]+)"' -AllMatches |
+  ForEach-Object { $_.Matches } |
+  ForEach-Object { $_.Groups[1].Value } |
+  Select-Object -First 30
+```
+
+Evitar:
+
+- one-liner longo com muitas interpolacoes, `:` e subexpressoes na mesma linha
+- decidir incremento novo apenas por ocorrencia textual bruta
+- pular da contagem direta para alteracao de contrato sem amostra real
+
 ## Buscar objetos por nome
 
 ```powershell

@@ -652,6 +652,8 @@ O eixo incremental de `ATTCUSTOMTYPE` ficou metodologicamente maduro ate o limit
 
 Depois do incremento 18, a triagem adicional indicou:
 
+- leitura agregada de `ATTCUSTOMTYPE` sem separar prefixos produz ruido excessivo para decisao incremental; a triagem correta deve agrupar primeiro por prefixo real observado no acervo
+- prefixos com semanticas diferentes, como `bas:`, `sdt:`, `bc:`, `exo:` e `ext:`, nao devem compartilhar a mesma hipotese de incremento apenas por coexistirem na mesma propriedade
 - `Attribute`, `PackagedModule` e `Stencil` ainda possuem ocorrencias brutas de `ATTCUSTOMTYPE`, mas sem novos alvos resolviveis com a mesma regra conservadora hoje usada para `SDT`, `Domain` e `ExternalObject`
 - `ext:*` continua relevante como valor literal de propriedade, mas nao como alvo resolvido para objeto local do inventario
 - `Success()`, `Fail()` e `GetMessages()` em variavel `bc:*` nao abriram novos pares `origem -> Transaction` fora dos pares ja cobertos por `.Load(...)`, `.Save()`, `.Delete()`, `.Check()`, `.Insert()` e `.Update()`
@@ -665,6 +667,7 @@ Medicao consolidada da triagem de BC em `Procedure`, `WebPanel` e `DataProvider`
 Conclusao operacional:
 
 - nao aprovar incremento 19 apenas para `Success()`, `Fail()` ou `GetMessages()`
+- nao aprovar novo incremento de `ATTCUSTOMTYPE` apenas por massa bruta agregada; antes disso, separar a amostra por prefixo e confirmar qual prefixo ainda preserva sinal estrutural forte
 - nao ampliar `ATTCUSTOMTYPE` resolvido para novos tipos de origem sem evidencia estrutural nova e casos reais adicionais
 - tratar a subtrilha atual como consolidada, e nao como aberta para extensao mecanica
 
