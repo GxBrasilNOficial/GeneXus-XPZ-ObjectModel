@@ -344,6 +344,78 @@
       "expected_rule": "source_bc_save_transaction",
       "should_exist": false,
       "expectation": "Save receiver without resolvable local bc: Transaction variable type must not create a relation by receiver name"
+    },
+    {
+      "id": "phase5-case-44-procedure-bc-delete-resolves-transaction",
+      "source": "Procedure:procApagaEstoqueMovimentoDiarioSemControle",
+      "target": "Transaction:EstoqueMovimentoDiario",
+      "expected_rule": "source_bc_delete_transaction",
+      "should_exist": true,
+      "expectation": "Procedure Source &EstoqueMovimentoDiario.Delete() must create a relation to Transaction:EstoqueMovimentoDiario when variable ATTCUSTOMTYPE is bc:EstoqueMovimentoDiario"
+    },
+    {
+      "id": "phase5-case-45-procedure-bc-delete-resolves-second-transaction",
+      "source": "Procedure:procCrudMsforn",
+      "target": "Transaction:PessoaE_Mails",
+      "expected_rule": "source_bc_delete_transaction",
+      "should_exist": true,
+      "expectation": "Procedure Source &pessoaemail.Delete() must create a relation to Transaction:PessoaE_Mails when variable ATTCUSTOMTYPE is bc:PessoaE_Mails"
+    },
+    {
+      "id": "phase5-case-46-bc-delete-does-not-infer-file-external-type",
+      "source": "Procedure:procApagaArquivoFisico",
+      "target": "Transaction:File",
+      "expected_rule": "source_bc_delete_transaction",
+      "should_exist": false,
+      "expectation": "Delete receiver without resolvable local bc: Transaction variable type must not create a relation by receiver name"
+    },
+    {
+      "id": "phase5-case-47-webpanel-bc-check-resolves-transaction",
+      "source": "WebPanel:wpTitulo3",
+      "target": "Transaction:Lancamento",
+      "expected_rule": "source_bc_check_transaction",
+      "should_exist": true,
+      "expectation": "WebPanel Source &alteracaoLancamento.Check() must create a relation to Transaction:Lancamento when variable ATTCUSTOMTYPE is bc:Lancamento"
+    },
+    {
+      "id": "phase5-case-48-procedure-bc-check-resolves-transaction",
+      "source": "Procedure:procAtualizaDuplicatasDoDocumentoFiscal",
+      "target": "Transaction:DocumentoFiscalDuplicata",
+      "expected_rule": "source_bc_check_transaction",
+      "should_exist": true,
+      "expectation": "Procedure Source &documentofiscalduplicata.Check() must create a relation to Transaction:DocumentoFiscalDuplicata when variable ATTCUSTOMTYPE is bc:DocumentoFiscalDuplicata"
+    },
+    {
+      "id": "phase5-case-49-bc-check-does-not-infer-gam-external-type",
+      "source": "WebPanel:GAMExampleApplicationEntry",
+      "target": "Transaction:GAMApplication",
+      "expected_rule": "source_bc_check_transaction",
+      "should_exist": false,
+      "expectation": "Check receiver without resolvable local bc: Transaction variable type must not create a relation by receiver name"
+    },
+    {
+      "id": "phase5-case-50-procedure-simple-bc-update-resolves-transaction",
+      "source": "Procedure:procCancelaVolumeMovimento",
+      "target": "Transaction:VolumeMovimento",
+      "expected_rule": "source_simple_bc_update_transaction",
+      "should_exist": true,
+      "expectation": "Procedure Source &VolumeMovimento.Update() must create a relation to Transaction:VolumeMovimento when variable ATTCUSTOMTYPE is bc:VolumeMovimento and AttCollection is not true"
+    },
+    {
+      "id": "phase5-case-51-procedure-simple-bc-insert-resolves-transaction",
+      "source": "Procedure:procGeraVendaPedidoDoQueNaoFoiCarregado",
+      "target": "Transaction:VendaPedido",
+      "expected_rule": "source_simple_bc_insert_transaction",
+      "should_exist": true,
+      "expectation": "Procedure Source &novovendapedido.Insert() must create a relation to Transaction:VendaPedido when variable ATTCUSTOMTYPE is bc:VendaPedido and AttCollection is not true"
+    },
+    {
+      "id": "phase5-case-52-simple-bc-insert-does-not-index-collection-variable",
+      "source": "Procedure:procCarregaBandeiraDeCartao",
+      "target": "Transaction:BandeiraDeCartao",
+      "expected_rule": "source_simple_bc_insert_transaction",
+      "should_exist": false,
+      "expectation": "Insert receiver with AttCollection=True must stay out of the simple BC Insert increment"
     }
   ]
 }

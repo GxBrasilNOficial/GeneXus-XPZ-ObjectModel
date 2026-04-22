@@ -16,6 +16,9 @@ Current scope:
 - qualified Source for each table-prefix references in Procedure and WebPanel
 - Source Business Component Load calls with receiver resolved by variable ATTCUSTOMTYPE
 - Source Business Component Save calls with receiver resolved by variable ATTCUSTOMTYPE
+- Source Business Component Delete calls with receiver resolved by variable ATTCUSTOMTYPE
+- Source Business Component Check calls with receiver resolved by variable ATTCUSTOMTYPE
+- Source simple Business Component Insert and Update calls with receiver resolved by variable ATTCUSTOMTYPE
 """
 
 from __future__ import annotations
@@ -48,6 +51,12 @@ FOR_EACH_QUALIFIED_TABLE_RE = re.compile(
 )
 BC_LOAD_RE = re.compile(r"(?P<receiver>&[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Load\s*\(", re.IGNORECASE)
 BC_SAVE_RE = re.compile(r"(?P<receiver>&[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Save\s*\(", re.IGNORECASE)
+BC_DELETE_RE = re.compile(r"(?P<receiver>&[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Delete\s*\(", re.IGNORECASE)
+BC_CHECK_RE = re.compile(r"(?P<receiver>&[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*Check\s*\(", re.IGNORECASE)
+BC_SIMPLE_INSERT_UPDATE_RE = re.compile(
+    r"(?P<receiver>&[A-Za-z_][A-Za-z0-9_]*)\s*\.\s*(?P<method>Insert|Update)\s*\(",
+    re.IGNORECASE,
+)
 INDEXED_SOURCE_TYPES = ("Procedure", "WebPanel", "DataProvider")
 FOR_EACH_SOURCE_TYPES = ("Procedure", "WebPanel")
 BC_LOAD_SOURCE_TYPES = ("Procedure", "WebPanel", "DataProvider")
@@ -59,6 +68,10 @@ ATTR_RE = re.compile(r'(?P<name>[A-Za-z_][A-Za-z0-9_]*)="(?P<value>[^"]*)"')
 GXOBJECT_RE = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}-(?P<name>.+)$")
 ATTCUSTOMTYPE_PROPERTY_RE = re.compile(
     r"<Property>\s*<Name>ATTCUSTOMTYPE</Name>\s*<Value>(?P<value>.*?)</Value>\s*</Property>",
+    re.IGNORECASE | re.DOTALL,
+)
+ATTCOLLECTION_PROPERTY_RE = re.compile(
+    r"<Property>\s*<Name>AttCollection</Name>\s*<Value>(?P<value>.*?)</Value>\s*</Property>",
     re.IGNORECASE | re.DOTALL,
 )
 IDBASEDON_PROPERTY_RE = re.compile(
@@ -482,6 +495,31 @@ def bc_variable_targets(xml_text: str, transaction_lookup: dict[str, str]) -> di
     return targets
 
 
+def simple_bc_variable_targets(xml_text: str, transaction_lookup: dict[str, str]) -> dict[str, str]:
+    targets: dict[str, str] = {}
+    for match in VARIABLE_RE.finditer(xml_text):
+        attrs = parse_attributes(match.group("attrs"))
+        variable_name = attrs.get("Name")
+        if not variable_name:
+            continue
+        body = match.group("body")
+        collection_match = ATTCOLLECTION_PROPERTY_RE.search(body)
+        if collection_match and collection_match.group("value").strip().lower() == "true":
+            continue
+        custom_type_match = ATTCUSTOMTYPE_PROPERTY_RE.search(body)
+        if not custom_type_match:
+            continue
+        custom_type = normalize_custom_type(custom_type_match.group("value"))
+        if not custom_type.lower().startswith("bc:"):
+            continue
+        raw_transaction_name = custom_type.split(":", 1)[1].strip()
+        target_name = transaction_lookup.get(raw_transaction_name.lower())
+        if not target_name:
+            continue
+        targets[variable_name.lower()] = target_name
+    return targets
+
+
 def extract_source_bc_load_transaction_evidence(
     source_objects: Iterable[ObjectInfo],
     transaction_names: set[str],
@@ -568,6 +606,160 @@ def extract_source_bc_save_transaction_evidence(
                         snippet=cleaned,
                         extractor_rule="source_bc_save_transaction",
                         evidence_role="Source BC Save",
+                    )
+
+    unique: dict[tuple[str, str, str, str, int, str], Evidence] = {}
+    for evidence in evidences:
+        key = (
+            evidence.source_type,
+            evidence.source_name,
+            evidence.target_type,
+            evidence.target_name,
+            evidence.line,
+            evidence.extractor_rule,
+        )
+        unique[key] = evidence
+    return list(unique.values())
+
+
+def extract_source_bc_delete_transaction_evidence(
+    source_objects: Iterable[ObjectInfo],
+    transaction_names: set[str],
+) -> list[Evidence]:
+    evidences: list[Evidence] = []
+    transaction_lookup = case_insensitive_lookup(transaction_names, "Transaction")
+
+    for source in source_objects:
+        xml_text = read_text(source.path)
+        variable_targets = bc_variable_targets(xml_text, transaction_lookup)
+        if not variable_targets:
+            continue
+        for block in source_blocks(xml_text):
+            for offset, line in enumerate(block.text.splitlines()):
+                cleaned = active_line(line)
+                if not cleaned.strip():
+                    continue
+                line_no = block.start_line + offset
+
+                for match in BC_DELETE_RE.finditer(cleaned):
+                    receiver_name = match.group("receiver")[1:]
+                    target_name = variable_targets.get(receiver_name.lower())
+                    if not target_name:
+                        continue
+                    add_evidence(
+                        evidences,
+                        source=source,
+                        target_type="Transaction",
+                        target_name=target_name,
+                        relation_kind="deletes_business_component",
+                        line=line_no,
+                        column=match.start("receiver") + 1,
+                        snippet=cleaned,
+                        extractor_rule="source_bc_delete_transaction",
+                        evidence_role="Source BC Delete",
+                    )
+
+    unique: dict[tuple[str, str, str, str, int, str], Evidence] = {}
+    for evidence in evidences:
+        key = (
+            evidence.source_type,
+            evidence.source_name,
+            evidence.target_type,
+            evidence.target_name,
+            evidence.line,
+            evidence.extractor_rule,
+        )
+        unique[key] = evidence
+    return list(unique.values())
+
+
+def extract_source_bc_check_transaction_evidence(
+    source_objects: Iterable[ObjectInfo],
+    transaction_names: set[str],
+) -> list[Evidence]:
+    evidences: list[Evidence] = []
+    transaction_lookup = case_insensitive_lookup(transaction_names, "Transaction")
+
+    for source in source_objects:
+        xml_text = read_text(source.path)
+        variable_targets = bc_variable_targets(xml_text, transaction_lookup)
+        if not variable_targets:
+            continue
+        for block in source_blocks(xml_text):
+            for offset, line in enumerate(block.text.splitlines()):
+                cleaned = active_line(line)
+                if not cleaned.strip():
+                    continue
+                line_no = block.start_line + offset
+
+                for match in BC_CHECK_RE.finditer(cleaned):
+                    receiver_name = match.group("receiver")[1:]
+                    target_name = variable_targets.get(receiver_name.lower())
+                    if not target_name:
+                        continue
+                    add_evidence(
+                        evidences,
+                        source=source,
+                        target_type="Transaction",
+                        target_name=target_name,
+                        relation_kind="checks_business_component",
+                        line=line_no,
+                        column=match.start("receiver") + 1,
+                        snippet=cleaned,
+                        extractor_rule="source_bc_check_transaction",
+                        evidence_role="Source BC Check",
+                    )
+
+    unique: dict[tuple[str, str, str, str, int, str], Evidence] = {}
+    for evidence in evidences:
+        key = (
+            evidence.source_type,
+            evidence.source_name,
+            evidence.target_type,
+            evidence.target_name,
+            evidence.line,
+            evidence.extractor_rule,
+        )
+        unique[key] = evidence
+    return list(unique.values())
+
+
+def extract_source_simple_bc_insert_update_transaction_evidence(
+    source_objects: Iterable[ObjectInfo],
+    transaction_names: set[str],
+) -> list[Evidence]:
+    evidences: list[Evidence] = []
+    transaction_lookup = case_insensitive_lookup(transaction_names, "Transaction")
+
+    for source in source_objects:
+        xml_text = read_text(source.path)
+        variable_targets = simple_bc_variable_targets(xml_text, transaction_lookup)
+        if not variable_targets:
+            continue
+        for block in source_blocks(xml_text):
+            for offset, line in enumerate(block.text.splitlines()):
+                cleaned = active_line(line)
+                if not cleaned.strip():
+                    continue
+                line_no = block.start_line + offset
+
+                for match in BC_SIMPLE_INSERT_UPDATE_RE.finditer(cleaned):
+                    receiver_name = match.group("receiver")[1:]
+                    target_name = variable_targets.get(receiver_name.lower())
+                    if not target_name:
+                        continue
+                    method = match.group("method").lower()
+                    add_evidence(
+                        evidences,
+                        source=source,
+                        target_type="Transaction",
+                        target_name=target_name,
+                        relation_kind=f"{method}s_business_component",
+                        line=line_no,
+                        column=match.start("receiver") + 1,
+                        snippet=cleaned,
+                        extractor_rule=f"source_simple_bc_{method}_transaction",
+                        evidence_role=f"Source Simple BC {method.capitalize()}",
                     )
 
     unique: dict[tuple[str, str, str, str, int, str], Evidence] = {}
@@ -1322,6 +1514,20 @@ def main() -> int:
         [obj for obj in objects if obj.object_type in BC_LOAD_SOURCE_TYPES],
         transaction_names=set(transactions),
     )
+    source_bc_delete_transaction_evidences = extract_source_bc_delete_transaction_evidence(
+        [obj for obj in objects if obj.object_type in BC_LOAD_SOURCE_TYPES],
+        transaction_names=set(transactions),
+    )
+    source_bc_check_transaction_evidences = extract_source_bc_check_transaction_evidence(
+        [obj for obj in objects if obj.object_type in BC_LOAD_SOURCE_TYPES],
+        transaction_names=set(transactions),
+    )
+    source_simple_bc_insert_update_transaction_evidences = (
+        extract_source_simple_bc_insert_update_transaction_evidence(
+            [obj for obj in objects if obj.object_type in BC_LOAD_SOURCE_TYPES],
+            transaction_names=set(transactions),
+        )
+    )
     workwith_evidences = extract_workwith_action_evidence(
         workwiths.values(),
         procedure_names=set(procedures),
@@ -1390,6 +1596,9 @@ def main() -> int:
         *source_for_each_qualified_table_prefix_evidences,
         *source_bc_load_transaction_evidences,
         *source_bc_save_transaction_evidences,
+        *source_bc_delete_transaction_evidences,
+        *source_bc_check_transaction_evidences,
+        *source_simple_bc_insert_update_transaction_evidences,
         *workwith_evidences,
         *workwith_condition_evidences,
         *workwith_condition_attribute_evidences,

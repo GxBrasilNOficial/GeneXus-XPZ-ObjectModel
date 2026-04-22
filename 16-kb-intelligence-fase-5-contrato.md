@@ -394,6 +394,114 @@ Exemplos conceituais:
 - inferir `.Load(...)`, `.Delete()`, `.Success()`, `.Fail()`, commit, rollback ou mensagens
 - provar sucesso da gravacao ou comportamento runtime
 
+## Incremento 12 aprovado - resolver `.Delete()` de Business Component para `Transaction`
+
+### Escopo aceito
+
+- origem: objetos `Procedure`, `WebPanel` e `DataProvider`
+- evidencia:
+  - linha de `Source` efetivo contendo `&Variavel.Delete()`
+  - declaracao da variavel com `ATTCUSTOMTYPE` resolvido como `bc:<Transaction>`
+- destino resolvido:
+  - `Transaction`, somente quando a transacao existir no inventario local
+- regra proposta:
+  - `source_bc_delete_transaction`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando uma linha de `Source` efetivo chamar `.Delete()` em uma variavel cujo `ATTCUSTOMTYPE` seja `bc:<Nome>` e `<Nome>` exista como `Transaction`, o indice deve criar relacao direta da origem para a `Transaction`.
+
+Essa relacao representa evidencia estrutural de exclusao via Business Component no `Source`. Ela nao prova sucesso da exclusao, commit, rollback, validacoes disparadas, mensagens de erro ou comportamento runtime completo.
+
+Exemplos conceituais:
+
+- `Procedure:procApagaEstoqueMovimentoDiarioSemControle` com `&EstoqueMovimentoDiario.Delete()` e variavel `bc:EstoqueMovimentoDiario` pode resolver para `Transaction:EstoqueMovimentoDiario`
+- `Procedure:procCrudMsforn` com `&pessoaemail.Delete()` e variavel `bc:PessoaE_Mails` pode resolver para `Transaction:PessoaE_Mails`
+- `Procedure:procApagaArquivoFisico` com `&File.Delete()` nao deve criar relacao para `Transaction:File`
+
+### Fora do incremento 12
+
+- inferir tipo do receptor pelo nome da variavel
+- criar relacao quando a variavel nao tiver `ATTCUSTOMTYPE` `bc:*` resolvido localmente
+- resolver `.Delete()` de `File`, `Directory`, `ExternalObject`, documentos, GAM externo ou outro tipo nao `Transaction`
+- inferir `.Load(...)`, `.Save()`, `.Success()`, `.Fail()`, commit, rollback ou mensagens
+- provar sucesso da exclusao ou comportamento runtime
+
+## Incremento 13 aprovado - resolver `.Check()` de Business Component para `Transaction`
+
+### Escopo aceito
+
+- origem: objetos `Procedure`, `WebPanel` e `DataProvider`
+- evidencia:
+  - linha de `Source` efetivo contendo `&Variavel.Check()`
+  - declaracao da variavel com `ATTCUSTOMTYPE` resolvido como `bc:<Transaction>`
+- destino resolvido:
+  - `Transaction`, somente quando a transacao existir no inventario local
+- regra proposta:
+  - `source_bc_check_transaction`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando uma linha de `Source` efetivo chamar `.Check()` em uma variavel cujo `ATTCUSTOMTYPE` seja `bc:<Nome>` e `<Nome>` exista como `Transaction`, o indice deve criar relacao direta da origem para a `Transaction`.
+
+Essa relacao representa evidencia estrutural de validacao/verificacao via Business Component no `Source`. Ela nao prova sucesso da validacao, persistencia, commit, rollback, mensagens de erro ou comportamento runtime completo.
+
+Exemplos conceituais:
+
+- `WebPanel:wpTitulo3` com `&alteracaoLancamento.Check()` e variavel `bc:Lancamento` pode resolver para `Transaction:Lancamento`
+- `Procedure:procAtualizaDuplicatasDoDocumentoFiscal` com `&documentofiscalduplicata.Check()` e variavel `bc:DocumentoFiscalDuplicata` pode resolver para `Transaction:DocumentoFiscalDuplicata`
+- `WebPanel:GAMExampleApplicationEntry` com `&GAMApplication.Check()` nao deve criar relacao para `Transaction:GAMApplication`
+
+### Fora do incremento 13
+
+- inferir tipo do receptor pelo nome da variavel
+- criar relacao quando a variavel nao tiver `ATTCUSTOMTYPE` `bc:*` resolvido localmente
+- resolver `.Check()` de `ExternalObject`, GAM externo ou outro tipo nao `Transaction`
+- inferir `.Load(...)`, `.Save()`, `.Delete()`, `.Success()`, `.Fail()`, commit, rollback ou mensagens
+- provar sucesso da validacao ou comportamento runtime
+
+## Incremento 14 aprovado - resolver `.Insert()` e `.Update()` de Business Component simples para `Transaction`
+
+### Escopo aceito
+
+- origem: objetos `Procedure`, `WebPanel` e `DataProvider`
+- evidencia:
+  - linha de `Source` efetivo contendo `&Variavel.Insert()` ou `&Variavel.Update()`
+  - declaracao da variavel com `ATTCUSTOMTYPE` resolvido como `bc:<Transaction>`
+  - variavel sem `AttCollection=True`
+- destino resolvido:
+  - `Transaction`, somente quando a transacao existir no inventario local
+- regras propostas:
+  - `source_simple_bc_insert_transaction`
+  - `source_simple_bc_update_transaction`
+- confianca:
+  - `direct`
+
+### Comportamento esperado
+
+Quando uma linha de `Source` efetivo chamar `.Insert()` ou `.Update()` em uma variavel simples cujo `ATTCUSTOMTYPE` seja `bc:<Nome>` e `<Nome>` exista como `Transaction`, o indice deve criar relacao direta da origem para a `Transaction`.
+
+Essa relacao representa evidencia estrutural de insercao ou atualizacao via Business Component simples no `Source`. Ela nao prova sucesso da operacao, commit, rollback, mensagens de erro ou comportamento runtime completo.
+
+Exemplos conceituais:
+
+- `Procedure:procCancelaVolumeMovimento` com `&VolumeMovimento.Update()` e variavel `bc:VolumeMovimento` pode resolver para `Transaction:VolumeMovimento`
+- `Procedure:procGeraVendaPedidoDoQueNaoFoiCarregado` com `&novovendapedido.Insert()` e variavel `bc:VendaPedido` pode resolver para `Transaction:VendaPedido`
+- `Procedure:procCarregaBandeiraDeCartao` com `&listaBandeiraDeCartao.Insert()` e variavel `AttCollection=True` nao deve entrar neste incremento
+
+### Fora do incremento 14
+
+- variaveis com `AttCollection=True`
+- inferir tipo do receptor pelo nome da variavel
+- criar relacao quando a variavel nao tiver `ATTCUSTOMTYPE` `bc:*` resolvido localmente
+- resolver `.Insert()` ou `.Update()` de `ExternalObject`, GAM externo ou outro tipo nao `Transaction`
+- inferir `.Load(...)`, `.Save()`, `.Delete()`, `.Check()`, `.Success()`, `.Fail()`, commit, rollback ou mensagens
+- provar sucesso da insercao/atualizacao ou comportamento runtime
+
 ## Fora do escopo geral da Fase 5
 
 - suporte funcional por agentes
