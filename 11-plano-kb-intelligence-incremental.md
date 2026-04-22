@@ -521,6 +521,8 @@ A primeira estabilizacao curta de `functional-trace-basic` ficou registrada em `
 
 Depois do ajuste conservador, a verificacao pos-filtro ficou registrada em `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`. O resultado confirmou que a consulta oculta apenas literais `CustomType` redundantes quando ha relacao resolvida equivalente, mantendo relacoes resolvidas, literais externos ou primitivos, chamadas e tabelas.
 
+O primeiro exemplo de resposta funcional controlada ficou registrado em `27-kb-intelligence-fase-6-primeira-resposta-funcional.md`, usando `API:apiPDV_Integracao` para exercitar a separacao entre evidencia direta, leitura adicional do XML, inferencia forte e hipotese.
+
 ## Versionamento recomendado
 
 Versionar:
