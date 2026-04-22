@@ -77,6 +77,15 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - `impact-basic` e a triagem equivalente representam impacto tecnico direto baseado no indice; nao provam impacto runtime completo
 - o indice nao substitui `ObjetosDaKbEmXml`, que continua sendo a fonte normativa e somente leitura
 - se a mudanca exigir semantica GeneXus, o agente deve abrir o XML oficial e revisar o trecho relevante antes de concluir
+- quando a pergunta for funcional e a trilha estiver na Fase 6, o agente deve usar o indice apenas para orientar a ordem de leitura, separando explicitamente `Evidencia direta`, `Leitura adicional do XML`, `Inferencia forte` e `Hipotese`
+
+## Regra de triagem exploratoria
+
+- quando a frente exigir decidir se existe massa suficiente para abrir novo incremento, priorizar triagem exploratoria curta e auditavel antes de propor alteracao metodologica ou de codigo
+- em Windows, preferir consultas pequenas e separadas no PowerShell, em vez de one-liner longo com muitas interpolacoes, regexes e transformacoes na mesma linha
+- a ordem recomendada e: contagem bruta, agrupamento por sinal relevante, amostra curta de casos reais positivos e negativos
+- nao propor novo incremento apenas por ocorrencia textual bruta; confirmar antes se o padrao observado tem resolucao estrutural segura no acervo
+- quando a consulta falhar por sintaxe ou ficar ruidosa demais para leitura direta, simplificar a abordagem e refazer em etapas menores
 
 ## Regra de leitura para compatibilidade de `Source`
 

@@ -489,6 +489,8 @@ Cada relacao nova deve entrar por contrato incremental, com exemplos reais posit
 
 ## Fase 6 - suporte funcional por agentes
 
+Aberta por contrato em `17-kb-intelligence-fase-6-contrato.md`, com foco inicial em metodo de triagem funcional assistida, ainda sem automacao funcional nova.
+
 So iniciar depois da base tecnica sustentar consultas confiaveis e depois de decidir se ainda ha expansao tecnica relevante pendente na Fase 5.
 
 A antiga previsao de Fase 4 foi renumerada para Fase 6 antes de abertura formal, para preservar a sequencia: inventario, relacoes semanticas, suporte funcional.
@@ -501,7 +503,7 @@ Entregas possiveis:
 
 Esta fase nao deve depender de humanos lendo documentacao estatica extensa.
 
-Estado recomendado apos 2026-04-22: preparar a abertura da Fase 6 em conversa nova, para evitar mistura entre fechamento metodologico da Fase 5 e desenho de suporte funcional por agentes.
+Estado em 2026-04-22: contrato de abertura preparado para formalizar a trilha de suporte funcional assistido por agentes, preservando a precedencia do XML oficial sobre o indice tecnico.
 
 ## Versionamento recomendado
 
