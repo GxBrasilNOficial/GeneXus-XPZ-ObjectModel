@@ -53,6 +53,22 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: campos vazios ou incompletos do pacote novo nao podem apagar `Source/@kb`, `Source/@username`, `Source/@UNCPath`, `Source/Version/@guid` ou `Source/Version/@name` quando houver baseline estavel anterior.
 - `Regra operacional`: se o pacote novo trouxer todos esses valores completos e validos, o refresh de metadado pode seguir normalmente.
 - `Regra operacional`: o caso deve produzir warning claro separando `sync de objetos aceito` de `refresh de metadado parcial`.
+- `Regra operacional`: `kb-source-metadata.md` deve expor `last_xpz_materialization_run_at` como horario da ultima solicitacao/processamento de materializacao XPZ/XML, mesmo quando nao houver mudanca material nos XMLs.
+
+## Frescor do indice derivado da KB
+
+- `Regra operacional`: `KbIntelligence\kb-intelligence.sqlite` deve expor `last_index_build_run_at` na tabela `metadata` como horario da ultima solicitacao/processamento de geracao do indice, mesmo quando o conteudo resultante for equivalente ao anterior.
+- `Regra operacional`: todo processamento bem-sucedido de `XPZ` exportado pela IDE que materialize ou atualize XMLs em `ObjetosDaKbEmXml` deve acionar compulsoriamente a regeneracao/validacao do indice derivado logo depois da materializacao.
+- `Regra operacional`: quando a pasta paralela adotar `KbIntelligence`, o agente so deve considerar o fluxo de `sync` normal como compativel se houver evidencia clara, na documentacao local ou no proprio wrapper local, de que o wrapper de materializacao encadeia esse refresh compulsorio do indice.
+- `Regra operacional`: na ausencia dessa evidencia clara, o agente deve tratar o caso como compatibilidade operacional pendente da pasta paralela, bloquear o `sync` normal e oferecer atualizacao via setup antes de seguir.
+- `Regra operacional`: o indice esta apto para triagem ampla quando `last_index_build_run_at` for igual ou posterior a `last_xpz_materialization_run_at` lido nominalmente em `kb-source-metadata.md`.
+- `Regra operacional`: se o indice estiver ausente, sem metadado, mais antigo que a ultima materializacao XPZ/XML ou se `kb-source-metadata.md` nao expuser literalmente `last_xpz_materialization_run_at`, o agente nao deve consultar o acervo oficial de objetos para responder pergunta de negocio, nem por varredura ampla nem por caminho pontual deduzido, e tambem nao deve gerar objetos para importacao na KB pela IDE.
+- `Regra operacional`: o agente nao deve substituir `last_xpz_materialization_run_at` por data do arquivo, `updated`, `generated_at`, `source_xpz`, data de relatorio ou outro metadado aproximado.
+- `Regra operacional`: indice ausente ou defasado e excecao operacional, tipicamente de pasta paralela ainda sem wrappers XPZ atualizados ou de falha fortuita; o agente deve bloquear pesquisa ampla, triagem substantiva, consulta substantiva ao acervo oficial de objetos, leitura de XML oficial de objeto e geracao, oferecendo ao usuario a atualizacao do indice antes de seguir.
+- `Regra operacional`: em pasta que adota `KbIntelligence`, o agente nao deve apresentar `sync` seguido de regeneracao manual separada do indice como fluxo normal; esse desenho so e aceitavel como etapa consciente de reparo/compatibilidade aprovada pelo usuario.
+- `Regra operacional`: com gate de indice bloqueado, leitura pontual so e aceitavel para diagnostico minimo da incompatibilidade em documentacao local, estrutura, wrappers e metadados operacionais; nao montar, testar existencia, listar ou abrir caminho de XML oficial de objeto para responder pergunta de negocio.
+- `Regra operacional`: o gate do indice deve ser sequencial e atomico; nao testar, listar ou abrir caminho filho de uma camada antes de validar a camada pai, como `KbIntelligence\kb-intelligence.sqlite` antes de `KbIntelligence`.
+- `Regra operacional`: se o wrapper local documentado de consulta do indice estiver ausente, nao listar `scripts` nem procurar wrappers alternativos, backups ou nomes parecidos; tratar como defasagem da pasta paralela e oferecer atualizacao via setup.
 
 ## Evidencia complementar de gerador local
 
@@ -111,6 +127,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: `ObjetosDaKbEmXml` e o snapshot oficial da KB e deve ser tratado como somente leitura para agentes.
 - `Regra operacional`: agente nunca pode criar, alterar, mover, renomear ou sobrescrever arquivos em `ObjetosDaKbEmXml`.
 - `Regra operacional`: a unica origem oficial de atualizacao de `ObjetosDaKbEmXml` e o script `.ps1` do fluxo de sincronizacao alimentado por `XPZ` exportado pela IDE.
+- `Regra operacional`: `KbIntelligence` e a pasta do indice SQLite derivado e regeneravel a partir de `ObjetosDaKbEmXml`; ela serve para triagem e nao substitui o snapshot oficial.
 - `Regra operacional`: XML gerado, clonado ou ajustado localmente nunca deve ser tratado como se ja fosse snapshot oficial da KB.
 - `Regra operacional`: `ObjetosGeradosParaImportacaoNaKbNoGenexus` e a area de trabalho para XMLs gerados, clonados, ajustados ou preservados para importacao manual na IDE.
 - `Regra operacional`: `PacotesGeradosParaImportacaoNaKbNoGenexus` e a area de saida para `import_file.xml` e demais pacotes gerados localmente.

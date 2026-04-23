@@ -72,9 +72,11 @@ Se você quer entender a base rapidamente:
 ### Topologia operacional
 
 - nesta trilha, a pasta nativa da KB GeneXus e diferente da pasta paralela da KB
-- a pasta paralela da KB e a pasta de trabalho que concentra `XPZ` exportados pela IDE, XMLs materializados pelo fluxo oficial e artefatos preparados para importação posterior
+- a pasta paralela da KB e a pasta de trabalho que concentra `XPZ` exportados pela IDE, XMLs materializados pelo fluxo oficial, indice derivado para triagem e artefatos preparados para importação posterior
 
 - `ObjetosDaKbEmXml`: snapshot oficial da KB; somente leitura para agentes
+- `KbIntelligence`: pasta do índice SQLite derivado e regenerável, usado para triagem técnica e funcional curta sem substituir o snapshot oficial
+- `KbIntelligence` só deve ser usado para triagem ampla quando `last_index_build_run_at` no SQLite for igual ou posterior a `last_xpz_materialization_run_at` em `kb-source-metadata.md`; todo sync XPZ/XML oficial deve regenerar/validar o índice logo depois da materialização, e índice ausente ou defasado é exceção operacional que deve bloquear pesquisa ampla/geração e oferecer atualização ao usuário
 - `XpzExportadosPelaIDE`: pasta onde o usuário grava tanto o `XPZ` completo da Carga Inicial quanto os `XPZ` incrementais do dia a dia
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabalho para XMLs gerados, ajustados ou preservados para importação manual na IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de saída para `import_file.xml` e demais pacotes gerados localmente
@@ -93,14 +95,17 @@ Se você quer entender a base rapidamente:
 ### Carga inicial
 
 - quando o usuário não informar nomes alternativos, a KB deve assumir estas subpastas padrão:
-  - `ObjetosDaKbEmXml`
-  - `XpzExportadosPelaIDE`
   - `scripts`
+  - `Temp`
+  - `XpzExportadosPelaIDE`
+  - `ObjetosDaKbEmXml`
+  - `KbIntelligence`
   - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   - `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - `XpzExportadosPelaIDE` é a pasta de entrada onde o usuário do GeneXus grava os `.xpz` que serão processados
 - depois de processado com sucesso pelo fluxo oficial, o `.xpz` pode ser renomeado para `processado_<nome-original>.xpz`
-- `scripts` concentra os wrappers `.ps1` que tratam os `XPZ`
+- `scripts` concentra os wrappers `.ps1` que tratam `XPZ` e indice derivado
+- `KbIntelligence` guarda o SQLite derivado e os relatórios de validação do índice, quando esse fluxo estiver adotado na KB
 - a Carga Inicial pode usar um `XPZ` completo novo a qualquer momento para reatualizar `ObjetosDaKbEmXml`
 - a mesma estrutura também vale para `XPZ` parciais com objetos alterados desde a última atualização
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus` guarda objetos temporários destinados à importação manual na IDE
@@ -112,10 +117,12 @@ Se você quer entender a base rapidamente:
 - `AGENTS.md` e `README.md` podem existir na raiz ou em subpastas quando houver anotação operacional pertinente
 - se alguma dessas subpastas ainda não existir, a ordem recomendada de criação é:
   1. `scripts`
-  2. `XpzExportadosPelaIDE`
-  3. `ObjetosDaKbEmXml`
-  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
-  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+  2. `Temp`
+  3. `XpzExportadosPelaIDE`
+  4. `ObjetosDaKbEmXml`
+  5. `KbIntelligence`
+  6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - quando `XpzExportadosPelaIDE` ainda não existir, o agente deve perguntar onde o usuário pretende salvar os `.xpz` antes de prosseguir com o processamento
 - quando `ObjetosDaKbEmXml` ainda não existir, o agente deve tratar isso como KB ainda não materializada e parar antes de assumir qualquer snapshot
 
@@ -125,6 +132,8 @@ Se você quer entender a base rapidamente:
 - esse script pode ser usado por projetos de produção que mantenham acervos versionados de XMLs extraidos de `XPZ`
 - a pasta `scripts/` existe como apoio operacional, analitico e editorial compartilhavel, mas nao e fonte normativa da documentacao consolidada da raiz
 - os scripts públicos desta raiz devem operar por parâmetros explícitos de entrada e saída, sem depender de caminhos absolutos privados
+- os `.example.ps1` publicados nas skills funcionam como exemplos metodologicos importantes para bootstrap tecnico e reconstrucao assistida de wrappers locais finais
+- esses `.example.ps1` nao substituem o wrapper local real da pasta paralela da KB e nao devem virar fallback automatico de execucao no fluxo normal
 - se o motor precisar evoluir, a mudança deve preservar compatibilidade com esse uso ou ser acompanhada de atualização explícita dos wrappers consumidores
 
 ---
@@ -191,9 +200,11 @@ Si quieres entender la base rápidamente:
 ### Topología operativa
 
 - en esta trilha, la carpeta nativa de la KB GeneXus es distinta de la carpeta paralela de la KB
-- la carpeta paralela de la KB es la carpeta de trabajo que concentra `XPZ` exportados por la IDE, XMLs materializados por el flujo oficial y artefactos preparados para importación posterior
+- la carpeta paralela de la KB es la carpeta de trabajo que concentra `XPZ` exportados por la IDE, XMLs materializados por el flujo oficial, índice derivado para triaje y artefactos preparados para importación posterior
 
 - `ObjetosDaKbEmXml`: snapshot oficial de la KB; solo lectura para agentes
+- `KbIntelligence`: carpeta del índice SQLite derivado y regenerable, usado para triaje técnico y funcional corto sin sustituir el snapshot oficial
+- `KbIntelligence` solo debe usarse para triaje amplio cuando `last_index_build_run_at` en SQLite sea igual o posterior a `last_xpz_materialization_run_at` en `kb-source-metadata.md`; todo sync XPZ/XML oficial debe regenerar/validar el indice inmediatamente despues de la materializacion, y un indice ausente o desfasado es una excepcion operativa que debe bloquear investigacion amplia/generacion y ofrecer actualizacion al usuario
 - `XpzExportadosPelaIDE`: carpeta donde el usuario graba tanto el `XPZ` completo de la Carga Inicial como los `XPZ` incrementales del día a día
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabajo para XMLs generados, ajustados o preservados para importación manual en la IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de salida para `import_file.xml` y demás paquetes generados localmente
@@ -212,14 +223,17 @@ Si quieres entender la base rápidamente:
 ### Carga inicial
 
 - cuando el usuario no informe nombres alternativos, la KB debe asumir estas subcarpetas estándar:
-  - `ObjetosDaKbEmXml`
-  - `XpzExportadosPelaIDE`
   - `scripts`
+  - `Temp`
+  - `XpzExportadosPelaIDE`
+  - `ObjetosDaKbEmXml`
+  - `KbIntelligence`
   - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   - `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - `XpzExportadosPelaIDE` es la carpeta de entrada donde el usuario de GeneXus graba los `.xpz` que serán procesados
 - después de procesado con éxito por el flujo oficial, el `.xpz` puede renombrarse a `processado_<nome-original>.xpz`
-- `scripts` concentra los wrappers `.ps1` que tratan los `XPZ`
+- `scripts` concentra los wrappers `.ps1` que tratan `XPZ` e índice derivado
+- `KbIntelligence` guarda el SQLite derivado y los informes de validación del índice, cuando ese flujo esté adoptado en la KB
 - la Carga Inicial puede usar un `XPZ` completo nuevo en cualquier momento para reactualizar `ObjetosDaKbEmXml`
 - la misma estructura también vale para `XPZ` parciales con objetos alterados desde la última actualización
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus` guarda objetos temporales destinados a la importación manual en la IDE
@@ -231,10 +245,12 @@ Si quieres entender la base rápidamente:
 - `AGENTS.md` y `README.md` pueden existir en la raíz o en subcarpetas cuando haya anotación operativa pertinente
 - si alguna de esas subcarpetas todavía no existe, el orden recomendado de creación es:
   1. `scripts`
-  2. `XpzExportadosPelaIDE`
-  3. `ObjetosDaKbEmXml`
-  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
-  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+  2. `Temp`
+  3. `XpzExportadosPelaIDE`
+  4. `ObjetosDaKbEmXml`
+  5. `KbIntelligence`
+  6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - cuando `XpzExportadosPelaIDE` todavía no exista, el agente debe preguntar dónde el usuario pretende guardar los `.xpz` antes de continuar con el procesamiento
 - cuando `ObjetosDaKbEmXml` todavía no exista, el agente debe tratar esto como KB aún no materializada y detenerse antes de asumir cualquier snapshot
 
@@ -244,6 +260,8 @@ Si quieres entender la base rápidamente:
 - ese script puede ser usado por proyectos de producción que mantengan acervos versionados de XML extraídos de `XPZ`
 - la carpeta `scripts/` existe como apoyo operativo, analítico y editorial compartible, pero no es fuente normativa de la documentación consolidada de la raíz
 - los scripts públicos de esta raíz deben operar por parámetros explícitos de entrada y salida, sin depender de rutas absolutas privadas
+- los `.example.ps1` publicados en las skills funcionan como ejemplos metodológicos importantes para bootstrap técnico y reconstrucción asistida de wrappers locales finales
+- esos `.example.ps1` no sustituyen el wrapper local real de la carpeta paralela de la KB y no deben convertirse en fallback automático de ejecución en el flujo normal
 - si el motor necesita evolucionar, el cambio debe preservar compatibilidad con ese uso o venir acompañado de actualización explícita de los wrappers consumidores
 
 ---
@@ -310,9 +328,11 @@ If you want to understand the repository quickly:
 ### Operational Topology
 
 - in this trail, the native GeneXus KB folder is different from the KB parallel folder
-- the KB parallel folder is the working folder that concentrates `XPZ` exported by the IDE, XMLs materialized by the official flow, and artifacts prepared for later import
+- the KB parallel folder is the working folder that concentrates `XPZ` exported by the IDE, XMLs materialized by the official flow, derived index for triage, and artifacts prepared for later import
 
 - `ObjetosDaKbEmXml`: official KB snapshot; read-only for agents
+- `KbIntelligence`: folder for the derived and regenerable SQLite index, used for technical and short functional triage without replacing the official snapshot
+- `KbIntelligence` should only be used for broad triage when `last_index_build_run_at` in SQLite is equal to or later than `last_xpz_materialization_run_at` in `kb-source-metadata.md`; every official XPZ/XML sync must regenerate/validate the index immediately after materialization, and a missing or stale index is an operational exception that must block broad search/generation and offer the user an update
 - `XpzExportadosPelaIDE`: folder where the user stores both the full Initial Load `XPZ` and the day-to-day incremental `XPZ` files
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: working area for XMLs generated, adjusted, or preserved for manual IDE import
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: output area for `import_file.xml` and other locally generated packages
@@ -331,14 +351,17 @@ If you want to understand the repository quickly:
 ### Initial load
 
 - when the user does not provide alternative names, the KB must assume these standard subfolders:
-  - `ObjetosDaKbEmXml`
-  - `XpzExportadosPelaIDE`
   - `scripts`
+  - `Temp`
+  - `XpzExportadosPelaIDE`
+  - `ObjetosDaKbEmXml`
+  - `KbIntelligence`
   - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   - `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - `XpzExportadosPelaIDE` is the input folder where the GeneXus user stores the `.xpz` files that will be processed
 - after being successfully processed by the official flow, the `.xpz` can be renamed to `processado_<nome-original>.xpz`
-- `scripts` concentrates the `.ps1` wrappers that handle the `XPZ`
+- `scripts` concentrates the `.ps1` wrappers that handle `XPZ` and the derived index
+- `KbIntelligence` stores the derived SQLite index and index validation reports when that flow is adopted in the KB
 - the Initial Load can use a new full `XPZ` at any time to refresh `ObjetosDaKbEmXml`
 - the same structure also applies to partial `XPZ` files with objects changed since the last update
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus` stores temporary objects intended for manual IDE import
@@ -350,10 +373,12 @@ If you want to understand the repository quickly:
 - `AGENTS.md` and `README.md` may exist in the root or in subfolders when there is relevant operational annotation
 - if any of those subfolders does not exist yet, the recommended creation order is:
   1. `scripts`
-  2. `XpzExportadosPelaIDE`
-  3. `ObjetosDaKbEmXml`
-  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
-  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+  2. `Temp`
+  3. `XpzExportadosPelaIDE`
+  4. `ObjetosDaKbEmXml`
+  5. `KbIntelligence`
+  6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - when `XpzExportadosPelaIDE` does not exist yet, the agent must ask where the user intends to save the `.xpz` files before continuing with processing
 - when `ObjetosDaKbEmXml` does not exist yet, the agent must treat this as a KB not yet materialized and stop before assuming any snapshot
 
@@ -363,4 +388,6 @@ If you want to understand the repository quickly:
 - that script can be used by production projects that keep versioned XML archives extracted from `XPZ`
 - the `scripts/` folder exists as shared operational, analytical, and editorial support, but it is not the normative source of the consolidated root documentation
 - the public scripts in this root must operate through explicit input and output parameters, without depending on private absolute paths
+- the `.example.ps1` files published inside the skills act as important methodological examples for technical bootstrap and assisted reconstruction of final local wrappers
+- those `.example.ps1` files do not replace the real local wrapper of the KB parallel folder and must not become an automatic execution fallback in the normal flow
 - if the engine needs to evolve, the change must preserve compatibility with that use or be accompanied by explicit updates to the consuming wrappers

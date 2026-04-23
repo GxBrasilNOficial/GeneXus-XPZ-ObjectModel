@@ -1,7 +1,7 @@
 #requires -version 5.1
 <#
 .SYNOPSIS
-    Builds the Phase 1 KB Intelligence SQLite index.
+    Builds the KB Intelligence SQLite index.
 
 .DESCRIPTION
     Wrapper for New-KbIntelligenceIndex.py. Keeps paths explicit and avoids

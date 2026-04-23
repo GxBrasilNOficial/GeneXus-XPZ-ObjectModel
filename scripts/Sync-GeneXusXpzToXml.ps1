@@ -770,6 +770,7 @@ function Update-KbSourceMetadata {
 name: KB Source Metadata
 description: Valores de KMW e Source extraidos do XPZ mais recente da IDE — usados para montar o envelope de import_file.xml
 updated: $timestamp
+last_xpz_materialization_run_at: $timestamp
 source_xpz: $SourceXpzPath
 source_refresh_status: $metadataStatus
 ---

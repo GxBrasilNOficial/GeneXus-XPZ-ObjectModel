@@ -5,7 +5,9 @@ guia operacional
 
 ## Escopo atual
 
-Estes scripts implementam a Fase 1 do KB Intelligence, os incrementos aprovados da Fase 2, a consulta operacional da Fase 3, o inventario ampliado da Fase 4 e os incrementos aprovados da Fase 5.
+Estes scripts implementam a base do KB Intelligence e os incrementos aprovados ao longo das Fases 1 a 5, alem da camada de suporte funcional aberta na Fase 6.
+
+As fases continuam relevantes como marco historico e contrato documental, mas nao devem ser tratadas como identidade operacional unica do SQLite. O metadata operacional do indice deve refletir capacidades e frescor atuais, nao um numero de fase.
 
 A Fase 3 foi aberta por contrato em `..\14-kb-intelligence-fase-3-contrato.md` para formalizar o uso operacional por agentes e o comando `impact-basic`.
 
@@ -76,6 +78,36 @@ Para validar os incrementos aprovados da Fase 2 em `FabricaBrasil`, use:
 ```
 
 O local operacional padrao dentro da pasta paralela da KB e `KbIntelligence\kb-intelligence.sqlite`. Este banco e derivado e regeneravel; a fonte normativa continua sendo `ObjetosDaKbEmXml`.
+
+## Frescor operacional do indice
+
+O indice so deve ser usado para triagem ampla quando estiver em dia com a ultima materializacao XPZ/XML do acervo oficial.
+
+- `last_xpz_materialization_run_at` fica no `kb-source-metadata.md` da raiz da pasta paralela da KB
+- `last_index_build_run_at` fica na tabela `metadata` de `KbIntelligence\kb-intelligence.sqlite`
+- `last_index_build_run_at` tambem e espelhado em `KbIntelligence\kb-intelligence-validation.json` quando o relatorio de validacao e gerado
+- `generated_at` nao faz mais parte do contrato operacional do indice; se aparecer em artefato antigo, trate esse indice como legado/incompativel e regenere
+- todo processamento bem-sucedido de `XPZ` exportado pela IDE que materialize ou atualize XMLs em `ObjetosDaKbEmXml` deve chamar a regeneracao/validacao do indice logo depois
+- se `last_index_build_run_at >= last_xpz_materialization_run_at`, o indice esta apto para triagem inicial
+- se o indice estiver ausente, sem metadado, mais antigo que a ultima materializacao ou se `kb-source-metadata.md` nao expuser literalmente `last_xpz_materialization_run_at`, o agente nao deve consultar o acervo oficial de objetos para responder pergunta de negocio, nem por varredura ampla nem por caminho pontual deduzido, e tambem nao deve gerar objetos para importacao na KB pela IDE
+- nesse estado defasado, o agente deve tratar a situacao como excecao operacional, oferecer regeneracao/validacao do indice ao usuario e nao seguir para varredura ampla, triagem substantiva, caminho pontual deduzido, leitura de XML oficial de objeto ou geracao
+- leitura pontual com gate bloqueado so deve ocorrer para diagnostico minimo da incompatibilidade em documentacao local, estrutura, wrappers e metadados operacionais; nao montar, testar existencia, listar ou abrir caminho de XML oficial de objeto como fallback para responder pergunta de negocio
+- o gate deve ser sequencial e atomico; nao testar caminho filho antes da camada pai, por exemplo `KbIntelligence\kb-intelligence.sqlite` antes de `KbIntelligence`
+- se o wrapper local documentado de consulta do indice estiver ausente, nao listar `scripts` nem procurar wrappers alternativos, backups ou nomes parecidos; tratar como defasagem da pasta paralela e oferecer atualizacao via setup
+- nao substituir `last_xpz_materialization_run_at` por data do arquivo, `updated`, `generated_at`, `source_xpz`, data de relatorio ou outro metadado aproximado
+
+Para ler os metadados do indice pelo wrapper:
+
+```powershell
+.\scripts\Query-KbIntelligenceIndex.ps1 `
+  -IndexPath "C:\Dev\Prod\Gx_FabricaBrasil\KbIntelligence\kb-intelligence.sqlite" `
+  -Query index-metadata `
+  -Format text
+```
+
+Se `index-metadata` falhar, retornar vazio ou nao expor `last_index_build_run_at`, trate o indice como legado/incompativel ou sem metadado valido. Nao siga para triagem substantiva, pesquisa ampla, caminho pontual deduzido em `ObjetosDaKbEmXml`, leitura de XML oficial de objeto ou geracao de objetos; ofereca regeneracao/validacao do indice ao usuario.
+
+Quando a validacao de frescor for parte relevante da resposta ou handoff, registre a decisao de forma curta. Em caso apto, informe `last_index_build_run_at >= last_xpz_materialization_run_at`; em caso bloqueado, informe o campo/capacidade ausente ou qual timestamp ficou defasado.
 
 ## Triagem exploratoria no PowerShell
 

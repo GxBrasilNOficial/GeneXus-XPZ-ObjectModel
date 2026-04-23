@@ -1360,6 +1360,7 @@ def write_index(
     source_root: Path,
     objects: list[ObjectInfo],
     evidences: list[Evidence],
+    index_build_run_at: str,
 ) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     if output_path.exists():
@@ -1368,13 +1369,11 @@ def write_index(
     conn = sqlite3.connect(output_path)
     try:
         create_schema(conn)
-        generated_at = datetime.now(timezone.utc).isoformat()
         conn.executemany(
             "INSERT INTO metadata(key, value) VALUES (?, ?)",
             [
-                ("generated_at", generated_at),
+                ("last_index_build_run_at", index_build_run_at),
                 ("source_root", str(source_root)),
-                ("phase", "2"),
                 ("scope", "Procedure,WebPanel,DataProvider,WorkWithForWeb,Transaction"),
             ],
         )
@@ -1435,6 +1434,7 @@ def validation_report(
     objects_by_type: dict[str, dict[str, ObjectInfo]],
     evidences: list[Evidence],
     validation_cases_path: Path | None,
+    index_build_run_at: str,
 ) -> dict[str, object]:
     def has_relation(source_type: str, source_name: str, target_type: str, target_name: str, rule: str) -> bool:
         return any(
@@ -1461,7 +1461,7 @@ def validation_report(
             cases.append(case_result)
 
     return {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "last_index_build_run_at": index_build_run_at,
         "source_root": str(source_root),
         "objects_read_by_type": {key: len(value) for key, value in objects_by_type.items()},
         "objects_written": sum(len(value) for value in objects_by_type.values()),
@@ -1637,13 +1637,14 @@ def main() -> int:
         *table_key_attribute_evidences,
         *table_index_member_attribute_evidences,
     ]
-    write_index(args.output_path.resolve(), source_root, objects, evidences)
+    index_build_run_at = datetime.now(timezone.utc).isoformat()
+    write_index(args.output_path.resolve(), source_root, objects, evidences, index_build_run_at)
 
     validation_cases_path = args.validation_cases_path.resolve() if args.validation_cases_path else None
     if validation_cases_path and not validation_cases_path.exists():
         raise SystemExit(f"ValidationCasesPath not found: {validation_cases_path}")
 
-    report = validation_report(source_root, objects_by_type, evidences, validation_cases_path)
+    report = validation_report(source_root, objects_by_type, evidences, validation_cases_path, index_build_run_at)
     if args.validation_report_path:
         report_path = args.validation_report_path.resolve()
         report_path.parent.mkdir(parents=True, exist_ok=True)

@@ -24,6 +24,11 @@ casos, o agente deve reconhecer a defasagem como oportunidade de adaptacao
 local, propor a mudanca ao usuario e aguardar aprovacao explicita; nao deve
 alterar wrappers locais por conta propria.
 
+Os `.example.ps1` da base metodologica podem servir como referencia para
+consertar ou reconstruir wrappers locais finais, mas nao substituem o wrapper
+local real e nao devem ser usados como fallback automatico de execucao no fluxo
+normal da pasta paralela da KB.
+
 Se a pasta paralela da KB ainda nao estiver montada, validada ou mapeada, parar e usar `xpz-kb-parallel-setup` antes do `sync`.
 
 ## PATH RESOLUTION
@@ -132,7 +137,12 @@ Os wrappers seguem esta convenção de parâmetros:
   mencionar ao usuario e aguardar aprovacao explicita antes de qualquer ajuste
 - `-KbMetadataPath` *(opcional)* — salva metadados da KB em formato Markdown
 - se esse parâmetro estiver ativo no wrapper local, `kb-source-metadata.md` faz parte normal do fluxo e pode ser reescrito a cada processamento
+- quando `kb-source-metadata.md` for reescrito, ele deve registrar `last_xpz_materialization_run_at` como horario do processamento XPZ/XML solicitado, mesmo quando nenhum XML tiver mudanca material
 - se o `XPZ` vier com `Source` vazio, incompleto ou ausente, o wrapper deve preservar valores estáveis conhecidos e emitir warning de refresh parcial; isso não invalida o sync de objetos
+- depois de materializacao XPZ/XML bem-sucedida em `ObjetosDaKbEmXml`, o wrapper local deve acionar compulsoriamente a regeneracao/validacao do indice derivado por wrapper local de `KbIntelligence`
+- evidencia clara desse encadeamento significa declaracao local explicita no `README.md`/`AGENTS.md` ou chamada observavel no proprio wrapper local; nao presumir essa capacidade apenas porque a base compartilhada a exige
+- se o wrapper local de regeneracao do indice estiver ausente ou defasado, ou se o wrapper de materializacao nao encadear esse refresh, tratar como bloqueio operacional do sync normal e oferecer ao usuario atualizacao via `xpz-kb-parallel-setup` antes de seguir
+- nao apresentar `sync` seguido de regeneracao manual separada do indice como fluxo normal em pasta que adota `KbIntelligence`
 - `-NoGitSummary` *(switch)* — suprime resumo Git no final
 
 ### Wrapper de conferência full
@@ -176,10 +186,17 @@ Os wrappers seguem esta convenção de parâmetros:
     - nao desviar a materializacao para a pasta de geracao para importacao
     - se o mesmo arquivo `XPZ` for reexportado/atualizado e reprocessado, tratar o novo processamento pelo conteúdo e pelo `lastUpdate` resultante, não pela memória do processamento anterior
     - se houver `-ExpectedItems`, usar esse contexto apenas para comparar foco esperado versus retorno oficial; a materialização continua seguindo tudo que a KB devolveu oficialmente
-11. Montar o comando com os parâmetros corretos
-12. Executar via Bash com `pwsh -File ...`
-13. Se o processamento foi concluído com sucesso, permitir renomear o `.xpz` consumido para `processado_<nome-original>.xpz`
-14. Reportar: objetos criados, atualizados, ignorados, resíduos removidos e resumo Git
+11. Se a pasta adota `KbIntelligence`, validar que o wrapper local de materializacao encadeia refresh compulsorio do indice apos sync bem-sucedido que nao seja `VerifyOnly`
+    - considerar evidencia clara apenas quando isso estiver documentado explicitamente no repositorio local ou observavel no codigo do proprio wrapper local
+    - se o wrapper nao tiver essa capacidade, bloquear o sync normal antes de executar e oferecer atualizacao via `xpz-kb-parallel-setup`
+    - nao executar sync normal esperando corrigir o indice manualmente depois
+    - nao usar o wrapper antigo para atualizar `kb-source-metadata.md` e depois regenerar o indice manualmente como substituto da correcao de compatibilidade
+    - nao usar `.example.ps1` da base compartilhada como substituto temporario do wrapper local real ausente
+12. Montar o comando com os parâmetros corretos
+13. Executar via Bash com `pwsh -File ...`
+14. Se a materializacao XPZ/XML em `ObjetosDaKbEmXml` foi concluida com sucesso e nao era `VerifyOnly`, regenerar/validar compulsoriamente o indice derivado antes de encerrar o fluxo
+15. Se o processamento foi concluído com sucesso, permitir renomear o `.xpz` consumido para `processado_<nome-original>.xpz`
+16. Reportar: objetos criados, atualizados, ignorados, resíduos removidos, refresh do indice e resumo Git
     - explicar que `updated` significa que o wrapper materializou conteúdo mais novo/relevante para o acervo naquele processamento
     - explicar que `unchanged` significa que o item já tinha no acervo oficial conteúdo compatível ou mais novo, tipicamente com `lastUpdate` igual ou superior ao XML vindo do `XPZ`
     - explicar que `updated`/`unchanged` pertencem ao processamento do `XPZ` contra o arquivo materializado atual, nao ao estado Git do repositorio
@@ -191,14 +208,14 @@ Os wrappers seguem esta convenção de parâmetros:
     - se o `XPZ` oficial da KB trouxer objetos adicionais fora do foco imediato da frente, reportar isso como inesperado para a frente atual, mas tratar como possível mudança paralela legítima vinda da IDE/KB até evidência em contrário
     - se `-ExpectedItems` tiver sido informado, classificar explicitamente `itens esperados que voltaram`, `itens esperados que nao voltaram` e `retorno oficial adicional da KB`
     - se `-ExpectedItems` tiver sido informado, emitir tambem um resumo humano curto no console/handoff, sem alarmismo e sem tratar adicionais oficiais ou esperados ausentes como falha automatica
-15. Quando um objeto voltar da KB via `xpz` e for materializado no acervo oficial, tratar esse XML do acervo como a fonte mais confiável para alterações futuras; não reutilizar cópia intermediária/delta sem comparar com o acervo atualizado
-16. Ao preparar commit ou handoff após o `sync`, separar explicitamente:
+17. Quando um objeto voltar da KB via `xpz` e for materializado no acervo oficial, tratar esse XML do acervo como a fonte mais confiável para alterações futuras; não reutilizar cópia intermediária/delta sem comparar com o acervo atualizado
+18. Ao preparar commit ou handoff após o `sync`, separar explicitamente:
     - artefato da frente atual = resultado que o processamento atual confirmou como pertencente à frente em curso
     - mudanca paralela legitima vinda da KB/IDE = item devolvido oficialmente pela KB no `XPZ`, ainda que fora do foco imediato da frente
     - mudanca lateral indevida = alteracao feita pelo agente fora do escopo da fase ou fora do fluxo oficial esperado
     - nao agrupar no mesmo commit da frente atual mudancas paralelas sem decisao explicita, mas nao tratar automaticamente o retorno oficial adicional da KB como erro
-17. O resumo Git do item anterior e apenas informativo; nao autoriza `git add`, `commit` ou `push`
-18. Se o usuario nao pedir fechamento Git de forma explicita, o fluxo deve terminar no handoff tecnico e, no maximo, sugerir proximos passos sem executar publicacao
+19. O resumo Git do item anterior e apenas informativo; nao autoriza `git add`, `commit` ou `push`
+20. Se o usuario nao pedir fechamento Git de forma explicita, o fluxo deve terminar no handoff tecnico e, no maximo, sugerir proximos passos sem executar publicacao
 
 ---
 
@@ -233,6 +250,10 @@ O arquivo `kb-source-metadata.md`, quando exposto pelo wrapper local via
 cada sync. Ele deve preservar valores estaveis conhecidos quando o `XPZ` atual
 vier com metadados de `Source` vazios ou parciais.
 
+Esse arquivo tambem e o local esperado de `last_xpz_materialization_run_at`.
+Esse horario representa a ultima solicitacao/processamento de materializacao
+XPZ/XML, nao apenas a ultima mudanca material detectada nos XMLs.
+
 ---
 
 ## CONSTRAINTS
@@ -250,6 +271,10 @@ vier com metadados de `Source` vazios ou parciais.
 - NUNCA usar GUID como estrutura principal de saida da materializacao
 - NUNCA organizar o acervo materializado com `guid`, `parentGuid`, `parentType` ou `moduleGuid` como eixo principal de navegacao
 - NUNCA criar, alterar, mover, renomear ou sobrescrever arquivos em `ObjetosDaKbEmXml` fora do fluxo oficial do script `.ps1`
+- NUNCA encerrar sync XPZ/XML bem-sucedido sem refresh compulsorio do indice derivado quando a KB adotar `KbIntelligence`
+- NUNCA executar sync normal em pasta que adota `KbIntelligence` se o wrapper local de materializacao ainda nao encadeia refresh compulsorio do indice; oferecer atualizacao via `xpz-kb-parallel-setup`
+- NUNCA descrever `sync` seguido de rebuild manual separado do indice como fluxo normal em pasta que adota `KbIntelligence`
+- NUNCA usar sync por wrapper antigo para reparar metadado de materializacao quando o proprio wrapper esta defasado; primeiro atualizar/validar wrappers pela trilha de setup
 - NUNCA antecipar atualização manual de `ObjetosDaKbEmXml`
 - NUNCA prosseguir com sync normal quando `ObjetosDaKbEmXml` estiver dirty fora do fluxo oficial; primeiro preserve, restaure e trate como incidente de processo
 - NUNCA tratar edição detectada ou pretendida em `ObjetosDaKbEmXml` para delta ainda não reexportado oficialmente pela KB como detalhe operacional; isso é erro explícito de processo

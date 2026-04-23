@@ -28,6 +28,15 @@ Caminho opcional para salvar metadados da KB em Markdown.
 Quando omitido, o wrapper grava `kb-source-metadata.md` na raiz da pasta
 paralela da KB.
 
+.PARAMETER IndexUpdateScriptPath
+Caminho opcional do wrapper local que regenera o indice derivado apos
+materializacao bem-sucedida. Quando omitido, usa
+`Update-KbIntelligenceIndex.ps1` na mesma pasta deste wrapper.
+
+.PARAMETER IndexValidationCasesPath
+Caminho opcional para casos de validacao usados no refresh compulsorio do
+indice.
+
 .PARAMETER NoGitSummary
 Suprime resumo local de alterações Git em `ObjetosDaKbEmXml`.
 
@@ -60,6 +69,10 @@ param(
 
     [string]$KbMetadataPath,
 
+    [string]$IndexUpdateScriptPath,
+
+    [string]$IndexValidationCasesPath,
+
     [string[]]$ExpectedItems = @(),
 
     [string]$SharedSkillsRoot = "C:\CAMINHO\PARA\GeneXus-XPZ-Skills",
@@ -76,6 +89,54 @@ $destinationRoot = Join-Path $repoRoot "ObjetosDaKbEmXml"
 
 if (-not (Test-Path -LiteralPath $enginePath)) {
     throw "Engine script not found: $enginePath"
+}
+
+function Invoke-IndexRefresh {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ScriptPath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$SharedSkillsRoot,
+
+        [string]$ValidationCasesPath
+    )
+
+    if (-not (Test-Path -LiteralPath $ScriptPath)) {
+        throw "Index refresh wrapper not found: $ScriptPath"
+    }
+
+    $powerShellCommand = Get-Command pwsh -ErrorAction SilentlyContinue
+    if ($null -eq $powerShellCommand) {
+        $powerShellCommand = Get-Command powershell -ErrorAction SilentlyContinue
+    }
+    if ($null -eq $powerShellCommand) {
+        throw "PowerShell executable not found for index refresh."
+    }
+    $powerShellPath = $powerShellCommand.Source
+
+    $arguments = @(
+        "-NoProfile",
+        "-File",
+        $ScriptPath,
+        "-SharedSkillsRoot",
+        $SharedSkillsRoot
+    )
+
+    if ($ValidationCasesPath) {
+        $arguments += @(
+            "-ValidationCasesPath",
+            $ValidationCasesPath,
+            "-FailOnValidationFailure"
+        )
+    }
+
+    Write-Host ""
+    Write-Host "Refreshing KbIntelligence index after XPZ/XML materialization..." -ForegroundColor Cyan
+    & $powerShellPath @arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "Index refresh failed after XPZ/XML materialization. Exit code: $LASTEXITCODE"
+    }
 }
 
 function Show-LocalGitSummary {
@@ -207,6 +268,13 @@ if (-not $KbMetadataPath) {
     $KbMetadataPath = Join-Path $repoRoot "kb-source-metadata.md"
 }
 
+if (-not $IndexUpdateScriptPath) {
+    $IndexUpdateScriptPath = Join-Path $PSScriptRoot "Update-KbIntelligenceIndex.ps1"
+    if (-not (Test-Path -LiteralPath $IndexUpdateScriptPath)) {
+        throw "Local index refresh wrapper not found: $IndexUpdateScriptPath. Generate or update the local final wrapper before normal XPZ/XML sync."
+    }
+}
+
 $params = @{
     InputPath       = $InputPath
     DestinationRoot = $destinationRoot
@@ -238,6 +306,10 @@ $result = & $enginePath @params
 $removedRenameResidue = @()
 if (-not $VerifyOnly) {
     $removedRenameResidue = @(Remove-RenamedObjectResidue -RootPath $destinationRoot)
+    Invoke-IndexRefresh `
+        -ScriptPath $IndexUpdateScriptPath `
+        -SharedSkillsRoot $SharedSkillsRoot `
+        -ValidationCasesPath $IndexValidationCasesPath
 }
 
 $shouldShowGitSummary = -not $NoGitSummary

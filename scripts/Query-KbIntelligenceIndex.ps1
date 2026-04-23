@@ -9,7 +9,7 @@ param(
     [string]$IndexPath,
 
     [Parameter(Mandatory = $true)]
-    [ValidateSet("object-info", "search-objects", "who-uses", "what-uses", "show-evidence", "impact-basic", "functional-trace-basic")]
+    [ValidateSet("object-info", "search-objects", "who-uses", "what-uses", "show-evidence", "impact-basic", "functional-trace-basic", "index-metadata")]
     [string]$Query,
 
     [string]$ObjectType,

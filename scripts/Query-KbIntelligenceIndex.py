@@ -32,6 +32,30 @@ def limit_rows(rows: list[dict[str, object]], limit: int | None) -> list[dict[st
     return rows[:limit]
 
 
+def index_metadata(conn: sqlite3.Connection) -> dict[str, object]:
+    rows = fetch_all(
+        conn,
+        """
+        SELECT key, value
+        FROM metadata
+        ORDER BY key
+        """,
+        (),
+    )
+    metadata = {str(row["key"]): row["value"] for row in rows}
+    last_index_build_run_at = metadata.get("last_index_build_run_at")
+    if not last_index_build_run_at:
+        raise SystemExit(
+            "index-metadata requires metadata.last_index_build_run_at; "
+            "legacy or incompatible index detected, regenerate before using it for triage."
+        )
+    return {
+        "query": "index-metadata",
+        "metadata": metadata,
+        "last_index_build_run_at": last_index_build_run_at,
+    }
+
+
 def object_info(conn: sqlite3.Connection, object_type: str, object_name: str) -> dict[str, object]:
     obj = fetch_one(
         conn,
@@ -384,6 +408,17 @@ def show_evidence(
 def format_text(result: dict[str, object]) -> str:
     lines: list[str] = []
     query = result.get("query")
+    if query == "index-metadata":
+        metadata = result.get("metadata")
+        lines.append("index-metadata")
+        lines.append(f"last_index_build_run_at: {result.get('last_index_build_run_at')}")
+        if isinstance(metadata, dict):
+            for key in sorted(metadata):
+                if key == "last_index_build_run_at":
+                    continue
+                lines.append(f"{key}: {metadata[key]}")
+        return "\n".join(lines)
+
     obj = result.get("object")
     if isinstance(obj, dict):
         if result.get("found") is False:
@@ -516,6 +551,7 @@ def parse_args() -> argparse.Namespace:
             "show-evidence",
             "impact-basic",
             "functional-trace-basic",
+            "index-metadata",
         ],
     )
     parser.add_argument("--object-type")
@@ -537,7 +573,9 @@ def main() -> int:
 
     conn = sqlite3.connect(args.index_path)
     try:
-        if args.query == "object-info":
+        if args.query == "index-metadata":
+            result = index_metadata(conn)
+        elif args.query == "object-info":
             if not args.object_type or not args.object_name:
                 raise SystemExit("object-info requires --object-type and --object-name.")
             result = object_info(conn, args.object_type, args.object_name)

@@ -52,6 +52,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - se houver tensao entre fluxo GeneXus geral do skill e achado empirico local desta base, o agente deve seguir a base local para decisao de `XPZ`/`XML` e manter do skill apenas a disciplina metodologica
 - quando a base compartilhar uma capacidade operacional nova, isso nao autoriza presumir que wrappers locais da pasta paralela da KB ja a exponham; a exposicao local e decisao separada
 - se o wrapper local ainda nao expuser um parametro operacional relevante ja disponivel na base compartilhada, o agente deve tratar isso como oportunidade de atualizacao local, mencionar ao usuario e aguardar aprovacao explicita; nao deve executar a mudanca local automaticamente
+- exemplos sanitizados `.example.ps1` publicados pelas skills podem servir como referencia metodologica para reconstruir wrappers locais finais, mas nao substituem o wrapper local real nem autorizam fallback automatico de execucao no fluxo normal
 
 ## Regra de leitura para runtime
 
@@ -74,6 +75,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 
 - quando o objetivo principal for triagem por indice derivado para decidir por onde comecar na KB, preferir a skill `xpz-index-triage`
 - quando uma pasta paralela de KB expuser `KbIntelligence\kb-intelligence.sqlite`, o agente deve usar o indice para triagem tecnica antes de alterar objetos GeneXus cobertos pelo contrato da Fase 3
+- antes de confiar no indice, comparar `last_index_build_run_at` na tabela `metadata` do SQLite com `last_xpz_materialization_run_at` lido nominalmente em `kb-source-metadata.md`
+- quando o wrapper local expuser `index-metadata`, usar essa consulta para obter `last_index_build_run_at`; se ela falhar, retornar vazio ou nao trouxer timestamp, tratar o indice como sem metadado valido e oferecer regeneracao/validacao antes de seguir
+- se `kb-source-metadata.md` nao expuser literalmente `last_xpz_materialization_run_at`, tratar a pasta paralela como defasada/incompatível e oferecer atualizacao via `xpz-kb-parallel-setup`; nao inferir esse horario por data do arquivo, `updated`, `generated_at`, `source_xpz` ou outro campo aproximado
+- se `last_index_build_run_at` for igual ou posterior a `last_xpz_materialization_run_at`, o indice esta apto para triagem inicial
+- quando a validacao de frescor/compatibilidade tiver sido relevante para liberar ou bloquear a resposta, declarar brevemente no handoff se o gate foi liberado (`last_index_build_run_at >= last_xpz_materialization_run_at`) ou qual campo/capacidade bloqueou
+- todo processamento bem-sucedido de `XPZ` exportado pela IDE que materialize XMLs oficiais em `ObjetosDaKbEmXml` deve chamar a regeneracao/validacao do indice derivado logo depois
+- antes de sugerir ou executar `sync` normal em pasta que adota `KbIntelligence`, o agente deve ter evidencia clara, na documentacao local ou no proprio wrapper local, de que o wrapper de materializacao encadeia esse refresh compulsorio do indice
+- na ausencia dessa evidencia clara, tratar a pasta paralela como compatibilidade pendente e oferecer atualizacao via `xpz-kb-parallel-setup` antes do `sync`
+- se o wrapper local de materializacao ainda nao encadear esse refresh, nao usar esse wrapper antigo para reparar metadado e regenerar indice manualmente; bloquear e oferecer atualizacao via `xpz-kb-parallel-setup`
+- nao descrever `sync` seguido de rebuild manual separado do indice como fluxo normal quando a pasta paralela adotar `KbIntelligence`
+- se o indice estiver ausente, sem metadado ou mais antigo que a ultima materializacao XPZ/XML, o agente nao deve consultar o acervo oficial de objetos para responder negocio, nem por varredura ampla nem por caminho pontual deduzido, nem gerar objetos para importacao na KB pela IDE; deve tratar isso como excecao operacional e oferecer ao usuario a regeneracao/validacao do indice antes de seguir
+- com gate de indice bloqueado, leitura pontual so e aceitavel para diagnostico minimo da incompatibilidade em documentacao local, estrutura, wrappers e metadados operacionais; nao montar, testar existencia, listar ou abrir caminho de XML oficial de objeto como fallback para responder a pergunta
+- o gate do indice deve ser sequencial e atomico; nao testar caminho filho antes da camada pai, por exemplo `KbIntelligence\kb-intelligence.sqlite` antes de `KbIntelligence`
+- se o wrapper local documentado de consulta do indice estiver ausente, nao listar `scripts` nem procurar wrappers alternativos, backups ou nomes parecidos; tratar como defasagem da pasta paralela e oferecer atualizacao via setup
 - a triagem operacional deve consultar `object-info`, `who-uses`, `what-uses` e `show-evidence`, ou `impact-basic` quando esse comando estiver disponivel
 - `impact-basic` e a triagem equivalente representam impacto tecnico direto baseado no indice; nao provam impacto runtime completo
 - `functional-trace-basic`, quando disponivel, pode empacotar a coleta inicial de triagem funcional, mas nao abre XML automaticamente, nao interpreta regra de negocio e nao substitui a resposta classificada do agente
@@ -114,11 +129,13 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a tarefa envolver montar ou serializar `XPZ`, consultar primeiro a secao `Envelope XPZ observado em export real` de `02-regras-operacionais-e-runtime.md`
 - distinguir sempre a pasta nativa da KB da pasta paralela da KB; nesta trilha, os `XPZ`, os XMLs materializados e os artefatos de importacao vivem na pasta paralela da KB, nao dentro da pasta nativa da KB
 - quando a tarefa envolver gerar, ajustar, preservar ou empacotar XMLs, distinguir explicitamente as tres areas operacionais do repositorio: `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e `PacotesGeradosParaImportacaoNaKbNoGenexus`
-- na carga inicial, considerar tambem `XpzExportadosPelaIDE` como pasta de entrada padrão, `scripts` como pasta de wrappers, `Temp` como destino preferencial de artefatos efemeros de execucao, e as demais pastas como estrutura funcional padrão quando o usuario nao informar nomes alternativos
-- se alguma dessas pastas ainda nao existir, criar nesta ordem: `scripts`, `Temp`, `XpzExportadosPelaIDE`, `ObjetosDaKbEmXml`, `ObjetosGeradosParaImportacaoNaKbNoGenexus`, `PacotesGeradosParaImportacaoNaKbNoGenexus`
+- na carga inicial, considerar tambem `XpzExportadosPelaIDE` como pasta de entrada padrão, `scripts` como pasta de wrappers, `Temp` como destino preferencial de artefatos efemeros de execucao, `KbIntelligence` como pasta do indice derivado, e as demais pastas como estrutura funcional padrão quando o usuario nao informar nomes alternativos
+- se alguma dessas pastas ainda nao existir, criar nesta ordem: `scripts`, `Temp`, `XpzExportadosPelaIDE`, `ObjetosDaKbEmXml`, `KbIntelligence`, `ObjetosGeradosParaImportacaoNaKbNoGenexus`, `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - se `XpzExportadosPelaIDE` ainda nao existir, perguntar onde o usuario quer salvar os `.xpz`
 - se `ObjetosDaKbEmXml` ainda nao existir, tratar a KB como ainda nao materializada e parar antes de assumir snapshot
+- se `KbIntelligence` ainda nao existir, tratar isso como ausencia da camada derivada de triagem, nao como ausencia do snapshot oficial; preparar a pasta e os wrappers locais antes de depender de `xpz-index-triage`
 - nesta trilha, `ObjetosDaKbEmXml` e snapshot oficial e somente leitura para agentes
+- nesta trilha, `KbIntelligence\kb-intelligence.sqlite` e indice derivado e regeneravel a partir de `ObjetosDaKbEmXml`
 - nesta trilha, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e a area de trabalho para XMLs a importar manualmente na IDE
 - nesta trilha, cada frente ativa deve usar sua propria subpasta `NomeCurto_GUID_YYYYMMDD` dentro de `ObjetosGeradosParaImportacaoNaKbNoGenexus`
 - nesta trilha, os arquivos ativos do lote devem ficar dentro da subpasta ativa da frente, e nao soltos na raiz da area de trabalho
