@@ -433,7 +433,7 @@ Gate minimo:
 
 Aberta por contrato em `14-kb-intelligence-fase-3-contrato.md`, depois do encerramento validado da Fase 2.
 
-Estado em 2026-04-21: implementada e encerrada, com registro em `historico/2026-04-kb-intelligence-fase-3-encerramento.md`.
+Estado em 2026-04-21: implementada e encerrada, com registro em `historico/kb-intelligence/2026-04-kb-intelligence-fase-3-encerramento.md`.
 
 A Fase 3 nao amplia o escopo de extracao. Ela formaliza o uso operacional do indice tecnico por agentes antes de alterar objetos GeneXus.
 
@@ -449,7 +449,7 @@ Esta fase deve priorizar respostas curtas, baratas e rastreaveis.
 
 Aberta por contrato em `15-kb-intelligence-fase-4-contrato.md`, depois do encerramento validado da Fase 3.
 
-Estado em 2026-04-21: implementada e encerrada, com registro em `historico/2026-04-kb-intelligence-fase-4-encerramento.md`.
+Estado em 2026-04-21: implementada e encerrada, com registro em `historico/kb-intelligence/2026-04-kb-intelligence-fase-4-encerramento.md`.
 
 Objetivo:
 
