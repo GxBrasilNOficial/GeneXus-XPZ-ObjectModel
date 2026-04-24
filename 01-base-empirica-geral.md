@@ -7,7 +7,7 @@ empirico
 medio
 
 ## Depende de
-09-historico-e-inventario-publico.md
+09-inventario-e-rastreabilidade-publica.md
 
 ## Usado por
 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 08-guia-para-agente-gpt.md

@@ -27,7 +27,7 @@ Os 10 arquivos abaixo formam a base compartilhada principal desta raiz, consolid
 
 Além dessa base principal, a raiz também pode conter documentação operacional complementar de frentes ativas, quando ela ainda precisar permanecer visível fora de `historico/`.
 
-- `00-readme-genexus-xpz-xml.md`
+- `00-indice-da-base-genexus-xpz-xml.md`
 - `01-base-empirica-geral.md`
 - `02-regras-operacionais-e-runtime.md`
 - `03-risco-e-decisao-por-tipo.md`
@@ -36,7 +36,7 @@ Além dessa base principal, a raiz também pode conter documentação operaciona
 - `06-padroes-de-objeto-e-nomenclatura.md`
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
-- `09-historico-e-inventario-publico.md`
+- `09-inventario-e-rastreabilidade-publica.md`
 
 ### Skills para agentes
 
@@ -53,7 +53,7 @@ Além dessa base principal, a raiz também pode conter documentação operaciona
 
 Se você quer entender a base rapidamente:
 
-1. comece por `00-readme-genexus-xpz-xml.md`
+1. comece por `00-indice-da-base-genexus-xpz-xml.md`
 2. siga para `01-base-empirica-geral.md`
 3. depois leia `02-regras-operacionais-e-runtime.md`
 4. em seguida leia `03-risco-e-decisao-por-tipo.md`
@@ -157,7 +157,7 @@ Los 10 archivos de abajo forman la base compartida principal de esta raíz, cons
 
 Además de esa base principal, la raíz también puede contener documentación operativa complementaria de frentes activas, cuando todavía necesite permanecer visible fuera de `historico/`.
 
-- `00-readme-genexus-xpz-xml.md`
+- `00-indice-da-base-genexus-xpz-xml.md`
 - `01-base-empirica-geral.md`
 - `02-regras-operacionais-e-runtime.md`
 - `03-risco-e-decisao-por-tipo.md`
@@ -166,7 +166,7 @@ Además de esa base principal, la raíz también puede contener documentación o
 - `06-padroes-de-objeto-e-nomenclatura.md`
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
-- `09-historico-e-inventario-publico.md`
+- `09-inventario-e-rastreabilidade-publica.md`
 
 ### Skills para agentes
 
@@ -183,7 +183,7 @@ Además de esa base principal, la raíz también puede contener documentación o
 
 Si quieres entender la base rápidamente:
 
-1. empieza por `00-readme-genexus-xpz-xml.md`
+1. empieza por `00-indice-da-base-genexus-xpz-xml.md`
 2. continúa con `01-base-empirica-geral.md`
 3. luego lee `02-regras-operacionais-e-runtime.md`
 4. después lee `03-risco-e-decisao-por-tipo.md`
@@ -287,7 +287,7 @@ The 10 files below form the main shared base in this root, consolidated to make 
 
 In addition to that main base, the root may also contain complementary operational documentation for active workstreams when it still needs to remain visible outside `historico/`.
 
-- `00-readme-genexus-xpz-xml.md`
+- `00-indice-da-base-genexus-xpz-xml.md`
 - `01-base-empirica-geral.md`
 - `02-regras-operacionais-e-runtime.md`
 - `03-risco-e-decisao-por-tipo.md`
@@ -296,7 +296,7 @@ In addition to that main base, the root may also contain complementary operation
 - `06-padroes-de-objeto-e-nomenclatura.md`
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
-- `09-historico-e-inventario-publico.md`
+- `09-inventario-e-rastreabilidade-publica.md`
 
 ### Skills for agents
 
@@ -313,7 +313,7 @@ In addition to that main base, the root may also contain complementary operation
 
 If you want to understand the repository quickly:
 
-1. start with `00-readme-genexus-xpz-xml.md`
+1. start with `00-indice-da-base-genexus-xpz-xml.md`
 2. continue with `01-base-empirica-geral.md`
 3. then read `02-regras-operacionais-e-runtime.md`
 4. next read `03-risco-e-decisao-por-tipo.md`

@@ -10,7 +10,7 @@ alto
 nenhum
 
 ## Usado por
-00-readme-genexus-xpz-xml.md, 01-base-empirica-geral.md
+00-indice-da-base-genexus-xpz-xml.md, 01-base-empirica-geral.md
 
 ## Objetivo
 Preservar rastreabilidade da consolidacao, inventario documental, inventario bruto publico sanitizado e o mapeamento usado para reduzir a base a ate 10 arquivos.
@@ -98,7 +98,7 @@ alto
 nenhum; este inventario reconstrói o estado da base antes da consolidacao final
 
 ## Usado por
-00-readme-genexus-xpz-xml.md, 04-genexus-open-points.md, 99-resumo-da-consolidacao.md
+00-indice-da-base-genexus-xpz-xml.md, 04-genexus-open-points.md, 99-resumo-da-consolidacao.md
 
 ## Objetivo
 Mapear os arquivos Markdown encontrados, identificar sobreposições e registrar a lógica de consolidação adotada.
@@ -187,7 +187,7 @@ alto
 nenhum; esta versao substitui o dump bruto nominal para publicacao
 
 ## Usado por
-01-base-empirica-geral.md, 10-matriz-part-types-por-tipo.md, 11-campos-estaveis-vs-variaveis.md, 12-diffs-estruturais-por-tipo.md, 00-readme-genexus-xpz-xml.md
+01-base-empirica-geral.md, 10-matriz-part-types-por-tipo.md, 11-campos-estaveis-vs-variaveis.md, 12-diffs-estruturais-por-tipo.md, 00-indice-da-base-genexus-xpz-xml.md
 
 ## Objetivo
 Preservar os fatos agregados da varredura XML sem expor nomes reais de objeto, modulos, pais, caminhos ou descricoes de negocio da KB de origem.
@@ -256,7 +256,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ## Estrutura alvo
 
-1. `00-readme-genexus-xpz-xml.md`
+1. `00-indice-da-base-genexus-xpz-xml.md`
 2. `01-base-empirica-geral.md`
 3. `02-regras-operacionais-e-runtime.md`
 4. `03-risco-e-decisao-por-tipo.md`
@@ -265,7 +265,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 7. `06-padroes-de-objeto-e-nomenclatura.md`
 8. `07-open-points-e-checklist.md`
 9. `08-guia-para-agente-gpt.md`
-10. `09-historico-e-inventario-publico.md`
+10. `09-inventario-e-rastreabilidade-publica.md`
 
 ## Regra de consolidacao
 
@@ -277,9 +277,9 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ## Mapeamento arquivo a arquivo
 
-### 00-readme-genexus-xpz-xml.md
+### 00-indice-da-base-genexus-xpz-xml.md
 
-- Destino principal: `00-readme-genexus-xpz-xml.md`
+- Destino principal: `00-indice-da-base-genexus-xpz-xml.md`
 - Manter:
   - objetivo da base
   - escopo
@@ -290,7 +290,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ### 00-inventario-da-base-documental.md
 
-- Destino principal: `09-historico-e-inventario-publico.md`
+- Destino principal: `09-inventario-e-rastreabilidade-publica.md`
 - Manter:
   - inventario dos documentos
   - diagnostico de duplicidade/sobreposicao
@@ -425,7 +425,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
   - criterios de resposta
   - quando gerar, recusar ou abortar
   - regras de materializacao, serializacao e fonte do ponto de vista do agente
-- Incorporar trechos introdutorios mais curtos tambem em `00-readme-genexus-xpz-xml.md`
+- Incorporar trechos introdutorios mais curtos tambem em `00-indice-da-base-genexus-xpz-xml.md`
 
 ### 04-webpanel-familias-e-templates.md
 
@@ -456,7 +456,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ### 30-inventario-bruto-kb.md
 
-- Destino principal: `09-historico-e-inventario-publico.md`
+- Destino principal: `09-inventario-e-rastreabilidade-publica.md`
 - Manter:
   - contagens agregadas
   - escopo da varredura
@@ -466,7 +466,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ### 99-resumo-da-consolidacao.md
 
-- Destino principal: `09-historico-e-inventario-publico.md`
+- Destino principal: `09-inventario-e-rastreabilidade-publica.md`
 - Manter:
   - historico da consolidacao
   - decisoes tomadas
@@ -475,9 +475,9 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ## Mapeamento por secao alvo
 
-### 00-readme-genexus-xpz-xml.md
+### 00-indice-da-base-genexus-xpz-xml.md
 
-- de `00-readme-genexus-xpz-xml.md`
+- de `00-indice-da-base-genexus-xpz-xml.md`
 - de `26-guia-para-agente-gpt.md`: ordem de consulta resumida e limites de uso
 
 ### 01-base-empirica-geral.md
@@ -520,7 +520,7 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 - de `26-guia-para-agente-gpt.md`
 
-### 09-historico-e-inventario-publico.md
+### 09-inventario-e-rastreabilidade-publica.md
 
 - de `00-inventario-da-base-documental.md`
 - de `30-inventario-bruto-kb.md`
@@ -536,13 +536,13 @@ Preservar todo o conteudo existente, definindo destino e criterio de incorporaca
 
 ## Ordem recomendada de execucao da consolidacao
 
-1. consolidar `09-historico-e-inventario-publico.md`
+1. consolidar `09-inventario-e-rastreabilidade-publica.md`
 2. consolidar `01-base-empirica-geral.md`
 3. consolidar `02-regras-operacionais-e-runtime.md`
 4. consolidar `03-risco-e-decisao-por-tipo.md`
 5. manter `04` e `05` como arquivos especializados
 6. consolidar `06`, `07` e `08`
-7. revisar `00-readme-genexus-xpz-xml.md` por fim, apontando para a nova estrutura
+7. revisar `00-indice-da-base-genexus-xpz-xml.md` por fim, apontando para a nova estrutura
 
 ## Observacao final
 

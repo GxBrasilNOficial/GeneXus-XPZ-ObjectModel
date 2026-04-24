@@ -139,7 +139,7 @@ Reference files and when to load them:
 
 | Reference | Load when |
 |-----------|-----------|
-| [00-readme-genexus-xpz-xml.md](../00-readme-genexus-xpz-xml.md) | Always — absolute rules and envelope structure |
+| [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) | Always — absolute rules and envelope structure |
 | [02-regras-operacionais-e-runtime.md](../02-regras-operacionais-e-runtime.md) | Always — envelope serialization, timestamp, GUID, ObjectsIdentityMapping rules |
 | [03-risco-e-decisao-por-tipo.md](../03-risco-e-decisao-por-tipo.md) | Always — risk level and abort conditions |
 | [04-webpanel-familias-e-templates.md](../04-webpanel-familias-e-templates.md) | Target is a WebPanel object |
@@ -488,4 +488,4 @@ Reference files and when to load them:
 - ABORT if applicable local repository documentation was not reread before packaging
 - ABORT if a local functional review chain, contract, or operational rule required by the target KB is still pending or inconsistent in the saved XML
 - ABORT if an essential `Source` construct depends only on intuition, generic GeneXus memory, or isolated local corpus evidence
-- Absolute rules in [00-readme-genexus-xpz-xml.md](../00-readme-genexus-xpz-xml.md) and [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) take precedence over all other heuristics
+- Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) and [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) take precedence over all other heuristics

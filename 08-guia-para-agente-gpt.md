@@ -7,7 +7,7 @@ operacional
 medio
 
 ## Depende de
-00-readme-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 04-webpanel-familias-e-templates.md, 05-transaction-familias-e-templates.md
+00-indice-da-base-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 04-webpanel-familias-e-templates.md, 05-transaction-familias-e-templates.md
 
 ## Usado por
 qualquer GPT que precise consumir esta base consolidada
@@ -27,7 +27,7 @@ operacional
 médio
 
 ## Depende de
-00-readme-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 22-tipos-prontos-para-geracao-conservadora.md, 03-risco-e-decisao-por-tipo.md, 02-regras-operacionais-e-runtime.md
+00-indice-da-base-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 22-tipos-prontos-para-geracao-conservadora.md, 03-risco-e-decisao-por-tipo.md, 02-regras-operacionais-e-runtime.md
 
 ## Usado por
 qualquer agente GPT que precise responder perguntas ou tomar decisão operacional usando esta base
@@ -38,12 +38,12 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 
 ## Ordem de consulta recomendada
 
-1. ler `00-readme-genexus-xpz-xml.md`
+1. ler `00-indice-da-base-genexus-xpz-xml.md`
 2. identificar o tipo alvo e checar `03-risco-e-decisao-por-tipo.md`
 3. ler `02-regras-operacionais-e-runtime.md`
 4. para `WebPanel`, ler `04-webpanel-familias-e-templates.md`
 5. para `Transaction`, ler `05-transaction-familias-e-templates.md`
-6. usar `01-base-empirica-geral.md` e `09-historico-e-inventario-publico.md` para sustentar detalhe empírico e rastreabilidade
+6. usar `01-base-empirica-geral.md` e `09-inventario-e-rastreabilidade-publica.md` para sustentar detalhe empírico e rastreabilidade
 
 ## Regra de precedencia sobre skills gerais
 

@@ -1,10 +1,10 @@
-# Plano Provisório - Skill Experimental De Importação/Exportação Headless Via MSBuild
+# 10 - Base Operacional MSBuild Headless
 
 ## Status
 
-Documento provisório de planejamento.
+Documento base de uso operacional da skill `xpz-msbuild-import-export`.
 
-Já existe um `SKILL.md` contratual materializado em `xpz-msbuild-import-export/SKILL.md`, ainda em status experimental.
+Já existe um `SKILL.md` materializado em `xpz-msbuild-import-export/SKILL.md`, apto para uso sob demanda em pasta paralela de KB GeneXus, com operação controlada e limites explícitos.
 
 Também já existe uma implementação controlada de `scripts/Test-GeneXusMsBuildSetup.ps1`, restrita ao probe (sondagem técnica inicial) de ambiente, sem abertura de KB, sem `.msbuild` operacional e sem importação ou exportação.
 
@@ -16,32 +16,32 @@ Também já existe uma implementação inicial de `scripts/Invoke-GeneXusXpzExpo
 
 Também já existe uma implementação inicial de `scripts/Invoke-GeneXusXpzImport.ps1`, restrita à importação real de `XPZ` com parâmetros explícitos, diagnóstico em `JSON` e validação da task carregada.
 
-Este plano ainda não define a implementação final da skill, não altera o comportamento das skills `xpz-*` existentes e não oficializa uma nova trilha operacional.
+Esta base não substitui o fluxo oficial atual da trilha paralela da KB, não altera o comportamento das demais skills `xpz-*` e não trata sucesso operacional como evidência suficiente de sucesso funcional.
 
 ## Objetivo
 
-Registrar as diretrizes iniciais para uma futura skill experimental dedicada à chamada efetiva de importação e exportação de `XPZ` do GeneXus por automação headless baseada em `MSBuild`, sem depender da operação manual pela IDE.
+Consolidar as diretrizes operacionais, restrições, riscos conhecidos e evidências de validação da skill dedicada à importação e exportação de `XPZ` do GeneXus por automação headless baseada em `MSBuild`, sem depender da operação manual pela IDE.
 
-## Escopo Pretendido
+## Escopo Operacional Atual
 
-- validar um caminho operacional real para abrir a `Knowledge Base`
+- abrir a `Knowledge Base` por `MSBuild` em cenário controlado
 - validar seleção de versão e `Environment`
-- validar exportação headless de `XPZ`
-- validar importação headless de `XPZ`
+- exportar `XPZ` de forma headless com parâmetros explícitos
+- executar preview de importação e importação real de `XPZ` em cenário controlado
 - registrar evidências operacionais, logs, códigos de saída e limitações
 
-## Fora De Escopo Nesta Fase
+## Fora De Escopo Atual
 
 - alterar qualquer uma das skills `xpz-*` atuais
-- promover a futura skill a dependência das demais
+- promover esta skill a dependência automática das demais
 - substituir o fluxo oficial atual da trilha paralela da KB
-- depender de GeneXus Server como requisito operacional da futura skill
+- depender de GeneXus Server como requisito operacional da skill
 - prometer sucesso funcional de importação, build, reorg ou consistência sem validação externa
-- implementar agora importação/exportação operacional ou integração ampla com as skills existentes
+- transformar importação real em comportamento implícito ou sem autorização explícita
 
 ## Princípios De Segurança
 
-- tratar a futura skill como experimental até haver evidência suficiente
+- tratar a skill como capacidade operacional validada, com uso controlado e limites explícitos
 - não inferir automaticamente caminhos, versão ativa, `Environment` ou comportamento da KB
 - exigir parametrização explícita para cada operação relevante
 - separar sucesso operacional da chamada de `MSBuild` de sucesso funcional dentro do GeneXus
@@ -52,9 +52,9 @@ Registrar as diretrizes iniciais para uma futura skill experimental dedicada à 
 
 - `ImportKBInformation` está documentado como capaz de importar propriedades de `KB`, `Version` e `Environment`, com default documentado `true`
 - `AllowCreateParentObjects` e `AllowCreateModuleObject` aparecem nas definições internas de importação como possibilidades de criação implícita
-- a futura skill não deve assumir que defaults internos do GeneXus são seguros para esta frente; parâmetros sensíveis devem ser tratados explicitamente
+- a skill não deve assumir que defaults internos do GeneXus são seguros para esta frente; parâmetros sensíveis devem ser tratados explicitamente
 - a instalação do host `MSBuild` sugere rastros laterais de log e trace, o que reforça a necessidade de controlar diretório de trabalho, captura de saída e destino dos logs
-- a futura skill deve tratar qualquer efeito colateral fora dos artefatos esperados como risco operacional relevante, mesmo quando a chamada principal reportar sucesso
+- a skill deve tratar qualquer efeito colateral fora dos artefatos esperados como risco operacional relevante, mesmo quando a chamada principal reportar sucesso
 - em importacao real validada nesta frente, fechar a KB antes da nova rodada nao eliminou nem o `stderr` lateral com `mismatched input ']' expecting 'default'` nem o acesso negado a `C:\Program Files (x86)\GeneXus\GeneXus18\CssProperties.json`; esse ruido persistente nao deve ser confundido com falha operacional da chamada
 - os wrappers de preview e importacao real precisaram normalizar recortes multiplos de `IncludeItems` e `ExcludeItems` para que a task carregada aceitasse a lista de itens de forma confiavel
 - depois dessa correcao, recortes combinados passaram a funcionar e a reduzir o ruido lateral; o bloqueio remanescente mais relevante desta frente passou a ser de conteudo da KB/`XPZ`, com referencia nao resolvida em `Source` (`procStrZERO`) durante a importacao de `procCarregaSDTsDaNFe`
@@ -73,7 +73,7 @@ Registrar as diretrizes iniciais para uma futura skill experimental dedicada à 
 - em `KB_Teste_Grande_A`, a abertura, o export e o preview tambem concluiram com sucesso operacional, mas com warning recorrente sobre item desconhecido `WebPanelDesigner` de extensao ausente `K2B Object Designer`
 - na `KB_Teste_Grande_A`, a importacao real tambem concluiu, porem em escala muito superior: o wrapper inicial estourou timeout, o `MSBuild` seguiu trabalhando por longo periodo com progresso visivel, inclusive em geracao de padroes `WorkWith`, e o `stdout` final terminou com `Close Knowledge Base Task Sucesso`
 - com isso, a frente ganhou outra regra empirica: em KBs muito grandes, timeout curto do wrapper nao deve ser interpretado automaticamente como falha da importacao; primeiro e preciso distinguir timeout do invocador de conclusao tardia do `MSBuild`
-- ainda assim, com evidência operacional repetida em nove KBs, a skill experimental ja demonstrou repetibilidade suficiente no mecanismo central de exportacao, preview e importacao via `MSBuild`; o foco remanescente desta frente passa a ser definicao de criterio de encerramento, limites de promocao e tratamento explicito de validacao incompleta ou execucao de longa duracao
+- ainda assim, com evidência operacional repetida em nove KBs, a skill ja demonstrou repetibilidade suficiente no mecanismo central de exportacao, preview e importacao via `MSBuild`; o foco remanescente desta frente passa a ser refinamento do criterio operacional de uso, classificacao explicita de validacao incompleta e tratamento de execucao de longa duracao
 
 ## Restrição Operacional De Leitura
 
@@ -336,9 +336,9 @@ Condições que descaracterizam ambiente controlado:
   - warning novo relevante
   - comportamento anômalo após a execução headless
 
-## Critério Para Confiar Na Futura Skill
+## Critério Operacional De Confiança Da Skill
 
-A skill já pode ser tratada como `done experimental` quando houver, de forma repetível e documentada:
+A skill já pode ser tratada como operacionalmente validada quando houver, de forma repetível e documentada:
 
 - pré-requisitos validados por probe (sondagem técnica inicial) e resolução explícita de caminhos
 - abertura headless da KB com contexto ativo coerente
@@ -347,7 +347,7 @@ A skill já pode ser tratada como `done experimental` quando houver, de forma re
 - importação real validada ao menos em KBs de teste controladas, com separação clara entre sucesso operacional e confirmação funcional
 - limitações conhecidas documentadas por classe de exceção, e não misturadas com defeito central do wrapper
 
-A skill só poderá deixar o status experimental quando, além do `done experimental`, houver evidência suficiente de promoção, com registro de:
+A skill deve ser tratada como operacionalmente apta quando, além da validação basal do mecanismo central, houver registro suficiente de:
 
 - repetibilidade em KBs de perfis distintos, inclusive sem depender de `GeneXus Server`
 - critério claro para interpretar `exitCode`, `stdout`, `stderr`, `importedItems` e warnings estruturais
@@ -396,10 +396,10 @@ A leitura filtrada do repositório `C:\Dev\Fork\FBgx18MCP`, ignorando a arquitet
 
 Com base nessa leitura, este plano passa a assumir explicitamente que:
 
-- a futura skill experimental deve ter como fundamento principal `PowerShell` orquestrando `MSBuild`
-- a futura skill não deve depender, como base metodológica principal, de carregar o SDK do GeneXus em host arbitrário
-- a futura skill deve tratar projeto temporário `.msbuild`, parâmetros explícitos, captura de saída e validação de artefatos como elementos centrais do fluxo
-- a futura skill deve continuar separada das skills `xpz-*` atuais até validação empírica suficiente
+- a skill deve ter como fundamento principal `PowerShell` orquestrando `MSBuild`
+- a skill não deve depender, como base metodológica principal, de carregar o SDK do GeneXus em host arbitrário
+- a skill deve tratar projeto temporário `.msbuild`, parâmetros explícitos, captura de saída e validação de artefatos como elementos centrais do fluxo
+- a skill deve continuar separada das demais skills `xpz-*` como capacidade especializada, sem virar dependência automática
 
 ## Aprendizados Metodológicos Da Evolução Recente De `FBgx18MCP`
 
@@ -415,18 +415,18 @@ Uma leitura adicional dos commits mais recentes de `FBgx18MCP` não trouxe evid�
 
 Consequências para esta frente:
 
-- a futura skill de `XPZ` headless deve distinguir "execução concluída" de "efeito confirmado"
+- a skill de `XPZ` headless deve distinguir "execução concluída" de "efeito confirmado"
 - `exitCode` isolado não deve ser tratado como evidência suficiente de sucesso funcional
 - a fase de verificação deve reler artefatos e estado observável em vez de depender de memória de execução
 - quando houver comportamento tardio ou ambíguo, a estratégia preferida deve ser retry curto com leitura posterior, e não inferência otimista
 
 ## Restrição De Escopo Sobre GeneXus Server
 
-O público-alvo destas skills de `XPZ` não dispõe de `GeneXus Server`, portanto a futura skill desta frente não deve assumir `GeneXus Server` como componente disponível nem como trilha operacional pretendida.
+O público-alvo destas skills de `XPZ` não dispõe de `GeneXus Server`, portanto a skill desta frente não deve assumir `GeneXus Server` como componente disponível nem como trilha operacional pretendida.
 
 Regras aplicáveis:
 
-- `Genexus.Server.Tasks.targets` não é base operacional da futura skill
+- `Genexus.Server.Tasks.targets` não é base operacional da skill
 - tasks de `GeneXus Server` não devem virar pré-requisito de uso
 - referências a `GeneXus Server` podem ser aproveitadas apenas como aprendizado indireto sobre convenções, mensagens, padrões de `MSBuild` ou comportamento de importação/exportação
 - quando houver alternativa entre trilha local e trilha dependente de `GeneXus Server`, a trilha local deve prevalecer
@@ -538,7 +538,7 @@ Conclusão operacional desta frente:
 - o caminho headless validado para exportação parcial é fornecer explicitamente a lista de objetos em `Objects`/`ObjectList`
 - quando o usuário precisar selecionar objetos por data e não houver lista prévia, a seleção por data permanece dependente da IDE ou de outra fonte externa autorizada que produza a lista de objetos
 
-## Checklist Inicial De Requisitos Da Futura Skill
+## Checklist Inicial De Requisitos Da Skill
 
 - usar `MSBuild` como host principal da execução operacional
 - gerar arquivo `.msbuild` temporário por execução
@@ -561,7 +561,7 @@ Conclusão operacional desta frente:
 - evitar placeholders esquecidos, caminhos hardcoded como regra e valores presumidos silenciosamente
 - começar os testes por descoberta de ambiente e abertura da KB
 - validar exportação simples antes de validar importação simples
-- manter a skill em status experimental até haver evidência repetível suficiente
+- manter a skill com uso controlado, sem prometer sucesso funcional além da evidência observada
 
 ## Interface Proposta Dos Futuros Scripts `.ps1`
 
@@ -893,11 +893,11 @@ Restrições de desenho:
 
 O próximo marco já não é provar o mecanismo básico do wrapper. Essa etapa ficou empiricamente validada em múltiplas KBs, inclusive com um caso de grande porte.
 
-O próximo marco passa a ser fechar o critério explícito de encerramento e promoção da skill experimental, com registro de:
+O próximo marco passa a ser fechar o critério explícito de uso estável da skill, com registro de:
 
-- definição objetiva de `done experimental`
+- definição objetiva de prontidão operacional
 - limites operacionais já conhecidos e como classificá-los no diagnóstico
-- critérios para promoção futura além do status experimental
+- critérios de uso estável em cenários além do laboratório inicial
 - exceções que não devem ser confundidas com defeito central do wrapper
 
 Classificação mínima que a documentação da skill deve espelhar a partir daqui:
@@ -907,4 +907,4 @@ Classificação mínima que a documentação da skill deve espelhar a partir daq
 - execução longa em KB grande, como `KB_Teste_Grande_A`
 - warning estrutural por extensão ausente, como `WebPanelDesigner`/`K2B Object Designer`
 
-Enquanto essa consolidação não estiver espelhada na skill e nos critérios de promoção, a frente continua experimental, porém com mecanismo central já validado.
+Enquanto essa consolidação não estiver totalmente espelhada na skill e nos critérios de uso, o mecanismo central já deve ser tratado como validado, com operação controlada e classificação explícita dos limites remanescentes.

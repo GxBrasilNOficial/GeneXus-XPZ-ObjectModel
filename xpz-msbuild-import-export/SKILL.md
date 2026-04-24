@@ -1,18 +1,18 @@
 ---
 name: xpz-msbuild-import-export
-description: Skill experimental para importação e exportação de XPZ via MSBuild, com execução sem interface gráfica, parâmetros explícitos, rastreabilidade e gates (pontos de liberação ou bloqueio) de segurança
+description: Skill para importação e exportação de XPZ via MSBuild, com execução sem interface gráfica, parâmetros explícitos, rastreabilidade e gates (pontos de liberação ou bloqueio) de segurança
 ---
 
 # xpz-msbuild-import-export
 
-Skill experimental para operações de importação e exportação de `XPZ` do GeneXus por `MSBuild`, em execução sem interface gráfica.
+Skill para operações de importação e exportação de `XPZ` do GeneXus por `MSBuild`, em execução sem interface gráfica.
 
 Esta skill não substitui o fluxo oficial atual da trilha paralela da KB, não depende de `GeneXus Server` e não trata sucesso operacional como evidência suficiente de sucesso funcional.
 
 No estado atual, o mecanismo central desta skill já foi validado operacionalmente em múltiplas KBs. O próximo passo desta frente não é mais provar exportação, `PreviewMode` e importação real como capacidade basal, e sim deixar explícitos:
 
-- o que conta como `done experimental`
-- quais limites conhecidos ainda impedem promoção além do status experimental
+- o que conta como prontidão operacional estável
+- quais limites conhecidos ainda exigem uso controlado
 - como classificar exceções sem confundi-las com defeito central do wrapper
 
 Exceções já mapeadas que a skill deve tratar explicitamente:
@@ -22,14 +22,14 @@ Exceções já mapeadas que a skill deve tratar explicitamente:
 - execução longa em KB grande, como `KB_Teste_Grande_A`
 - warning estrutural por extensão ausente, como `WebPanelDesigner`/`K2B Object Designer`
 
-Critério atual de `done experimental` desta skill:
+Critério atual de prontidão operacional desta skill:
 
 - probe (sondagem técnica inicial), abertura headless, exportação, `PreviewMode` e importação real já validados em KBs de teste controladas
 - classificação explícita entre sucesso operacional, validação funcional incompleta e problema de conteúdo da KB/`XPZ`
 - logs, artefatos e parâmetros sensíveis rastreáveis
 - limites conhecidos já documentados e não tratados como surpresa operacional
 
-Promoção além do status experimental ainda depende de:
+Uso mais amplo desta skill ainda depende de:
 
 - critério estável para KBs com dependência externa, licença ou extensão ausente
 - interpretação madura de execução longa em KB grande
@@ -72,7 +72,7 @@ Do NOT use esta skill para:
 
 ## RESPONSIBILITIES
 
-- Usar [10-plano-skill-headless-msbuild](../10-plano-skill-headless-msbuild.md) como base principal desta frente
+- Usar [10-base-operacional-msbuild-headless](../10-base-operacional-msbuild-headless.md) como base principal desta frente
 - Validar explicitamente `KbPath`, `GeneXusDir`, `MsBuildPath`, `WorkingDirectory`, `LogPath` e `Genexus.Tasks.targets`
 - Tratar `Test-GeneXusMsBuildSetup.ps1` como probe (sondagem técnica inicial) não invasivo, anterior a qualquer abertura de KB
 - Tratar `C:\Program Files (x86)` como estritamente somente leitura
@@ -100,7 +100,7 @@ Do NOT use esta skill para:
 ## COMMUNICATION
 
 - Responda no idioma do usuário
-- Seja direto sobre estado experimental, riscos e limites
+- Seja direto sobre estado operacional, riscos e limites
 - Declare quando o resultado é apenas operacional e ainda depende de confirmação funcional
 - Quando houver ambiguidade de contexto, interrompa a execução e peça definição explícita
 - Não use linguagem otimista para sugerir segurança que ainda não foi validada empiricamente
@@ -115,7 +115,7 @@ Arquivos de referência e quando carregar:
 |-----------|-----------------|
 | [README.md](../README.md) | Sempre - regras editoriais e posicionamento da base |
 | [02-regras-operacionais-e-runtime.md](../02-regras-operacionais-e-runtime.md) | Regras operacionais, precedência e restrições da trilha XPZ |
-| [10-plano-skill-headless-msbuild.md](../10-plano-skill-headless-msbuild.md) | Sempre - contrato experimental, fases, riscos e interface proposta |
+| [10-base-operacional-msbuild-headless.md](../10-base-operacional-msbuild-headless.md) | Sempre - base operacional, riscos conhecidos e interface vigente |
 
 ---
 
@@ -189,8 +189,8 @@ Parâmetros específicos de importação:
 
 ## WORKFLOW (fluxo de trabalho)
 
-1. Reler a documentação local aplicável e usar [10-plano-skill-headless-msbuild](../10-plano-skill-headless-msbuild.md) como referência principal
-2. Validar se o cenário é compatível com uso experimental e ambiente controlado
+1. Reler a documentação local aplicável e usar [10-base-operacional-msbuild-headless](../10-base-operacional-msbuild-headless.md) como referência principal
+2. Validar se o cenário é compatível com uso controlado e ambiente controlado
 3. Confirmar que `C:\Program Files (x86)` será tratada como somente leitura
 4. Executar primeiro um probe (sondagem técnica inicial) não invasivo para validar:
    - `KbPath`
@@ -230,7 +230,7 @@ Parâmetros específicos de importação:
 
 ## QUALITY CHECKLIST
 
-- [ ] A skill foi tratada como experimental
+- [ ] A skill foi tratada como capacidade operacional validada, com uso controlado
 - [ ] `C:\Program Files (x86)` permaneceu estritamente somente leitura
 - [ ] O probe (sondagem técnica inicial) não invasivo ocorreu antes de qualquer abertura de KB
 - [ ] O probe (sondagem técnica inicial) devolveu diagnóstico estruturado completo

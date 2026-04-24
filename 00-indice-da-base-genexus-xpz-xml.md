@@ -1,4 +1,4 @@
-# 00 - Readme GeneXus XPZ XML
+# 00 - Indice da Base GeneXus XPZ XML
 
 ## Papel do documento
 indice
@@ -7,7 +7,7 @@ indice
 alto
 
 ## Depende de
-09-historico-e-inventario-publico.md
+09-inventario-e-rastreabilidade-publica.md
 
 ## Usado por
 toda a base consolidada
@@ -16,10 +16,10 @@ toda a base consolidada
 Ser o ponto de entrada principal da base consolidada em ate 10 arquivos, com ordem de leitura, limites metodologicos e regras absolutas para uso por outro agente GPT.
 
 ## Fontes consolidadas
-- 00-readme-genexus-xpz-xml.md
+- 00-indice-da-base-genexus-xpz-xml.md
 - 26-guia-para-agente-gpt.md
 
-## Origem incorporada - 00-readme-genexus-xpz-xml.md
+## Origem incorporada - 00-indice-da-base-genexus-xpz-xml.md
 
 ## Papel do documento
 indice
@@ -53,9 +53,9 @@ Organizar conhecimento operacional e empírico sobre XMLs extraídos de `XPZ` Ge
 
 ### Conceitual
 
-- `00-readme-genexus-xpz-xml.md`
+- `00-indice-da-base-genexus-xpz-xml.md`
 - `06-padroes-de-objeto-e-nomenclatura.md`
-- `09-historico-e-inventario-publico.md`
+- `09-inventario-e-rastreabilidade-publica.md`
 
 ### Empírica
 
@@ -72,7 +72,7 @@ Organizar conhecimento operacional e empírico sobre XMLs extraídos de `XPZ` Ge
 
 ## Ordem recomendada de leitura
 
-1. `00-readme-genexus-xpz-xml.md`
+1. `00-indice-da-base-genexus-xpz-xml.md`
 2. `01-base-empirica-geral.md`
 3. `02-regras-operacionais-e-runtime.md`
 4. `03-risco-e-decisao-por-tipo.md`
@@ -80,7 +80,7 @@ Organizar conhecimento operacional e empírico sobre XMLs extraídos de `XPZ` Ge
 6. `05-transaction-familias-e-templates.md`
 7. `07-open-points-e-checklist.md`
 8. `08-guia-para-agente-gpt.md`
-9. `09-historico-e-inventario-publico.md`
+9. `09-inventario-e-rastreabilidade-publica.md`
 
 ## Regras absolutas para qualquer agente GPT
 

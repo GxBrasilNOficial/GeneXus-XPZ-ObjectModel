@@ -31,7 +31,7 @@ médio
 00-inventario-da-base-documental.md, 01-base-empirica-geral.md, 22-tipos-prontos-para-geracao-conservadora.md, 03-risco-e-decisao-por-tipo.md
 
 ## Usado por
-00-readme-genexus-xpz-xml.md, 26-guia-para-agente-gpt.md, 99-resumo-da-consolidacao.md
+00-indice-da-base-genexus-xpz-xml.md, 26-guia-para-agente-gpt.md, 99-resumo-da-consolidacao.md
 
 ## Objetivo
 Concentrar lacunas técnicas, conflitos documentais e próximos passos que ainda exigem validação adicional.
@@ -234,7 +234,6 @@ Orientar futuras coletas de templates comparáveis.
 - `Causa`: assumir a `Base Table` pelo nome do objeto ou por leitura parcial do bloco, sem confirmar a determinacao explicita ou implicita.
 - `Consequência`: aceitar atributos que nao pertencem a `Base Table`/`Extended Table` coerente, gerando analise errada ou ajuste de `Source` fora da navegacao real.
 - `Regra de checagem`: antes de validar atributos do bloco, identificar a `Base Table` determinada do `For each` e verificar cada referencia contra essa base e seu contexto coerente de navegacao.
-
 
 
 
