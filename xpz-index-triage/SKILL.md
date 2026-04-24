@@ -123,6 +123,8 @@ Do NOT use this skill for:
 
 Reference files and when to load them:
 
+Esta tabela prioriza contratos e guias de uso corrente da skill. Nao incluir por padrao contratos historicos de fase ja condensados em referencias operacionais mais diretas, nem registros de verificacao pontual ja absorvidos pelo contrato ativo; esses materiais so devem ser carregados quando houver duvida metodologica especifica que a tabela atual nao cubra.
+
 | Reference | Load when |
 |-----------|-----------|
 | [02-regras-operacionais-e-runtime.md](../02-regras-operacionais-e-runtime.md) | Depois do gate estrutural inicial, quando for necessario interpretar frescor, metadados, limite operacional ou relacao entre artefato derivado e fonte normativa |
