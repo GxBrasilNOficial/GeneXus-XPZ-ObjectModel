@@ -53,6 +53,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a base compartilhar uma capacidade operacional nova, isso nao autoriza presumir que wrappers locais da pasta paralela da KB ja a exponham; a exposicao local e decisao separada
 - se o wrapper local ainda nao expuser um parametro operacional relevante ja disponivel na base compartilhada, o agente deve tratar isso como oportunidade de atualizacao local, mencionar ao usuario e aguardar aprovacao explicita; nao deve executar a mudanca local automaticamente
 - exemplos sanitizados `.example.ps1` publicados pelas skills podem servir como referencia metodologica para reconstruir wrappers locais finais, mas nao substituem o wrapper local real nem autorizam fallback automatico de execucao no fluxo normal
+- quando wrappers locais precisarem nascer do zero no setup inicial da pasta paralela da KB, preferir adaptar os exemplos sanitizados completos da base como bootstrap tecnico, em vez de improvisar wrappers curtos ou parciais
 
 ## Regra de leitura para runtime
 
@@ -141,6 +142,9 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - se o setup inicial da pasta paralela da KB estiver sendo preparado e o caminho da pasta nativa da KB nao vier no prompt, pedir esse caminho ao usuario antes de concluir o setup
 - no setup inicial, gerar `kb-source-metadata.md` inicial em formato compativel com o motor compartilhado, preservando o campo nominal `last_xpz_materialization_run_at`
 - no setup inicial, nao salvar memoria operacional fora da propria pasta paralela da KB sem autorizacao explicita do usuario; `AGENTS.md`, `README.md` e arquivos operacionais locais sao a camada preferencial de memoria
+- no setup inicial da pasta paralela da KB, nao declarar `setup concluido`, `estrutura pronta` ou equivalente final antes de a camada minima de wrappers locais esperados em `scripts` existir para o fluxo oficial adotado
+- se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir, o status correto e `estrutura parcial` ou `bootstrap incompleto`, nao `setup concluido`
+- se o setup inicial registrar memoria local provisoria como `ObjetosDaKbEmXml ainda nao materializada`, `aguardando primeiro XPZ` ou equivalente, esse estado precisa ser atualizado ou neutralizado depois da primeira materializacao oficial bem-sucedida
 - se `XpzExportadosPelaIDE` ainda nao existir, perguntar onde o usuario quer salvar os `.xpz`
 - se `ObjetosDaKbEmXml` ainda nao existir, tratar a KB como ainda nao materializada e parar antes de assumir snapshot
 - se `KbIntelligence` ainda nao existir, tratar isso como ausencia da camada derivada de triagem, nao como ausencia do snapshot oficial; preparar a pasta e os wrappers locais antes de depender de `xpz-index-triage`
@@ -160,9 +164,13 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a skill de `MSBuild` for publicada por symlink, junction ou outro reparse point, resolver referencias `../` pela pasta real da skill, nao pelo caminho launcher publicado
 - ao concluir a exportacao headless do caminho `B)`, declarar explicitamente o marco `XPZ gerado` antes de prosseguir para materializacao em `ObjetosDaKbEmXml`
 - se o pedido do usuario for apenas gerar o `.xpz`, parar no artefato gerado; so prosseguir para materializacao quando o pedido for seguir com o setup ou com a materializacao
-- na materializacao normal do `XPZ` em `ObjetosDaKbEmXml`, inclusive na primeira carga por `XPZ` full, nao presumir `-FullSnapshot` como padrao implicito; usar esse modo apenas quando o objetivo explicito for conferencia full adicional ou quando a documentacao local exigir isso nominalmente
+- `XPZ` full define o insumo exportado; `FullSnapshot` define modo adicional de verificacao do acervo
+- na materializacao normal do `XPZ` em `ObjetosDaKbEmXml`, inclusive na primeira carga por `XPZ` full vindo da IDE ou por export headless via `MSBuild`, nao presumir `-FullSnapshot` como padrao implicito nem como atalho ergonomico
+- usar `-FullSnapshot` apenas quando houver pedido explicito do usuario por conferencia full, quando o wrapper especifico de conferencia full for o caminho escolhido ou quando a documentacao local exigir isso nominalmente
 - quando o resumo do sync expuser `MaterializationInterpretation`, preferir esse campo para explicar o resultado da materializacao; nao reinventar a leitura a partir de `Created`, `Updated` e `Unchanged`
 - nao afirmar `primeira carga`, `primeira materializacao` ou equivalente quando `Created = 0` e `Unchanged > 0`; sem evidencia previa adicional, isso indica apenas confirmacao de snapshot ja existente contra o insumo atual
+- se houver relatorio da primeira materializacao e outro de reprocessamento confirmatorio ou conferencia full, nao misturar os papeis no handoff; identificar explicitamente qual arquivo representa a materializacao que criou/atualizou o acervo e qual arquivo representa apenas verificacao posterior
+- se a execucao tiver primeira materializacao seguida de reprocessamento confirmatorio ou conferencia full, preferir caminhos ou nomes de relatorio separados; nao sobrescrever silenciosamente o relatorio principal da primeira materializacao com o da segunda passagem
 - so afirmar metadado especifico de `kb-source-metadata.md`, como versao do GeneXus, build, GUID da KB, usuario ou caminho `Source`, quando esse metadado tiver aparecido explicitamente na saida real do wrapper ou quando o proprio `kb-source-metadata.md` tiver sido aberto e lido nominalmente na rodada atual
 - nao presumir `Objects.xml` isolado nem manifesto externo separado se isso nao estiver documentado no `02`
 - usar o envelope sanitizado documentado na base como referencia estrutural antes de pedir XML externo adicional

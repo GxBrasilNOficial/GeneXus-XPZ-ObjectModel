@@ -67,6 +67,7 @@ Do NOT use this skill for:
 - Tratar `Temp` como destino preferencial para artefatos efemeros, temporarios de execucao, relatorios descartaveis e copias temporarias de SQLite
 - Tratar `KbIntelligence` como pasta do indice SQLite derivado e regeneravel, normalmente `KbIntelligence\kb-intelligence.sqlite`, mais relatorios de validacao quando o repositorio local adotar esse fluxo
 - Tratar `kb-source-metadata.md` como metadado operacional da materializacao XPZ/XML; ele deve expor `last_xpz_materialization_run_at` quando o fluxo oficial tiver processado um insumo da IDE
+- Tratar qualquer memoria local de setup que diga `ainda nao materializada`, `aguardando primeiro XPZ` ou equivalente como estado provisório; depois da primeira materializacao oficial bem-sucedida, esse estado nao deve continuar sendo apresentado como atual
 - Tratar `KbIntelligence\kb-intelligence.sqlite` como dono do metadado `last_index_build_run_at` na tabela `metadata`; esse horario deve ser igual ou posterior a `last_xpz_materialization_run_at` para permitir triagem ampla e geracao de objetos de importacao
 - Explicar que o fluxo oficial de materializacao XPZ/XML deve chamar a regeneracao/validacao do indice derivado compulsoriamente apos atualizar `ObjetosDaKbEmXml`
 - Explicar que, apos processamento bem-sucedido, um `.xpz` em `XpzExportadosPelaIDE` pode ser renomeado para `processado_<nome-original>.xpz`
@@ -88,6 +89,8 @@ Do NOT use this skill for:
 - Explicar que `KbIntelligence` nao substitui `ObjetosDaKbEmXml`; ele e uma camada derivada para triagem e deve ser regeneravel a partir do snapshot oficial
 - Explicar que, se `last_index_build_run_at` estiver ausente ou anterior a `last_xpz_materialization_run_at`, o agente nao deve pesquisar o acervo em massa nem gerar objetos para importacao; deve tratar isso como excecao operacional e oferecer a regeneracao/validacao do indice antes de seguir
 - Prever wrappers locais `.ps1` na pasta `scripts` quando a pasta paralela da KB precisar reconstruir o fluxo operacional local sobre o motor compartilhado
+- Quando a pasta paralela da KB for inicializada do zero para operar com fluxo oficial de materializacao XPZ/XML, tratar a camada minima de wrappers locais em `scripts` como parte do bootstrap tecnico esperado, nao como pendencia para a etapa seguinte
+- Nao declarar `setup inicial concluido`, `estrutura pronta` ou equivalente final se a pasta ainda nao tiver a camada minima de wrappers locais necessaria para materializacao oficial e, quando adotado, para `KbIntelligence`
 - Se a pasta paralela ja estiver versionada em Git, tratar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte esperada do setup inicial padrao
 - Se a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local como passo opcional de apoio; a decisao pertence ao usuario
 - Nao executar `git init` por conta propria no setup inicial
@@ -97,6 +100,7 @@ Do NOT use this skill for:
 - Gerar `kb-source-metadata.md` inicial em formato compativel com o motor compartilhado, preservando desde o setup o campo nominal `last_xpz_materialization_run_at`
 - Nao salvar memoria operacional fora da propria pasta paralela da KB sem autorizacao explicita do usuario; `AGENTS.md`, `README.md` e arquivos operacionais locais sao a camada preferencial de memoria do setup
 - Ao concluir o setup inicial, declarar explicitamente que a pasta paralela esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
+- Quando o setup inicial tiver registrado memoria local provisoria de que `ObjetosDaKbEmXml` ainda nao foi materializada, exigir refresh dessa memoria local depois da primeira materializacao oficial bem-sucedida, para evitar handoff com estado desatualizado
 - Ao concluir o setup inicial, oferecer dois proximos passos:
   - `A)` o usuario exporta o `.xpz` full pela IDE do GeneXus para `XpzExportadosPelaIDE` e o agente materializa os XMLs depois
   - `B)` o agente tenta gerar o `.xpz` full a partir da pasta nativa da KB, grava esse `.xpz` em `XpzExportadosPelaIDE` e depois materializa os XMLs
@@ -173,6 +177,7 @@ Do NOT use this skill for:
   - [Update-KbIntelligenceIndex.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Update-KbIntelligenceIndex.example.ps1)
   - [Notify-TaskComplete.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Notify-TaskComplete.example.ps1)
 - Esses `.example.ps1` sao exemplos metodologicos importantes para bootstrap tecnico e reconstrucao assistida dos wrappers locais finais.
+- Quando os wrappers locais precisarem nascer do zero no setup inicial, preferir adaptar os exemplos sanitizados completos desta skill como base do bootstrap tecnico, em vez de improvisar wrappers curtos ou parciais que ainda exijam correcao na etapa seguinte.
 - Esses `.example.ps1` nao substituem o wrapper local real da pasta paralela da KB e nao devem virar fallback automatico de execucao no fluxo normal.
 - Os exemplos sanitizados de wrappers incorporam uma trilha real de pasta paralela da KB com:
   - metadados da KB gravados em `kb-source-metadata.md`
@@ -284,12 +289,15 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
 14. Se `ObjetosDaKbEmXml` ainda nao contiver snapshot materializado, nao tentar gerar `kb-intelligence.sqlite`; preparar apenas a pasta e os wrappers locais
 15. Se a pasta adotar `KbIntelligence`, validar o gate de compatibilidade operacional antes de permitir pesquisa ampla, triagem substantiva ou geracao de objetos
 16. Se o gate falhar, oferecer atualizacao da pasta paralela/wrappers/indice e nao responder a pergunta de negocio por fallback manual
-17. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
-18. Ao concluir o setup inicial, oferecer os proximos passos:
+17. Antes de declarar o setup como concluido, validar se a camada minima de wrappers locais esperados em `scripts` ja existe para o fluxo oficial adotado por essa pasta paralela
+18. Se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir, reportar isso como `estrutura parcial` ou `bootstrap incompleto`, nao como setup concluido
+19. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
+20. Se a primeira materializacao oficial ocorrer depois do setup, atualizar ou neutralizar a memoria local provisoria criada no setup que ainda afirme `ObjetosDaKbEmXml` nao materializada, `aguardando primeiro XPZ` ou equivalente
+21. Ao concluir o setup inicial, oferecer os proximos passos:
    - `A)` o usuario exporta o `.xpz` full pela IDE para `XpzExportadosPelaIDE`, e o agente materializa os XMLs depois
    - `B)` o agente tenta gerar o `.xpz` full a partir da pasta nativa da KB, grava esse `.xpz` em `XpzExportadosPelaIDE` e depois materializa os XMLs
-19. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
-20. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
+22. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
+23. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
 
 ---
 

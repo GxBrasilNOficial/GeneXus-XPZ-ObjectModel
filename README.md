@@ -108,8 +108,11 @@ Se você quer entender a base rapidamente:
 - `XpzExportadosPelaIDE` é a pasta de entrada onde o usuário do GeneXus grava os `.xpz` que serão processados
 - depois de processado com sucesso pelo fluxo oficial, o `.xpz` pode ser renomeado para `processado_<nome-original>.xpz`
 - `scripts` concentra os wrappers `.ps1` que tratam `XPZ` e indice derivado
+- quando a pasta paralela da KB for inicializada do zero para operar com fluxo oficial de materializacao XPZ/XML, o bootstrap tecnico minimo deve incluir os wrappers locais principais em `scripts`
+- nao declarar `setup inicial concluido` enquanto essa camada minima de wrappers locais ainda nao existir; nesse caso, o status correto e `estrutura parcial` ou `bootstrap incompleto`
 - `KbIntelligence` guarda o SQLite derivado e os relatórios de validação do índice, quando esse fluxo estiver adotado na KB
 - a Carga Inicial pode usar um `XPZ` completo novo a qualquer momento para reatualizar `ObjetosDaKbEmXml`
+- `XPZ` full define o insumo exportado; a materializacao normal desse insumo nao implica `-FullSnapshot`, que deve ficar restrito a conferencia full explicita ou exigencia documental nominal
 - a mesma estrutura também vale para `XPZ` parciais com objetos alterados desde a última atualização
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus` guarda objetos temporários destinados à importação manual na IDE
 - cada frente ativa em `ObjetosGeradosParaImportacaoNaKbNoGenexus` deve ter sua propria subpasta `NomeCurto_GUID_YYYYMMDD`
@@ -250,8 +253,11 @@ Si quieres entender la base rápidamente:
 - `XpzExportadosPelaIDE` es la carpeta de entrada donde el usuario de GeneXus graba los `.xpz` que serán procesados
 - después de procesado con éxito por el flujo oficial, el `.xpz` puede renombrarse a `processado_<nome-original>.xpz`
 - `scripts` concentra los wrappers `.ps1` que tratan `XPZ` e índice derivado
+- cuando la carpeta paralela de la KB se inicialice desde cero para operar con el flujo oficial de materialización XPZ/XML, el bootstrap técnico mínimo debe incluir los wrappers locales principales en `scripts`
+- no declarar `setup inicial concluido` mientras esa capa mínima de wrappers locales todavía no exista; en ese caso, el estado correcto es `estructura parcial` o `bootstrap incompleto`
 - `KbIntelligence` guarda el SQLite derivado y los informes de validación del índice, cuando ese flujo esté adoptado en la KB
 - la Carga Inicial puede usar un `XPZ` completo nuevo en cualquier momento para reactualizar `ObjetosDaKbEmXml`
+- `XPZ` full define el insumo exportado; la materialización normal de ese insumo no implica `-FullSnapshot`, que debe quedar restringido a la verificación full explícita o a exigencia documental nominal
 - la misma estructura también vale para `XPZ` parciales con objetos alterados desde la última actualización
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus` guarda objetos temporales destinados a la importación manual en la IDE
 - cada frente activa en `ObjetosGeradosParaImportacaoNaKbNoGenexus` debe tener su propia subcarpeta `NomeCurto_GUID_YYYYMMDD`
@@ -392,8 +398,11 @@ If you want to understand the repository quickly:
 - `XpzExportadosPelaIDE` is the input folder where the GeneXus user stores the `.xpz` files that will be processed
 - after being successfully processed by the official flow, the `.xpz` can be renamed to `processado_<nome-original>.xpz`
 - `scripts` concentrates the `.ps1` wrappers that handle `XPZ` and the derived index
+- when the KB parallel folder is initialized from zero to operate with the official XPZ/XML materialization flow, the minimum technical bootstrap must include the main local wrappers in `scripts`
+- do not declare `initial setup complete` while that minimum local wrapper layer does not exist yet; in that case, the correct status is `partial structure` or `incomplete bootstrap`
 - `KbIntelligence` stores the derived SQLite index and index validation reports when that flow is adopted in the KB
 - the Initial Load can use a new full `XPZ` at any time to refresh `ObjetosDaKbEmXml`
+- full `XPZ` defines the exported input; normal materialization of that input does not imply `-FullSnapshot`, which must stay restricted to explicit full verification or nominal documentary requirement
 - the same structure also applies to partial `XPZ` files with objects changed since the last update
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus` stores temporary objects intended for manual IDE import
 - each active front in `ObjetosGeradosParaImportacaoNaKbNoGenexus` must have its own `NomeCurto_GUID_YYYYMMDD` subfolder

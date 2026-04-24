@@ -128,9 +128,13 @@ Os wrappers seguem esta convenção de parâmetros:
 - `-InputPath` *(obrigatório)* — caminho para `.xpz`, XML ou pasta contendo o XML
 - `-VerifyOnly` *(switch)* — só confere, não regrava
 - `-FullSnapshot` *(switch)* — compara snapshot completo do acervo
-- para materializacao normal, inclusive carga inicial por `XPZ` full, nao presumir `-FullSnapshot` como padrao implicito; usar esse modo apenas quando o objetivo explicito for conferencia full adicional do acervo
+- `XPZ` full define apenas o insumo; nao define, por si so, o modo de verificacao
+- para materializacao normal, inclusive carga inicial por `XPZ` full vindo da IDE ou por export headless via `MSBuild`, nao presumir `-FullSnapshot` como padrao implicito nem como atalho ergonomico
+- usar `-FullSnapshot` somente em um destes casos: pedido explicito do usuario por conferencia full, uso do wrapper especifico de conferencia full, ou exigencia nominal da documentacao local do repositorio
 - `-ReportPath` *(opcional)* — salva relatório JSON
 - `-KeepReport` *(switch)* — mantém relatório mesmo sem erro
+- quando houver primeira materializacao seguida de reprocessamento confirmatorio ou conferencia full, nao sobrescrever silenciosamente o relatorio principal da primeira materializacao com o relatorio da segunda passagem
+- nesses casos, usar caminhos separados para cada relatorio ou deixar explicito no handoff qual arquivo corresponde a `materializacao` e qual corresponde a `confirmacao`/`conferencia`
 - `-ExpectedItems` *(opcional)* — lista de itens esperados da frente atual no formato `Tipo:Nome`, usada apenas para classificação comparativa entre foco esperado e retorno oficial da KB
 - a disponibilidade desse parametro no motor compartilhado nao autoriza presumir
   que wrappers locais da pasta paralela da KB ja o exponham; se o wrapper local
@@ -195,6 +199,7 @@ Os wrappers seguem esta convenção de parâmetros:
     - nao usar `.example.ps1` da base compartilhada como substituto temporario do wrapper local real ausente
 12. Montar o comando com os parâmetros corretos
     - para materializacao normal do `XPZ` em `ObjetosDaKbEmXml`, nao acrescentar `-FullSnapshot` por conta propria
+    - nao reinterpretar `XPZ` full como autorizacao implicita para `-FullSnapshot`; export full e conferencia full sao coisas diferentes
     - usar `-FullSnapshot` apenas quando o usuario pedir conferencia full, quando o wrapper especifico de conferencia for o escolhido ou quando a documentacao local tornar isso requisito explicito
 13. Executar via Bash com `pwsh -File ...`
 14. Se a materializacao XPZ/XML em `ObjetosDaKbEmXml` foi concluida com sucesso e nao era `VerifyOnly`, regenerar/validar compulsoriamente o indice derivado antes de encerrar o fluxo
@@ -209,9 +214,11 @@ Os wrappers seguem esta convenção de parâmetros:
     - quando houver resumo Git, apresentar essa camada separadamente como comparacao do worktree contra o commit atual, sem reclassificar o resultado do sync
     - se o mesmo `XPZ` tiver sido reprocessado após atualização do arquivo, deixar explícito que a comparação relevante é com o conteúdo do insumo reprocessado e com o estado atual do acervo, não com o relatório antigo
     - se `kb-source-metadata.md` tiver sido reescrito pelo wrapper, tratar isso como artefato normal do fluxo, não como evidência automática de mudança funcional na frente
+    - se a pasta ainda carregar memoria local provisoria do setup dizendo que `ObjetosDaKbEmXml` nao foi materializada, `aguardando primeiro XPZ` ou equivalente, atualizar ou neutralizar esse estado quando a primeira materializacao oficial tiver sido concluida com sucesso
     - so afirmar conteudo especifico de `kb-source-metadata.md`, como versao do GeneXus, build, GUID da KB, usuario ou caminho `Source`, quando esse metadado tiver aparecido explicitamente na saida real do wrapper ou quando o proprio `kb-source-metadata.md` tiver sido aberto e lido nominalmente na rodada atual
     - quando nenhuma dessas duas fontes aceitaveis tiver mostrado o metadado, limitar o resumo ao que o wrapper efetivamente retornou
     - se o pacote tiver `Source` parcial, separar claramente `sync de objetos aceito` de `refresh de metadado parcial` e preservar os valores estáveis já conhecidos
+    - se houver relatorio da primeira materializacao e outro de reprocessamento confirmatorio ou conferencia full, nao misturar os papeis no handoff; identificar explicitamente qual arquivo representa a criacao/atualizacao do acervo e qual arquivo representa apenas verificacao posterior
     - se o `XPZ` oficial da KB trouxer objetos adicionais fora do foco imediato da frente, reportar isso como inesperado para a frente atual, mas tratar como possível mudança paralela legítima vinda da IDE/KB até evidência em contrário
     - se `-ExpectedItems` tiver sido informado, classificar explicitamente `itens esperados que voltaram`, `itens esperados que nao voltaram` e `retorno oficial adicional da KB`
     - se `-ExpectedItems` tiver sido informado, emitir tambem um resumo humano curto no console/handoff, sem alarmismo e sem tratar adicionais oficiais ou esperados ausentes como falha automatica
