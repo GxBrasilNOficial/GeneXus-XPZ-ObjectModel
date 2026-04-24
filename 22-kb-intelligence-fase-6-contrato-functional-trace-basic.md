@@ -7,7 +7,7 @@ contrato operacional de consulta
 baixo a medio
 
 ## Depende de
-17-kb-intelligence-fase-6-contrato.md, 18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md, 20-kb-intelligence-fase-6-piloto-investigacao-funcional.md, 21-kb-intelligence-fase-6-checklist-operacional-agente.md, scripts/README-kb-intelligence.md
+17-kb-intelligence-fase-6-contrato.md, 18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md, 21-kb-intelligence-fase-6-checklist-operacional-agente.md, scripts/README-kb-intelligence.md
 
 ## Usado por
 agentes que forem avaliar ou implementar uma consulta auxiliar para montar trilha funcional basica sem produzir conclusao funcional automatica
@@ -29,6 +29,8 @@ A consulta nao deve interpretar regra de negocio, nao deve inferir comportamento
 Implementada em 2026-04-22 nos scripts de consulta do KB Intelligence, sem alterar schema do SQLite e sem ampliar extracao.
 
 Depois da primeira estabilizacao curta, recebeu filtro conservador para ocultar literais `CustomType` redundantes quando houver relacao resolvida equivalente na mesma direcao, arquivo e linha. `impact-basic` e `show-evidence` continuam completos.
+
+Em validacao real da Fase 6, o indice canonico apresentou defasagem em relacao ao indice temporario atualizado com os scripts mais recentes. `functional-trace-basic` opera sobre o canonico disponivel; atualizacao do canonico nao faz parte da consulta.
 
 ## Problema que a consulta resolve
 
@@ -131,6 +133,7 @@ A primeira implementacao, se aprovada, deve ser conservadora:
 - substituir `Source`, `Rules`, eventos ou propriedades do XML oficial
 - alterar schema sem necessidade explicita
 - alterar o indice canonico durante consulta
+- disparar regeneracao do canonico como resposta a defasagem percebida durante triagem funcional
 
 ## Gate minimo de validacao
 

@@ -7,7 +7,7 @@ checklist operacional
 medio
 
 ## Depende de
-17-kb-intelligence-fase-6-contrato.md, 18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md, 20-kb-intelligence-fase-6-piloto-investigacao-funcional.md, scripts/README-kb-intelligence.md, 08-guia-para-agente-gpt.md
+17-kb-intelligence-fase-6-contrato.md, 18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md, scripts/README-kb-intelligence.md, 08-guia-para-agente-gpt.md
 
 ## Usado por
 agentes que forem responder perguntas funcionais curtas usando o KB Intelligence como triagem tecnica, sem substituir a leitura do XML oficial
@@ -23,7 +23,10 @@ Este checklist nao cria nova semantica de extracao e nao autoriza conclusao func
 - ler `README.md` e `AGENTS.md` locais quando entrar em uma pasta de KB diferente da raiz metodologica
 - confirmar o objeto sempre por `tipo + nome`
 - localizar `KbIntelligence\kb-intelligence.sqlite`
+- tratar `KbIntelligence\kb-intelligence.sqlite` como artefato canonico estavel da pasta paralela da KB
 - tratar o SQLite como indice derivado, nao como fonte normativa
+- se a triagem funcional sugerir que o canonico esta defasado em relacao ao comportamento esperado do indice, nao regenerar durante a propria investigacao
+- tratar regeneracao do canonico como acao operacional separada, explicita e validada
 - usar `ObjetosDaKbEmXml` como fonte normativa quando a pergunta depender de semantica GeneXus
 - nao usar `ArquivoMorto`, salvo pedido explicito de analise historica
 - nao tocar em `logs/` locais, salvo pedido explicito

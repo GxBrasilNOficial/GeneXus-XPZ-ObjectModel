@@ -7,7 +7,7 @@ exemplos operacionais de consulta
 medio
 
 ## Depende de
-17-kb-intelligence-fase-6-contrato.md, 20-kb-intelligence-fase-6-piloto-investigacao-funcional.md, 21-kb-intelligence-fase-6-checklist-operacional-agente.md, 22-kb-intelligence-fase-6-contrato-functional-trace-basic.md, scripts/README-kb-intelligence.md
+17-kb-intelligence-fase-6-contrato.md, 21-kb-intelligence-fase-6-checklist-operacional-agente.md, 22-kb-intelligence-fase-6-contrato-functional-trace-basic.md, scripts/README-kb-intelligence.md
 
 ## Usado por
 agentes que forem usar `functional-trace-basic` como atalho de triagem funcional antes de abrir XML oficial
