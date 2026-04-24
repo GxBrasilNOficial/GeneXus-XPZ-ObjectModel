@@ -126,7 +126,9 @@ Se você quer entender a base rapidamente:
   5. `KbIntelligence`
   6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
-- quando a pasta paralela estiver versionada em Git e o setup inicial partir de estrutura vazia, `.gitignore` na raiz e `.gitkeep` nas subpastas vazias fazem parte do bootstrap esperado
+- quando a pasta paralela ja estiver versionada em Git e o setup inicial partir de estrutura vazia, `.gitignore` na raiz e `.gitkeep` nas subpastas vazias fazem parte do bootstrap esperado
+- quando a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local como passo opcional; nao deve executar `git init` sem aprovacao explicita do usuario
+- se o usuario aceitar versionamento Git local e o Git nao estiver funcional no ambiente, o agente pode oferecer instalar ou orientar a instalacao antes do bootstrap Git
 - quando `XpzExportadosPelaIDE` ainda não existir, o agente deve perguntar onde o usuário pretende salvar os `.xpz` antes de prosseguir com o processamento
 - no setup inicial da pasta paralela da KB, se o caminho da pasta nativa da KB nao vier informado, o agente deve pedir esse caminho ao usuario antes de concluir o setup
 - no setup inicial da pasta paralela da KB, `kb-source-metadata.md` deve nascer em formato compativel com o motor compartilhado e preservar o campo nominal `last_xpz_materialization_run_at`
@@ -264,7 +266,9 @@ Si quieres entender la base rápidamente:
   5. `KbIntelligence`
   6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
-- cuando la carpeta paralela esté versionada en Git y el setup inicial parta de estructura vacía, `.gitignore` en la raíz y `.gitkeep` en las subcarpetas vacías forman parte del bootstrap esperado
+- cuando la carpeta paralela ya esté versionada en Git y el setup inicial parta de estructura vacía, `.gitignore` en la raíz y `.gitkeep` en las subcarpetas vacías forman parte del bootstrap esperado
+- cuando la carpeta paralela todavía no esté versionada en Git, el agente puede ofrecer inicializar versionado Git local como paso opcional; no debe ejecutar `git init` sin aprobación explícita del usuario
+- si el usuario acepta versionado Git local y Git no está funcional en el entorno, el agente puede ofrecer instalarlo u orientar la instalación antes del bootstrap Git
 - cuando `XpzExportadosPelaIDE` todavía no exista, el agente debe preguntar dónde el usuario pretende guardar los `.xpz` antes de continuar con el procesamiento
 - en el setup inicial de la carpeta paralela de la KB, si el camino de la carpeta nativa de la KB no viene informado, el agente debe pedir ese camino al usuario antes de concluir el setup
 - en el setup inicial de la carpeta paralela de la KB, `kb-source-metadata.md` debe nacer en formato compatible con el motor compartido y preservar el campo nominal `last_xpz_materialization_run_at`
@@ -402,7 +406,9 @@ If you want to understand the repository quickly:
   5. `KbIntelligence`
   6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
-- when the parallel folder is versioned in Git and the initial setup starts from an empty structure, `.gitignore` at the root and `.gitkeep` in empty subfolders are part of the expected bootstrap
+- when the parallel folder is already versioned in Git and the initial setup starts from an empty structure, `.gitignore` at the root and `.gitkeep` in empty subfolders are part of the expected bootstrap
+- when the parallel folder is not yet versioned in Git, the agent may offer to initialize local Git versioning as an optional step; it must not run `git init` without explicit user approval
+- if the user accepts local Git versioning and Git is not functional in the environment, the agent may offer to install it or guide the installation before the Git bootstrap
 - when `XpzExportadosPelaIDE` does not exist yet, the agent must ask where the user intends to save the `.xpz` files before continuing with processing
 - in the initial setup of the KB parallel folder, if the native KB folder path is not provided, the agent must ask the user for that path before concluding setup
 - in the initial setup of the KB parallel folder, `kb-source-metadata.md` must start in a format compatible with the shared engine and preserve the nominal `last_xpz_materialization_run_at` field

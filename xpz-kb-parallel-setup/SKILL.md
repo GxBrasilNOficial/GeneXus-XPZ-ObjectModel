@@ -60,6 +60,7 @@ Do NOT use this skill for:
 - Registrar em `AGENTS.md` da pasta paralela que a pasta nativa da KB e terreno proibido para gravacao por agentes, com leitura permitida apenas quando o fluxo operacional explicito realmente exigir
 - Quando houver `README.md` local para humanos na pasta paralela, espelhar ali a identificacao da pasta nativa da KB e a regra de somente leitura em linguagem clara
 - Em setup inicial padrao sem nomes alternativos, sem conflito estrutural e com pasta nativa da KB ja informada, evitar exploracao ampla do motor compartilhado e dos exemplos antes de criar a estrutura base; explorar mais so se surgir bloqueio concreto
+- Quando a inspecao local da pasta contradisser contexto indireto do ambiente, da sessao ou de hooks, confiar primeiro na inspecao local e seguir com verificacao curta e objetiva, sem narrativa longa de especulacao
 - Explicar a funcao de cada subpasta
 - Tratar `ObjetosDaKbEmXml` como snapshot oficial somente leitura para agentes
 - Tratar `XpzExportadosPelaIDE` como pasta de entrada onde o usuario grava os `.xpz` exportados pela IDE
@@ -86,7 +87,10 @@ Do NOT use this skill for:
 - Explicar que `KbIntelligence` nao substitui `ObjetosDaKbEmXml`; ele e uma camada derivada para triagem e deve ser regeneravel a partir do snapshot oficial
 - Explicar que, se `last_index_build_run_at` estiver ausente ou anterior a `last_xpz_materialization_run_at`, o agente nao deve pesquisar o acervo em massa nem gerar objetos para importacao; deve tratar isso como excecao operacional e oferecer a regeneracao/validacao do indice antes de seguir
 - Prever wrappers locais `.ps1` na pasta `scripts` quando a pasta paralela da KB precisar reconstruir o fluxo operacional local sobre o motor compartilhado
-- Tratar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte esperada do setup inicial padrao quando a pasta paralela estiver versionada em Git
+- Se a pasta paralela ja estiver versionada em Git, tratar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte esperada do setup inicial padrao
+- Se a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local como passo opcional de apoio; a decisao pertence ao usuario
+- Nao executar `git init` por conta propria no setup inicial
+- Se o usuario aceitar versionamento Git local e o ambiente nao tiver Git funcional, o agente pode oferecer instalar ou orientar a instalacao antes de prosseguir com o bootstrap Git
 - Reutilizar o fluxo oficial previsto nas skills e no motor compartilhado antes de considerar qualquer script novo
 - Gerar `kb-source-metadata.md` inicial em formato compativel com o motor compartilhado, preservando desde o setup o campo nominal `last_xpz_materialization_run_at`
 - Nao salvar memoria operacional fora da propria pasta paralela da KB sem autorizacao explicita do usuario; `AGENTS.md`, `README.md` e arquivos operacionais locais sao a camada preferencial de memoria do setup
@@ -247,10 +251,12 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
    - `KbIntelligence`
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
    - `PacotesGeradosParaImportacaoNaKbNoGenexus`
-9. Quando a pasta paralela estiver versionada em Git, criar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte do bootstrap padrao
-10. Criar `kb-source-metadata.md` inicial com o campo nominal `last_xpz_materialization_run_at`, sem inventar formato paralelo desconectado do motor compartilhado
-11. Nao salvar memoria externa do agente fora da pasta paralela da KB sem autorizacao explicita do usuario
-12. Explicar o papel de cada pasta:
+9. Se a pasta paralela ja estiver versionada em Git, criar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte do bootstrap padrao
+10. Se a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local; nao executar `git init` sem aprovacao explicita do usuario
+11. Se o usuario aceitar versionamento Git local e o Git nao estiver funcional no ambiente, oferecer instalar ou orientar a instalacao antes do bootstrap Git
+12. Criar `kb-source-metadata.md` inicial com o campo nominal `last_xpz_materialization_run_at`, sem inventar formato paralelo desconectado do motor compartilhado
+13. Nao salvar memoria externa do agente fora da pasta paralela da KB sem autorizacao explicita do usuario
+14. Explicar o papel de cada pasta:
    - `ObjetosDaKbEmXml` = snapshot oficial extraido via fluxo oficial do `.ps1`
    - `ObjetosDaKbEmXml` = materializacao do `XPZ` completo ou parcial da IDE, quebrando `full.xml` em XMLs individuais por objeto
    - `ObjetosDaKbEmXml` = organizacao por subpastas de tipo amigavel e nomes amigaveis de objeto
@@ -263,10 +269,10 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = XMLs temporarios gerados pelo agente para importacao manual, organizados por frente em subpastas `NomeCurto_GUID_YYYYMMDD`
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = nao recebe materializacao do acervo vindo de `XPZ`
    - `PacotesGeradosParaImportacaoNaKbNoGenexus` = pacote final de importacao pela IDE, mantido plano sem subpastas por frente
-13. Se `ObjetosDaKbEmXml` ainda nao existir, tratar o acervo como ainda nao materializado
-14. Se `ObjetosGeradosParaImportacaoNaKbNoGenexus` nao estiver organizado por frentes em subpastas `NomeCurto_GUID_YYYYMMDD`, tratar isso como desvio operacional e orientar correcao
-15. Se `XpzExportadosPelaIDE` estiver ausente e o fluxo depender de `XPZ`, pedir ao usuario o caminho pretendido ou criar a pasta padrao quando a politica do repositorio permitir
-16. Se a pasta `scripts` existir sem wrappers locais minimos, orientar a reconstruir:
+15. Se `ObjetosDaKbEmXml` ainda nao existir, tratar o acervo como ainda nao materializado
+16. Se `ObjetosGeradosParaImportacaoNaKbNoGenexus` nao estiver organizado por frentes em subpastas `NomeCurto_GUID_YYYYMMDD`, tratar isso como desvio operacional e orientar correcao
+17. Se `XpzExportadosPelaIDE` estiver ausente e o fluxo depender de `XPZ`, pedir ao usuario o caminho pretendido ou criar a pasta padrao quando a politica do repositorio permitir
+18. Se a pasta `scripts` existir sem wrappers locais minimos, orientar a reconstruir:
    - wrapper de atualizacao diaria sobre o motor compartilhado
    - wrapper de conferencia full reaproveitando o wrapper diario
    - wrapper de consulta do indice derivado, se a KB local adotar `KbIntelligence`
