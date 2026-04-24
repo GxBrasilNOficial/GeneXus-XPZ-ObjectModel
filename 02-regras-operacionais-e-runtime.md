@@ -124,6 +124,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 
 ## Topologia operacional do workspace
 
+- `Regra operacional`: a pasta nativa da KB e area proibida para gravacao por agentes; leitura e permitida apenas quando o fluxo operacional explicito realmente exigir.
 - `Regra operacional`: `ObjetosDaKbEmXml` e o snapshot oficial da KB e deve ser tratado como somente leitura para agentes.
 - `Regra operacional`: agente nunca pode criar, alterar, mover, renomear ou sobrescrever arquivos em `ObjetosDaKbEmXml`.
 - `Regra operacional`: a unica origem oficial de atualizacao de `ObjetosDaKbEmXml` e o script `.ps1` do fluxo de sincronizacao alimentado por `XPZ` exportado pela IDE.
@@ -139,6 +140,9 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: o tipo do objeto determina a pasta esperada no acervo (`Procedure`, `Transaction`, `WebPanel`, `Attribute` e correlatas) e deve ser confirmado antes de qualquer leitura, comparacao, clonagem, ajuste ou empacotamento.
 - `Regra operacional`: o mesmo nome pode existir simultaneamente em tipos diferentes; antes de agir sobre um objeto, confirmar em qual pasta o arquivo realmente existe no acervo local.
 - `Regra operacional`: agente nao deve inferir tipo de objeto apenas por contexto funcional, nome parecido ou conversa anterior; a pasta real e a evidência direta minima para localizar o artefato correto.
+- `Regra operacional`: ao concluir o setup inicial da pasta paralela da KB, o agente deve distinguir explicitamente `estrutura pronta` de `snapshot oficial ainda nao materializado`.
+- `Regra operacional`: ao concluir o setup inicial, o agente deve oferecer `A)` exportacao de `.xpz` full pela IDE para `XpzExportadosPelaIDE` ou `B)` geracao do `.xpz` full a partir da pasta nativa da KB via trilha `MSBuild`, seguida de materializacao dos XMLs.
+- `Regra operacional`: no fechamento do setup inicial, `A)` deve ser apresentado como caminho preferencial e normalmente mais rapido; `B)` deve ser apresentado como caminho possivel, porem mais lento por depender da trilha via `MSBuild`.
 
 ## Compatibilidade de `Source`
 

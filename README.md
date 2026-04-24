@@ -74,6 +74,7 @@ Se você quer entender a base rapidamente:
 ### Topologia operacional
 
 - nesta trilha, a pasta nativa da KB GeneXus e diferente da pasta paralela da KB
+- nesta trilha, a pasta nativa da KB deve ser tratada como area proibida para gravacao por agentes; leitura e permitida apenas quando o fluxo operacional explicito realmente exigir
 - a pasta paralela da KB e a pasta de trabalho que concentra `XPZ` exportados pela IDE, XMLs materializados pelo fluxo oficial, indice derivado para triagem e artefatos preparados para importação posterior
 
 - `ObjetosDaKbEmXml`: snapshot oficial da KB; somente leitura para agentes
@@ -126,7 +127,11 @@ Se você quer entender a base rapidamente:
   6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - quando `XpzExportadosPelaIDE` ainda não existir, o agente deve perguntar onde o usuário pretende salvar os `.xpz` antes de prosseguir com o processamento
+- no setup inicial da pasta paralela da KB, se o caminho da pasta nativa da KB nao vier informado, o agente deve pedir esse caminho ao usuario antes de concluir o setup
 - quando `ObjetosDaKbEmXml` ainda não existir, o agente deve tratar isso como KB ainda não materializada e parar antes de assumir qualquer snapshot
+- ao concluir o setup inicial da pasta paralela da KB, o agente deve deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
+- ao concluir o setup inicial, o agente deve oferecer `A)` exportacao do `.xpz` full pela IDE para `XpzExportadosPelaIDE` ou `B)` geracao do `.xpz` full a partir da pasta nativa da KB via trilha `MSBuild`, seguida de materializacao dos XMLs
+- no fechamento do setup inicial, `A)` deve ser apresentado como caminho preferencial e normalmente mais rapido; `B)` deve ser apresentado como caminho possivel, porem mais lento por depender da trilha via `MSBuild`
 
 ### Automação operacional
 
@@ -204,6 +209,7 @@ Si quieres entender la base rápidamente:
 ### Topología operativa
 
 - en esta trilha, la carpeta nativa de la KB GeneXus es distinta de la carpeta paralela de la KB
+- en esta trilha, la carpeta nativa de la KB debe tratarse como área prohibida para escritura por agentes; la lectura solo se permite cuando el flujo operativo explícito realmente lo exija
 - la carpeta paralela de la KB es la carpeta de trabajo que concentra `XPZ` exportados por la IDE, XMLs materializados por el flujo oficial, índice derivado para triaje y artefactos preparados para importación posterior
 
 - `ObjetosDaKbEmXml`: snapshot oficial de la KB; solo lectura para agentes
@@ -256,7 +262,11 @@ Si quieres entender la base rápidamente:
   6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - cuando `XpzExportadosPelaIDE` todavía no exista, el agente debe preguntar dónde el usuario pretende guardar los `.xpz` antes de continuar con el procesamiento
+- en el setup inicial de la carpeta paralela de la KB, si el camino de la carpeta nativa de la KB no viene informado, el agente debe pedir ese camino al usuario antes de concluir el setup
 - cuando `ObjetosDaKbEmXml` todavía no exista, el agente debe tratar esto como KB aún no materializada y detenerse antes de asumir cualquier snapshot
+- al concluir el setup inicial de la carpeta paralela de la KB, el agente debe dejar explícito que la estructura está lista, pero `ObjetosDaKbEmXml` todavía no fue materializada
+- al concluir el setup inicial, el agente debe ofrecer `A)` exportación del `.xpz` full por la IDE hacia `XpzExportadosPelaIDE` o `B)` generación del `.xpz` full a partir de la carpeta nativa de la KB por la trilha `MSBuild`, seguida de materialización de los XMLs
+- en el cierre del setup inicial, `A)` debe presentarse como camino preferencial y normalmente más rápido; `B)` debe presentarse como camino posible, pero más lento por depender de la trilha via `MSBuild`
 
 ### Automación operativa
 
@@ -334,6 +344,7 @@ If you want to understand the repository quickly:
 ### Operational Topology
 
 - in this trail, the native GeneXus KB folder is different from the KB parallel folder
+- in this trail, the native KB folder must be treated as a write-prohibited area for agents; reading is allowed only when the explicit operational flow truly requires it
 - the KB parallel folder is the working folder that concentrates `XPZ` exported by the IDE, XMLs materialized by the official flow, derived index for triage, and artifacts prepared for later import
 
 - `ObjetosDaKbEmXml`: official KB snapshot; read-only for agents
@@ -386,7 +397,11 @@ If you want to understand the repository quickly:
   6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - when `XpzExportadosPelaIDE` does not exist yet, the agent must ask where the user intends to save the `.xpz` files before continuing with processing
+- in the initial setup of the KB parallel folder, if the native KB folder path is not provided, the agent must ask the user for that path before concluding setup
 - when `ObjetosDaKbEmXml` does not exist yet, the agent must treat this as a KB not yet materialized and stop before assuming any snapshot
+- when concluding the initial setup of the KB parallel folder, the agent must make it explicit that the structure is ready, but `ObjetosDaKbEmXml` has not yet been materialized
+- when concluding the initial setup, the agent must offer `A)` full `.xpz` export by the IDE into `XpzExportadosPelaIDE` or `B)` full `.xpz` generation from the native KB folder through the `MSBuild` track, followed by XML materialization
+- in the initial setup closeout, `A)` must be presented as the preferred and usually faster path; `B)` must be presented as a possible but slower path because it depends on the `MSBuild` track
 
 ### Operational automation
 
