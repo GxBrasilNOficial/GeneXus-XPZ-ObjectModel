@@ -128,6 +128,7 @@ Os wrappers seguem esta convenção de parâmetros:
 - `-InputPath` *(obrigatório)* — caminho para `.xpz`, XML ou pasta contendo o XML
 - `-VerifyOnly` *(switch)* — só confere, não regrava
 - `-FullSnapshot` *(switch)* — compara snapshot completo do acervo
+- para materializacao normal, inclusive carga inicial por `XPZ` full, nao presumir `-FullSnapshot` como padrao implicito; usar esse modo apenas quando o objetivo explicito for conferencia full adicional do acervo
 - `-ReportPath` *(opcional)* — salva relatório JSON
 - `-KeepReport` *(switch)* — mantém relatório mesmo sem erro
 - `-ExpectedItems` *(opcional)* — lista de itens esperados da frente atual no formato `Tipo:Nome`, usada apenas para classificação comparativa entre foco esperado e retorno oficial da KB
@@ -193,6 +194,8 @@ Os wrappers seguem esta convenção de parâmetros:
     - nao usar o wrapper antigo para atualizar `kb-source-metadata.md` e depois regenerar o indice manualmente como substituto da correcao de compatibilidade
     - nao usar `.example.ps1` da base compartilhada como substituto temporario do wrapper local real ausente
 12. Montar o comando com os parâmetros corretos
+    - para materializacao normal do `XPZ` em `ObjetosDaKbEmXml`, nao acrescentar `-FullSnapshot` por conta propria
+    - usar `-FullSnapshot` apenas quando o usuario pedir conferencia full, quando o wrapper especifico de conferencia for o escolhido ou quando a documentacao local tornar isso requisito explicito
 13. Executar via Bash com `pwsh -File ...`
 14. Se a materializacao XPZ/XML em `ObjetosDaKbEmXml` foi concluida com sucesso e nao era `VerifyOnly`, regenerar/validar compulsoriamente o indice derivado antes de encerrar o fluxo
 15. Se o processamento foi concluído com sucesso, permitir renomear o `.xpz` consumido para `processado_<nome-original>.xpz`
@@ -206,6 +209,8 @@ Os wrappers seguem esta convenção de parâmetros:
     - quando houver resumo Git, apresentar essa camada separadamente como comparacao do worktree contra o commit atual, sem reclassificar o resultado do sync
     - se o mesmo `XPZ` tiver sido reprocessado após atualização do arquivo, deixar explícito que a comparação relevante é com o conteúdo do insumo reprocessado e com o estado atual do acervo, não com o relatório antigo
     - se `kb-source-metadata.md` tiver sido reescrito pelo wrapper, tratar isso como artefato normal do fluxo, não como evidência automática de mudança funcional na frente
+    - nao afirmar conteudo especifico de `kb-source-metadata.md`, como versao do GeneXus, build, GUID da KB, usuario ou caminho `Source`, sem citar a saida real do wrapper ou o proprio arquivo lido nominalmente
+    - quando esses metadados nao tiverem sido exibidos na saida real ou lidos do arquivo, limitar o resumo ao que o wrapper efetivamente retornou
     - se o pacote tiver `Source` parcial, separar claramente `sync de objetos aceito` de `refresh de metadado parcial` e preservar os valores estáveis já conhecidos
     - se o `XPZ` oficial da KB trouxer objetos adicionais fora do foco imediato da frente, reportar isso como inesperado para a frente atual, mas tratar como possível mudança paralela legítima vinda da IDE/KB até evidência em contrário
     - se `-ExpectedItems` tiver sido informado, classificar explicitamente `itens esperados que voltaram`, `itens esperados que nao voltaram` e `retorno oficial adicional da KB`
