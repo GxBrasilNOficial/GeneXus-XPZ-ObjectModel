@@ -117,6 +117,7 @@ Se você quer entender a base rapidamente:
 - ao retomar uma frente existente, reutilizar a mesma subpasta da frente em vez de criar outra
 - `PacotesGeradosParaImportacaoNaKbNoGenexus` guarda o pacote `.xml` e, quando necessário, também `.xpz`, que será importado pela IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus` deve permanecer plano, sem subpastas por frente; o vinculo com a frente fica apenas no prefixo `NomeCurto_GUID_YYYYMMDD` somado ao `nn`
+- por padrao, `ObjetosGeradosParaImportacaoNaKbNoGenexus` e `PacotesGeradosParaImportacaoNaKbNoGenexus` nao precisam ser versionadas em Git; se houver duvida sobre rastrear ou ignorar seu conteudo, isso deve ser tratado como decisao de politica do repositorio
 - `AGENTS.md` e `README.md` podem existir na raiz ou em subpastas quando houver anotação operacional pertinente
 - se alguma dessas subpastas ainda não existir, a ordem recomendada de criação é:
   1. `scripts`
@@ -129,6 +130,7 @@ Se você quer entender a base rapidamente:
 - quando a pasta paralela ja estiver versionada em Git e o setup inicial partir de estrutura vazia, `.gitignore` na raiz e `.gitkeep` nas subpastas vazias fazem parte do bootstrap esperado
 - quando a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local como passo opcional; nao deve executar `git init` sem aprovacao explicita do usuario
 - se o usuario aceitar versionamento Git local e o Git nao estiver funcional no ambiente, o agente pode oferecer instalar ou orientar a instalacao antes do bootstrap Git
+- alterar `.gitignore`, politica de versionamento ou escopo de arquivos rastreados para viabilizar `git add`/`commit` e decisao de politica do repositorio; o agente pode diagnosticar e propor opcoes, mas nao deve mudar essa politica automaticamente so para concluir o fechamento
 - quando `XpzExportadosPelaIDE` ainda não existir, o agente deve perguntar onde o usuário pretende salvar os `.xpz` antes de prosseguir com o processamento
 - no setup inicial da pasta paralela da KB, se o caminho da pasta nativa da KB nao vier informado, o agente deve pedir esse caminho ao usuario antes de concluir o setup
 - no setup inicial da pasta paralela da KB, `kb-source-metadata.md` deve nascer em formato compativel com o motor compartilhado e preservar o campo nominal `last_xpz_materialization_run_at`
@@ -257,6 +259,7 @@ Si quieres entender la base rápidamente:
 - al retomar una frente existente, reutilizar la misma subcarpeta de la frente en vez de crear otra
 - `PacotesGeradosParaImportacaoNaKbNoGenexus` guarda el paquete `.xml` y, cuando sea necesario, también `.xpz`, que será importado por la IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus` debe permanecer plano, sin subcarpetas por frente; el vínculo con la frente queda solo en el prefijo `NomeCurto_GUID_YYYYMMDD` sumado a `nn`
+- por defecto, `ObjetosGeradosParaImportacaoNaKbNoGenexus` y `PacotesGeradosParaImportacaoNaKbNoGenexus` no necesitan versionarse en Git; si hay duda sobre rastrear o ignorar su contenido, eso debe tratarse como decisión de política del repositorio
 - `AGENTS.md` y `README.md` pueden existir en la raíz o en subcarpetas cuando haya anotación operativa pertinente
 - si alguna de esas subcarpetas todavía no existe, el orden recomendado de creación es:
   1. `scripts`
@@ -269,6 +272,7 @@ Si quieres entender la base rápidamente:
 - cuando la carpeta paralela ya esté versionada en Git y el setup inicial parta de estructura vacía, `.gitignore` en la raíz y `.gitkeep` en las subcarpetas vacías forman parte del bootstrap esperado
 - cuando la carpeta paralela todavía no esté versionada en Git, el agente puede ofrecer inicializar versionado Git local como paso opcional; no debe ejecutar `git init` sin aprobación explícita del usuario
 - si el usuario acepta versionado Git local y Git no está funcional en el entorno, el agente puede ofrecer instalarlo u orientar la instalación antes del bootstrap Git
+- cambiar `.gitignore`, la política de versionado o el alcance de archivos rastreados para viabilizar `git add`/`commit` es una decisión de política del repositorio; el agente puede diagnosticar y proponer opciones, pero no debe cambiar esa política automáticamente solo para cerrar la frente
 - cuando `XpzExportadosPelaIDE` todavía no exista, el agente debe preguntar dónde el usuario pretende guardar los `.xpz` antes de continuar con el procesamiento
 - en el setup inicial de la carpeta paralela de la KB, si el camino de la carpeta nativa de la KB no viene informado, el agente debe pedir ese camino al usuario antes de concluir el setup
 - en el setup inicial de la carpeta paralela de la KB, `kb-source-metadata.md` debe nacer en formato compatible con el motor compartido y preservar el campo nominal `last_xpz_materialization_run_at`
@@ -397,6 +401,7 @@ If you want to understand the repository quickly:
 - when resuming an existing front, reuse the same front subfolder instead of creating another one
 - `PacotesGeradosParaImportacaoNaKbNoGenexus` stores the `.xml` package and, when needed, also `.xpz`, which will be imported by the IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus` must remain flat, without subfolders by front; the link to the front exists only in the `NomeCurto_GUID_YYYYMMDD` prefix plus `nn`
+- by default, `ObjetosGeradosParaImportacaoNaKbNoGenexus` and `PacotesGeradosParaImportacaoNaKbNoGenexus` do not need to be versioned in Git; if there is doubt about tracking or ignoring their contents, treat that as repository policy
 - `AGENTS.md` and `README.md` may exist in the root or in subfolders when there is relevant operational annotation
 - if any of those subfolders does not exist yet, the recommended creation order is:
   1. `scripts`
@@ -409,6 +414,7 @@ If you want to understand the repository quickly:
 - when the parallel folder is already versioned in Git and the initial setup starts from an empty structure, `.gitignore` at the root and `.gitkeep` in empty subfolders are part of the expected bootstrap
 - when the parallel folder is not yet versioned in Git, the agent may offer to initialize local Git versioning as an optional step; it must not run `git init` without explicit user approval
 - if the user accepts local Git versioning and Git is not functional in the environment, the agent may offer to install it or guide the installation before the Git bootstrap
+- changing `.gitignore`, versioning policy, or the scope of tracked files just to make `git add`/`commit` work is a repository policy decision; the agent may diagnose and propose options, but must not change that policy automatically just to close the front
 - when `XpzExportadosPelaIDE` does not exist yet, the agent must ask where the user intends to save the `.xpz` files before continuing with processing
 - in the initial setup of the KB parallel folder, if the native KB folder path is not provided, the agent must ask the user for that path before concluding setup
 - in the initial setup of the KB parallel folder, `kb-source-metadata.md` must start in a format compatible with the shared engine and preserve the nominal `last_xpz_materialization_run_at` field
