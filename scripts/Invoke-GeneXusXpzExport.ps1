@@ -47,6 +47,9 @@ Valor explícito para ExportKBInfo. Default: false.
 .PARAMETER ExportAll
 Valor explícito para ExportAll. Default: false.
 
+.PARAMETER FullExport
+Atalho ergonômico para exportação full. Equivale a ExportAll=true.
+
 .PARAMETER VerboseLog
 Amplia o detalhamento gravado no log sem alterar o resultado lógico.
 #>
@@ -84,11 +87,17 @@ param(
     [ValidateSet('true', 'false')]
     [string]$ExportAll = 'false',
 
+    [switch]$FullExport,
+
     [switch]$VerboseLog
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+if ($FullExport) {
+    $ExportAll = 'true'
+}
 
 $ProgramFilesX86 = [System.IO.Path]::GetFullPath('C:\Program Files (x86)')
 

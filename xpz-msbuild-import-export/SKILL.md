@@ -87,6 +87,7 @@ Do NOT use esta skill para:
 - Preferir `JSON` como formato canônico inicial desse diagnóstico
 - Registrar `stdout`, `stderr`, `exitCode`, caminho do `.msbuild` temporário e caminho do log
 - Validar a assinatura efetiva do wrapper e da task antes de assumir formato de parâmetro sensível de exportação ou importação
+- Em exportação full da KB, preferir o atalho ergonômico `-FullExport` do wrapper local quando ele existir; manter `ExportAll='true'` apenas como compatibilidade com contratos antigos
 - Privilegiar `PreviewMode` e, quando suportado pela task carregada, `UpdateFile` antes de importação real
 - Tratar `ImportKBInformation`, `UpdateFile` e defaults internos de importação/exportação como sensíveis e dependentes da assinatura efetiva da task `Import`
 - Normalizar recortes multiplos de `IncludeItems` e `ExcludeItems` como lista antes de serializar para a task carregada
@@ -216,6 +217,7 @@ Parâmetros específicos de importação:
    - `UpdateFile`, quando suportado pela task carregada
 9. Se o objetivo for exportação, executar com parâmetros explícitos e conferir o artefato gerado
    Antes de emitir parâmetro sensível de exportação, validar a assinatura efetiva do wrapper e da task carregada para evitar sintaxe presumida incorreta.
+   Em exportação full, preferir `-FullExport` quando o wrapper expuser esse atalho.
 10. Se o objetivo for importação real, exigir autorização explícita e ambiente controlado
 11. Capturar e relatar:
    - `exitCode`
