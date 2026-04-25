@@ -156,6 +156,9 @@ Do NOT use this skill for:
 - Quando a pasta paralela da KB adotar `KbIntelligence`, a pasta `scripts` tambem deve prever wrappers locais finos para:
   - consulta do indice derivado em `KbIntelligence\kb-intelligence.sqlite`
   - regeneracao e validacao do indice a partir de `ObjetosDaKbEmXml`
+  - execucao do gate de frescor (`Test-*KbGate.ps1`): chama o wrapper de consulta local com `-Query index-metadata`, le `kb-source-metadata.md`, compara timestamps e retorna `GATE_OK` ou lanca `BLOCK: <motivo>`; depende de `Query-*KbIntelligence.ps1` na mesma pasta; deve ser o unico ponto de execucao do gate de frescor
+  - leitura de campos chave de `kb-source-metadata.md` (`Get-*KbMetadata.ps1`): elimina o padrao recorrente de `Select-String + regex` inline nos chamadores; expoe ao menos `last_xpz_materialization_run_at`, `kb_name` e `source_guid`
+  - verificacao de estrutura da pasta paralela (`Test-*KbStructure.ps1`): relatorio de presenca/ausencia de pastas, scripts e artefatos esperados; retorna `STRUCTURE_OK` ou lista componentes ausentes; usado no setup e em diagnostico antes de qualquer operacao
 - Um helper local de notificacao pode existir como apoio operacional, mas nao substitui os wrappers principais
 - O wrapper local deve ser fino:
   - resolver caminhos da pasta paralela da KB
@@ -177,6 +180,9 @@ Do NOT use this skill for:
   - [Query-KbIntelligence.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Query-KbIntelligence.example.ps1)
   - [Update-KbIntelligenceIndex.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Update-KbIntelligenceIndex.example.ps1)
   - [Notify-TaskComplete.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Notify-TaskComplete.example.ps1)
+  - [Test-KbGate.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Test-KbGate.example.ps1)
+  - [Get-KbMetadata.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Get-KbMetadata.example.ps1)
+  - [Test-KbStructure.example.ps1](C:/Dev/Knowledge/GeneXus-XPZ-Skills/xpz-kb-parallel-setup/examples/Test-KbStructure.example.ps1)
 - Esses `.example.ps1` sao exemplos metodologicos importantes para bootstrap tecnico e reconstrucao assistida dos wrappers locais finais.
 - Quando os wrappers locais precisarem nascer do zero no setup inicial, preferir adaptar os exemplos sanitizados completos desta skill como base do bootstrap tecnico, em vez de improvisar wrappers curtos ou parciais que ainda exijam correcao na etapa seguinte.
 - Esses `.example.ps1` nao substituem o wrapper local real da pasta paralela da KB e nao devem virar fallback automatico de execucao no fluxo normal.
@@ -302,21 +308,29 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
    - wrapper de conferencia full reaproveitando o wrapper diario
    - wrapper de consulta do indice derivado, se a KB local adotar `KbIntelligence`
    - wrapper de regeneracao e validacao do indice derivado, se a KB local adotar `KbIntelligence`
+   - `Test-*KbGate.ps1`, se a KB local adotar `KbIntelligence`
+   - `Get-*KbMetadata.ps1`, se a KB local adotar `KbIntelligence`
+   - `Test-*KbStructure.ps1`, se a KB local adotar `KbIntelligence`
    - helper local opcional de notificacao, se houver necessidade operacional
-20. Se `KbIntelligence` estiver ausente, orientar sua criacao como pasta de artefatos derivados antes de instalar wrappers de indice
-21. Se `ObjetosDaKbEmXml` ainda nao contiver snapshot materializado, nao tentar gerar `kb-intelligence.sqlite`; preparar apenas a pasta e os wrappers locais
-22. Se a pasta adotar `KbIntelligence`, validar o gate de compatibilidade operacional antes de permitir pesquisa ampla, triagem substantiva ou geracao de objetos
-23. Se o gate falhar, oferecer atualizacao da pasta paralela/wrappers/indice e nao responder a pergunta de negocio por fallback manual
-24. Antes de declarar o setup como concluido, validar se a camada minima de wrappers locais esperados em `scripts` ja existe para o fluxo oficial adotado por essa pasta paralela
-25. Quando os wrappers locais forem derivados dos `.example.ps1`, validar que eles nao mantem placeholders sanitizados em configuracao efetiva antes de classifica-los como wrappers minimos existentes
-26. Se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir ou ainda mantiver placeholders sanitizados em configuracao efetiva, reportar isso como `estrutura parcial` ou `bootstrap incompleto`, nao como setup concluido
-27. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
-28. Se a primeira materializacao oficial ocorrer depois do setup, atualizar ou neutralizar a memoria local provisoria criada no setup que ainda afirme `ObjetosDaKbEmXml` nao materializada, `aguardando primeiro XPZ` ou equivalente
-29. Ao concluir o setup inicial, oferecer os proximos passos:
+20. Se os scripts `Test-*KbGate.ps1`, `Get-*KbMetadata.ps1` e `Test-*KbStructure.ps1` forem criados durante o setup, registrar imediatamente os padroes de allowlist correspondentes em `.claude\settings.json` da pasta paralela da KB:
+   - Para cada script, adicionar uma entrada no array `permissions.allow` no formato `PowerShell(& "<caminho-absoluto-do-script>" *)`
+   - Usar o nome real do script no caminho (ex: `Test-FabricaBrasilKbGate.ps1`), nao o nome sanitizado do exemplo
+   - Criar `.claude\settings.json` com estrutura minima se ainda nao existir
+   - Tratar essa etapa como parte do bootstrap, nao como pendencia manual posterior; o agente deve executar isso antes de declarar `setup concluido` ou equivalente
+21. Se `KbIntelligence` estiver ausente, orientar sua criacao como pasta de artefatos derivados antes de instalar wrappers de indice
+22. Se `ObjetosDaKbEmXml` ainda nao contiver snapshot materializado, nao tentar gerar `kb-intelligence.sqlite`; preparar apenas a pasta e os wrappers locais
+23. Se a pasta adotar `KbIntelligence`, validar o gate de compatibilidade operacional antes de permitir pesquisa ampla, triagem substantiva ou geracao de objetos
+24. Se o gate falhar, oferecer atualizacao da pasta paralela/wrappers/indice e nao responder a pergunta de negocio por fallback manual
+25. Antes de declarar o setup como concluido, validar se a camada minima de wrappers locais esperados em `scripts` ja existe para o fluxo oficial adotado por essa pasta paralela
+26. Quando os wrappers locais forem derivados dos `.example.ps1`, validar que eles nao mantem placeholders sanitizados em configuracao efetiva antes de classifica-los como wrappers minimos existentes
+27. Se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir ou ainda mantiver placeholders sanitizados em configuracao efetiva, reportar isso como `estrutura parcial` ou `bootstrap incompleto`, nao como setup concluido
+28. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
+29. Se a primeira materializacao oficial ocorrer depois do setup, atualizar ou neutralizar a memoria local provisoria criada no setup que ainda afirme `ObjetosDaKbEmXml` nao materializada, `aguardando primeiro XPZ` ou equivalente
+30. Ao concluir o setup inicial, oferecer os proximos passos:
    - `A)` o usuario exporta o `.xpz` full pela IDE para `XpzExportadosPelaIDE`, e o agente materializa os XMLs depois
    - `B)` o agente tenta gerar o `.xpz` full a partir da pasta nativa da KB, grava esse `.xpz` em `XpzExportadosPelaIDE` e depois materializa os XMLs
-30. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
-31. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
+31. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
+32. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
 
 ---
 
@@ -329,6 +343,9 @@ PastaParalelaDaKb/
     Test-KbFullSnapshot.ps1
     Query-KbIntelligence.ps1
     Update-KbIntelligenceIndex.ps1
+    Test-KbGate.ps1
+    Get-KbMetadata.ps1
+    Test-KbStructure.ps1
   Temp/
   XpzExportadosPelaIDE/
     KBCompleta_20260413.xpz

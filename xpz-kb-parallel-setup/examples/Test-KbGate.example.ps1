@@ -1,0 +1,82 @@
+#requires -version 5.1
+<#
+.SYNOPSIS
+Wrapper local sanitizado para executar o gate de frescor do indice derivado da KB.
+
+.DESCRIPTION
+Verifica sequencialmente: pasta KbIntelligence, kb-intelligence.sqlite, wrapper
+local de consulta, metadado de build do indice via index-metadata,
+kb-source-metadata.md e campo last_xpz_materialization_run_at. Compara timestamps
+e retorna GATE_OK em stdout quando o indice esta apto, ou lanca excecao com
+BLOCK: <motivo> quando nao esta.
+
+Deve ser o unico ponto de execucao do gate de frescor da pasta paralela da KB.
+Dependencia: Query-KbIntelligence.ps1 na mesma pasta.
+
+.PARAMETER QueryWrapperPath
+Caminho opcional para o wrapper local de consulta do indice.
+Quando omitido, usa Query-KbIntelligence.ps1 na mesma pasta deste script.
+
+.EXAMPLE
+.\Test-KbGate.ps1
+
+.EXAMPLE
+& (Join-Path $kbRoot 'scripts\Test-FabricaBrasilKbGate.ps1')
+#>
+
+param(
+    [string]$QueryWrapperPath
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$repoRoot = Split-Path -Parent $PSScriptRoot
+$indexDir = Join-Path $repoRoot 'KbIntelligence'
+$indexPath = Join-Path $indexDir 'kb-intelligence.sqlite'
+$sourceMetadata = Join-Path $repoRoot 'kb-source-metadata.md'
+
+if (-not $QueryWrapperPath) {
+    $QueryWrapperPath = Join-Path $PSScriptRoot 'Query-KbIntelligence.ps1'
+}
+
+if (-not (Test-Path -LiteralPath $indexDir -PathType Container)) {
+    throw 'BLOCK: pasta KbIntelligence ausente'
+}
+if (-not (Test-Path -LiteralPath $indexPath -PathType Leaf)) {
+    throw 'BLOCK: KbIntelligence\kb-intelligence.sqlite ausente'
+}
+if (-not (Test-Path -LiteralPath $QueryWrapperPath -PathType Leaf)) {
+    throw 'BLOCK: wrapper local de consulta ausente'
+}
+
+$indexMetadata = & $QueryWrapperPath -Query index-metadata -Format text
+$indexMetadataText = ($indexMetadata | Out-String)
+if ([string]::IsNullOrWhiteSpace($indexMetadataText) -or ($indexMetadataText -notmatch 'last_index_build_run_at')) {
+    throw 'BLOCK: index-metadata ausente ou sem last_index_build_run_at'
+}
+
+if (-not (Test-Path -LiteralPath $sourceMetadata -PathType Leaf)) {
+    throw 'BLOCK: kb-source-metadata.md ausente'
+}
+$sourceMaterialization = Select-String -LiteralPath $sourceMetadata -Pattern 'last_xpz_materialization_run_at' -SimpleMatch
+if (-not $sourceMaterialization) {
+    throw 'BLOCK: kb-source-metadata.md sem last_xpz_materialization_run_at'
+}
+
+$indexMatch = [regex]::Match($indexMetadataText, 'last_index_build_run_at\s*[:=]\s*(?<value>\S+)')
+$sourceMatch = [regex]::Match($sourceMaterialization.Line, 'last_xpz_materialization_run_at\s*[:=]\s*(?<value>\S+)')
+if (-not $indexMatch.Success) {
+    throw 'BLOCK: index-metadata sem valor parseavel de last_index_build_run_at'
+}
+if (-not $sourceMatch.Success) {
+    throw 'BLOCK: kb-source-metadata.md sem valor parseavel de last_xpz_materialization_run_at'
+}
+
+$lastIndexBuild = [datetimeoffset]::Parse($indexMatch.Groups['value'].Value)
+$lastXpzMaterialization = [datetimeoffset]::Parse($sourceMatch.Groups['value'].Value)
+if ($lastIndexBuild -lt $lastXpzMaterialization) {
+    throw 'BLOCK: indice defasado em relacao a last_xpz_materialization_run_at'
+}
+
+'GATE_OK'

@@ -146,58 +146,20 @@ Mesmo com o gate liberado, continue economico: para pergunta simples de existenc
 
 ## GATE MINIMO RECOMENDADO
 
-Use uma sequencia unica e bloqueante para evitar reordenacao acidental das camadas. Copie o bloco literalmente, sem acrescentar linhas, saidas auxiliares, parsing, `Select-Object`, extracao de timestamps ou comandos posteriores. Ajuste apenas o nome do wrapper quando a documentacao local da pasta paralela indicar outro nome.
+Chamar `Test-*KbGate.ps1` pelo nome provisionado na pasta `scripts` da pasta paralela da KB. O script encapsula toda a logica do gate: verifica sequencialmente pasta `KbIntelligence`, `kb-intelligence.sqlite`, wrapper local de consulta, metadado de build via `-Query index-metadata`, `kb-source-metadata.md` e comparacao de timestamps. Retorna `GATE_OK` em stdout quando o indice esta apto, ou lanca excecao com `BLOCK: <motivo>` quando nao esta.
+
+Copie o bloco abaixo literalmente, sem acrescentar linhas, saidas auxiliares, parsing ou comandos posteriores. Ajuste apenas o nome do script quando a documentacao local da pasta paralela indicar outro nome.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
-$kbRoot = (Get-Location).Path
-$indexDir = Join-Path $kbRoot 'KbIntelligence'
-$indexPath = Join-Path $indexDir 'kb-intelligence.sqlite'
-$queryWrapper = Join-Path $kbRoot 'scripts\Query-FabricaBrasilKbIntelligence.ps1'
-$sourceMetadata = Join-Path $kbRoot 'kb-source-metadata.md'
-
-if (-not (Test-Path -LiteralPath $indexDir -PathType Container)) {
-    throw 'BLOCK: pasta KbIntelligence ausente'
+$gateScript = Join-Path (Get-Location).Path 'scripts\Test-KBExemploKbGate.ps1'
+if (-not (Test-Path -LiteralPath $gateScript -PathType Leaf)) {
+    throw 'BLOCK: script Test-*KbGate.ps1 ausente em scripts\'
 }
-if (-not (Test-Path -LiteralPath $indexPath -PathType Leaf)) {
-    throw 'BLOCK: KbIntelligence\kb-intelligence.sqlite ausente'
-}
-if (-not (Test-Path -LiteralPath $queryWrapper -PathType Leaf)) {
-    throw 'BLOCK: wrapper local de consulta ausente'
-}
-
-$indexMetadata = & $queryWrapper -Query index-metadata -Format text
-$indexMetadataText = ($indexMetadata | Out-String)
-if ([string]::IsNullOrWhiteSpace($indexMetadataText) -or ($indexMetadataText -notmatch 'last_index_build_run_at')) {
-    throw 'BLOCK: index-metadata ausente ou sem last_index_build_run_at'
-}
-
-if (-not (Test-Path -LiteralPath $sourceMetadata -PathType Leaf)) {
-    throw 'BLOCK: kb-source-metadata.md ausente'
-}
-$sourceMaterialization = Select-String -LiteralPath $sourceMetadata -Pattern 'last_xpz_materialization_run_at' -SimpleMatch
-if (-not $sourceMaterialization) {
-    throw 'BLOCK: kb-source-metadata.md sem last_xpz_materialization_run_at'
-}
-
-$indexMatch = [regex]::Match($indexMetadataText, 'last_index_build_run_at\s*[:=]\s*(?<value>\S+)')
-$sourceMatch = [regex]::Match($sourceMaterialization.Line, 'last_xpz_materialization_run_at\s*[:=]\s*(?<value>\S+)')
-if (-not $indexMatch.Success) {
-    throw 'BLOCK: index-metadata sem valor parseavel de last_index_build_run_at'
-}
-if (-not $sourceMatch.Success) {
-    throw 'BLOCK: kb-source-metadata.md sem valor parseavel de last_xpz_materialization_run_at'
-}
-$lastIndexBuild = [datetimeoffset]::Parse($indexMatch.Groups['value'].Value)
-$lastXpzMaterialization = [datetimeoffset]::Parse($sourceMatch.Groups['value'].Value)
-if ($lastIndexBuild -lt $lastXpzMaterialization) {
-    throw 'BLOCK: indice defasado em relacao a last_xpz_materialization_run_at'
-}
-
-'GATE_OK'
+& $gateScript
 ```
 
-O gate minimo termina em `GATE_OK` somente quando `last_index_build_run_at >= last_xpz_materialization_run_at`. Nao imprimir timestamps nesse bloco. Se `GATE_OK` for retornado, encerrar o comando do gate; qualquer proxima acao deve ser decidida e executada em comando separado, conforme a consulta substantiva necessaria.
+Se o script retornar `GATE_OK`, encerrar o comando do gate; qualquer proxima acao deve ser decidida e executada em comando separado, conforme a consulta substantiva necessaria.
 
 Se qualquer `BLOCK:` ocorrer, encerrar a pergunta de negocio e oferecer `xpz-kb-parallel-setup`. Nao executar etapas posteriores do gate em comandos separados para "completar diagnostico".
 
@@ -208,32 +170,27 @@ Se qualquer `BLOCK:` ocorrer, encerrar a pergunta de negocio e oferecer `xpz-kb-
 1. Identificar o repositorio ativo e reler `README.md` e `AGENTS.md` locais
 2. Se a pasta paralela da KB ainda nao estiver montada, validada ou mapeada para este repositorio -> **ABORT** e usar `xpz-kb-parallel-setup`
 3. Executar o gate em ordem sequencial e parar no primeiro bloqueio; nao investigar camadas internas ate a camada externa estar valida
-4. Verificar se existe pasta `KbIntelligence`
-5. Verificar se existe `KbIntelligence\kb-intelligence.sqlite`
-6. Verificar se existe wrapper local de consulta do indice
-7. Executar `index-metadata` pelo wrapper local quando disponivel e capturar claramente sucesso, erro ou ausencia de saida
-8. Verificar se existe `kb-source-metadata.md` como arquivo; se nao existir, bloquear como incompatibilidade da pasta paralela
-9. Ler `last_xpz_materialization_run_at` nominalmente em `kb-source-metadata.md`; se o campo literal nao existir, bloquear como incompatibilidade da pasta paralela
-10. Comparar `last_index_build_run_at` do SQLite com `last_xpz_materialization_run_at` do `kb-source-metadata.md`; se o indice for anterior a materializacao, bloquear como indice defasado
-11. Se qualquer etapa do gate falhar, bloquear pesquisa ampla, triagem substantiva, consulta substantiva ao acervo oficial de objetos, leitura de XML oficial de objeto e geracao de objetos para importacao, relatar a primeira excecao operacional encontrada e oferecer atualizacao via `xpz-kb-parallel-setup` antes de seguir
-12. Com gate bloqueado, encerrar a pergunta de negocio antes de resolver o objeto pedido para caminho de XML; nao montar, testar existencia, listar ou abrir caminhos deduzidos como `ObjetosDaKbEmXml\<Tipo>\<Nome>.xml`
-13. Classificar a pergunta do usuario em uma destas naturezas:
+4. Verificar se existe `Test-*KbGate.ps1` em `scripts\`; se ausente, bloquear como defasagem da pasta paralela e oferecer atualizacao via `xpz-kb-parallel-setup`
+5. Executar `Test-*KbGate.ps1`; o script verifica sequencialmente pasta `KbIntelligence`, `kb-intelligence.sqlite`, wrapper local de consulta com `-Query index-metadata`, `kb-source-metadata.md` e comparacao de timestamps; qualquer `BLOCK:` encerra a pergunta de negocio
+6. Se qualquer etapa do gate falhar, bloquear pesquisa ampla, triagem substantiva, consulta substantiva ao acervo oficial de objetos, leitura de XML oficial de objeto e geracao de objetos para importacao, relatar a primeira excecao operacional encontrada e oferecer atualizacao via `xpz-kb-parallel-setup` antes de seguir
+7. Com gate bloqueado, encerrar a pergunta de negocio antes de resolver o objeto pedido para caminho de XML; nao montar, testar existencia, listar ou abrir caminhos deduzidos como `ObjetosDaKbEmXml\<Tipo>\<Nome>.xml`
+8. Classificar a pergunta do usuario em uma destas naturezas:
    - localizacao de objeto
    - impacto tecnico
    - dependentes e dependencias
    - evidencia de relacao especifica
    - triagem funcional curta
-14. Escolher a consulta do indice mais adequada
-15. So depois de `GATE_OK`, executar a consulta substantiva minima necessaria sem leitura lateral de `scripts`, `scripts/README-kb-intelligence.md` ou reinspecao do wrapper quando a pergunta ja couber em `search-objects` ou `object-info`
+9. Escolher a consulta do indice mais adequada
+10. So depois de `GATE_OK`, executar a consulta substantiva minima necessaria sem leitura lateral de `scripts`, `scripts/README-kb-intelligence.md` ou reinspecao do wrapper quando a pergunta ja couber em `search-objects` ou `object-info`
     - para pergunta simples de existencia/localizacao nominal, usar diretamente `search-objects` ou `object-info` conforme a pergunta, sem abrir o wrapper para confirmar parametros
-16. Resumir o resultado da triagem de forma curta e auditavel
-17. Decidir se a triagem ja basta para responder no nivel tecnico pedido
-18. Se nao bastar, indicar ao chamador apenas o conjunto minimo de XMLs oficiais a abrir
-19. Se a pergunta for funcional:
+11. Resumir o resultado da triagem de forma curta e auditavel
+12. Decidir se a triagem ja basta para responder no nivel tecnico pedido
+13. Se nao bastar, indicar ao chamador apenas o conjunto minimo de XMLs oficiais a abrir
+14. Se a pergunta for funcional:
     - usar o indice apenas para orientar a ordem de leitura
     - manter explicitamente `Evidencia direta`, `Leitura adicional do XML`, `Inferencia forte` e `Hipotese`
-20. Se a semantica GeneXus exigida estiver fora do recorte atual do indice, escalar para XML oficial e declarar o limite do indice
-21. Se o wrapper local nao expuser uma capacidade ja disponivel no motor compartilhado:
+15. Se a semantica GeneXus exigida estiver fora do recorte atual do indice, escalar para XML oficial e declarar o limite do indice
+16. Se o wrapper local nao expuser uma capacidade ja disponivel no motor compartilhado:
     - relatar a defasagem
     - tratar o caso como bloqueio de compatibilidade da pasta paralela para aquela triagem
     - oferecer atualizacao via `xpz-kb-parallel-setup`
@@ -257,7 +214,7 @@ Se qualquer `BLOCK:` ocorrer, encerrar a pergunta de negocio e oferecer `xpz-kb-
 - NUNCA procurar `last_xpz_materialization_run_at` antes de confirmar que `kb-source-metadata.md` existe como arquivo
 - NUNCA intercalar `Get-Date` entre etapas internas do gate; usar horario local apenas para updates/respostas ao usuario ou registro operacional necessario
 - NUNCA descrever bloqueio pos-`index-metadata` como proibicao total de consultar o indice; `index-metadata` e consulta de gate, o bloqueio impede triagem substantiva
-- NUNCA acrescentar parsing, saidas auxiliares, impressao de timestamps, `Select-Object` ou comandos posteriores ao bloco do gate minimo recomendado
+- NUNCA acrescentar parsing, saidas auxiliares, impressao de timestamps ou comandos ao bloco de chamada do gate; toda logica esta encapsulada em `Test-*KbGate.ps1`
 - NUNCA, depois de `GATE_OK`, abrir `scripts/README-kb-intelligence.md`, listar `scripts` ou reinspecionar o wrapper local quando a pergunta puder ser resolvida diretamente por `search-objects` ou `object-info`
 - NUNCA, em pergunta simples de existencia/localizacao nominal, abrir o wrapper local apenas para confirmar assinatura antes de chamar `search-objects` ou `object-info`
 - NUNCA encurtar ou reescrever de forma inconsistente o caminho nominal do XML oficial retornado pelo indice
