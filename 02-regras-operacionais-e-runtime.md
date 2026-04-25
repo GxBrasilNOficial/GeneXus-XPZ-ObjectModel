@@ -150,6 +150,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: nao exigir busca ampla no acervo inteiro da KB como padrao para validar um `Source`; se a base metodologica ja cobrir o padrao, ela prevalece.
 - `Regra operacional`: quando a cobertura vier apenas de melhor esforco, declarar explicitamente que a compatibilidade nao esta garantida e elevar o risco metodologico.
 
+### Gramatica operacional para `Procedure` de relatorio
+
+- `Regra operacional`: em `Procedure` de relatorio simples, o fluxo primario deve partir de molde sanitizado documentado da trilha antes de escalar para XML real comparavel.
+- `Regra operacional`: a cobertura primaria barata desta trilha vale para relatorio simples das familias `F2` e `F3`, desde que o shape completo esteja documentado em molde sanitizado suficiente.
+- `Regra operacional`: em `Procedure` de relatorio, separar sempre tres camadas antes de corrigir ou gerar: `Source`, `Rules` e layout.
+- `Regra operacional`: `Source` e a camada de fluxo procedural; nela entram `Header`, `Footer`, `For each`, `print printBlock...`, `Output_file` e logica de preparacao de variaveis.
+- `Regra operacional`: `Rules` e a camada de assinatura/regra; nela entram `parm(...)` e regras proprias dessa camada, nao `print`, `For each`, `Header`, `Footer` nem shape de layout.
+- `Regra operacional`: o layout do `Part` `c414ed00-8cc4-4f44-8820-4baf93547173` e a camada estrutural de `Bands`, `PrintBlock`, `ReportLabel` e `ReportAttribute`; nao deve receber pseudo-`Source` procedural.
+- `Regra operacional`: `RPT_INTERNAL_NAME`, identificadores de `PrintBlock` e referencias usadas em `print printBlock...` devem permanecer coerentes entre `Source` e layout.
+- `Regra operacional`: em relatorio simples, a falta de XML real da KB nao bloqueia o primeiro prototipo quando a trilha ja oferecer molde sanitizado canonico suficiente.
+- `Regra operacional`: escalar para XML real comparavel apenas quando o pedido fugir da cobertura simples, quando houver falha estrutural repetida, ou quando surgir sinal de dialeto/localismo da KB.
+- `Regra operacional`: em `Procedure` de relatorio, `;` faltando em `Rules` deve ser tratado como erro da camada `Rules`; `;` rejeitado em `Source` deve ser tratado como erro de dialeto/sintaxe de `Source`.
+- `Regra operacional`: nao inventar `GXML`, controles, propriedades ou shape alternativo para o `Part c414...` sem ancoragem em molde documentado ou XML real comparavel.
+
+### Escalada para corpus real
+
+- `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
+- `Regra operacional`: depois de uma tentativa inicial e no maximo um corretivo estrutural curto, o agente deve parar de iterar por analogia e escalar para XML real comparavel.
+- `Regra operacional`: ao escalar, registrar explicitamente se a base usada passa a ser `XML real da KB atual` ou `XML real de outra KB`.
+- `Regra operacional`: se a resposta ainda estiver sustentada apenas por tentativa plausivel sem molde documentado nem XML real comparavel, classificar como `hipotese` e bloquear consolidacao.
+
 ## Citacao de linhas em XML GeneXus
 
 - `Regra operacional`: ao citar linha de XML GeneXus como evidencia, classificar explicitamente o papel do trecho citado: `Source efetivo`, `Rules/parm`, `metadado XML`, `chamada no chamador` ou `assinatura no chamado`.
@@ -323,6 +344,18 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: warning ou erro lateral coexistente com `Import` bem-sucedido deve gerar `sucesso com ressalva`, nao `falha total`.
 - `Regra operacional`: ao gerar pacote corretivo depois de falha parcial, relatar explicitamente: pacote original, objetos importados com sucesso, objetos falhos, causa provavel por objeto ou etapa, e novo pacote corretivo.
 - `Regra operacional`: pacote corretivo deve conter apenas o delta necessario para corrigir os objetos falhos ou dependencias estritamente necessarias; nao reenviar automaticamente todos os objetos do pacote original.
+
+### Playbook de diagnostico para `Procedure` de relatorio
+
+- `src0212 invalid control`: suspeitar primeiro do layout; revisar o shape do `Part c414ed00-8cc4-4f44-8820-4baf93547173`, `Bands`, `PrintBlock`, `ReportLabel`, `ReportAttribute` e a coerencia entre bloco impresso e bloco materializado.
+- `src0201 output_file invalid type`: suspeitar primeiro de `Source` ou de mistura de camadas; revisar assinatura usada em `Output_file`, tipo dos parametros e se o comando ficou realmente no `Source`.
+- `src0119 ';' not longer supported`: suspeitar primeiro de `Source`; revisar transplante indevido de sintaxe de `Rules`, legado de dialeto ou terminador herdado.
+- `src0056 Missed ';' at the end of the rule`: suspeitar primeiro de `Rules`; revisar fechamento de `parm(...)` e demais regras, sem deslocar o diagnostico para o layout.
+- erro citando `printBlock`, `ReportLabel`, `ReportAttribute` ou `invalid control`: suspeitar primeiro do layout.
+- erro citando `parm`, `rule`, `end of the rule` ou assinatura: suspeitar primeiro de `Rules`.
+- erro citando `For each`, `Header`, `Footer`, `Output_file` ou comando procedural: suspeitar primeiro de `Source`.
+- `Regra operacional`: classificar esses casos como `erro de sintaxe/semantica do Source` ou `erro estrutural de XML/pacote` conforme a camada realmente afetada; nao colapsar tudo como defeito de envelope.
+- `Regra operacional`: depois de uma ou duas falhas estruturais nesse playbook, bloquear terceira tentativa por analogia e exigir XML real comparavel.
 
 ### Procedimento auditavel de leitura
 

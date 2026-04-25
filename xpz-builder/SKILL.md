@@ -55,6 +55,7 @@ If the main need is to prepare or validate the initial folder structure around t
 - Abort for confirmation instead of extrapolating from weak analogy when no strong enough local precedent justifies the package format
 - Treat `runtime`, `Import File Load`, `Import`, and `Specification` as distinct validation layers; success in one does not authorize conclusions about the others
 - Validate `Source` compatibility by methodology first: GeneXus semantic rules plus the XPZ trail and `nexa`; use KB corpus search only as fallback when the methodological base does not cover the case
+- For simple report `Procedure`, prefer the documented sanitized canonical template first; escalate to KB corpus only when the methodological base does not cover the case, when structural import failures repeat, or when KB-local dialect/localism appears
 - Classify each package candidate by content delta as `requested change`, `necessary auxiliary change`, or `extra unrequested change` before packaging
 - Require explicit signaling before packaging when a candidate item remains as `extra unrequested change`, including metadata, reserialization, or known noise that is not strictly required
 - Generate valid `lastUpdate` timestamp (real local time, not placeholder)
@@ -106,6 +107,12 @@ If the main need is to prepare or validate the initial folder structure around t
   - if `parm(...)` changed, variable name, base type, and presence must remain coherent
   - if `parm(...)` changed or a direct call is reviewed, distinguish the callee signature line from each caller call-site line
   - do NOT treat the callee `parm(...)` line as evidence that a caller invokes that `Procedure`
+  - for report `Procedure`, classify every edited fragment as `Source`, `Rules`, or layout before accepting the change
+  - for report `Procedure`, keep `Output_file`, `Header`, `Footer`, `For each`, and `print printBlock...` in `Source`
+  - for report `Procedure`, keep `parm(...)` in `Rules`
+  - for report `Procedure`, keep `Bands`, `PrintBlock`, `ReportLabel`, and `ReportAttribute` in layout `Part c414ed00-8cc4-4f44-8820-4baf93547173`
+  - for report `Procedure`, never invent GXML-like layout, unsupported controls, or unproved shape to "complete" the object
+  - after one initial structural attempt plus at most one short corrective attempt for report `Procedure`, stop iterating by analogy and escalate to comparable real XML
   - if the current `Source` delta introduces a new helper variable, that variable must exist in the variables section and its declared type must remain coherent with the way it is used
   - if the current `Source` delta introduces a method call on a variable, accept it only when that method is compatible with the declared variable type and is anchored by the methodological base loaded for the case
   - if the current `Source` delta introduces cleanup or reinitialization of a collection, SDT, or `Messages, GeneXus.Common`, accept only patterns anchored by the methodological base for that declared type
@@ -199,7 +206,9 @@ Reference files and when to load them:
 9. Locate template:
    - Transaction → use family F1–F6 from [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md)
    - WebPanel → use closest family from [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md)
+   - Simple report `Procedure` → use the canonical sanitized family from [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md) first when the case fits simple F2/F3 coverage
    - Other types → use sanitized representative from [08-guia-para-agente-gpt](../08-guia-para-agente-gpt.md) materialization rules
+   - For simple report `Procedure`, escalate to comparable real XML only when the request falls outside the documented simple family, when one or two structural import failures already happened, or when KB-local dialect/localism appears
    - If the object has already returned from the KB via official XPZ processing, prefer the current XML in the official corpus over any older delta/import working copy when selecting the base for a new change
    - Before cloning identity fields, classify the container from comparable corpus XML: `Folder` (`parentType="00000000-0000-0000-0000-000000000008"`) versus `Module` (`parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117"`)
 9. Apply conservative cloning:
@@ -223,6 +232,9 @@ Reference files and when to load them:
    - Each introduced `Source` construct must be anchored by layer-1 methodological evidence from this XPZ trail: explicit rule, sanitized example, or documented template
    - Local KB corpus may confirm or disambiguate the choice, but does NOT replace layer-1 methodological evidence
    - If an essential `Source` construct is still justified only by plausibility, generic GeneXus memory, or isolated local corpus evidence, rewrite it using documented patterns or **ABORT**
+   - For report `Procedure`, classify each edited fragment before serialization as `Source`, `Rules`, or layout and reject any cross-layer mixture
+   - For report `Procedure`, verify coherence between layout `PrintBlock` names and each `print printBlock...` reference in `Source`
+   - For report `Procedure`, if an import error points to invalid control, report block, or layout shape, inspect layout first before altering envelope
 10. Apply envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md):
    - For delta of an existing object, prefer the package format with validated local precedent in the same KB trail before any generic preference
    - Distinguish explicitly between embedded-object package under `<Objects>` and package using `<FilePath>` to external XML

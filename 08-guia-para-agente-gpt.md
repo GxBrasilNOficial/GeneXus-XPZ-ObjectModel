@@ -7,7 +7,7 @@ operacional
 medio
 
 ## Depende de
-00-indice-da-base-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 04-webpanel-familias-e-templates.md, 05-transaction-familias-e-templates.md
+00-indice-da-base-genexus-xpz-xml.md, 01-base-empirica-geral.md, 02-regras-operacionais-e-runtime.md, 03-risco-e-decisao-por-tipo.md, 04-webpanel-familias-e-templates.md, 05-transaction-familias-e-templates.md, 05b-procedure-relatorio-familias-e-templates.md
 
 ## Usado por
 qualquer GPT que precise consumir esta base consolidada
@@ -43,7 +43,17 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 3. ler `02-regras-operacionais-e-runtime.md`
 4. para `WebPanel`, ler `04-webpanel-familias-e-templates.md`
 5. para `Transaction`, ler `05-transaction-familias-e-templates.md`
-6. usar `01-base-empirica-geral.md` e `09-inventario-e-rastreabilidade-publica.md` para sustentar detalhe empírico e rastreabilidade
+6. para `Procedure` de relatorio (nome com prefixo de relatorio no acervo), ler `05b-procedure-relatorio-familias-e-templates.md`
+7. usar `01-base-empirica-geral.md` e `09-inventario-e-rastreabilidade-publica.md` para sustentar detalhe empírico e rastreabilidade
+
+### Fluxo curto para `Procedure` de relatorio simples
+
+1. classificar primeiro se o caso cabe em familia simples `F2` ou `F3`
+2. se couber, partir de `05b-procedure-relatorio-familias-e-templates.md` como molde sanitizado canonico primario
+3. separar explicitamente `Source`, `Rules` e layout antes de editar ou diagnosticar
+4. tentar no maximo uma rodada corretiva estrutural curta se a primeira montagem falhar
+5. escalar para XML real comparavel apenas se o caso fugir da cobertura simples, se houver uma ou duas falhas estruturais, ou se aparecer sinal de dialeto/localismo da KB
+6. registrar no handoff qual base esta sustentando a resposta: `molde sanitizado`, `XML real da KB atual`, `XML real de outra KB` ou `hipotese`
 
 ## Regra de precedencia sobre skills gerais
 
@@ -124,6 +134,16 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - para afirmar que uma `Procedure` A chama uma `Procedure` B, a evidencia deve estar no `Source` efetivo de A, na linha da chamada a B; o `parm(...)` de B prova assinatura do chamado, nao ponto de chamada
 - em cadeia de chamadas, separar sempre arquivo/linha do chamador e arquivo/linha da assinatura do chamado
 
+### Regra adicional para `Procedure` de relatorio
+
+- em relatorio simples, `Source` deve ser validado junto com a camada onde cada sintoma nasceu: `Source`, `Rules` ou layout
+- `Output_file`, `Header`, `Footer`, `For each` e `print printBlock...` pertencem ao `Source`
+- `parm(...)` pertence a `Rules`
+- `Bands`, `PrintBlock`, `ReportLabel` e `ReportAttribute` pertencem ao layout `Part c414ed00-8cc4-4f44-8820-4baf93547173`
+- se o erro mencionar `;` em regra, revisar `Rules` antes de reabrir layout
+- se o erro mencionar controle invalido, `printBlock` ou shape de relatorio, revisar layout antes de inferir defeito de envelope
+- se a solucao continuar sustentada so por plausibilidade depois de uma rodada corretiva, parar e escalar para XML real comparavel
+
 ## Regra de leitura para XPZ
 
 - antes de usar `xpz-sync`, `xpz-builder` ou `xpz-doc-builder` em fluxo dependente de repositorio, confirmar que a pasta paralela da KB esta montada e validada; se nao estiver, usar `xpz-kb-parallel-setup` primeiro
@@ -164,6 +184,13 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a skill de `MSBuild` for publicada por symlink, junction ou outro reparse point, resolver referencias `../` pela pasta real da skill, nao pelo caminho launcher publicado
 - ao concluir a exportacao headless do caminho `B)`, declarar explicitamente o marco `XPZ gerado` antes de prosseguir para materializacao em `ObjetosDaKbEmXml`
 - se o pedido do usuario for apenas gerar o `.xpz`, parar no artefato gerado; so prosseguir para materializacao quando o pedido for seguir com o setup ou com a materializacao
+- em handoff de pasta paralela da KB, declarar marcos operacionais separados, sem colapsar um no outro:
+  - `setup de estrutura`: pastas e memoria local basica foram criadas ou validadas
+  - `bootstrap de wrappers`: wrappers locais minimos existem e sao compativeis com o fluxo oficial adotado
+  - `XPZ gerado`: artefato `.xpz` existe em `XpzExportadosPelaIDE` ou no destino aprovado, mas ainda nao implica materializacao
+  - `materializacao em ObjetosDaKbEmXml`: XMLs oficiais foram criados/atualizados pelo fluxo oficial a partir do `XPZ`
+  - `refresh/validacao do indice`: `KbIntelligence` foi regenerado/validado e tem `last_index_build_run_at >= last_xpz_materialization_run_at`
+  - `conferencia full`: verificacao posterior do acervo, que nao substitui nem deve sobrescrever o relatorio da materializacao principal
 - `XPZ` full define o insumo exportado; `FullSnapshot` define modo adicional de verificacao do acervo
 - na materializacao normal do `XPZ` em `ObjetosDaKbEmXml`, inclusive na primeira carga por `XPZ` full vindo da IDE ou por export headless via `MSBuild`, nao presumir `-FullSnapshot` como padrao implicito nem como atalho ergonomico
 - usar `-FullSnapshot` apenas quando houver pedido explicito do usuario por conferencia full, quando o wrapper especifico de conferencia full for o caminho escolhido ou quando a documentacao local exigir isso nominalmente
@@ -352,6 +379,9 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - Inferência forte: para `WebPanel`, os anexos completos de `04-webpanel-familias-e-templates.md` ja podem servir como molde sanitizado documentado
 - Inferência forte: para `Transaction`, `05-transaction-familias-e-templates.md` ja contem moldes sanitizados completos para as familias `F1`, `F2`, `F5` e `F6`
 - Inferência forte: para `Procedure`, `DataProvider`, `DataSelector`, `Panel`, `API`, `WorkWithForWeb`, `SDT`, `Domain`, `Theme`, `PackagedModule`, `DesignSystem`, `ColorPalette`, `ThemeClass`, `ThemeColor`, `Image`, `Table`, `Document`, `ExternalObject`, `UserControl`, `Module`, `SubTypeGroup`, `PatternSettings`, `DataStore`, `Dashboard`, `DeploymentUnit`, `Generator`, `Language`, `Folder`, `Stencil` e `File`, `01-base-empirica-geral.md` ja contem moldes sanitizados completos representativos
+- Inferência forte: para `Procedure` de relatorio simples, `05b-procedure-relatorio-familias-e-templates.md` passa a ser a referencia primaria de molde sanitizado canonico para familias `F2` e `F3`
+- Regra operacional: em `Procedure` de relatorio simples, nao exigir XML real da KB como primeiro passo quando o molde sanitizado canonico desta trilha ja cobrir o shape necessario
+- Regra operacional: depois de uma tentativa inicial e no maximo um corretivo estrutural curto, bloquear nova iteracao por analogia e escalar para XML real comparavel
 - Hipótese: para `Transaction` das familias `F3` e `F4`, continua prudente buscar molde bruto comparavel adicional se a densidade estrutural real do alvo ultrapassar o que os anexos atuais sustentam
 - Evidência direta: a consulta ao acervo real mostrou que `Transaction` materializa atributos dentro do proprio `<Level>` e usa variaveis de contexto como `sdt:Context`, `sdt:TransactionContext` e `sdt:TransactionContext.Attribute`
 - Evidência direta: a consulta ao acervo real mostrou que `Theme` simples valido preserva classes como `TableDetail`, `TableSection` e `TextBlockGroupCaption`, alem de suas referencias internas
@@ -476,11 +506,13 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - Fonte valida: XML bruto de objeto
 - Fonte valida: envelope XPZ observado documentado em `02-regras-operacionais-e-runtime.md`
 - Fonte valida: exemplos sanitizados completos de `04-webpanel-familias-e-templates.md`, quando usados como molde de `WebPanel`
+- Fonte valida: molde sanitizado canonico completo de `05b-procedure-relatorio-familias-e-templates.md`, quando o caso for `Procedure` de relatorio simples dentro da cobertura `F2` ou `F3`
 - Fonte invalida: markdown apenas descritivo desta base
 - Fonte invalida: reconstrucoes livres baseadas em tabelas, frequencias ou descricoes
 - Inferência forte: esta base documental ja explica o envelope XPZ observado e ja contem moldes sanitizados completos para `WebPanel`
 - Inferência forte: esta base documental ja contem moldes sanitizados completos tambem para `Transaction` em familias representativas
 - Inferência forte: esta base documental ja contem moldes sanitizados completos tambem para `Procedure`, `DataProvider`, `DataSelector`, `Panel`, `API`, `WorkWithForWeb`, `SDT`, `Domain`, `Theme`, `PackagedModule`, `DesignSystem`, `ColorPalette`, `ThemeClass`, `ThemeColor`, `Image`, `Table`, `Document`, `ExternalObject`, `UserControl`, `Module`, `SubTypeGroup`, `PatternSettings`, `DataStore`, `Dashboard`, `DeploymentUnit`, `Generator`, `Language`, `Folder`, `Stencil` e `File` em perfis representativos
+- Regra operacional: quando `Procedure` de relatorio simples estiver coberta por molde canonico da trilha, rotular a resposta como baseada em `molde sanitizado`; quando houver escalada, rotular explicitamente `XML real da KB atual`, `XML real de outra KB` ou `hipotese`
 - Hipótese: no caso de `WorkWithForWeb`, os anexos ajudam a prototipar, mas ainda nao eliminam a necessidade de cautela extra quando o caso concreto depender fortemente de `pattern` gerado e contexto do objeto pai
 - Hipótese: nem todos os tipos da base chegaram nesse mesmo nivel de cobertura; para varios deles ainda prevalece a orientacao por familia + molde bruto comparavel
 

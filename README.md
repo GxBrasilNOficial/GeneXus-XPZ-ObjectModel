@@ -23,7 +23,7 @@ A documentação consolidada e os scripts desta raiz funcionam como base metodol
 
 ### O que você vai encontrar aqui
 
-Os 10 arquivos abaixo formam a base compartilhada principal desta raiz, consolidada para facilitar leitura, manutenção e uso controlado.
+Os arquivos abaixo formam a base compartilhada principal desta raiz, consolidada para facilitar leitura, manutenção e uso controlado.
 
 Além dessa base principal, a raiz também pode conter documentação operacional complementar de frentes ativas, quando ela ainda precisar permanecer visível fora de `historico/`.
 
@@ -33,6 +33,7 @@ Além dessa base principal, a raiz também pode conter documentação operaciona
 - `03-risco-e-decisao-por-tipo.md`
 - `04-webpanel-familias-e-templates.md`
 - `05-transaction-familias-e-templates.md`
+- `05b-procedure-relatorio-familias-e-templates.md`
 - `06-padroes-de-objeto-e-nomenclatura.md`
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
@@ -57,7 +58,7 @@ Se você quer entender a base rapidamente:
 2. siga para `01-base-empirica-geral.md`
 3. depois leia `02-regras-operacionais-e-runtime.md`
 4. em seguida leia `03-risco-e-decisao-por-tipo.md`
-5. para casos práticos, use `04-webpanel-familias-e-templates.md` e `05-transaction-familias-e-templates.md`
+5. para casos práticos, use `04-webpanel-familias-e-templates.md`, `05-transaction-familias-e-templates.md` e `05b-procedure-relatorio-familias-e-templates.md`
 6. se quiser entender limites e próximas frentes, leia `07-open-points-e-checklist.md`
 7. para consumo por outro agente GPT, termine em `08-guia-para-agente-gpt.md`
 
@@ -168,7 +169,7 @@ Este repositorio reúne documentación consolidada sobre análisis estructural d
 
 ### Qué encontrarás aquí
 
-Los 10 archivos de abajo forman la base compartida principal de esta raíz, consolidada para facilitar lectura, mantenimiento y uso controlado.
+Los archivos de abajo forman la base compartida principal de esta raíz, consolidada para facilitar lectura, mantenimiento y uso controlado.
 
 Además de esa base principal, la raíz también puede contener documentación operativa complementaria de frentes activas, cuando todavía necesite permanecer visible fuera de `historico/`.
 
@@ -178,6 +179,7 @@ Además de esa base principal, la raíz también puede contener documentación o
 - `03-risco-e-decisao-por-tipo.md`
 - `04-webpanel-familias-e-templates.md`
 - `05-transaction-familias-e-templates.md`
+- `05b-procedure-relatorio-familias-e-templates.md`
 - `06-padroes-de-objeto-e-nomenclatura.md`
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
@@ -202,7 +204,7 @@ Si quieres entender la base rápidamente:
 2. continúa con `01-base-empirica-geral.md`
 3. luego lee `02-regras-operacionais-e-runtime.md`
 4. después lee `03-risco-e-decisao-por-tipo.md`
-5. para casos prácticos, usa `04-webpanel-familias-e-templates.md` y `05-transaction-familias-e-templates.md`
+5. para casos prácticos, usa `04-webpanel-familias-e-templates.md`, `05-transaction-familias-e-templates.md` y `05b-procedure-relatorio-familias-e-templates.md`
 6. si quieres ver límites y siguientes frentes, lee `07-open-points-e-checklist.md`
 7. para consumo por otro agente GPT, termina en `08-guia-para-agente-gpt.md`
 
@@ -313,7 +315,7 @@ This repository contains consolidated documentation about structural analysis of
 
 ### What you will find here
 
-The 10 files below form the main shared base in this root, consolidated to make reading, maintenance, and controlled use easier.
+The files below form the main shared base in this root, consolidated to make reading, maintenance, and controlled use easier.
 
 In addition to that main base, the root may also contain complementary operational documentation for active workstreams when it still needs to remain visible outside `historico/`.
 
@@ -323,6 +325,7 @@ In addition to that main base, the root may also contain complementary operation
 - `03-risco-e-decisao-por-tipo.md`
 - `04-webpanel-familias-e-templates.md`
 - `05-transaction-familias-e-templates.md`
+- `05b-procedure-relatorio-familias-e-templates.md`
 - `06-padroes-de-objeto-e-nomenclatura.md`
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
@@ -347,7 +350,7 @@ If you want to understand the repository quickly:
 2. continue with `01-base-empirica-geral.md`
 3. then read `02-regras-operacionais-e-runtime.md`
 4. next read `03-risco-e-decisao-por-tipo.md`
-5. for practical cases, use `04-webpanel-familias-e-templates.md` and `05-transaction-familias-e-templates.md`
+5. for practical cases, use `04-webpanel-familias-e-templates.md`, `05-transaction-familias-e-templates.md`, and `05b-procedure-relatorio-familias-e-templates.md`
 6. if you want limits and next investigation fronts, read `07-open-points-e-checklist.md`
 7. for another GPT agent consuming the base, finish with `08-guia-para-agente-gpt.md`
 

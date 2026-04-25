@@ -43,9 +43,11 @@ Do NOT use this skill for:
 - Identify `Object/@type` and map to known object category using [01-base-empirica-geral](../01-base-empirica-geral.md)
 - Map Part types present in input against observed frequencies and known patterns
 - Classify object family when applicable: WebPanel families in [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md), Transaction families in [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md)
+- For report `Procedure`, classify whether the case fits the documented simple coverage from [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md) before recommending escalation to real XML
 - Classify container identity from `parentType` and check whether the object is under `Folder` or `Module`
 - Assign risk level using [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
 - Identify structural anomalies: unexpected Part types, missing recurring parts, malformed envelope
+- For report `Procedure`, classify anomalies by layer: `Source`, `Rules`, or layout `Part c414ed00-8cc4-4f44-8820-4baf93547173`
 - Identify identity anomalies involving `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
 - Treat object lookup in repository-backed workflows as `type + name`, never `name` alone
 - Confirm the real folder where the XML exists before citing, comparing, or using a local object as evidence
@@ -80,6 +82,7 @@ Reference files and when to load them:
 | [03-risco-e-decisao-por-tipo.md](../03-risco-e-decisao-por-tipo.md) | Risk classification for any object type |
 | [04-webpanel-familias-e-templates.md](../04-webpanel-familias-e-templates.md) | Input contains WebPanel XML |
 | [05-transaction-familias-e-templates.md](../05-transaction-familias-e-templates.md) | Input contains Transaction XML |
+| [05b-procedure-relatorio-familias-e-templates.md](../05b-procedure-relatorio-familias-e-templates.md) | Input contains report `Procedure` XML |
 | [06-padroes-de-objeto-e-nomenclatura.md](../06-padroes-de-objeto-e-nomenclatura.md) | User asks about naming conventions or object organization |
 | [09-inventario-e-rastreabilidade-publica.md](../09-inventario-e-rastreabilidade-publica.md) | User asks about corpus history, validation trail, or inventory |
 
@@ -109,13 +112,17 @@ Reference files and when to load them:
 11. If the conclusion is "object A calls object B", require evidence in A's effective `Source` or in explicit call metadata belonging to A; a `parm(...)` line in B is only callee signature evidence
 12. If type is WebPanel → load [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md) and classify family
 13. If type is Transaction → load [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md) and classify family (F1–F6)
-14. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-15. Report result:
+14. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
+15. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
+16. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available; otherwise recommend escalation to comparable real XML explicitly
+17. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+18. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
    - Risk level
    - Part types: present / expected / missing
+   - For report `Procedure`, anomaly layer and escalation recommendation (`sanitized canonical template still fits` vs `escalate to comparable real XML`)
    - Identity fields: `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`
    - Confidence level for each conclusion
    - Any structural anomalies detected
@@ -132,6 +139,7 @@ Reference files and when to load them:
 - [ ] Container identity classified from `parentType` and comparable corpus evidence
 - [ ] Risk level stated with source reference
 - [ ] Family classified when type supports it (WebPanel, Transaction)
+- [ ] For report `Procedure`, evidence was separated into `Source`, `Rules`, and layout and the escalation status was made explicit
 - [ ] Confidence level declared for every conclusion
 - [ ] No import/build compatibility claims made
 - [ ] No Part type GUIDs invented outside observed corpus

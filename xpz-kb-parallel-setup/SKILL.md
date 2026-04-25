@@ -46,6 +46,7 @@ Do NOT use this skill for:
 - Assumir o termo principal `pasta paralela da KB`
 - Se o caminho da pasta nativa da KB nao vier no prompt, pedir esse caminho ao usuario antes de concluir o setup inicial
 - Se o caminho da pasta nativa da KB vier no prompt, reutilizar esse valor sem pedir novamente
+- Se o agente verificar a existencia da pasta nativa da KB, declarar o resultado no handoff; se ela nao existir ou nao estiver acessivel, registrar o caminho informado, manter a regra de nao gravacao e fechar o setup com ressalva operacional explicita
 - Quando o usuario nao informar nomes alternativos, assumir estas subpastas padrao:
   - `scripts`
   - `Temp`
@@ -179,6 +180,8 @@ Do NOT use this skill for:
 - Esses `.example.ps1` sao exemplos metodologicos importantes para bootstrap tecnico e reconstrucao assistida dos wrappers locais finais.
 - Quando os wrappers locais precisarem nascer do zero no setup inicial, preferir adaptar os exemplos sanitizados completos desta skill como base do bootstrap tecnico, em vez de improvisar wrappers curtos ou parciais que ainda exijam correcao na etapa seguinte.
 - Esses `.example.ps1` nao substituem o wrapper local real da pasta paralela da KB e nao devem virar fallback automatico de execucao no fluxo normal.
+- Wrapper local derivado de `.example.ps1` so conta como wrapper de bootstrap valido depois que o agente validar parse do `.ps1` e ausencia de placeholders sanitizados em valores executaveis, configuracao efetiva, caminhos padrao, parametros default ou chamadas reais.
+- Exemplos em comentario ou blocos de ajuda, como `.EXAMPLE`, nao bloqueiam o bootstrap apenas por conterem caminhos ilustrativos; se forem mantidos, nao podem ser citados como evidencia de configuracao local validada.
 - Os exemplos sanitizados de wrappers incorporam uma trilha real de pasta paralela da KB com:
   - metadados da KB gravados em `kb-source-metadata.md`
   - `last_xpz_materialization_run_at` atualizado a cada processamento XPZ/XML solicitado
@@ -227,6 +230,19 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
 
 ---
 
+## ESTADOS DE CONCLUSAO DO SETUP
+
+Ao fechar um setup ou handoff de pasta paralela da KB, usar um estado operacional explicito, sem promover o status por inferencia:
+
+- `estrutura_criada`: pastas e documentos basicos existem, mas wrappers locais, materializacao ou indice ainda nao foram validados.
+- `bootstrap_incompleto`: a estrutura existe, mas falta camada minima de wrappers locais para o fluxo oficial adotado, ou falta compatibilidade obrigatoria com `KbIntelligence`.
+- `pronto_para_primeira_materializacao`: estrutura, documentos e wrappers locais minimos foram criados ou validados, sem placeholders sanitizados pendentes em configuracao efetiva dos wrappers, mas `ObjetosDaKbEmXml` ainda nao recebeu materializacao oficial.
+- `materializado_e_indice_validado`: houve materializacao oficial bem-sucedida e, quando `KbIntelligence` for adotado, o indice derivado foi regenerado/validado com `last_index_build_run_at >= last_xpz_materialization_run_at`.
+
+Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dizer qual desses marcos ja foi efetivamente cumprido. Criar pastas vazias ou gravar memoria local inicial nao basta para declarar a pasta pronta para `sync` normal, pesquisa ampla ou geracao de objetos.
+
+---
+
 ## COMMUNICATION
 
 - Responder na lingua do usuario
@@ -238,6 +254,7 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
 - Nao tratar a estrutura da pasta nativa da KB como se fosse a mesma coisa que o repositorio paralelo
 - Ao fechar um setup inicial bem-sucedido, diferenciar explicitamente `estrutura pronta` de `snapshot oficial ainda nao materializado`
 - No fechamento do setup inicial, apresentar `A)` e `B)` como opcoes de proximo passo e informar o tradeoff de tempo entre elas
+- Se a existencia da pasta nativa da KB foi verificada, declarar no fechamento se ela existe/acessou corretamente ou se ficou como ressalva operacional
 
 ---
 
@@ -245,12 +262,13 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
 
 1. Confirmar se o usuario esta falando da pasta nativa da KB ou da pasta paralela da KB
 2. Se o caminho da pasta nativa da KB nao vier informado, pedir esse caminho ao usuario antes de concluir o setup inicial
-3. Se o usuario nao informar nomes alternativos, assumir as subpastas padrao
-4. Se o usuario informar nomes alternativos, registrar o mapeamento entre nome real e funcao da pasta em `AGENTS.md` da pasta paralela da KB e, quando ajudar humanos, tambem em `README.md`
-5. Registrar em `AGENTS.md` da pasta paralela o caminho confirmado da pasta nativa da KB e a regra de que essa pasta e somente leitura para agentes, com gravacao proibida
-6. Quando houver `README.md` local na pasta paralela, registrar ali tambem a identificacao da pasta nativa da KB e a regra de somente leitura em linguagem clara
-7. Se o caso for setup inicial padrao e a pasta paralela estiver praticamente vazia, criar primeiro a estrutura base e so aprofundar exploracao se surgir bloqueio concreto
-8. Validar a existencia da estrutura nesta ordem:
+3. Se o caminho da pasta nativa da KB vier informado, verificar existencia/acesso quando isso for seguro e barato; se nao existir ou nao estiver acessivel, nao gravar nem tentar corrigir a pasta nativa, apenas registrar a ressalva no handoff
+4. Se o usuario nao informar nomes alternativos, assumir as subpastas padrao
+5. Se o usuario informar nomes alternativos, registrar o mapeamento entre nome real e funcao da pasta em `AGENTS.md` da pasta paralela da KB e, quando ajudar humanos, tambem em `README.md`
+6. Registrar em `AGENTS.md` da pasta paralela o caminho confirmado da pasta nativa da KB e a regra de que essa pasta e somente leitura para agentes, com gravacao proibida
+7. Quando houver `README.md` local na pasta paralela, registrar ali tambem a identificacao da pasta nativa da KB e a regra de somente leitura em linguagem clara
+8. Se o caso for setup inicial padrao e a pasta paralela estiver praticamente vazia, criar primeiro a estrutura base e so aprofundar exploracao se surgir bloqueio concreto
+9. Validar a existencia da estrutura nesta ordem:
    - `scripts`
    - `Temp`
    - `XpzExportadosPelaIDE`
@@ -258,12 +276,12 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
    - `KbIntelligence`
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
    - `PacotesGeradosParaImportacaoNaKbNoGenexus`
-9. Se a pasta paralela ja estiver versionada em Git, criar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte do bootstrap padrao
-10. Se a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local; nao executar `git init` sem aprovacao explicita do usuario
-11. Se o usuario aceitar versionamento Git local e o Git nao estiver funcional no ambiente, oferecer instalar ou orientar a instalacao antes do bootstrap Git
-12. Criar `kb-source-metadata.md` inicial com o campo nominal `last_xpz_materialization_run_at`, sem inventar formato paralelo desconectado do motor compartilhado
-13. Nao salvar memoria externa do agente fora da pasta paralela da KB sem autorizacao explicita do usuario
-14. Explicar o papel de cada pasta:
+10. Se a pasta paralela ja estiver versionada em Git, criar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte do bootstrap padrao
+11. Se a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local; nao executar `git init` sem aprovacao explicita do usuario
+12. Se o usuario aceitar versionamento Git local e o Git nao estiver funcional no ambiente, oferecer instalar ou orientar a instalacao antes do bootstrap Git
+13. Criar `kb-source-metadata.md` inicial com o campo nominal `last_xpz_materialization_run_at`, sem inventar formato paralelo desconectado do motor compartilhado
+14. Nao salvar memoria externa do agente fora da pasta paralela da KB sem autorizacao explicita do usuario
+15. Explicar o papel de cada pasta:
    - `ObjetosDaKbEmXml` = snapshot oficial extraido via fluxo oficial do `.ps1`
    - `ObjetosDaKbEmXml` = materializacao do `XPZ` completo ou parcial da IDE, quebrando `full.xml` em XMLs individuais por objeto
    - `ObjetosDaKbEmXml` = organizacao por subpastas de tipo amigavel e nomes amigaveis de objeto
@@ -276,28 +294,29 @@ O objetivo do bloqueio e tornar visivel que uma pasta paralela ainda precisa rec
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = XMLs temporarios gerados pelo agente para importacao manual, organizados por frente em subpastas `NomeCurto_GUID_YYYYMMDD`
    - `ObjetosGeradosParaImportacaoNaKbNoGenexus` = nao recebe materializacao do acervo vindo de `XPZ`
    - `PacotesGeradosParaImportacaoNaKbNoGenexus` = pacote final de importacao pela IDE, mantido plano sem subpastas por frente
-15. Se `ObjetosDaKbEmXml` ainda nao existir, tratar o acervo como ainda nao materializado
-16. Se `ObjetosGeradosParaImportacaoNaKbNoGenexus` nao estiver organizado por frentes em subpastas `NomeCurto_GUID_YYYYMMDD`, tratar isso como desvio operacional e orientar correcao
-17. Se `XpzExportadosPelaIDE` estiver ausente e o fluxo depender de `XPZ`, pedir ao usuario o caminho pretendido ou criar a pasta padrao quando a politica do repositorio permitir
-18. Se a pasta `scripts` existir sem wrappers locais minimos, orientar a reconstruir:
+16. Se `ObjetosDaKbEmXml` ainda nao existir, tratar o acervo como ainda nao materializado
+17. Se `ObjetosGeradosParaImportacaoNaKbNoGenexus` nao estiver organizado por frentes em subpastas `NomeCurto_GUID_YYYYMMDD`, tratar isso como desvio operacional e orientar correcao
+18. Se `XpzExportadosPelaIDE` estiver ausente e o fluxo depender de `XPZ`, pedir ao usuario o caminho pretendido ou criar a pasta padrao quando a politica do repositorio permitir
+19. Se a pasta `scripts` existir sem wrappers locais minimos, orientar a reconstruir:
    - wrapper de atualizacao diaria sobre o motor compartilhado
    - wrapper de conferencia full reaproveitando o wrapper diario
    - wrapper de consulta do indice derivado, se a KB local adotar `KbIntelligence`
    - wrapper de regeneracao e validacao do indice derivado, se a KB local adotar `KbIntelligence`
    - helper local opcional de notificacao, se houver necessidade operacional
-13. Se `KbIntelligence` estiver ausente, orientar sua criacao como pasta de artefatos derivados antes de instalar wrappers de indice
-14. Se `ObjetosDaKbEmXml` ainda nao contiver snapshot materializado, nao tentar gerar `kb-intelligence.sqlite`; preparar apenas a pasta e os wrappers locais
-15. Se a pasta adotar `KbIntelligence`, validar o gate de compatibilidade operacional antes de permitir pesquisa ampla, triagem substantiva ou geracao de objetos
-16. Se o gate falhar, oferecer atualizacao da pasta paralela/wrappers/indice e nao responder a pergunta de negocio por fallback manual
-17. Antes de declarar o setup como concluido, validar se a camada minima de wrappers locais esperados em `scripts` ja existe para o fluxo oficial adotado por essa pasta paralela
-18. Se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir, reportar isso como `estrutura parcial` ou `bootstrap incompleto`, nao como setup concluido
-19. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
-20. Se a primeira materializacao oficial ocorrer depois do setup, atualizar ou neutralizar a memoria local provisoria criada no setup que ainda afirme `ObjetosDaKbEmXml` nao materializada, `aguardando primeiro XPZ` ou equivalente
-21. Ao concluir o setup inicial, oferecer os proximos passos:
+20. Se `KbIntelligence` estiver ausente, orientar sua criacao como pasta de artefatos derivados antes de instalar wrappers de indice
+21. Se `ObjetosDaKbEmXml` ainda nao contiver snapshot materializado, nao tentar gerar `kb-intelligence.sqlite`; preparar apenas a pasta e os wrappers locais
+22. Se a pasta adotar `KbIntelligence`, validar o gate de compatibilidade operacional antes de permitir pesquisa ampla, triagem substantiva ou geracao de objetos
+23. Se o gate falhar, oferecer atualizacao da pasta paralela/wrappers/indice e nao responder a pergunta de negocio por fallback manual
+24. Antes de declarar o setup como concluido, validar se a camada minima de wrappers locais esperados em `scripts` ja existe para o fluxo oficial adotado por essa pasta paralela
+25. Quando os wrappers locais forem derivados dos `.example.ps1`, validar que eles nao mantem placeholders sanitizados em configuracao efetiva antes de classifica-los como wrappers minimos existentes
+26. Se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir ou ainda mantiver placeholders sanitizados em configuracao efetiva, reportar isso como `estrutura parcial` ou `bootstrap incompleto`, nao como setup concluido
+27. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
+28. Se a primeira materializacao oficial ocorrer depois do setup, atualizar ou neutralizar a memoria local provisoria criada no setup que ainda afirme `ObjetosDaKbEmXml` nao materializada, `aguardando primeiro XPZ` ou equivalente
+29. Ao concluir o setup inicial, oferecer os proximos passos:
    - `A)` o usuario exporta o `.xpz` full pela IDE para `XpzExportadosPelaIDE`, e o agente materializa os XMLs depois
    - `B)` o agente tenta gerar o `.xpz` full a partir da pasta nativa da KB, grava esse `.xpz` em `XpzExportadosPelaIDE` e depois materializa os XMLs
-22. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
-23. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
+30. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
+31. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
 
 ---
 

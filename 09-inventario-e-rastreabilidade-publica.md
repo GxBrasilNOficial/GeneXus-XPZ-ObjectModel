@@ -624,3 +624,19 @@ Registrar o que foi lido, renomeado, consolidado e mantido em aberto durante a r
 - `Evidência direta`: um teste controlado de importacao de `.xpz` minimo de `Procedure` foi bem-sucedido nesta trilha e confirmou o envelope normal sem `KnowledgeBase`.
 - `Evidência direta`: o mesmo teste mostrou que `Source/@kb` e `Source/Version/@guid` nao podem ficar como placeholders textuais; precisam ser GUIDs sintaticamente validos.
 - `Hipótese`: os erros adicionais de importacao que aparecerem devem continuar sendo incorporados ao refinamento desta mesma documentacao.
+
+## Aliases publicos de Procedure de relatorio
+
+Estes aliases foram criados em 2026-04-25 a partir da analise estrutural de 77 XMLs de `Procedure` de relatorio no acervo privado. Cada alias representa o menor XML observado dentro da respectiva familia estrutural definida em `05b-procedure-relatorio-familias-e-templates.md`.
+
+| Alias publico | Familia | Criterio estrutural |
+|---|---|---|
+| `PRCRelatorioExemploF1` | F1 — Embriao sem layout ativo | FE=0, sem Header, sem Footer; menor XML da faixa |
+| `PRCRelatorioExemploF2` | F2 — Molde base com cabecalho de pagina | FE=0, com Header e/ou Footer; menor XML da faixa |
+| `PRCRelatorioExemploF3` | F3 — Listagem linear simples | FE=1-2; menor XML da faixa |
+| `PRCRelatorioExemploF4` | F4 — Relatorio com agrupamento e totalizacao | FE=3-6, PB<=24; menor XML da faixa |
+| `PRCRelatorioExemploF5` | F5 — Relatorio complexo de alto volume | FE>=7 ou PB>=25; menor XML com FE>=10 e PB>=20 simultaneamente |
+
+- Rastreabilidade privada: os nomes reais dos representantes estao registrados em `GeneXus-XPZ-PrivateMap/maps/object-alias-map.csv`.
+- Uso previsto: esses aliases servem como referencia estrutural para `xpz-reader`, `xpz-builder` e `xpz-doc-builder` ao trabalhar com `Procedure` de relatorio.
+- Regra editorial: nunca usar o alias como unica fonte para materializacao; o XML real do representante deve ser lido a partir de `ObjetosDaKbEmXml` antes de qualquer clonagem.

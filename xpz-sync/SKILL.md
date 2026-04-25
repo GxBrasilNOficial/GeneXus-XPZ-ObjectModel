@@ -202,7 +202,10 @@ Os wrappers seguem esta convenção de parâmetros:
     - nao reinterpretar `XPZ` full como autorizacao implicita para `-FullSnapshot`; export full e conferencia full sao coisas diferentes
     - usar `-FullSnapshot` apenas quando o usuario pedir conferencia full, quando o wrapper especifico de conferencia for o escolhido ou quando a documentacao local tornar isso requisito explicito
 13. Executar via Bash com `pwsh -File ...`
-14. Se a materializacao XPZ/XML em `ObjetosDaKbEmXml` foi concluida com sucesso e nao era `VerifyOnly`, regenerar/validar compulsoriamente o indice derivado antes de encerrar o fluxo
+14. Se a materializacao XPZ/XML em `ObjetosDaKbEmXml` foi concluida com sucesso e nao era `VerifyOnly`, confirmar na saida do wrapper ou em evidencia local clara que o refresh compulsorio do indice derivado tambem foi executado
+    - em pasta que adota `KbIntelligence`, ausencia de evidencia do refresh deve ser tratada como falha ou defasagem operacional do wrapper local
+    - nao compensar essa ausencia com rebuild manual separado do indice como se fosse fluxo normal
+    - se o wrapper nao produzir evidencia suficiente do refresh, encerrar com bloqueio de compatibilidade e oferecer atualizacao via `xpz-kb-parallel-setup`
 15. Se o processamento foi concluído com sucesso, permitir renomear o `.xpz` consumido para `processado_<nome-original>.xpz`
 16. Reportar: objetos criados, atualizados, ignorados, resíduos removidos, refresh do indice e resumo Git
     - se o resumo do wrapper expuser `MaterializationInterpretation`, usar esse campo como leitura principal do resultado em vez de inferir pela combinacao solta de `Created`, `Updated` e `Unchanged`
@@ -228,8 +231,15 @@ Os wrappers seguem esta convenção de parâmetros:
     - mudanca paralela legitima vinda da KB/IDE = item devolvido oficialmente pela KB no `XPZ`, ainda que fora do foco imediato da frente
     - mudanca lateral indevida = alteracao feita pelo agente fora do escopo da fase ou fora do fluxo oficial esperado
     - nao agrupar no mesmo commit da frente atual mudancas paralelas sem decisao explicita, mas nao tratar automaticamente o retorno oficial adicional da KB como erro
-19. O resumo Git do item anterior e apenas informativo; nao autoriza `git add`, `commit` ou `push`
-20. Se o usuario nao pedir fechamento Git de forma explicita, o fluxo deve terminar no handoff tecnico e, no maximo, sugerir proximos passos sem executar publicacao
+19. O handoff tecnico minimo deve declarar:
+    - comando/wrapper executado e `InputPath` usado
+    - se a rodada foi materializacao normal, reprocessamento confirmatorio ou conferencia full
+    - relatorio principal usado para a conclusao e, quando houver, relatorio separado de verificacao posterior
+    - `MaterializationInterpretation` quando o wrapper expuser esse campo; caso contrario, limitar a leitura aos contadores e warnings reais
+    - evidencia usada para afirmar refresh do indice ou bloqueio que impediu essa conclusao
+    - se `kb-source-metadata.md` foi lido nominalmente na rodada atual ou apenas reescrito pelo wrapper
+20. O resumo Git do item anterior e apenas informativo; nao autoriza `git add`, `commit` ou `push`
+21. Se o usuario nao pedir fechamento Git de forma explicita, o fluxo deve terminar no handoff tecnico e, no maximo, sugerir proximos passos sem executar publicacao
 
 ---
 

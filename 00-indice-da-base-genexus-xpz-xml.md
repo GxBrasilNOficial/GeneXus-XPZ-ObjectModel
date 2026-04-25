@@ -62,6 +62,7 @@ Organizar conhecimento operacional e empírico sobre XMLs extraídos de `XPZ` Ge
 - `01-base-empirica-geral.md`
 - `04-webpanel-familias-e-templates.md`
 - `05-transaction-familias-e-templates.md`
+- `05b-procedure-relatorio-familias-e-templates.md`
 
 ### Operacional
 
@@ -78,9 +79,10 @@ Organizar conhecimento operacional e empírico sobre XMLs extraídos de `XPZ` Ge
 4. `03-risco-e-decisao-por-tipo.md`
 5. `04-webpanel-familias-e-templates.md`
 6. `05-transaction-familias-e-templates.md`
-7. `07-open-points-e-checklist.md`
-8. `08-guia-para-agente-gpt.md`
-9. `09-inventario-e-rastreabilidade-publica.md`
+7. `05b-procedure-relatorio-familias-e-templates.md`
+8. `07-open-points-e-checklist.md`
+9. `08-guia-para-agente-gpt.md`
+10. `09-inventario-e-rastreabilidade-publica.md`
 
 ## Regras absolutas para qualquer agente GPT
 
