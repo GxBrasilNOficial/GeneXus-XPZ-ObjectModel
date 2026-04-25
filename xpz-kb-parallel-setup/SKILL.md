@@ -11,7 +11,7 @@ Define e valida a estrutura inicial da pasta paralela da KB usada ao redor de um
 
 ## GUIDELINE
 
-Usar esta skill quando o trabalho exigir preparar, explicar, validar ou corrigir a estrutura inicial da pasta paralela da KB. O agente deve separar claramente a pasta nativa da KB da pasta paralela e aplicar os nomes padrao quando o usuario nao informar alternativas.
+Usar esta skill quando o trabalho exigir preparar, explicar, validar, atualizar ou corrigir a estrutura da pasta paralela da KB. O agente deve separar claramente a pasta nativa da KB da pasta paralela e aplicar os nomes padrao quando o usuario nao informar alternativas.
 
 ## PATH RESOLUTION
 
@@ -28,6 +28,7 @@ Use esta skill para:
 - Preparar a estrutura inicial de pastas para fluxos com `XPZ`
 - Validar se a pasta paralela da KB esta pronta para `sync`, geracao de XML ou empacotamento
 - Preparar a pasta paralela da KB para uso de indice derivado em `KbIntelligence`
+- Atualizar wrappers de pasta paralela com historico de uso para incorporar novos scripts previstos pela base metodologica compartilhada
 - Explicar a diferenca entre pasta da KB e pasta paralela da KB
 - Confirmar nomes padrao das subpastas quando o usuario nao informou alternativas
 
@@ -244,6 +245,7 @@ Ao fechar um setup ou handoff de pasta paralela da KB, usar um estado operaciona
 - `bootstrap_incompleto`: a estrutura existe, mas falta camada minima de wrappers locais para o fluxo oficial adotado, ou falta compatibilidade obrigatoria com `KbIntelligence`.
 - `pronto_para_primeira_materializacao`: estrutura, documentos e wrappers locais minimos foram criados ou validados, sem placeholders sanitizados pendentes em configuracao efetiva dos wrappers, mas `ObjetosDaKbEmXml` ainda nao recebeu materializacao oficial.
 - `materializado_e_indice_validado`: houve materializacao oficial bem-sucedida e, quando `KbIntelligence` for adotado, o indice derivado foi regenerado/validado com `last_index_build_run_at >= last_xpz_materialization_run_at`.
+- `wrappers_atualizados`: pasta ja em producao recebeu scripts ausentes previstos pela base metodologica; scripts com personalizacao foram preservados ou substituidos com aprovacao explicita do usuario; `ObjetosDaKbEmXml`, `kb-source-metadata.md` e `kb-intelligence.sqlite` intactos.
 
 Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dizer qual desses marcos ja foi efetivamente cumprido. Criar pastas vazias ou gravar memoria local inicial nao basta para declarar a pasta pronta para `sync` normal, pesquisa ampla ou geracao de objetos.
 
@@ -273,7 +275,32 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 5. Se o usuario informar nomes alternativos, registrar o mapeamento entre nome real e funcao da pasta em `AGENTS.md` da pasta paralela da KB e, quando ajudar humanos, tambem em `README.md`
 6. Registrar em `AGENTS.md` da pasta paralela o caminho confirmado da pasta nativa da KB e a regra de que essa pasta e somente leitura para agentes, com gravacao proibida
 7. Quando houver `README.md` local na pasta paralela, registrar ali tambem a identificacao da pasta nativa da KB e a regra de somente leitura em linguagem clara
-8. Se o caso for setup inicial padrao e a pasta paralela estiver praticamente vazia, criar primeiro a estrutura base e so aprofundar exploracao se surgir bloqueio concreto
+8. Detectar o contexto operacional da pasta paralela antes de qualquer escrita:
+   - `modo_criacao`: pasta inexistente, vazia, sem `ObjetosDaKbEmXml` materializado e sem `kb-source-metadata.md` com timestamps reais → criar primeiro a estrutura base e so aprofundar exploracao se surgir bloqueio concreto; prosseguir para o passo 9
+   - `modo_atualizacao`: pasta com historico real — qualquer combinacao de `ObjetosDaKbEmXml` materializado, `kb-source-metadata.md` com timestamps reais ou `kb-intelligence.sqlite` com dados → executar o BLOCO DE ATUALIZACAO a seguir antes de prosseguir para o passo 9
+--- BLOCO DE ATUALIZACAO (executar somente em modo_atualizacao) ---
+
+8.a Inspecionar `scripts/` e categorizar cada script previsto pela base metodologica em uma de tres classes:
+    - AUSENTE: script previsto que ainda nao existe localmente
+    - EQUIVALENTE: script que existe e cuja logica e equivalente ao exemplo correspondente; diferencas apenas de nome KB (ex: `FabricaBrasil` no lugar do nome generico) sao toleradas e nao constituem divergencia
+    - CUSTOMIZADO: script que existe com diferencas de logica, parametros adicionais, fluxo alterado ou qualquer mudanca alem da substituicao de nome KB
+
+8.b Para cada script AUSENTE: preparar criacao a partir do exemplo correspondente; apresentar ao usuario o script que sera criado e aguardar aprovacao explicita antes de gravar
+
+8.c Para cada script CUSTOMIZADO: evidenciar objetivamente a divergencia (quais secoes diferem, quais parametros foram adicionados, qual logica foi alterada) e apresentar ao usuario quatro opcoes claras; aguardar decisao explicita antes de qualquer escrita:
+    - A) Manter versao local intacta — script customizado fica como esta; nenhuma escrita
+    - B) Substituir pelo exemplo atual — personalizacao local e descartada; script volta ao estado canonico
+    - C) Revisar e incorporar seletivamente — usuario decide o que do exemplo incorporar; agente aplica apenas o que o usuario confirmar explicitamente
+    - D) Pular este script por agora — nenhuma escrita; continuar com os demais scripts da lista
+
+8.d Nao tocar `kb-source-metadata.md` em modo_atualizacao; o arquivo contem timestamps operacionais reais que o gate de frescor depende e nao devem ser sobrescritos pelo agente
+
+8.e Para `.claude\settings.json` existente: ler entradas presentes e inserir apenas os padroes que ainda nao constarem; nao remover nem sobrescrever entradas ja existentes
+
+8.f Ao concluir o bloco de atualizacao, declarar o estado `wrappers_atualizados` e listar explicitamente: scripts adicionados, scripts mantidos (EQUIVALENTES), scripts substituidos com aprovacao e scripts pulados
+
+--- FIM DO BLOCO DE ATUALIZACAO ---
+
 9. Validar a existencia da estrutura nesta ordem:
    - `scripts`
    - `Temp`
@@ -285,7 +312,7 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 10. Se a pasta paralela ja estiver versionada em Git, criar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte do bootstrap padrao
 11. Se a pasta paralela ainda nao estiver versionada em Git, o agente pode oferecer inicializar versionamento Git local; nao executar `git init` sem aprovacao explicita do usuario
 12. Se o usuario aceitar versionamento Git local e o Git nao estiver funcional no ambiente, oferecer instalar ou orientar a instalacao antes do bootstrap Git
-13. Criar `kb-source-metadata.md` inicial com o campo nominal `last_xpz_materialization_run_at`, sem inventar formato paralelo desconectado do motor compartilhado
+13. Se `kb-source-metadata.md` ainda nao existir, criar com o campo nominal `last_xpz_materialization_run_at`, sem inventar formato paralelo desconectado do motor compartilhado; se ja existir, nao tocar — o arquivo contem timestamps operacionais reais que o gate de frescor depende
 14. Nao salvar memoria externa do agente fora da pasta paralela da KB sem autorizacao explicita do usuario
 15. Explicar o papel de cada pasta:
    - `ObjetosDaKbEmXml` = snapshot oficial extraido via fluxo oficial do `.ps1`
@@ -312,11 +339,12 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
    - `Get-*KbMetadata.ps1`, se a KB local adotar `KbIntelligence`
    - `Test-*KbStructure.ps1`, se a KB local adotar `KbIntelligence`
    - helper local opcional de notificacao, se houver necessidade operacional
-20. Se os scripts `Test-*KbGate.ps1`, `Get-*KbMetadata.ps1` e `Test-*KbStructure.ps1` forem criados durante o setup, registrar imediatamente os padroes de allowlist correspondentes em `.claude\settings.json` da pasta paralela da KB:
+20. Se os scripts `Test-*KbGate.ps1`, `Get-*KbMetadata.ps1` e `Test-*KbStructure.ps1` forem criados ou confirmados durante o setup ou atualizacao, registrar os padroes de allowlist correspondentes em `.claude\settings.json` da pasta paralela da KB:
    - Para cada script, adicionar uma entrada no array `permissions.allow` no formato `PowerShell(& "<caminho-absoluto-do-script>" *)`
    - Usar o nome real do script no caminho (ex: `Test-FabricaBrasilKbGate.ps1`), nao o nome sanitizado do exemplo
-   - Criar `.claude\settings.json` com estrutura minima se ainda nao existir
-   - Tratar essa etapa como parte do bootstrap, nao como pendencia manual posterior; o agente deve executar isso antes de declarar `setup concluido` ou equivalente
+   - Se `.claude\settings.json` ainda nao existir, criar com estrutura minima
+   - Se `.claude\settings.json` ja existir, ler o conteudo atual, verificar quais padroes ja estao presentes e inserir apenas os ausentes; nao remover nem sobrescrever entradas ja existentes
+   - Tratar essa etapa como parte do bootstrap ou da atualizacao, nao como pendencia manual posterior; o agente deve executar isso antes de declarar o estado de conclusao
 21. Se `KbIntelligence` estiver ausente, orientar sua criacao como pasta de artefatos derivados antes de instalar wrappers de indice
 22. Se `ObjetosDaKbEmXml` ainda nao contiver snapshot materializado, nao tentar gerar `kb-intelligence.sqlite`; preparar apenas a pasta e os wrappers locais
 23. Se a pasta adotar `KbIntelligence`, validar o gate de compatibilidade operacional antes de permitir pesquisa ampla, triagem substantiva ou geracao de objetos
@@ -388,3 +416,6 @@ PastaParalelaDaKb/
 - NUNCA criar script novo se ja houver fluxo oficial previsto nas skills ou em `scripts/` do repositorio
 - NUNCA presumir que a ausencia de `ObjetosDaKbEmXml` significa snapshot vazio; significa estrutura ainda nao materializada
 - NUNCA esconder do usuario quando a estrutura padrao foi assumida por falta de nomes alternativos
+- NUNCA sobrescrever script existente em `scripts/` sem antes comparar com o exemplo correspondente, evidenciar objetivamente a divergencia ao usuario e obter aprovacao explicita para substituicao
+- NUNCA gravar em `kb-source-metadata.md` se o arquivo ja existir com timestamps reais; apos a primeira materializacao oficial esse arquivo e somente leitura para o agente
+- NUNCA classificar uma pasta como `bootstrap_incompleto` por ausencia de um script novo quando os scripts existentes ja funcionam e a pasta tem historico de uso real; a ausencia de script novo e caso de `modo_atualizacao`, nao de bootstrap incompleto
