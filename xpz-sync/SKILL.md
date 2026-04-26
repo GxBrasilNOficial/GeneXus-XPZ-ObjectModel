@@ -47,7 +47,12 @@ Use esta skill para:
 - Usuário quer conferir se um export full da KB está completo
 - Usuário quer rodar o script de sincronização ou de snapshot
 
-Antes do `sync`, se a dúvida principal for preparar, explicar ou validar a estrutura inicial da pasta paralela da KB, usar `xpz-kb-parallel-setup`.
+Do NOT use this skill para:
+- Gerar ou construir pacotes XPZ para importacao manual na IDE (use `xpz-builder`)
+- Analisar estrutura interna de um XML isolado (use `xpz-reader`)
+- Instalar ou gerenciar monitoramento automatico de pastas XPZ (use `xpz-daemon`)
+- Localizar objetos no acervo da KB por nome ou tipo (usar `xpz-index-triage` quando houver indice KbIntelligence disponivel)
+- Preparar, explicar ou validar a estrutura inicial da pasta paralela da KB (use `xpz-kb-parallel-setup`)
 
 ---
 
@@ -69,16 +74,20 @@ Quando o usuário não informar nomes alternativos, adotar estas subpastas na ra
 - `ObjetosDaKbEmXml`: acervo oficial somente leitura para agentes
 - `XpzExportadosPelaIDE`: entrada dos `.xpz` exportados pela IDE
 - `scripts`: wrappers `.ps1` que tratam `XPZ`
+- `Temp`: destino de artefatos efemeros de execucao, como diretorios temporarios de wrappers, logs auxiliares e saidas intermediarias
+- `KbIntelligence`: pasta do indice SQLite derivado e regeneravel, quando esse fluxo estiver adotado na KB
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: saída de XMLs temporários para importação manual, organizada por frente em subpastas `NomeCurto_GUID_YYYYMMDD`; essa subpasta é a unidade ativa da frente
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: saída de pacotes `.xml` e, quando necessário, `.xpz`
 - após processamento bem-sucedido, o `.xpz` consumido pode ser renomeado para `processado_<nome-original>.xpz`
 - por padrão, novos fluxos devem ignorar arquivos com prefixo `processado_`
 - se alguma subpasta ainda não existir, criar nesta ordem:
   1. `scripts`
-  2. `XpzExportadosPelaIDE`
-  3. `ObjetosDaKbEmXml`
-  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
-  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+  2. `Temp`
+  3. `XpzExportadosPelaIDE`
+  4. `ObjetosDaKbEmXml`
+  5. `KbIntelligence`
+  6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - se `XpzExportadosPelaIDE` ainda não existir, perguntar onde o usuário quer salvar os `.xpz`
 - se `ObjetosDaKbEmXml` ainda não existir, parar e tratar a KB como ainda não materializada
 

@@ -39,6 +39,26 @@ Além dessa base principal, a raiz também pode conter documentação operaciona
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
 - `09-inventario-e-rastreabilidade-publica.md`
+- `10-base-operacional-msbuild-headless.md`: base operacional da trilha MSBuild headless, usada pela skill `xpz-msbuild-import-export`
+
+Os arquivos `10-matriz-part-types-por-tipo.md`, `11-campos-estaveis-vs-variaveis.md` e `12-diffs-estruturais-por-tipo.md` sao stubs de compatibilidade retroativa: cada um redireciona para o equivalente na serie `01` (`01b`, `01c`, `01d`). Nao contem conteudo proprio e nao devem ser usados como fonte direta.
+
+### Documentacao operacional KB Intelligence
+
+Arquivos da serie KB Intelligence presentes na raiz enquanto a frente estiver ativa. Quando encerrados, migram para `historico/kb-intelligence/`.
+
+- `11-plano-kb-intelligence-incremental.md`
+- `14-kb-intelligence-fase-3-contrato.md`
+- `16-kb-intelligence-fase-5-contrato.md`
+- `17-kb-intelligence-fase-6-contrato.md`
+- `18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md`
+- `19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md`
+- `21-kb-intelligence-fase-6-checklist-operacional-agente.md`
+- `22-kb-intelligence-fase-6-contrato-functional-trace-basic.md`
+- `23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md`
+- `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`
+- `27-kb-intelligence-fase-6-primeira-resposta-funcional.md`
+- `29-kb-intelligence-estudo-update-incremental.md`
 
 ### Skills para agentes
 
@@ -86,6 +106,7 @@ Se você quer entender a base rapidamente:
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabalho para XMLs gerados, ajustados ou preservados para importação manual na IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de saída para `import_file.xml` e demais pacotes gerados localmente
 - `Temp`: destino preferencial de artefatos efêmeros de execução, como diretórios temporários de wrappers, logs auxiliares e saídas intermediárias que não sejam fonte normativa da base
+- `ArquivoMorto`: subpasta opcional de `ObjetosGeradosParaImportacaoNaKbNoGenexus` para preservar XMLs contaminados que nao devem ser importados mas precisam de rastreabilidade; nao apagar sem autorizacao explicita do usuario
 - em `ObjetosGeradosParaImportacaoNaKbNoGenexus`, cada frente ativa deve usar sua propria subpasta no formato `NomeCurto_GUID_YYYYMMDD`
 - `NomeCurto_GUID_YYYYMMDD` identifica a frente pela combinacao de nome curto, GUID gerado na abertura da frente e data de criacao da frente; `YYYYMMDD` representa a data de criacao da frente, nao a data do pacote
 - em `PacotesGeradosParaImportacaoNaKbNoGenexus`, os pacotes devem permanecer na raiz, sem subpastas, usando o formato `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml`
@@ -186,6 +207,26 @@ Además de esa base principal, la raíz también puede contener documentación o
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
 - `09-inventario-e-rastreabilidade-publica.md`
+- `10-base-operacional-msbuild-headless.md`: base operacional de la trilha MSBuild headless, usada por la skill `xpz-msbuild-import-export`
+
+Los archivos `10-matriz-part-types-por-tipo.md`, `11-campos-estaveis-vs-variaveis.md` y `12-diffs-estruturais-por-tipo.md` son stubs de compatibilidad retroactiva: cada uno redirige al equivalente en la serie `01` (`01b`, `01c`, `01d`). No contienen contenido propio y no deben usarse como fuente directa.
+
+### Documentacion operacional KB Intelligence
+
+Archivos de la serie KB Intelligence presentes en la raíz mientras la frente esté activa. Cuando se cierran, migran a `historico/kb-intelligence/`.
+
+- `11-plano-kb-intelligence-incremental.md`
+- `14-kb-intelligence-fase-3-contrato.md`
+- `16-kb-intelligence-fase-5-contrato.md`
+- `17-kb-intelligence-fase-6-contrato.md`
+- `18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md`
+- `19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md`
+- `21-kb-intelligence-fase-6-checklist-operacional-agente.md`
+- `22-kb-intelligence-fase-6-contrato-functional-trace-basic.md`
+- `23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md`
+- `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`
+- `27-kb-intelligence-fase-6-primeira-resposta-funcional.md`
+- `29-kb-intelligence-estudo-update-incremental.md`
 
 ### Skills para agentes
 
@@ -233,6 +274,7 @@ Si quieres entender la base rápidamente:
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabajo para XMLs generados, ajustados o preservados para importación manual en la IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de salida para `import_file.xml` y demás paquetes generados localmente
 - `Temp`: destino preferente de artefactos efímeros de ejecución, como directorios temporales de wrappers, logs auxiliares y salidas intermedias que no sean fuente normativa de la base
+- `ArquivoMorto`: subcarpeta opcional de `ObjetosGeradosParaImportacaoNaKbNoGenexus` para preservar XML contaminados que no deben importarse pero necesitan trazabilidad; no borrar sin autorización explícita del usuario
 - en `ObjetosGeradosParaImportacaoNaKbNoGenexus`, cada frente activa debe usar su propia subcarpeta con el formato `NomeCurto_GUID_YYYYMMDD`
 - `NomeCurto_GUID_YYYYMMDD` identifica la frente por la combinación de nombre corto, GUID generado al abrir la frente y fecha de creación de la frente
 - en `PacotesGeradosParaImportacaoNaKbNoGenexus`, los paquetes deben permanecer en la raíz, sin subcarpetas, usando el formato `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml`
@@ -333,6 +375,26 @@ In addition to that main base, the root may also contain complementary operation
 - `07-open-points-e-checklist.md`
 - `08-guia-para-agente-gpt.md`
 - `09-inventario-e-rastreabilidade-publica.md`
+- `10-base-operacional-msbuild-headless.md`: operational base for the headless MSBuild trail, used by the `xpz-msbuild-import-export` skill
+
+The files `10-matriz-part-types-por-tipo.md`, `11-campos-estaveis-vs-variaveis.md`, and `12-diffs-estruturais-por-tipo.md` are backward-compatibility stubs: each one redirects to its equivalent in the `01` series (`01b`, `01c`, `01d`). They contain no content of their own and must not be used as a direct source.
+
+### KB Intelligence operational documentation
+
+KB Intelligence series files present in the root while the workstream is active. When closed, they migrate to `historico/kb-intelligence/`.
+
+- `11-plano-kb-intelligence-incremental.md`
+- `14-kb-intelligence-fase-3-contrato.md`
+- `16-kb-intelligence-fase-5-contrato.md`
+- `17-kb-intelligence-fase-6-contrato.md`
+- `18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md`
+- `19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md`
+- `21-kb-intelligence-fase-6-checklist-operacional-agente.md`
+- `22-kb-intelligence-fase-6-contrato-functional-trace-basic.md`
+- `23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md`
+- `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`
+- `27-kb-intelligence-fase-6-primeira-resposta-funcional.md`
+- `29-kb-intelligence-estudo-update-incremental.md`
 
 ### Skills for agents
 
@@ -380,6 +442,7 @@ If you want to understand the repository quickly:
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: working area for XMLs generated, adjusted, or preserved for manual IDE import
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: output area for `import_file.xml` and other locally generated packages
 - `Temp`: preferred destination for ephemeral execution artifacts, such as wrapper temporary directories, auxiliary logs, and intermediate outputs that are not normative source material for the base
+- `ArquivoMorto`: optional subfolder of `ObjetosGeradosParaImportacaoNaKbNoGenexus` used to preserve contaminated XMLs that must not be imported but require traceability; do not delete without explicit user authorization
 - in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, each active front must use its own subfolder in the format `NomeCurto_GUID_YYYYMMDD`
 - `NomeCurto_GUID_YYYYMMDD` identifies the front by the combination of short name, GUID generated when the front is opened, and the front creation date
 - in `PacotesGeradosParaImportacaoNaKbNoGenexus`, packages must remain in the root, without subfolders, using the format `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml`

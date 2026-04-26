@@ -38,6 +38,7 @@ Do NOT use this skill for:
 - Analisar um XML isolado sem intenção de atualizar a documentação (use `xpz-reader`)
 - Gerar ou clonar objetos XPZ para empacotamento (use `xpz-builder`)
 - Tratar o SQLite do KB Intelligence como fonte normativa no lugar dos XMLs oficiais
+- Localizar objetos no acervo da KB por nome ou tipo (usar `xpz-index-triage` primeiro quando houver indice KbIntelligence disponivel)
 
 ---
 
@@ -101,12 +102,13 @@ Se o repositório ainda mantiver wrappers especializados, eles devem ser tratado
 
 1. Identificar se o pedido é `inventory`, `advanced-docs` ou `update-section`
 2. Se a pasta paralela da KB ainda não estiver montada, validada ou mapeada para este repositório → **ABORT** e usar `xpz-kb-parallel-setup`
+   - Quando houver indice KbIntelligence disponivel e a tarefa exigir selecionar ou localizar objetos do corpus para documentar, invocar `xpz-index-triage` antes de abrir XMLs para orientar a selecao
 3. Resolver a raiz do repositório pelo contexto
 4. Localizar `scripts\` e confirmar a existência do script adequado
 5. Confirmar ou derivar caminhos de entrada e saída
 6. Executar o script com parâmetros explícitos
 7. Se usar casos de validação derivados do KB Intelligence, identificar primeiro o formato do caso antes de escolher o executor:
-   - casos com `source`, `target` e `expected_rule` → validar no gerador/indexador com `New-KbIntelligenceIndex.ps1 -ValidationCasesPath`
+   - casos com `source`, `target` e `expected_rule` → validar no gerador/indexador com `Build-KbIntelligenceIndex.ps1 -ValidationCasesPath`
    - casos com `query` → validar no executor de consultas com `Test-KbIntelligenceQueries.ps1 -ValidationCasesPath`
 8. Se a documentação citar XML vindo de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, rotular isso como artefato de trabalho e não como snapshot oficial
 9. Quando a documentação gerar ou preservar links de linha para XML GeneXus, rotular o papel do trecho citado: `Source efetivo`, `Rules/parm`, `metadado XML`, `chamada no chamador` ou `assinatura no chamado`

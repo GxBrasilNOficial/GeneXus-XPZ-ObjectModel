@@ -35,6 +35,7 @@ Do NOT use this skill for:
 - Generating or cloning XPZ objects (use `xpz-builder`)
 - Questions about GeneXus IDE behavior, build, or runtime execution beyond structural classification
 - Questions unrelated to GeneXus XPZ/XML structure
+- Locating or finding objects by name or type within the KB corpus (use `xpz-index-triage` first when a KbIntelligence index is available, to identify which XML to open)
 
 ---
 
@@ -89,6 +90,7 @@ Reference files and when to load them:
 | [05b-procedure-relatorio-familias-e-templates.md](../05b-procedure-relatorio-familias-e-templates.md) | Input contains report `Procedure` XML |
 | [06-padroes-de-objeto-e-nomenclatura.md](../06-padroes-de-objeto-e-nomenclatura.md) | User asks about naming conventions or object organization |
 | [09-inventario-e-rastreabilidade-publica.md](../09-inventario-e-rastreabilidade-publica.md) | User asks about corpus history, validation trail, or inventory |
+| `xpz-index-triage` skill | When a KbIntelligence index is available and the user needs to locate or confirm which object XML to open before structural analysis |
 
 ---
 

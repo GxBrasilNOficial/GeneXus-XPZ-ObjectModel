@@ -22,12 +22,26 @@ Usuário solicita ativar ou desativar o monitoramento permanente. A skill:
 
 ---
 
+## PATH RESOLUTION
+
+- Este `SKILL.md` fica dentro de uma subpasta de skill sob a raiz do repositório.
+- Toda referência `../arquivo.md` deve ser resolvida a partir da pasta deste `SKILL.md`, e não do diretório de trabalho corrente.
+- Na prática, `../` aponta para a base metodológica compartilhada na pasta-pai desta skill.
+
+---
+
 ## TRIGGERS
 
-- "ative o monitoramento automático de XPZ para esta KB"
-- "desative o daemon de XPZ"
-- "qual é o status do monitoramento?"
-- "remova o daemon de XPZ"
+Use esta skill para:
+- Usuário quer ativar, configurar ou gerenciar monitoramento automático de novas exportações XPZ da IDE
+- Usuário quer instalar um daemon que dispara sincronização automaticamente ao detectar novos arquivos `.xpz`
+- Usuário quer parar, verificar status ou remover um daemon XPZ existente
+
+Do NOT use this skill para:
+- Processar ou sincronizar um `.xpz` manualmente (use `xpz-sync`)
+- Preparar ou validar a estrutura da pasta paralela da KB (use `xpz-kb-parallel-setup`)
+- Gerar ou clonar objetos XPZ para importacao (use `xpz-builder`)
+- Analisar estrutura de XML isolado (use `xpz-reader`)
 
 ---
 

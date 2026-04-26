@@ -38,6 +38,7 @@ Do NOT use this skill for:
 - Questions about GeneXus runtime, build behavior, or IDE configuration
 - Generating KnowledgeBase-level exports or full KB backups
 - Affirming that generated XPZ will import or build without errors
+- Locating or finding objects in the KB corpus by name, type, or function (use `xpz-index-triage` first when a KbIntelligence index is available)
 
 If the main need is to prepare or validate the initial folder structure around the KB before any packaging flow, use `xpz-kb-parallel-setup`.
 
@@ -66,14 +67,18 @@ If the main need is to prepare or validate the initial folder structure around t
   - `ObjetosDaKbEmXml`
   - `XpzExportadosPelaIDE`
   - `scripts`
+  - `Temp`
+  - `KbIntelligence`
   - `ObjetosGeradosParaImportacaoNaKbNoGenexus`
   - `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - If some subfolders do not exist yet, prefer creating them in this order:
   1. `scripts`
-  2. `XpzExportadosPelaIDE`
-  3. `ObjetosDaKbEmXml`
-  4. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
-  5. `PacotesGeradosParaImportacaoNaKbNoGenexus`
+  2. `Temp`
+  3. `XpzExportadosPelaIDE`
+  4. `ObjetosDaKbEmXml`
+  5. `KbIntelligence`
+  6. `ObjetosGeradosParaImportacaoNaKbNoGenexus`
+  7. `PacotesGeradosParaImportacaoNaKbNoGenexus`
 - If `XpzExportadosPelaIDE` does not exist yet, ask where the user wants to store exported `.xpz` files
 - If `ObjetosDaKbEmXml` does not exist yet, stop and treat the KB as not yet materialized
 - Use `ObjetosGeradosParaImportacaoNaKbNoGenexus` as the working area for locally generated or preserved XML
@@ -153,6 +158,7 @@ Reference files and when to load them:
 | [05-transaction-familias-e-templates.md](../05-transaction-familias-e-templates.md) | Target is a Transaction object |
 | [07-open-points-e-checklist.md](../07-open-points-e-checklist.md) | Edge cases, provisional decisions, or checklist for new templates |
 | [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) | Decision formula, precedence rules, materialization rules, refuse conditions |
+| `xpz-index-triage` skill | When a KbIntelligence index is available and locating comparable corpus XMLs or confirming object existence is needed before opening XML files |
 
 ---
 
