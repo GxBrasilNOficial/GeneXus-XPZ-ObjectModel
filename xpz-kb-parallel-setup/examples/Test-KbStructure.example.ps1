@@ -90,4 +90,4 @@ if ($blocked.Count -gt 0) {
     exit 1
 }
 
-Write-Host 'STRUCTURE_OK' -ForegroundColor Green
+Write-Output 'STRUCTURE_OK'

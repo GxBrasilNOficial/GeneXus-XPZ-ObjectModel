@@ -1,0 +1,108 @@
+# AGENTS.md - <NomeKb>
+<!-- PREENCHER: substitua <NomeKb> pelo nome real da KB -->
+
+## Identificacao
+
+- Nome da KB: `<NomeKb>`
+- Pasta paralela da KB: `C:\Dev\Prod\Gx_<NomeKb>`
+- Pasta nativa da KB vista pelo GeneXus: `C:\KBs\<NomeKb>`
+- Verificacao inicial: a pasta nativa da KB existia e estava acessivel em
+  <YYYY-MM-DD>.
+<!-- PREENCHER: data no formato YYYY-MM-DD -->
+
+## Regra critica da pasta nativa da KB
+
+`C:\KBs\<NomeKb>` e terreno proibido para gravacao por agentes.
+
+Agentes nao devem criar, editar, mover, renomear ou excluir arquivos nessa pasta.
+Leitura e permitida apenas quando o fluxo operacional explicito realmente exigir.
+
+## Estrutura funcional da pasta paralela da KB
+
+- `scripts`: wrappers locais finos que delegam ao motor compartilhado.
+- `Temp`: temporarios e relatorios descartaveis.
+- `XpzExportadosPelaIDE`: entrada de `.xpz` exportados pela IDE GeneXus.
+- `ObjetosDaKbEmXml`: snapshot oficial materializado; somente leitura para
+  agentes fora do fluxo oficial.
+- `KbIntelligence`: indice derivado regeneravel.
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus`: area de trabalho para XMLs de
+  importacao. Cada frente ativa deve usar subpasta
+  `NomeCurto_GUID_YYYYMMDD`.
+- `PacotesGeradosParaImportacaoNaKbNoGenexus`: saida plana de pacotes finais.
+
+## Estado operacional
+
+Estado atual: `<estado>`.
+<!-- PREENCHER: um de: estrutura_criada | bootstrap_incompleto |
+     pronto_para_primeira_materializacao | materializado_e_indice_validado |
+     wrappers_atualizados -->
+
+`last_xpz_materialization_run_at`: `<YYYY-MM-DDTHH:MM:SS.0000000Z>`.
+
+`last_index_build_run_at`: `<YYYY-MM-DDTHH:MM:SS.000000+00:00>`.
+
+Como o indice esta posterior a materializacao, triagem ampla e consultas por
+`KbIntelligence` estao liberadas.
+
+## Wrappers locais
+
+Os wrappers em `scripts` usam a base compartilhada:
+
+```text
+C:\Dev\Knowledge\GeneXus-XPZ-Skills
+```
+
+Wrappers esperados:
+
+- `Update-<NomeKb>KbFromXpz.ps1`: materializa XPZ/XML em `ObjetosDaKbEmXml`,
+  grava `kb-source-metadata.md` e chama o refresh do indice quando nao estiver
+  em `VerifyOnly`.
+- `Test-<NomeKb>KbFullSnapshot.ps1`: conferencia full em modo somente verificacao.
+- `Rebuild-<NomeKb>KbIntelligenceIndex.ps1`: regenera e valida
+  `KbIntelligence\kb-intelligence.sqlite`.
+- `Query-<NomeKb>KbIntelligence.ps1`: consulta o indice derivado, inclusive
+  `index-metadata`.
+- `Test-<NomeKb>KbGate.ps1`: gate de frescor — verifica estrutura, SQLite,
+  timestamps e retorna `GATE_OK` ou lanca `BLOCK: <motivo>`; deve ser o unico
+  ponto de execucao do gate.
+- `Get-<NomeKb>KbMetadata.ps1`: le campos-chave de `kb-source-metadata.md` sem
+  regex inline nos chamadores; expoe ao menos `last_xpz_materialization_run_at`,
+  `kb_name` e `source_guid`.
+- `Test-<NomeKb>KbStructure.ps1`: relatorio de presenca/ausencia de pastas,
+  scripts e artefatos esperados; retorna `STRUCTURE_OK` ou lista componentes
+  ausentes.
+- `Notify-TaskComplete.ps1`: helper opcional de notificacao operacional.
+
+## Triagem Por Indice
+
+Para qualquer pergunta sobre existencia, localizacao, impacto tecnico, dependentes,
+dependencias ou investigacao funcional curta sobre objetos desta KB, usar
+`xpz-index-triage`. O gate e o unico ponto de entrada para o indice:
+
+1. Verificar se `scripts/Test-<NomeKb>KbGate.ps1` existe.
+   - Se ausente: encerrar a consulta e oferecer atualizacao via
+     `xpz-kb-parallel-setup`.
+2. Executar o gate:
+   ```powershell
+   & "C:\Dev\Prod\Gx_<NomeKb>\scripts\Test-<NomeKb>KbGate.ps1" #gate
+   ```
+   - `GATE_OK` → prosseguir com `xpz-index-triage`.
+   - `BLOCK: <motivo>` → encerrar a consulta e oferecer rebuild do indice.
+3. Nunca acessar `KbIntelligence\kb-intelligence.sqlite` diretamente por
+   nenhuma ferramenta — Python, sqlite3, PowerShell inline, Bash ou qualquer
+   outro meio.
+4. Nunca compensar gate bloqueado com leitura manual de SQLite, JSON de
+   validacao, `kb-source-metadata.md` isolado, datas de arquivo ou XML oficial.
+5. `ObjetosDaKbEmXml` e a fonte normativa; so consultar apos gate liberado e
+   apenas para o conjunto minimo necessario indicado pela triagem.
+
+## Regras GeneXus/XPZ
+
+- Em tarefas GeneXus, usar a skill `nexa`.
+- Em tarefas XPZ, `import_file.xml`, XML exportado da KB, pacote de importacao
+  ou `ObjectsIdentityMapping`, usar a skill `xpz-*` aplicavel.
+- `ObjetosDaKbEmXml` e o snapshot oficial materializado; `KbIntelligence` e
+  apenas camada derivada e regeneravel.
+- `last_xpz_materialization_run_at` deve existir em `kb-source-metadata.md`.
+- `last_index_build_run_at`, no SQLite, deve ser igual ou posterior a
+  `last_xpz_materialization_run_at` antes de triagem ampla ou geracao de objetos.

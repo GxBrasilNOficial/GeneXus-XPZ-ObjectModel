@@ -54,7 +54,7 @@ if (-not (Test-Path -LiteralPath $StructureWrapperPath -PathType Leaf)) {
 }
 $structureOutput = & $StructureWrapperPath
 $structureText = ($structureOutput | Out-String)
-if ($LASTEXITCODE -ne 0 -or $structureText -notmatch 'STRUCTURE_OK') {
+if ((-not $?) -or $structureText -notmatch 'STRUCTURE_OK') {
     throw "BLOCK: estrutura da pasta paralela falhou: $($structureText.Trim())"
 }
 

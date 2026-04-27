@@ -92,6 +92,7 @@ Se você quer entender a base rapidamente:
 - o conteúdo foi organizado para reduzir tentativa e erro, não para eliminar risco
 - existe uma pasta privada separada, `GeneXus-XPZ-PrivateMap`, usada apenas para rastreabilidade editorial privada entre aliases públicos e artefatos reais; a fonte publicada continua sendo esta raiz
 - todo novo exemplo sanitizado incorporado na base pública deve receber anotação correspondente no `GeneXus-XPZ-PrivateMap`, ligando o trecho público aos objetos ou pacotes reais de origem
+- **modelos de linguagem**: as skills XPZ dependem de carregamento voluntário de skills, execução sequencial de gates e respeito a constraints do tipo NEVER. Modelos fracos ou com tendência a pular etapas (ex: GLM 5.1, DeepSeek V4 Flash, Kimi K2.6, Qwen 3.5 Plus, Qwen 3.6 Plus, MiniMax M2.7, MiMo-V2.5-Pro) não são confiáveis para triagem GeneXus e não devem ser recomendados a usuários. Prefira modelos com forte aderência a instruções (DeepSeek V4 Pro, GPT-5.4, Sonnet 4.6, Opus 4.7).
 
 ### Topologia operacional
 
@@ -260,6 +261,7 @@ Si quieres entender la base rápidamente:
 - el contenido fue organizado para reducir prueba y error, no para eliminar riesgo
 - existe una carpeta privada separada, `GeneXus-XPZ-PrivateMap`, usada solo para trazabilidad editorial privada entre aliases públicos y artefactos reales; la fuente publicada sigue siendo esta raíz
 - todo nuevo ejemplo sanitizado incorporado en la base pública debe recibir una anotación correspondiente en `GeneXus-XPZ-PrivateMap`, vinculando el trecho público con los objetos o paquetes reales de origen
+- **modelos de lenguaje**: las skills XPZ dependen de carga voluntaria de skills, ejecución secuencial de gates y respeto a constraints del tipo NEVER. Modelos débiles o con tendencia a saltar etapas (ej: GLM 5.1, DeepSeek V4 Flash, Kimi K2.6, Qwen 3.5 Plus, Qwen 3.6 Plus, MiniMax M2.7, MiMo-V2.5-Pro) no son confiables para triaje GeneXus y no deben recomendarse a usuarios. Prefiere modelos con fuerte adherencia a instrucciones (DeepSeek V4 Pro, GPT-5.4, Sonnet 4.6, Opus 4.7).
 
 ### Topología operativa
 
@@ -428,6 +430,7 @@ If you want to understand the repository quickly:
 - the content is meant to reduce trial and error, not to eliminate risk
 - there is a separate private folder, `GeneXus-XPZ-PrivateMap`, used only for private editorial traceability between public aliases and real artifacts; the published source remains this root
 - every new sanitized example incorporated into the public base must receive a corresponding note in `GeneXus-XPZ-PrivateMap`, linking the public excerpt to the real source objects or packages
+- **language models**: XPZ skills depend on voluntary skill loading, sequential gate execution, and adherence to NEVER constraints. Weak models or those prone to skipping steps (e.g., GLM 5.1, DeepSeek V4 Flash, Kimi K2.6, Qwen 3.5 Plus, Qwen 3.6 Plus, MiniMax M2.7, MiMo-V2.5-Pro) are not reliable for GeneXus triage and should not be recommended to users. Prefer models with strong instruction adherence (DeepSeek V4 Pro, GPT-5.4, Sonnet 4.6, Opus 4.7).
 
 ### Operational Topology
 

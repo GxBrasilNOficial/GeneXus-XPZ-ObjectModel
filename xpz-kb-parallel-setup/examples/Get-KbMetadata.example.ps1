@@ -49,8 +49,8 @@ foreach ($field in $fields) {
     $match = Select-String -LiteralPath $MetadataPath -Pattern "^$field\s*[:=]\s*(.+)$"
     if ($match) {
         $value = $match.Matches[0].Groups[1].Value.Trim()
-        "$field: $value"
+        "${field}: $value"
     } else {
-        "$field: (ausente)"
+        "${field}: (ausente)"
     }
 }

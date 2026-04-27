@@ -15,10 +15,12 @@ Usar o indice derivado da KB como trilha inicial de triagem antes de expandir a 
 
 O indice e artefato derivado. Ele nao substitui os XMLs oficiais e nao autoriza conclusao funcional automatica.
 
-Antes de usar o indice como base de triagem, executar obrigatoriamente o gate via `Test-*KbGate.ps1`. O gate verifica em sequencia: estrutura da pasta paralela via `Test-*KbStructure.ps1`, existencia da pasta `KbIntelligence`, do SQLite, frescor via `index-metadata`, existencia de `kb-source-metadata.md` e `last_xpz_materialization_run_at`, e compara timestamps. Nao fazer verificacao manual de frescor ou estrutura — ambas as verificacoes sao encapsuladas no gate script, que e o unico ponto de execucao autorizado.
+Antes de usar o indice como base de triagem, executar obrigatoriamente o gate via `Test-*KbGate.ps1`. O gate verifica em sequencia: estrutura da pasta paralela via `Test-*KbStructure.ps1`, existencia da pasta `KbIntelligence`, do SQLite, frescor via `index-metadata`, existencia de `kb-source-metadata.md` e `last_xpz_materialization_run_at`, e compara timestamps. Nao fazer verificacao manual de frescor ou estrutura — ambas as verificacoes sao encapsuladas no gate script, que e o unico ponto de execucao autorizado. Se `Test-*KbGate.ps1` nao existir em `scripts/`, tratar isso como bloqueio estrutural equivalente a `BLOCK:` do proprio script — encerrar a pergunta de negocio e oferecer atualizacao via `xpz-kb-parallel-setup`; nao compensar com verificacao manual, consulta direta ao indice ou qualquer outra alternativa.
 
 - se o gate retornar `GATE_OK`, o indice esta apto para triagem inicial
 - se o gate retornar `BLOCK: <motivo>`, tratar o indice como defasado/incompatível
+
+O gate e obrigatorio inclusive para perguntas simples de existencia — um indice defasado pode retornar falso negativo ou falso positivo mesmo para `search-objects`; a simplicidade da pergunta nao elimina o risco de resposta errada.
 
 Indice defasado, `last_xpz_materialization_run_at` ausente ou wrapper local sem suporte a `index-metadata` e gate de bloqueio para pesquisa ampla, triagem substantiva, consulta substantiva ao acervo oficial de objetos, leitura de XML de objeto e geracao de objetos de importacao. Esse estado deve ser tratado como excecao operacional, normalmente sinal de pasta paralela ainda sem wrappers XPZ atualizados ou de falha fortuita. O agente deve oferecer ao usuario atualizacao via `xpz-kb-parallel-setup` antes de seguir. Nesse estado, o agente pode executar apenas diagnostico minimo para explicar a incompatibilidade, restrito a documentacao local, estrutura, wrappers e metadados operacionais; nao deve compensar com leitura manual de JSON, SQLite direto, `kb-source-metadata.md` isolado, datas de arquivo, `updated`, `generated_at`, `source_xpz`, XML oficial de objeto, caminho pontual deduzido em `ObjetosDaKbEmXml` ou varredura em `ObjetosDaKbEmXml`.
 
@@ -176,7 +178,7 @@ Se qualquer `BLOCK:` ocorrer, encerrar a pergunta de negocio e oferecer `xpz-kb-
 
 ## WORKFLOW
 
-1. Identificar o repositorio ativo e reler `README.md` e `AGENTS.md` locais
+1. Identificar o repositorio ativo e reler `README.md` e `AGENTS.md` locais; ao reler o `AGENTS.md`, verificar se contem a secao `## Triagem Por Indice` — se ausente em pasta que adota `KbIntelligence`, tratar como estrutura desatualizada e rotear para `xpz-kb-parallel-setup` antes de qualquer triagem
 2. Se a pasta paralela da KB ainda nao estiver montada, validada ou mapeada para este repositorio -> **ABORT** e usar `xpz-kb-parallel-setup`
 3. A PRIMEIRA acao substantiva desta skill em qualquer sessao deve ser executar o gate. Nenhuma consulta ao indice, leitura de XML, varredura de `ObjetosDaKbEmXml` ou comando `Query-*KbIntelligence.ps1` pode ocorrer antes de `Test-*KbGate.ps1` retornar `GATE_OK`. Isso vale inclusive para perguntas simples de existencia/localizacao nominal — `search-objects` e `object-info` estao proibidos antes do gate.
 4. Executar o gate em ordem sequencial e parar no primeiro bloqueio; nao investigar camadas internas ate a camada externa estar valida
@@ -232,11 +234,13 @@ Se qualquer `BLOCK:` ocorrer, encerrar a pergunta de negocio e oferecer `xpz-kb-
 - NUNCA, em pergunta simples de existencia/localizacao nominal, abrir o wrapper local apenas para confirmar assinatura antes de chamar `search-objects` ou `object-info`; os parametros estao documentados em **QUERY PARAMETER REFERENCE**
 - NUNCA encurtar ou reescrever de forma inconsistente o caminho nominal do XML oficial retornado pelo indice
 - NUNCA reutilizar timestamp anterior em update ou resposta ao usuario; obter horario local imediatamente antes de cada mensagem
+- NUNCA acessar `kb-intelligence.sqlite` diretamente por qualquer linguagem ou ferramenta — Python, sqlite3 CLI, PowerShell inline, Bash, ou qualquer outro meio — sem passar pelo gate e pelo wrapper local; acesso direto ao SQLite e equivalente a bypass do gate independente do resultado obtido
 - NUNCA compensar falha de `index-metadata` ou ausencia de `last_xpz_materialization_run_at` lendo manualmente JSON de validacao, SQLite direto, `kb-source-metadata.md` isolado, datas de arquivo, `updated`, `generated_at`, `source_xpz` ou XML oficial para responder a pergunta de negocio
 - NUNCA abrir XML oficial de objeto para responder pergunta de negocio quando o gate de compatibilidade/frescor estiver bloqueado
 - NUNCA normalizar trabalho sem indice como alternativa economica quando o repositorio adota `KbIntelligence`; indice ausente ou defasado exige oferta de atualizacao
 - NUNCA substituir `nexa`
 - NUNCA substituir `xpz-reader`
+- NUNCA executar `Query-*KbIntelligence.ps1` ou chamar qualquer consulta ao indice sem ter verificado primeiro que `Test-*KbGate.ps1` existe em `scripts/` e executado o gate com retorno `GATE_OK`; ausencia do gate script e bloqueio estrutural, nao licenca para consultar o indice diretamente
 - NUNCA tratar declaracao de estado em `AGENTS.md` local (ex: `materializado_e_indice_validado`) como autorizacao para pular a verificacao estrutural do gate quando `Test-*KbGate.ps1` estiver ausente ou quando a skill detectar ausencia objetiva de scripts. O `AGENTS.md` pode estar desatualizado; a inspecao objetiva da pasta paralela prevalece sobre declaracao de estado
 - NUNCA assumir que toda capacidade nova do motor compartilhado ja esta exposta no wrapper local da KB
 - NUNCA tratar ausencia de wrapper local compativel como defeito da base metodologica

@@ -31,6 +31,7 @@ Use esta skill para:
 - Validar se a pasta paralela da KB esta pronta para `sync`, geracao de XML ou empacotamento
 - Preparar a pasta paralela da KB para uso de indice derivado em `KbIntelligence`
 - Atualizar wrappers de pasta paralela com historico de uso para incorporar novos scripts previstos pela base metodologica compartilhada
+- Detectar que o `AGENTS.md` da pasta paralela esta desatualizado em relacao ao padrao canonico atual — por exemplo, ausencia de secao `## Triagem Por Indice`, lista de wrappers incompleta ou outras secoes ausentes identificadas por comparacao com `examples/AGENTS.md.example`
 - Explicar a diferenca entre pasta da KB e pasta paralela da KB
 - Confirmar nomes padrao das subpastas quando o usuario nao informou alternativas
 
@@ -277,6 +278,30 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 5. Se o usuario informar nomes alternativos, registrar o mapeamento entre nome real e funcao da pasta em `AGENTS.md` da pasta paralela da KB e, quando ajudar humanos, tambem em `README.md`
 6. Registrar em `AGENTS.md` da pasta paralela o caminho confirmado da pasta nativa da KB e a regra de que essa pasta e somente leitura para agentes, com gravacao proibida
 7. Quando houver `README.md` local na pasta paralela, registrar ali tambem a identificacao da pasta nativa da KB e a regra de somente leitura em linguagem clara
+7a. Se a pasta paralela adota `KbIntelligence`, incluir obrigatoriamente no `AGENTS.md` local a secao `## Triagem Por Indice` com:
+    - Roteamento: perguntas de existencia/localizacao/impacto tecnico/relacoes/investigacao funcional curta → `xpz-index-triage`
+    - Gate: `Test-*KbGate.ps1` como unica porta de entrada; gate bloqueado impede pesquisa ampla, triagem substantiva e varredura de XMLs
+    - Regra explicita: nao compensar gate bloqueado com leitura manual de SQLite, JSON de validacao, `kb-source-metadata.md` ou XML oficial
+    - Fonte normativa: `ObjetosDaKbEmXml` para confirmacao somente apos gate liberado
+  Esta secao e pre-requisito para declarar o setup como concluido; sem ela, agentes podem rotear perguntas de triagem para `nexa` (regra generica "tarefa GeneXus → nexa") em vez de `xpz-index-triage`, furando o gate. Em `modo_criacao`, criar a secao junto com o restante do `AGENTS.md`. Em `modo_atualizacao`, verificar e adicionar se ausente (ver passo 8.g).
+7b. Verificar se o gatilho estrutural global esta presente nas configuracoes das ferramentas de agente instaladas:
+    - Identificar a ferramenta em uso na sessao atual e verificar seu arquivo de configuracao global primeiro; em seguida, verificar os arquivos das demais ferramentas instaladas
+    - Arquivos de configuracao a verificar (somente se existirem):
+      - Claude Code: `Join-Path $env:USERPROFILE '.claude\CLAUDE.md'`
+      - Codex: `Join-Path $env:USERPROFILE '.codex\AGENTS.md'`
+      - OpenCode: `Join-Path $env:USERPROFILE '.config\opencode\opencode.json'` → ler campo `instructions[]` e verificar cada arquivo listado
+    - Para cada arquivo encontrado, aplicar verificacao em dois niveis:
+      - Nivel 1: o proprio arquivo contem `## Pasta paralela de KB GeneXus`? Se sim → coberto, nenhuma acao
+      - Nivel 2: o arquivo referencia outro arquivo de instrucoes (ex: linha `@~/.codex/AGENTS.md` no `CLAUDE.md`, ou campo `instructions` no `opencode.json`)? Se sim → seguir a referencia e verificar o arquivo apontado; se esse contiver a secao → coberto, nenhuma acao
+    - Propor adicao apenas quando nem o arquivo direto nem os arquivos referenciados contiverem a secao
+    - A adicao deve ir no arquivo centralizado ja referenciado quando houver um; caso contrario, no proprio arquivo de configuracao da ferramenta
+    - Apresentar ao usuario qual arquivo sera alterado e o bloco exato a adicionar; aguardar aprovacao explicita antes de gravar:
+      ```
+      ## Pasta paralela de KB GeneXus
+
+      Ao identificar que a pasta de trabalho ou qualquer pasta referenciada na conversa contem `ObjetosDaKbEmXml/` ou `KbIntelligence/`, invocar `xpz-kb-parallel-setup` uma vez na sessao antes de qualquer triagem, consulta ou geracao de objetos — mesmo que o AGENTS.md local nao instrua isso explicitamente.
+      ```
+    - Esta verificacao e nao bloqueante: recusa ou pulo pelo usuario nao impede a conclusao do setup
 8. Detectar o contexto operacional da pasta paralela antes de qualquer escrita:
    - `modo_criacao`: pasta inexistente, vazia, sem `ObjetosDaKbEmXml` materializado e sem `kb-source-metadata.md` com timestamps reais → criar primeiro a estrutura base e so aprofundar exploracao se surgir bloqueio concreto; prosseguir para o passo 9
    - `modo_atualizacao`: pasta com historico real — qualquer combinacao de `ObjetosDaKbEmXml` materializado, `kb-source-metadata.md` com timestamps reais ou `kb-intelligence.sqlite` com dados → executar o BLOCO DE ATUALIZACAO a seguir antes de prosseguir para o passo 9
@@ -286,7 +311,7 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 
 8.a Inspecionar `scripts/` e categorizar cada script previsto pela base metodologica em uma de tres classes:
     - AUSENTE: script previsto que ainda nao existe localmente
-    - EQUIVALENTE: script que existe e cuja logica e equivalente ao exemplo correspondente; diferencas apenas de nome KB (ex: `FabricaBrasil` no lugar do nome generico) sao toleradas e nao constituem divergencia; para ser EQUIVALENTE, nenhum parametro pode ter default hardcoded apontando para arquivo que nao existe no disco
+    - EQUIVALENTE: script que existe e cuja logica e equivalente ao exemplo correspondente; diferencas apenas de nome KB (ex: `FabricaBrasil` no lugar do nome generico) sao toleradas e nao constituem divergencia; para ser EQUIVALENTE, nenhum parametro pode ter default hardcoded apontando para arquivo que nao existe no disco e o caminho de engine inferido no corpo do script — tipicamente `Join-Path $SharedSkillsRoot 'scripts\<nome>.ps1'` — deve apontar para arquivo que existe no motor compartilhado; engine path apontando para arquivo inexistente classifica o script como CUSTOMIZADO independente de qualquer outra diferenca
     - CUSTOMIZADO: script que existe com diferencas de logica, parametros adicionais, fluxo alterado ou qualquer mudanca alem da substituicao de nome KB; tambem e CUSTOMIZADO qualquer script com parametro cujo default hardcoded aponta para arquivo inexistente, mesmo que a logica seja identica ao exemplo — o default quebrado e divergencia de configuracao efetiva, nao mera diferenca de nome
 
 8.b Para cada script AUSENTE: preparar criacao a partir do exemplo correspondente; apresentar ao usuario o script que sera criado e aguardar aprovacao explicita antes de gravar
@@ -311,7 +336,16 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
     - Atualizar entradas correspondentes em `.claude\settings.json` (remover entrada antiga, adicionar entrada nova)
     - Aguardar aprovacao explicita do usuario antes de renomear ou alterar qualquer script por este motivo
 
-8.g Ao concluir o bloco de atualizacao, declarar o estado `wrappers_atualizados` e listar explicitamente: scripts adicionados, scripts mantidos (EQUIVALENTES), scripts substituidos com aprovacao e scripts pulados. Atualizar o campo de estado operacional no `AGENTS.md` local da pasta paralela para refletir o que realmente foi concluido (ex: `wrappers_atualizados`, `bootstrap_incompleto`). Nao manter declaracao de estado anterior desatualizada — se o `AGENTS.md` dizia `materializado_e_indice_validado` mas o gate script nao existia e acabou de ser criado, o estado deve ser atualizado para `wrappers_atualizados`. Um `AGENTS.md` com estado desatualizado serve como argumento falso para agentes burlarem o gate.
+8.g Para pastas que adotam `KbIntelligence`: verificar se o `AGENTS.md` local contem a secao `## Triagem Por Indice` com roteamento explicito para `xpz-index-triage`. Se a secao estiver ausente:
+    - O agente deve evidenciar a ausencia ao usuario: "O AGENTS.md nao tem a secao de triagem por indice — tarefas de existencia/localizacao/impacto podem ser roteadas para `nexa` em vez de `xpz-index-triage`, furando o gate."
+    - Oferecer adicionar o bloco padrao de triagem (conforme template do `modo_criacao`)
+    - Aguardar aprovacao explicita do usuario antes de gravar
+    - O bloco padrao deve incluir no minimo:
+      - Roteamento: perguntas de existencia/localizacao/impacto → `xpz-index-triage`
+      - Gate: nao compensar gate bloqueado com leitura manual de SQLite, JSON ou XML
+      - Fonte normativa: `ObjetosDaKbEmXml` como confirmacao so depois do gate liberado
+
+8.h Ao concluir o bloco de atualizacao, declarar o estado `wrappers_atualizados` e listar explicitamente: scripts adicionados, scripts mantidos (EQUIVALENTES), scripts substituidos com aprovacao e scripts pulados. Atualizar o campo de estado operacional no `AGENTS.md` local da pasta paralela para refletir o que realmente foi concluido (ex: `wrappers_atualizados`, `bootstrap_incompleto`). Nao manter declaracao de estado anterior desatualizada — se o `AGENTS.md` dizia `materializado_e_indice_validado` mas o gate script nao existia e acabou de ser criado, o estado deve ser atualizado para `wrappers_atualizados`. Um `AGENTS.md` com estado desatualizado serve como argumento falso para agentes burlarem o gate. Verificar tambem se a secao `## Wrappers locais` do `AGENTS.md` local lista todos os scripts atualmente presentes em `scripts/` com nomes e funcoes corretos; se estiver desatualizada — por listar scripts com nomes antigos ou omitir scripts recem-adicionados — propor atualizacao ao usuario antes de declarar o setup como concluido. Por fim, comparar a estrutura geral do `AGENTS.md` local contra o modelo canonico em `examples/AGENTS.md.example` desta skill; se houver secoes canonicas ausentes alem das ja verificadas nos passos anteriores (`## Triagem Por Indice` em 8.g e `## Wrappers locais` acima), propor adicao ao usuario antes de declarar o setup como concluido.
 
 --- FIM DO BLOCO DE ATUALIZACAO ---
 
@@ -438,3 +472,4 @@ PastaParalelaDaKb/
 - NUNCA, quando o wrapper de regeneracao do indice falhar com "file not found" em um `$ValidationCasesPath` default, tratar isso como ausencia de casos de validacao nem propor workarounds como passar `-ValidationCasesPath ""` ou apontar para casos de outra KB; tratar como default hardcoded quebrado no wrapper (classificacao `CUSTOMIZADO`), evidenciar a divergencia ao usuario e oferecer correcao via esta skill (remover ou corrigir o default para que o parametro fique opcional sem valor fixo)
 - NUNCA ignorar divergencia de prefixo verbal entre o nome do script local e o exemplo canonico correspondente quando o exemplo mudou de nome em relacao a versao anterior da base (ex: `Update-` → `Rebuild-`). Corrigir o conteudo sem alinhar o nome mascara a divergencia do `Test-KbStructure` e deixa a pasta paralela com nome defasado invisivel para o gate
 - NUNCA tratar declaracao de estado em `AGENTS.md` local (ex: `materializado_e_indice_validado`) como verdade absoluta quando a inspecao objetiva da pasta paralela mostrar scripts ausentes, wrappers defasados ou gate quebrado. O `AGENTS.md` e memoria auxiliar e pode estar desatualizado; a evidencia estrutural (presenca/ausencia de scripts, resultado do gate) prevalece sobre declaracao de estado. Ao concluir qualquer atualizacao, atualizar o estado no `AGENTS.md` para refletir a realidade.
+- NUNCA deixar uma pasta paralela que adota `KbIntelligence` sem a secao `## Triagem Por Indice` no `AGENTS.md` local. A ausencia dessa secao faz com que a regra generica "tarefa GeneXus → nexa" capture perguntas de existencia/localizacao/impacto, desviando o agente do `xpz-index-triage` e furando o gate. Tanto em `modo_criacao` quanto em `modo_atualizacao`, verificar e garantir essa secao.
