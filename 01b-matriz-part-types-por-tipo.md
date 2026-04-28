@@ -175,12 +175,9 @@ Separar observação direta de leitura heurística preliminar.
 ## Module/Folder
 
 - Evidência direta: Object/@type = 00000000-0000-0000-0000-000000000008 — container criado pelo usuário; a IDE exibe como "Module/Folder" no painel Properties.
-- Evidência direta: 279 objetos deste tipo observados no acervo FabricaBrasil.
-- Lacuna: a matriz de Part types para este tipo não foi coletada no corpus original; os dados de PresencePct/EmptyPct abaixo estão pendentes de coleta.
-
-| PartType | ObjectsWithPart | PresencePct | EmptyPct | PreliminaryClass | exemplos sanitizados |
-| --- | --- | --- | --- | --- | --- |
-| *(não coletado)* | — | — | — | — | — |
+- Evidência direta: 279 objetos lidos no acervo FabricaBrasil (`Folder/`); nenhum contém `<Part type="...">`.
+- Evidência direta: as propriedades ficam diretamente em `<Properties>` sob `<Object>`, sem wrapper de Part.
+- Conclusão: este tipo não usa Parts; a matriz de Part types não se aplica.
 
 ## Image
 
