@@ -42,6 +42,17 @@ Separar observação direta de leitura heurística preliminar.
 | c44bd5ff-f918-415b-98e6-aca44fed84fa | 1 | 100 | 0 | aparentemente obrigatorio (amostra muito pequena) | exemplos sanitizados |
 | e4c4ade7-53f0-4a56-bdfd-843735b66f47 | 1 | 100 | 0 | aparentemente obrigatorio (amostra muito pequena) | exemplos sanitizados |
 
+## Attribute
+
+- Evidência direta: envelope próprio — raiz `<Attributes><Attribute>`; sem `Object/@type`.
+- Evidência direta: 7685 objetos lidos no acervo FabricaBrasil (`Attribute/`).
+- Inferência forte: classificações aparentemente obrigatorio/opcional/raro/vazio dependem da recorrência observada nesta KB.
+
+| PartType | ObjectsWithPart | PresencePct | EmptyPct | PreliminaryClass | exemplos sanitizados |
+| --- | --- | --- | --- | --- | --- |
+| ad3ca970-19d0-44e1-a7b7-db05556e820c | 7685 | 100 | 0 | aparentemente obrigatorio | exemplos sanitizados |
+| babf62c5-0111-49e9-a1c3-cc004d90900a | 7685 | 100 | 0 | aparentemente obrigatorio | exemplos sanitizados |
+
 ## ColorPalette
 
 - Evidência direta: Object/@type = 3affc0b3-494b-4d84-9ec1-3a6ab8349cda em 1 objetos.
@@ -91,6 +102,12 @@ Separar observação direta de leitura heurística preliminar.
 | --- | --- | --- | --- | --- | --- |
 | a2bc65a1-999f-4e9b-b837-72285cc9bb16 | 2 | 100 | 0 | aparentemente obrigatorio (amostra muito pequena) | exemplos sanitizados |
 | babf62c5-0111-49e9-a1c3-cc004d90900a | 2 | 100 | 50 | aparentemente obrigatorio (amostra muito pequena) | exemplos sanitizados |
+
+## DataStore
+
+- Evidência direta: Object/@type = dcdcdcdc-dfe0-4a57-ae8f-c6e31b0dcbc0 em 2 objetos.
+- Evidência direta: nenhum contém `<Part type="...">`.
+- Conclusão: este tipo não usa Parts; a matriz de Part types não se aplica.
 
 ## DeploymentUnit
 
@@ -177,6 +194,12 @@ Separar observação direta de leitura heurística preliminar.
 - Evidência direta: Object/@type = 00000000-0000-0000-0000-000000000008 — container criado pelo usuário; a IDE exibe como "Module/Folder" no painel Properties.
 - Evidência direta: 279 objetos lidos no acervo FabricaBrasil (`Folder/`); nenhum contém `<Part type="...">`.
 - Evidência direta: as propriedades ficam diretamente em `<Properties>` sob `<Object>`, sem wrapper de Part.
+- Conclusão: este tipo não usa Parts; a matriz de Part types não se aplica.
+
+## Generator
+
+- Evidência direta: Object/@type = ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0 em 5 objetos.
+- Evidência direta: nenhum contém `<Part type="...">`.
 - Conclusão: este tipo não usa Parts; a matriz de Part types não se aplica.
 
 ## Image
@@ -307,6 +330,18 @@ Separar observação direta de leitura heurística preliminar.
 | 43b86e51-163f-44af-ac5a-e101541b1a71 | 7 | 100 | 14.3 | aparentemente obrigatorio | exemplos sanitizados |
 | babf62c5-0111-49e9-a1c3-cc004d90900a | 7 | 100 | 71.4 | aparentemente obrigatorio | exemplos sanitizados |
 | c31007a6-01d3-4788-95b3-425921d47758 | 7 | 100 | 0 | aparentemente obrigatorio | exemplos sanitizados |
+
+## ThemeClass
+
+- Evidência direta: Object/@type = d4876646-98dd-419b-8c1c-896f83c48368 em 501 objetos.
+- Evidência direta: nenhum contém `<Part type="...">`.
+- Conclusão: este tipo não usa Parts; a matriz de Part types não se aplica.
+
+## ThemeColor
+
+- Evidência direta: Object/@type = 5592de59-d30a-499d-9100-a7006d3674f2 em 24 objetos.
+- Evidência direta: nenhum contém `<Part type="...">`.
+- Conclusão: este tipo não usa Parts; a matriz de Part types não se aplica.
 
 ## Transaction
 
