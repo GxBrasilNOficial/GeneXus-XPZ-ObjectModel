@@ -38,7 +38,10 @@ Servir como base conceitual para os documentos empíricos e operacionais.
 ## Estrutura XML recorrente
 
 - `Evidência direta`: os objetos extraídos seguem o formato geral `<Object ...>` com atributos como `guid`, `name`, `type`, `parent`, `parentGuid`, `moduleGuid` e `fullyQualifiedName`.
-- `Evidência direta`: quando há conteúdo interno, ele aparece em blocos `<Part type="...">...</Part>`.
+- `Evidência direta`: a maioria dos tipos armazena conteúdo interno em blocos `<Part type="...">...</Part>` dentro de `<Object>`.
+- `Evidência direta`: uma classe de tipos armazena propriedades diretamente em `<Properties>` sob `<Object>`, sem qualquer wrapper `<Part>`. Tipos confirmados com essa estrutura no acervo FabricaBrasil: `ThemeClass` (501 objetos), `Module/Folder` (279 objetos, `000...0008`), `ThemeColor` (24 objetos), `Generator` (5 objetos), `DataStore` (2 objetos).
+- `Evidência direta`: `Attribute` tem envelope próprio e diferente de todos os demais — raiz `<Attributes><Attribute>` no lugar de `<Object type="...">`. Possui `<Part type="...">` interno, mas não segue o envelope padrão.
+- `Inferência forte`: a ausência de `<Part>` em um XML não indica objeto vazio ou corrompido — pode ser a estrutura normal do tipo.
 - `Inferência forte`: para este acervo, o GUID em `Object/@type` é um identificador estável do tipo extraído do objeto.
 - `Hipótese`: o mesmo catálogo de `Object/@type` e `Part/@type` pode se repetir em outros exports GeneXus 18, mas isso não foi provado aqui.
 
