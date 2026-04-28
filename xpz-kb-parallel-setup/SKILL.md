@@ -349,13 +349,37 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
       - Gate: nao compensar gate bloqueado com leitura manual de SQLite, JSON ou XML
       - Fonte normativa: `ObjetosDaKbEmXml` como confirmacao so depois do gate liberado
 
-8.g2 OBRIGATÓRIO ANTES DE 8.h: executar o BLOCO DE VERIFICACAO DE NAMING (passos 8.i a 8.n) para todos os diretorios presentes em `ObjetosDaKbEmXml` que contenham XMLs; so pular se `ObjetosDaKbEmXml` nao existir ou estiver completamente vazio
+8.g2 OBRIGATÓRIO ANTES DE 8.h — Verificacao de naming de `ObjetosDaKbEmXml` (so pular se a pasta nao existir ou estiver completamente vazia):
+
+8.g2.i  Identificar todos os diretorios presentes em `ObjetosDaKbEmXml`
+
+8.g2.ii Para cada diretorio presente, ler pelo menos um XML e extrair o tipo canonico:
+    - Se o elemento raiz for `<Attribute>`, o tipo canonico e `Attribute`
+    - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico conforme o catalogo em `01a-catalogo-e-padroes-empiricos.md`
+    - O GUID encontrado no XML e sempre a fonte autoritativa; o nome do diretorio e convencao local e pode divergir
+    - Nota: o motor `Build-KbIntelligenceIndex.py` ja usa esse mesmo mapeamento por GUID — o campo `object_type` no indice estara correto independente do nome da pasta; a auditoria aqui serve a legibilidade e consistencia do acervo para humanos
+
+8.g2.iii Se o nome do diretorio divergir do nome canonico esperado para o GUID encontrado, declarar a divergencia explicitamente ao usuario: qual diretorio esta com qual tipo real, qual seria o nome canonico segundo a convencao, e qual foi a causa provavel quando conhecida
+
+8.g2.iv Antes de propor qualquer renome, verificar:
+    - Se o `AGENTS.md` local referencia os nomes de diretorio em risco de ser renomeados
+    - Se existe indice `KbIntelligence`: o campo `object_type` no SQLite ja estara correto (o motor le o GUID do XML, nao o nome da pasta), mas o campo `path` dos registros refletira o nome antigo da pasta — apos o renome, o path ficara desatualizado ate o proximo rebuild
+
+8.g2.v Propor a sequencia de renome segura e aguardar aprovacao explicita do usuario antes de qualquer escrita no disco:
+    1. Diretorio A → `_tmp_<nome>/` (nome temporario para evitar colisao)
+    2. Diretorio B → nome que era de A
+    3. `_tmp_<nome>/` → nome que era de B
+    - Nunca tentar renomear A diretamente para B quando B ja existe
+
+8.g2.vi Apos renome aprovado e executado:
+    - Atualizar referencias ao nome antigo no `AGENTS.md` local se houver
+    - Informar ao usuario que o indice `KbIntelligence`, se existente, deve ser regenerado: o tipo dos objetos ja estava correto, mas o campo `path` dos registros ainda reflete o nome antigo da pasta e ficara desatualizado ate o rebuild
 
 8.h Ao concluir o bloco de atualizacao, declarar o estado `wrappers_atualizados` e listar explicitamente: scripts adicionados, scripts mantidos (EQUIVALENTES), scripts substituidos com aprovacao e scripts pulados. Atualizar o campo de estado operacional no `AGENTS.md` local da pasta paralela para refletir o que realmente foi concluido (ex: `wrappers_atualizados`, `bootstrap_incompleto`). Nao manter declaracao de estado anterior desatualizada — se o `AGENTS.md` dizia `materializado_e_indice_validado` mas o gate script nao existia e acabou de ser criado, o estado deve ser atualizado para `wrappers_atualizados`. Um `AGENTS.md` com estado desatualizado serve como argumento falso para agentes burlarem o gate. Verificar tambem se a secao `## Wrappers locais` do `AGENTS.md` local lista todos os scripts atualmente presentes em `scripts/` com nomes e funcoes corretos; se estiver desatualizada — por listar scripts com nomes antigos ou omitir scripts recem-adicionados — propor atualizacao ao usuario antes de declarar o setup como concluido. Por fim, comparar a estrutura geral do `AGENTS.md` local contra o modelo canonico em `examples/AGENTS.md.example` desta skill; se houver secoes canonicas ausentes alem das ja verificadas nos passos anteriores (`## Triagem Por Indice` em 8.g e `## Wrappers locais` acima), propor adicao ao usuario antes de declarar o setup como concluido.
 
 --- FIM DO BLOCO DE ATUALIZACAO ---
 
---- BLOCO DE VERIFICACAO DE NAMING (executar sempre que existirem diretorios com XMLs em ObjetosDaKbEmXml — inclusive como parte do modo_atualizacao via passo 8.g2 — e tambem quando solicitado isoladamente) ---
+--- BLOCO DE VERIFICACAO DE NAMING (executar quando solicitado isoladamente, fora do modo_atualizacao; em modo_atualizacao os mesmos passos ja estao incorporados em 8.g2.i a 8.g2.vi) ---
 
 8.i Identificar todos os diretorios presentes em `ObjetosDaKbEmXml`
 
@@ -485,7 +509,7 @@ PastaParalelaDaKb/
 
 - NUNCA assumir que o nome de qualquer diretorio em `ObjetosDaKbEmXml` corresponde ao tipo GeneXus correto sem verificar o GUID em pelo menos um XML daquele diretorio; o nome do diretorio e convencao local e pode divergir do tipo real
 - NUNCA renomear diretorios em `ObjetosDaKbEmXml` sem aprovacao explicita do usuario e sem seguir a sequencia segura com nome temporario (A→tmp, B→A, tmp→B)
-- NUNCA declarar estado de conclusao em `modo_atualizacao` (passo 8.h) sem ter executado o BLOCO DE VERIFICACAO DE NAMING (passos 8.i a 8.n) quando `ObjetosDaKbEmXml` contiver diretorios com XMLs; a auditoria de naming e obrigatoria e nao pode ser omitida mesmo quando todos os scripts forem EQUIVALENTE e nenhuma outra correcao for necessaria
+- NUNCA declarar estado de conclusao em `modo_atualizacao` (passo 8.h) sem ter executado a verificacao de naming inline (passos 8.g2.i a 8.g2.vi) quando `ObjetosDaKbEmXml` contiver diretorios com XMLs; a auditoria de naming e obrigatoria e nao pode ser omitida mesmo quando todos os scripts forem EQUIVALENTE e nenhuma outra correcao for necessaria
 - NUNCA confundir a pasta nativa da KB com a pasta paralela da KB
 - NUNCA gravar na pasta nativa da KB; essa pasta e somente leitura para agentes, salvo leitura operacional controlada quando realmente necessaria
 - NUNCA gravar manualmente em `ObjetosDaKbEmXml`
