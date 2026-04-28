@@ -15,6 +15,8 @@ Usar esta skill quando o trabalho exigir preparar, explicar, validar, atualizar 
 
 Quando o usuario usar qualquer linguagem que sugira setup — "refazer", "reiniciar", "recriar", "atualizar", "preciso dos novos scripts", "meu gate ta falhando" ou equivalente — em pasta que ja tem historico real, assumir `modo_atualizacao` e confirmar brevemente com o usuario o que sera feito antes de gravar. Em pasta com historico real, `modo_criacao` nunca e uma opcao oferecida ou aceita; se o usuario insistir em apagar tudo ou recriar do zero, recusar, explicar que dados existentes nao serao destruidos e redirecionar para `modo_atualizacao`.
 
+Em `modo_atualizacao`, a verificacao de naming de `ObjetosDaKbEmXml` nao e opcional e nao pode ser pulada mesmo quando todos os scripts forem EQUIVALENTE: para cada diretorio presente na pasta, o agente deve ler pelo menos um XML, extrair o tipo canonico pelo GUID (ou pelo elemento raiz `<Attribute>`), comparar com o nome do diretorio e reportar o resultado — conforme ou divergente — antes de declarar qualquer estado de conclusao.
+
 ## PATH RESOLUTION
 
 - Este `SKILL.md` fica dentro de uma subpasta de skill sob a raiz do repositório.
