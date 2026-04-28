@@ -217,7 +217,11 @@ Reference files and when to load them:
    - For simple report `Procedure`, escalate to comparable real XML only when the request falls outside the documented simple family, when the initial attempt plus one short structural corrective attempt already failed, or when KB-local dialect/localism appears
    - For simple report `Procedure`, every output or handoff must label the basis used as exactly one of: `molde sanitizado`, `XML real da KB atual`, `XML real de outra KB`, or `hipotese`
    - If the object has already returned from the KB via official XPZ processing, prefer the current XML in the official corpus over any older delta/import working copy when selecting the base for a new change
-   - Before cloning identity fields, classify the container from comparable corpus XML: `Folder` (`parentType="00000000-0000-0000-0000-000000000008"`) versus `Module` (`parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117"`)
+   - Before cloning identity fields, classify the container from comparable corpus XML using `Object/@parentType` — never from the directory name in `ObjetosDaKbEmXml`, which varies across KBs:
+     - `00000000-0000-0000-0000-000000000008` = Module/Folder (user-created container; GeneXus IDE shows "Module/Folder: X" in Properties)
+     - `c88fffcd-b6f8-0000-8fec-00b5497e2117` = PackagedModule (installed module, cube icon in IDE)
+     - `afa47377-41d5-4ae8-9755-6f53150aa361` = Root Module (virtual KB root; no XML file in acervo; objects here show "Module/Folder: Root Module" in Properties)
+     - `00000000-0000-0000-0000-000000000006` = system Folder (Main Programs, ToBeDefined); never appears as parentType of packagable objects
 11. Apply conservative cloning:
    - Preserve `Object/@guid` (new GUID only for new objects, never reuse existing object's GUID)
    - Preserve `parent`, `parentGuid`, `parentType`, `moduleGuid`
@@ -228,8 +232,8 @@ Reference files and when to load them:
    - Search for residual template object name, description, GUID, and calls; classify each residual occurrence as intentional, necessary dependency, or clone error
    - If any residual template identity remains unclassified, **ABORT** before packaging
    - Do NOT derive `fullyQualifiedName` by concatenating `parent + "." + name`
-   - If `parentType` is `Folder`, treat the folder name as container only; it must appear in `parent`/`parentGuid`, not be promoted automatically into `fullyQualifiedName`
-   - If `parentType` is `Module`, allow module qualification in `fullyQualifiedName` only when comparable corpus objects of the same KB confirm that pattern
+   - If `parentType` is `00000000-0000-0000-0000-000000000008` (Module/Folder), treat the container name as container only; it must appear in `parent`/`parentGuid`, not be promoted automatically into `fullyQualifiedName`
+   - If `parentType` is `c88fffcd-b6f8-0000-8fec-00b5497e2117` (PackagedModule), allow module qualification in `fullyQualifiedName` only when comparable corpus objects of the same KB confirm that pattern
    - For `WebPanel`, verify where each relevant property is actually persisted before editing: `Conditions` may live in its own `Part`, while `ControlWhere`, `ControlBaseTable`, `ControlOrder`, `ControlUnique`, `PATTERN_ELEMENT_CUSTOM_PROPERTIES`, and `WebUserControlProperties` often live inside serialized layout metadata; follow the operational rules in [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
    - For `WebPanel`, do NOT treat template defaults mentioning `Conditions` as proof that a real filter is materialized in the object
    - Before generating a new delta for an object that already returned from the KB, compare any intermediate import/delta copy against the official corpus XML and rebase on the official corpus if the working copy is stale
@@ -440,7 +444,9 @@ Reference files and when to load them:
 - NEVER invent a Part type GUID not present in the selected template
 - NEVER affirm import or build success — state "requires external IDE validation"
 - NEVER treat `runtime`, `Import File Load`, `Import`, and `Specification` as interchangeable evidence
-- NEVER promote a `Folder` name into `fullyQualifiedName` by analogy or by string concatenation alone
+- NEVER interpret `Import File Load` success as confirmation that an object was imported into the KB; it is a listing and preview step only — actual import requires explicit user confirmation in the subsequent `Import` step
+- NEVER use an integer value for `ObjectIdentity/@Type`; always derive it from `Object/@parentType` in the source XML of the object being packaged; an integer causes `Guid should contain 32 digits with 4 dashes` during Import File Load
+- NEVER promote a Module/Folder (`parentType="00000000-0000-0000-0000-000000000008"`) container name into `fullyQualifiedName` by analogy or by string concatenation alone
 - NEVER propose a business filter over status, authorization, cancellation, invoicing, balance, availability, or similar functional meaning if the chosen field is still semantically justified only by its name or UI label
 - NEVER treat plausible GeneXus `Source` as ready when its new syntax is not anchored in the methodological base of this trail
 - NEVER deliver XML or package with static, inherited, stale, or non-rechecked `lastUpdate`
@@ -472,7 +478,7 @@ Reference files and when to load them:
 - NEVER generate special KB block (`KnowledgeBase`, `Settings`) for normal single-object XPZ
 - ABORT if risk is high/very high and no internal comparable template is available
 - ABORT if type has fewer than 5 specimens in the corpus and no sanitized template exists
-- ABORT if container identity is unresolved between `Folder` and `Module` for the target object
+- ABORT if container identity is unresolved among Module/Folder (`00000000-0000-0000-0000-000000000008`), PackagedModule (`c88fffcd-b6f8-0000-8fec-00b5497e2117`), and Root Module (`afa47377-41d5-4ae8-9755-6f53150aa361`) for the target object
 - ABORT if more than one plausible batch is active in the workspace
 - ABORT if improper local changes are detected in `ObjetosDaKbEmXml` and the snapshot has not been sanitized yet
 - ABORT if classification of an item as modified vs unchanged dependency does not match the materialized `lastUpdate`

@@ -375,6 +375,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: em `Prompt`, `Selection List`, `Dynamic Combo` e variantes com grid, confirmar por familia se o filtro operacional esta no `Part` de `Conditions`, no layout, ou nos dois lugares; nao promover padrao localizado a regra universal.
 - `Evidência direta`: em `FreeStyleGrid`, ja houve caso em que o filtro navegou em runtime, mas a mesma forma nao foi aceita pelo parser estrutural da IDE.
 - `Regra operacional`: tratar `Load`, `Import` e `Specification` como validacoes separadas; sucesso em uma camada nao prova sucesso nas outras.
+- `Regra operacional`: `Import File Load` e apenas a etapa de listagem e preview do pacote na IDE — o objeto NAO entra na KB nessa etapa; a importacao real so ocorre quando o usuario confirma explicitamente na etapa subsequente `Import`. Mensagem `Success: Import File Load` significa que o pacote foi parseado e listado com sucesso, nao que o objeto foi importado.
 - `Regra operacional`: ao ajustar `ControlWhere` no XML, preferir a sintaxe aceita pelo editor estrutural da IDE; navegacao em runtime, sozinha, nao basta como criterio de materializacao segura.
 - `Evidência direta`: declarar `controlName` explicito em `<data>` pode reduzir ambiguidade estrutural no XML, mas isso nao garante que o nome fique disponivel como identificador manipulavel no source do objeto.
 - `Regra operacional`: em pacote delta GeneXus, quando ja existir pacote equivalente validado na IDE, reaproveitar o envelope completo desse pacote como molde; nao simplificar cabecalho, `Dependencies` ou `ObjectsIdentityMapping` por inferencia.
@@ -398,6 +399,8 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
   `Correção`: validar o XML interno do `CDATA` como documento completo, nao apenas o envelope externo.
 - `Erro sanitizado`: `Unknown function 'IsEmpty'` em `Procedure` importada.
   `Correção`: comparar a `Procedure` com um molde valido da KB e ajustar o `Source` e o bloco de `Variables` para a assinatura real do objeto.
+- `Erro sanitizado`: `Guid should contain 32 digits with 4 dashes` durante Import File Load causado por `ObjectIdentity/@Type` com valor inteiro (ex.: `Type="1"` ou `Type="8"`).
+  `Correção`: substituir o valor inteiro pelo GUID real do tipo correspondente, derivado do campo `Object/@parentType` do XML de origem do objeto empacotado.
 - `Erro sanitizado`: `Cannot insert Folder ... already exists in this model`.
   `Correção`: revisar `parentGuid` e `ObjectsIdentityMapping`; nao usar identidade de contêiner errada nem reaproveitar container inexistente no destino.
 - `Erro sanitizado`: `lastUpdate` novo aplicado a objeto apenas reenviado.
@@ -1213,8 +1216,8 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - Evidência direta: no acervo real desta KB, objetos sob `Module` podem trazer qualificacao em `fullyQualifiedName`, como `General.Services.DirectionsServiceRequest`.
 - Evidência direta: tambem existe caso em que o objeto esta sob `Folder` dentro de `Module`; nesse perfil, o nome do modulo permanece em `fullyQualifiedName`, mas o nome da pasta continua restrito a `parent`.
 - Regra operacional: antes de serializar identidade de objeto, classificar primeiro o contêiner por `parentType`.
-- Regra operacional: se `parentType="00000000-0000-0000-0000-000000000008"`, tratar o contêiner como `Folder`; o nome da pasta nao deve ser promovido automaticamente para `fullyQualifiedName`.
-- Regra operacional: se `parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117"`, tratar o contêiner como `Module`; a qualificacao em `fullyQualifiedName` so pode ser mantida ou introduzida quando houver exemplar comparavel da mesma KB confirmando esse padrao.
+- Regra operacional: se `parentType="00000000-0000-0000-0000-000000000008"`, tratar o contêiner como `Module/Folder` (Pasta/Módulo do usuário); o nome da pasta nao deve ser promovido automaticamente para `fullyQualifiedName`.
+- Regra operacional: se `parentType="c88fffcd-b6f8-0000-8fec-00b5497e2117"`, tratar o contêiner como `PackagedModule` (Módulo instalado); a qualificacao em `fullyQualifiedName` so pode ser mantida ou introduzida quando houver exemplar comparavel da mesma KB confirmando esse padrao.
 - Regra operacional: validar sempre em conjunto `fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType` e `moduleGuid`; nao validar esses campos isoladamente.
 - Regra operacional: `fullyQualifiedName` nao deve ser derivado por concatenacao textual de `parent + "." + name`.
 - Regra operacional: se a trilha nao conseguir decidir, por exemplar comparavel, se o contêiner real e `Folder` ou `Module`, a geracao deve abortar antes da serializacao.
@@ -1366,6 +1369,7 @@ Funcionar como resumo decisório sem esconder os limites da evidência.
 - Evidência direta: `Object/@name` nao apareceu vazio nos exports normais lidos
 - Evidência direta: `ObjectIdentity/@Name` nao apareceu vazio nos exports normais lidos
 - Evidência direta: `ObjectIdentity/@Type` e `ObjectIdentity/Guid` tambem vieram sempre preenchidos nos exports normais lidos
+- Regra operacional: `ObjectIdentity/@Type` deve ser um GUID valido, derivado do campo `Object/@parentType` do XML de origem do objeto sendo empacotado; nunca usar valor inteiro (como `"1"` ou `"8"`) — valor inteiro causa erro `Guid should contain 32 digits with 4 dashes` no GeneXus durante Import File Load
 - Evidência direta: `Source/@kb` e `Source/Version/@guid` precisam ser GUIDs sintaticamente validos para que o GeneXus ao menos aceite o parse inicial do `.xpz`
 - Evidência direta: `Dependency/Properties/@Name` e `Dependency/Properties/@PackageName`, quando o no `Properties` existe, vieram preenchidos
 - Inferência forte: entre os campos de nome do formato normal, os candidatos mais fortes a obrigatoriedade estrutural sao `Source/Version/@name`, `Object/@name` e `ObjectIdentity/@Name`

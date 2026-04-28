@@ -45,7 +45,7 @@ Do NOT use this skill for:
 - Map Part types present in input against observed frequencies and known patterns, using [01b-matriz-part-types-por-tipo](../01b-matriz-part-types-por-tipo.md) when needed
 - Classify object family when applicable: WebPanel families in [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md), Transaction families in [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md)
 - For report `Procedure`, classify whether the case fits the documented simple coverage from [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), and treat sanitized coverage as materialization-ready only when the selected block is marked as `molde pronto`
-- Classify container identity from `parentType` and check whether the object is under `Folder` or `Module`
+- Classify container identity from `parentType` using the GUIDs: `00000000-0000-0000-0000-000000000008` = Module/Folder (user-created container), `c88fffcd-b6f8-0000-8fec-00b5497e2117` = PackagedModule, `afa47377-41d5-4ae8-9755-6f53150aa361` = Root Module (virtual, no XML file in acervo), `00000000-0000-0000-0000-000000000006` = system Folder (Main Programs, ToBeDefined; never a valid parentType of packagable objects); never use the directory name in `ObjetosDaKbEmXml` as a type indicator — it varies across KBs
 - Assign risk level using [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
 - Identify structural anomalies: unexpected Part types, missing recurring parts, malformed envelope
 - For report `Procedure`, classify anomalies by layer: `Source`, `Rules`, or layout `Part c414ed00-8cc4-4f44-8820-4baf93547173`
@@ -101,7 +101,12 @@ Reference files and when to load them:
 3. Locate `Object/@type` attribute → use [01-base-empirica-geral](../01-base-empirica-geral.md) to route and cross-reference against [01a-catalogo-e-padroes-empiricos](../01a-catalogo-e-padroes-empiricos.md)
 4. Enumerate Part types present (`<Part type="...">`) → compare against observed frequencies in [01b-matriz-part-types-por-tipo](../01b-matriz-part-types-por-tipo.md) for that type
 5. Identify missing or unexpected Part types relative to the known structural pattern
-6. Read container identity fields (`fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`) and classify the container as `Folder`, `Module`, or unresolved from comparable corpus evidence
+6. Read container identity fields (`fullyQualifiedName`, `name`, `parent`, `parentGuid`, `parentType`, `moduleGuid`) and classify the container from `parentType` GUID — never from the directory name in `ObjetosDaKbEmXml`, which varies across KBs:
+   - `00000000-0000-0000-0000-000000000008` → Module/Folder (user-created container)
+   - `c88fffcd-b6f8-0000-8fec-00b5497e2117` → PackagedModule
+   - `afa47377-41d5-4ae8-9755-6f53150aa361` → Root Module (virtual; no XML file in acervo)
+   - `00000000-0000-0000-0000-000000000006` → system Folder (never a valid parentType of packagable objects)
+   - unresolved when parentType is absent or unknown
 7. When the task depends on locating an object in a local GeneXus repository, confirm the object by `type + name` and verify the actual folder where the file exists before proceeding
 8. Before citing a local line as evidence, classify the line role:
    - effective `Source` of the current object

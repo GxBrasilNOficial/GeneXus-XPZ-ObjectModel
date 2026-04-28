@@ -172,6 +172,16 @@ Separar observação direta de leitura heurística preliminar.
 | --- | --- | --- | --- | --- | --- |
 | babf62c5-0111-49e9-a1c3-cc004d90900a | 7 | 100 | 100 | aparentemente obrigatorio | exemplos sanitizados |
 
+## Module/Folder
+
+- Evidência direta: Object/@type = 00000000-0000-0000-0000-000000000008 — container criado pelo usuário; a IDE exibe como "Module/Folder" no painel Properties.
+- Evidência direta: 279 objetos deste tipo observados no acervo FabricaBrasil.
+- Lacuna: a matriz de Part types para este tipo não foi coletada no corpus original; os dados de PresencePct/EmptyPct abaixo estão pendentes de coleta.
+
+| PartType | ObjectsWithPart | PresencePct | EmptyPct | PreliminaryClass | exemplos sanitizados |
+| --- | --- | --- | --- | --- | --- |
+| *(não coletado)* | — | — | — | — | — |
+
 ## Image
 
 - Evidência direta: Object/@type = 9fb193d9-64a4-4d30-b129-ff7c76830f7e em 250 objetos.

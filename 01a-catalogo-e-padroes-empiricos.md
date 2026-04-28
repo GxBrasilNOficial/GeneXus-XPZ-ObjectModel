@@ -42,42 +42,53 @@ Servir como base conceitual para os documentos empíricos e operacionais.
 - `Inferência forte`: para este acervo, o GUID em `Object/@type` é um identificador estável do tipo extraído do objeto.
 - `Hipótese`: o mesmo catálogo de `Object/@type` e `Part/@type` pode se repetir em outros exports GeneXus 18, mas isso não foi provado aqui.
 
-## Catálogo observado de tipos extraídos
+## Referência de Tipos de Objeto GeneXus
 
-| Diretório extraído | Contagem | GUID observado em `Object/@type` | Classificação |
-| --- | ---: | --- | --- |
-| `API` | 1 | `36e32e2d-023e-4188-95df-d13573bac2e0` | `Evidência direta` |
-| `ColorPalette` | 1 | `3affc0b3-494b-4d84-9ec1-3a6ab8349cda` | `Evidência direta` |
-| `Dashboard` | 1 | `526aba9f-a725-4bc7-b1db-0b9f92ac9550` | `Evidência direta` |
-| `DataProvider` | 24 | `2a9e9aba-d2de-4801-ae7f-5e3819222daf` | `Evidência direta` |
-| `DataSelector` | 2 | `ffd44be7-3bb4-4d01-9e7e-d1c1a3c095af` | `Evidência direta` |
-| `DataStore` | 2 | `dcdcdcdc-dfe0-4a57-ae8f-c6e31b0dcbc0` | `Evidência direta` |
-| `DeploymentUnit` | 1 | `bf08dfb1-361c-4e7e-ad54-391e56e60b49` | `Evidência direta` |
-| `DesignSystem` | 2 | `78b3fa0e-174c-4b2b-8716-718167a428b5` | `Evidência direta` |
-| `Document` | 3 | `faeb588c-dcce-4dad-9af3-cdd11b961a32` | `Evidência direta` |
-| `Domain` | 593 | `00972a17-9975-449e-aab1-d26165d51393` | `Evidência direta` |
-| `ExternalObject` | 18 | `c163e562-42c6-4158-ad83-5b21a14cf30e` | `Evidência direta` |
-| `File` | 81 | `1132ac08-290f-4fd1-bd18-64777b7329d1` | `Evidência direta` |
-| `Folder` | 7 | `00000000-0000-0000-0000-000000000006` | `Evidência direta` |
-| `Generator` | 5 | `ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0` | `Evidência direta` |
-| `Image` | 250 | `9fb193d9-64a4-4d30-b129-ff7c76830f7e` | `Evidência direta` |
-| `Table` | 228 | `857ca50e-7905-0000-0007-c5d9ff2975ec` | `Evidência direta` |
-| `Language` | 1 | `88313f43-5eb2-0000-0028-e8d9f5bf9588` | `Evidência direta` |
-| `Module` | 279 | `00000000-0000-0000-0000-000000000008` | `Evidência direta` |
-| `PackagedModule` | 16 | `c88fffcd-b6f8-0000-8fec-00b5497e2117` | `Evidência direta` |
-| `Panel` | 7 | `d82625fd-5892-40b0-99c9-5c8559c197fc` | `Evidência direta` |
-| `PatternSettings` | 2 | `83476c1e-fa72-4229-9930-f51b954fca2d` | `Evidência direta` |
-| `Procedure` | 2281 | `84a12160-f59b-4ad7-a683-ea4481ac23e9` | `Evidência direta` |
-| `SDT` | 594 | `447527b5-9210-4523-898b-5dccb17be60a` | `Evidência direta` |
-| `Stencil` | 11 | `624a8b31-36f0-4292-adba-2d270d1e3537` | `Evidência direta` |
-| `SubTypeGroup` | 709 | `87313f43-5eb2-41d7-9b8c-e8d9f5bf9588` | `Evidência direta` |
-| `Theme` | 7 | `c804fdbd-7c0b-440d-8527-4316c92649a6` | `Evidência direta` |
-| `ThemeClass` | 501 | `d4876646-98dd-419b-8c1c-896f83c48368` | `Evidência direta` |
-| `ThemeColor` | 24 | `5592de59-d30a-499d-9100-a7006d3674f2` | `Evidência direta` |
-| `Transaction` | 183 | `1db606f2-af09-4cf9-a3b5-b481519d28f6` | `Evidência direta` |
-| `UserControl` | 7 | `562f4793-aabe-449f-8821-fc77e550698e` | `Evidência direta` |
-| `WebPanel` | 1196 | `c9584656-94b6-4ccd-890f-332d11fc2c25` | `Evidência direta` |
-| `WorkWithForWeb` | 183 | `78cecefe-be7d-4980-86ce-8d6e91fba04b` | `Evidência direta` |
+Tipos que geram arquivo XML próprio no acervo. Containers de organização estão na seção seguinte.
+
+| Tipo | GUID em `Object/@type` | Descrição | Dir. Sugerido |
+| --- | --- | --- | --- |
+| `API` | `36e32e2d-023e-4188-95df-d13573bac2e0` | Interface de serviço REST ou SOAP | `API/` |
+| `Attribute` | *(envelope próprio: `<Attributes><Attribute>`; sem `Object/@type`)* | Atributo de domínio da KB | `Attribute/` |
+| `ColorPalette` | `3affc0b3-494b-4d84-9ec1-3a6ab8349cda` | Paleta de cores para temas | `ColorPalette/` |
+| `Dashboard` | `526aba9f-a725-4bc7-b1db-0b9f92ac9550` | Painel visual composto | `Dashboard/` |
+| `DataProvider` | `2a9e9aba-d2de-4801-ae7f-5e3819222daf` | Fonte de dados parametrizada | `DataProvider/` |
+| `DataSelector` | `ffd44be7-3bb4-4d01-9e7e-d1c1a3c095af` | Seletor de dados reutilizável | `DataSelector/` |
+| `DataStore` | `dcdcdcdc-dfe0-4a57-ae8f-c6e31b0dcbc0` | Configuração de repositório de dados | `DataStore/` |
+| `DeploymentUnit` | `bf08dfb1-361c-4e7e-ad54-391e56e60b49` | Unidade de empacotamento para deploy | `DeploymentUnit/` |
+| `DesignSystem` | `78b3fa0e-174c-4b2b-8716-718167a428b5` | Design System | `DesignSystem/` |
+| `Document` | `faeb588c-dcce-4dad-9af3-cdd11b961a32` | Documento de conhecimento (wiki interna) | `Document/` |
+| `Domain` | `00972a17-9975-449e-aab1-d26165d51393` | Domínio (tipo de dado reutilizável) | `Domain/` |
+| `ExternalObject` | `c163e562-42c6-4158-ad83-5b21a14cf30e` | Wrapper de API ou biblioteca nativa | `ExternalObject/` |
+| `File` | `1132ac08-290f-4fd1-bd18-64777b7329d1` | Arquivo estático embarcado | `File/` |
+| `Generator` | `ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0` | Gerador de código | `Generator/` |
+| `Image` | `9fb193d9-64a4-4d30-b129-ff7c76830f7e` | Recurso de imagem | `Image/` |
+| `Language` | `88313f43-5eb2-0000-0028-e8d9f5bf9588` | Configuração de idioma | `Language/` |
+| `Panel` | `d82625fd-5892-40b0-99c9-5c8559c197fc` | Panel para dispositivos móveis (SmartDevices) | `Panel/` |
+| `PatternSettings` | `83476c1e-fa72-4229-9930-f51b954fca2d` | Configuração de padrão aplicado | `PatternSettings/` |
+| `Procedure` | `84a12160-f59b-4ad7-a683-ea4481ac23e9` | Procedure (código GeneXus) | `Procedure/` |
+| `SDT` | `447527b5-9210-4523-898b-5dccb17be60a` | Structured Data Type | `SDT/` |
+| `Stencil` | `624a8b31-36f0-4292-adba-2d270d1e3537` | Stencil de pattern | `Stencil/` |
+| `SubTypeGroup` | `87313f43-5eb2-41d7-9b8c-e8d9f5bf9588` | Grupo de subtipos de domínio | `SubTypeGroup/` |
+| `Table` | `857ca50e-7905-0000-0007-c5d9ff2975ec` | Índice ou tabela de base de dados | `Table/` |
+| `Theme` | `c804fdbd-7c0b-440d-8527-4316c92649a6` | Tema visual completo | `Theme/` |
+| `ThemeClass` | `d4876646-98dd-419b-8c1c-896f83c48368` | Classe dentro de um tema | `ThemeClass/` |
+| `ThemeColor` | `5592de59-d30a-499d-9100-a7006d3674f2` | Cor nomeada dentro de um tema | `ThemeColor/` |
+| `Transaction` | `1db606f2-af09-4cf9-a3b5-b481519d28f6` | Transação (formulário + modelo de dados) | `Transaction/` |
+| `UserControl` | `562f4793-aabe-449f-8821-fc77e550698e` | User Control customizado | `UserControl/` |
+| `WebPanel` | `c9584656-94b6-4ccd-890f-332d11fc2c25` | Tela web (eventos e layout) | `WebPanel/` |
+| `WorkWithForWeb` | `78cecefe-be7d-4980-86ce-8d6e91fba04b` | Work With For Web (gerado por padrão) | `WorkWithForWeb/` |
+
+## Containers de organização da KB
+
+Estes não são tipos de objeto programáveis. São a infraestrutura de organização da KB. O nome do diretório no acervo local **não é indicador confiável de tipo entre KBs** — use sempre o GUID em `Object/@type`.
+
+| Container | GUID em `Object/@type` | Descrição | Dir. Sugerido |
+| --- | --- | --- | --- |
+| Pasta de sistema | `00000000-0000-0000-0000-000000000006` | Pastas internas do GeneXus (Main Programs, ToBeDefined); **nunca** é `parentType` válido de objetos exportáveis | `Module/` |
+| Pasta/Módulo do usuário | `00000000-0000-0000-0000-000000000008` | Container criado pelo usuário; a IDE exibe como "Module/Folder" no painel Properties | `Folder/` |
+| Módulo instalado | `c88fffcd-b6f8-0000-8fec-00b5497e2117` | Módulos GeneXus instalados (GAM, módulos de pacote); ícone de cubo na IDE | `PackagedModule/` |
+| RootModule | `afa47377-41d5-4ae8-9755-6f53150aa361` | Raiz virtual da KB; **não gera arquivo XML** no acervo; aparece apenas como `parentGuid`/`moduleGuid` | *(sem pasta)* |
 
 ## Padrões internos observados por grupos
 

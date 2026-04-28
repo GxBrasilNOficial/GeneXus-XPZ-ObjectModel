@@ -141,6 +141,8 @@ Do NOT use this skill for:
 ## REGRAS DE NAMING
 
 - Para acervo materializado, preferir subpastas por tipo amigavel de objeto GeneXus, por exemplo `Transaction`, `Procedure`, `WebPanel`
+- Para containers GeneXus, adotar a convencao canonica derivada da FabricaBrasil: `Folder/` para objetos com `Object/@type="00000000-0000-0000-0000-000000000008"` (containers criados pelo usuario — "Pastas") e `Module/` para objetos com `Object/@type="00000000-0000-0000-0000-000000000006"` (containers de sistema: Main Programs, ToBeDefined)
+- O nome do subdiretorio em `ObjetosDaKbEmXml` NAO e indicador confiavel do tipo GeneXus entre KBs; a fonte autoritativa e sempre `Object/@type` no XML do objeto
 - Para acervo materializado, preferir nome amigavel do objeto como nome do XML, por exemplo `Cliente.xml`, `GeraBoleto.xml`
 - Nao usar GUID como nome principal de pasta ou arquivo do acervo materializado
 - Se houver colisao rara de nome, o GUID pode aparecer apenas como apoio de desambiguacao, nunca como eixo principal da organizacao
