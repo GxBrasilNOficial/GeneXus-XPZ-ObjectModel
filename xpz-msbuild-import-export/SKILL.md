@@ -242,6 +242,42 @@ Parâmetros específicos de importação:
 
 ---
 
+## WWP IMPORT ORDER
+
+Aplica-se quando os pacotes a importar contêm objetos WorkWithPlus. Siga fases separadas para evitar erros de referência e não misture estrutura base com instâncias de pattern.
+
+### Sequência de importação
+
+1. Importar `SEM_WWP` (preferir dry-run via `PreviewMode` primeiro)
+2. Validar log de conflito/import
+3. Importar `COM_WWP` ou aplicar pattern na IDE
+4. Importar pacote de instâncias/custom (`WorkWithPluswc*`, `wp*`, etc.)
+5. Importar pacote(s) de correção cirúrgica
+6. Build + Reorganizer em ambiente de teste
+
+### Limpeza pós-import
+
+`import_file` não remove objetos antigos automaticamente. Planejar limpeza manual na IDE para:
+
+- Transactions antigas substituídas
+- SubtypeGroups obsoletos
+- PatternInstances antigas que serão regeneradas
+- Procedures/WebPanels gerados automaticamente e já substituídos
+
+Após a limpeza, reaplicar WWP na Transaction final para regenerar base consistente.
+
+### Ciclo de validação
+
+1. Build após cada fase de import
+2. Classificar erros por categoria:
+   - Referência ausente (`non-defined object`)
+   - Duplicidade em metadata/pattern
+   - Incompatibilidade de assinatura em procedures/calls
+3. Corrigir no menor pacote possível (cirúrgico)
+4. Rebuild até zerar regressão introduzida por aquela fase
+
+---
+
 ## QUALITY CHECKLIST
 
 - [ ] A skill foi tratada como capacidade operacional validada, com uso controlado

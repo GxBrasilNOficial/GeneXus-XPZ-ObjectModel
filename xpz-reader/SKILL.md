@@ -58,6 +58,7 @@ Do NOT use this skill for:
 - Declare confidence level for every conclusion: `Direct evidence` / `Strong inference` / `Hypothesis`
 - Never affirm import or build compatibility — structural analysis only
 - When the task depends on a local KB parallel folder structure, require that structure to be clarified or validated first via `xpz-kb-parallel-setup`
+- When the object analyzed is a WWP PatternInstance (`WorkWithPlus*`): flag as structural anomaly any duplicate nodes in `<attribute>`, `<gridAttribute>`, or `<parameter>`; `parentGuid` inconsistent with the object name; and references to attributes apparently absent from the current model — if the user intends to package or clone the object, encaminhar para `xpz-builder`
 
 ---
 
