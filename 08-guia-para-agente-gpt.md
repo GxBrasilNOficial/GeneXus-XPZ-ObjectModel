@@ -185,6 +185,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
 - usar `Report layout` como bloco inicial apenas em `Procedure` de relatorio quando o sintoma falar de `PrintBlock`, `ReportLabel`, `ReportAttribute`, `Bands` ou shape de layout
 
+### Regra adicional para revisao de `DataProvider`
+
+- em `DataProvider`, revisar por blocos funcionais; nao presumir `Source` como bloco inicial universal
+- os blocos canonicos sao `Output structure`, `Source`, `Navigation context`, `Calls and dependencies` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Output structure -> Source` para reconciliar shape prometido com montagem real
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataProvider` inteiro por reflexo
+- usar `Output structure` como bloco inicial para colecao vs simples, grupo aninhado, nome de no, cardinalidade, coerencia do retorno e shape prometido
+- usar `Source` como bloco inicial para condicao, atribuicao, montagem, calculo, preenchimento e fluxo interno
+- usar `Navigation context` como bloco inicial para base implicita, `For each`, filtro, tabela base e ambiguidade de navegacao
+- usar `Calls and dependencies` como bloco inicial para `SDT`, `Procedure`, `BC`, `Transaction` e dependencia externa imediata
+- usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
+
 ### Regra adicional para revisao de `Transaction`
 
 - em `Transaction`, revisar por blocos funcionais; nao tratar a transacao inteira como bloco unico de leitura

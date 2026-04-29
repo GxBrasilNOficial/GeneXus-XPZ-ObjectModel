@@ -207,6 +207,19 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: em `Procedure`, as transicoes mais comuns e justificadas sao `Rules/parm -> Variables`, `Rules/parm -> Source`, `Source -> Variables`, `Source -> Calls and dependencies` e `Report layout -> Source`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `Procedure` inteira por reflexo.
 
+### Revisao por blocos em `DataProvider`
+
+- `Regra operacional`: em `DataProvider`, nao presumir `Source` como bloco inicial universal; a revisao fina deve declarar antes qual e o bloco primario do sintoma atual.
+- `Regra operacional`: os blocos canonicos de revisao em `DataProvider` sao `Output structure`, `Source`, `Navigation context`, `Calls and dependencies` e `Identity and container`.
+- `Regra operacional`: `Output structure` cobre grupos, colecao vs simples, aninhamento, nomes de nos, cardinalidade e coerencia estrutural do retorno prometido.
+- `Regra operacional`: `Source` cobre logica de montagem, atribuicoes, blocos, `For each`, condicoes, calculos e preenchimento dos nos de saida.
+- `Regra operacional`: `Navigation context` cobre base transacional implicita ou declarada, contexto de navegacao e ambiguidade de busca que afetem o `DataProvider`.
+- `Regra operacional`: `Calls and dependencies` cobre `SDT`, `BC`, `Transaction`, `Procedure`, objetos auxiliares e a cadeia funcional imediata necessaria para justificar a conclusao.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do objeto.
+- `Regra operacional`: em `DataProvider`, as transicoes mais comuns e justificadas sao `Output structure -> Source`, `Source -> Navigation context`, `Source -> Calls and dependencies`, `Navigation context -> Source` e `Calls and dependencies -> Output structure`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataProvider` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.

@@ -52,6 +52,7 @@ If the main need is to prepare or validate the initial folder structure around t
 - For `WebPanel`, classify the current delta by functional block before editing: `layout`, `events`, `variables`, `serialized functional metadata`, `identity and container`, or `dependencies`
 - For `Transaction`, classify the current delta by functional block before editing: `Transaction structure`, `Attributes and attribute properties`, `Rules`, `Events`, `Execution context`, or `Identity and container`
 - For `Procedure`, classify the current delta by functional block before editing: `Source`, `Rules/parm`, `Variables`, `Calls and dependencies`, `Identity and container`, and `Report layout` when applicable
+- For `DataProvider`, classify the current delta by functional block before editing: `Output structure`, `Source`, `Navigation context`, `Calls and dependencies`, or `Identity and container`
 - Treat any extra block opened after the first one as an `adjacent block` and open it only when there is explicit functional dependency with the primary edit block
 - Name every justified block transition in the review or packaging rationale, instead of silently widening the edit scope
 - State the intended conclusion or effect scope at the smallest functional level supported by the delta, including execution context when that distinction matters
@@ -236,6 +237,7 @@ Reference files and when to load them:
    - Transaction → use family F1–F6 from [05-transaction-familias-e-templates](../05-transaction-familias-e-templates.md)
    - WebPanel → use closest family from [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md)
    - For `WebPanel`, declare the primary edit block before touching the XML and use only the adjacent blocks required by explicit functional dependency
+   - For `DataProvider`, declare the primary edit block before touching the XML and use only the adjacent blocks required by explicit functional dependency
    - Simple report `Procedure` → use the canonical sanitized family from [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md) first when the case fits simple F2/F3 coverage and the selected block is marked as `molde pronto`
    - Other types → use sanitized representative from [08-guia-para-agente-gpt](../08-guia-para-agente-gpt.md) materialization rules
    - For simple report `Procedure`, escalate to comparable real XML only when the request falls outside the documented simple family, when the initial attempt plus one short structural corrective attempt already failed, or when KB-local dialect/localism appears
@@ -263,6 +265,12 @@ Reference files and when to load them:
    - For `WebPanel`, do NOT treat template defaults mentioning `Conditions` as proof that a real filter is materialized in the object
    - For `WebPanel`, name each justified block transition during review, for example `events -> variables` or `layout -> serialized functional metadata`
    - For `WebPanel`, if the current reasoning no longer needs a new block, stop expanding; do NOT reopen the whole object by reflex
+   - For `DataProvider`, treat `Output structure` as its own functional layer; do NOT collapse return shape into a generic `Source` reading
+   - For `DataProvider`, if the delta touches collection vs simple, nested groups, node names, or return cardinality, classify `Output structure` as the primary edit block unless explicit evidence points elsewhere
+   - For `DataProvider`, if the delta depends on `For each`, base table, filters, or navigation ambiguity, open `Navigation context` only as an explicitly justified adjacent block
+   - For `DataProvider`, do NOT treat `SDT`, `Procedure`, `BC`, or `Transaction` dependency inventory by itself as proof of the output shape
+   - For `DataProvider`, name each justified block transition during review, for example `Output structure -> Source` or `Source -> Navigation context`
+   - For `DataProvider`, if the current reasoning no longer needs a new block, stop expanding; do NOT reopen the whole object by reflex
    - Before generating a new delta for an object that already returned from the KB, compare any intermediate import/delta copy against the official corpus XML and rebase on the official corpus if the working copy is stale
    - If a filter, business rule, or functional interpretation depends on a calculated or derived field, open the field formula/source and review the immediate chain of called procedures before defining the condition
    - Do NOT conclude the semantic meaning of a calculated or derived field from its name, label, or mere XML presence
@@ -485,6 +493,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] For `Transaction`, every `DescriptionAttribute` present exists in the same `Level` and also in `<Attributes>`
 - [ ] For `Transaction`, no required `Attribute` was serialized as `Domain` or other object type under `<Objects>`
 - [ ] For `Transaction`, the primary edit block was declared before editing, any block transition was justified explicitly, and intended scope via web editing vs BC was stated when relevant
+- [ ] For `DataProvider`, the primary edit block was declared before editing and any block transition was justified explicitly
 - [ ] UTF-8 BOM hygiene was checked on every active XML
 - [ ] Generated package name followed the preferred `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml` pattern when applicable
 - [ ] Package write was blocked if the same front prefix already had the same `nn`
@@ -511,6 +520,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] Variables referenced by the edited `Source` exist in the `Procedure`
 - [ ] Every new helper variable introduced by the current `Source` delta exists in the variables section and remains coherent with its declared type
 - [ ] For `WebPanel`, the primary edit block was declared before editing and any block transition was justified explicitly
+- [ ] For `DataProvider`, output-shape deltas were reviewed explicitly against the promised return structure before packaging
 - [ ] For `Procedure`, the primary edit block was declared before editing and any block transition was justified explicitly
 - [ ] Every new method call introduced by the current `Source` delta on a variable is compatible with the declared type of that variable and is anchored by the methodological base loaded for the case
 - [ ] Cleanup or reinitialization introduced by the current `Source` delta for a collection, SDT, or `Messages, GeneXus.Common` uses a pattern anchored by the methodological base loaded for that declared type
