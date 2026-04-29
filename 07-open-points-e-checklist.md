@@ -48,8 +48,8 @@ Servir como local único para conflitos não resolvidos silenciosamente.
 
 ## Pontos ainda abertos
 
-- `Hipótese`: o significado funcional preciso de cada GUID de `Part type` ainda precisa de catálogo semântico por tipo de objeto.
-- `Hipótese`: ainda não está provado quais `Part type` são obrigatórios, opcionais ou apenas vazios estruturais em cada família de objeto.
+- `Hipótese`: o significado funcional preciso de cada GUID de `Part type` ainda precisa de catalogo semantico fechado por tipo de objeto; a base atual ja prova recorrencia estrutural e indicios fortes de papel por frequencia, mas ainda nao fecha a semantica funcional completa de cada GUID.
+- `Hipótese`: a base ja sustenta, para varios tipos, indicios fortes de quais `Part type` sao obrigatorios, opcionais ou vazios/estruturais por recorrencia observada e por importacoes controladas; o que ainda nao esta totalmente provado e o limite de generalizacao dessa leitura para todas as familias, variantes e KBs.
 - `Hipótese`: a correspondência entre nomes compactos de diretório e nomes oficiais mostrados na IDE ainda deve ser validada diretamente na KB quando isso for necessário.
 - `Hipótese`: a diferença exata entre `Module` e `PackagedModule` no plano funcional ainda não pode ser fechada só com os XMLs extraídos.
 - `Hipótese`: ainda falta validar se os padrões observados nesta KB se repetem sem mudança relevante em outros exports GeneXus 18.
@@ -234,5 +234,4 @@ Orientar futuras coletas de templates comparáveis.
 - `Causa`: assumir a `Base Table` pelo nome do objeto ou por leitura parcial do bloco, sem confirmar a determinacao explicita ou implicita.
 - `Consequência`: aceitar atributos que nao pertencem a `Base Table`/`Extended Table` coerente, gerando analise errada ou ajuste de `Source` fora da navegacao real.
 - `Regra de checagem`: antes de validar atributos do bloco, identificar a `Base Table` determinada do `For each` e verificar cada referencia contra essa base e seu contexto coerente de navegacao.
-
 

@@ -45,7 +45,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 5. para `WebPanel`, ler `04-webpanel-familias-e-templates.md`
 6. para `Transaction`, ler `05-transaction-familias-e-templates.md`
 7. para `Procedure` de relatorio (nome com prefixo de relatorio no acervo), ler `05b-procedure-relatorio-familias-e-templates.md`
-8. usar `09-inventario-e-rastreabilidade-publica.md` para sustentar rastreabilidade
+8. ler `07-open-points-e-checklist.md` quando a resposta depender de limites conhecidos, pendencias metodologicas ou frentes ainda abertas
+9. usar `09-inventario-e-rastreabilidade-publica.md` para sustentar rastreabilidade
 
 `06-padroes-de-objeto-e-nomenclatura.md`: leitura suplementar — indicado quando a duvida envolver nomenclatura de objetos, prefixos de tipo ou comportamento de `Folder` vs `Module` no `fullyQualifiedName`.
 
@@ -91,7 +92,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando uma pasta paralela de KB expuser `KbIntelligence\kb-intelligence.sqlite`, o agente deve usar o indice para triagem tecnica antes de alterar objetos GeneXus cobertos pelo contrato da Fase 3
 - antes de confiar no indice, comparar `last_index_build_run_at` na tabela `metadata` do SQLite com `last_xpz_materialization_run_at` lido nominalmente em `kb-source-metadata.md`
 - quando o wrapper local expuser `index-metadata`, usar essa consulta para obter `last_index_build_run_at`; se ela falhar, retornar vazio ou nao trouxer timestamp, tratar o indice como sem metadado valido e oferecer regeneracao/validacao antes de seguir
-- se `kb-source-metadata.md` nao expuser literalmente `last_xpz_materialization_run_at`, tratar a pasta paralela como defasada/incompatível e oferecer atualizacao via `xpz-kb-parallel-setup`; nao inferir esse horario por data do arquivo, `updated`, `generated_at`, `source_xpz` ou outro campo aproximado
+- se `kb-source-metadata.md` estiver ausente ou nao expuser literalmente `last_xpz_materialization_run_at`, tratar a pasta paralela como defasada/incompatível e oferecer atualizacao via `xpz-kb-parallel-setup`; nao inferir esse horario por data do arquivo, `updated`, `generated_at`, `source_xpz` ou outro campo aproximado
 - se `last_index_build_run_at` for igual ou posterior a `last_xpz_materialization_run_at`, o indice esta apto para triagem inicial
 - quando a validacao de frescor/compatibilidade tiver sido relevante para liberar ou bloquear a resposta, declarar brevemente no handoff se o gate foi liberado (`last_index_build_run_at >= last_xpz_materialization_run_at`) ou qual campo/capacidade bloqueou
 - todo processamento bem-sucedido de `XPZ` exportado pela IDE que materialize XMLs oficiais em `ObjetosDaKbEmXml` deve chamar a regeneracao/validacao do indice derivado logo depois
@@ -99,7 +100,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - na ausencia dessa evidencia clara, tratar a pasta paralela como compatibilidade pendente e oferecer atualizacao via `xpz-kb-parallel-setup` antes do `sync`
 - se o wrapper local de materializacao ainda nao encadear esse refresh, nao usar esse wrapper antigo para reparar metadado e regenerar indice manualmente; bloquear e oferecer atualizacao via `xpz-kb-parallel-setup`
 - nao descrever `sync` seguido de rebuild manual separado do indice como fluxo normal quando a pasta paralela adotar `KbIntelligence`
-- se o indice estiver ausente, sem metadado ou mais antigo que a ultima materializacao XPZ/XML, o agente nao deve consultar o acervo oficial de objetos para responder negocio, nem por varredura ampla nem por caminho pontual deduzido, nem gerar objetos para importacao na KB pela IDE; deve tratar isso como excecao operacional e oferecer ao usuario a regeneracao/validacao do indice antes de seguir
+- se o indice estiver ausente, sem metadado, mais antigo que a ultima materializacao XPZ/XML, ou se `kb-source-metadata.md` estiver ausente, o agente nao deve consultar o acervo oficial de objetos para responder negocio, nem por varredura ampla nem por caminho pontual deduzido, nem gerar objetos para importacao na KB pela IDE; deve tratar isso como excecao operacional e oferecer ao usuario a regeneracao/validacao do indice antes de seguir
 - com gate de indice bloqueado, leitura pontual so e aceitavel para diagnostico minimo da incompatibilidade em documentacao local, estrutura, wrappers e metadados operacionais; nao montar, testar existencia, listar ou abrir caminho de XML oficial de objeto como fallback para responder a pergunta
 - o gate do indice deve ser sequencial e atomico; nao testar caminho filho antes da camada pai, por exemplo `KbIntelligence\kb-intelligence.sqlite` antes de `KbIntelligence`
 - se o wrapper local documentado de consulta do indice estiver ausente, nao listar `scripts` nem procurar wrappers alternativos, backups ou nomes parecidos; tratar como defasagem da pasta paralela e oferecer atualizacao via setup

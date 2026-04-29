@@ -62,7 +62,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: quando a pasta paralela adotar `KbIntelligence`, o agente so deve considerar o fluxo de `sync` normal como compativel se houver evidencia clara, na documentacao local ou no proprio wrapper local, de que o wrapper de materializacao encadeia esse refresh compulsorio do indice.
 - `Regra operacional`: na ausencia dessa evidencia clara, o agente deve tratar o caso como compatibilidade operacional pendente da pasta paralela, bloquear o `sync` normal e oferecer atualizacao via setup antes de seguir.
 - `Regra operacional`: o indice esta apto para triagem ampla quando `last_index_build_run_at` for igual ou posterior a `last_xpz_materialization_run_at` lido nominalmente em `kb-source-metadata.md`.
-- `Regra operacional`: se o indice estiver ausente, sem metadado, mais antigo que a ultima materializacao XPZ/XML ou se `kb-source-metadata.md` nao expuser literalmente `last_xpz_materialization_run_at`, o agente nao deve consultar o acervo oficial de objetos para responder pergunta de negocio, nem por varredura ampla nem por caminho pontual deduzido, e tambem nao deve gerar objetos para importacao na KB pela IDE.
+- `Regra operacional`: se o indice estiver ausente, sem metadado, mais antigo que a ultima materializacao XPZ/XML, se `kb-source-metadata.md` estiver ausente ou se esse arquivo nao expuser literalmente `last_xpz_materialization_run_at`, o agente nao deve consultar o acervo oficial de objetos para responder pergunta de negocio, nem por varredura ampla nem por caminho pontual deduzido, e tambem nao deve gerar objetos para importacao na KB pela IDE.
 - `Regra operacional`: o agente nao deve substituir `last_xpz_materialization_run_at` por data do arquivo, `updated`, `generated_at`, `source_xpz`, data de relatorio ou outro metadado aproximado.
 - `Regra operacional`: indice ausente ou defasado e excecao operacional, tipicamente de pasta paralela ainda sem wrappers XPZ atualizados ou de falha fortuita; o agente deve bloquear pesquisa ampla, triagem substantiva, consulta substantiva ao acervo oficial de objetos, leitura de XML oficial de objeto e geracao, oferecendo ao usuario a atualizacao do indice antes de seguir.
 - `Regra operacional`: em pasta que adota `KbIntelligence`, o agente nao deve apresentar `sync` seguido de regeneracao manual separada do indice como fluxo normal; esse desenho so e aceitavel como etapa consciente de reparo/compatibilidade aprovada pelo usuario.
@@ -84,7 +84,8 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Evidência direta`: no export real inspecionado nesta trilha, o arquivo `.xpz` continha um unico XML principal com raiz `<ExportFile>`.
 - `Evidência direta`: no export full observado, os blocos de primeiro nivel foram `KMW`, `Source`, um bloco especial de KB, `Objects`, `Attributes` e `Dependencies`, nessa ordem.
 - `Evidência direta`: o bloco `KMW` observado continha `MajorVersion`, `MinorVersion` e `Build`.
-- `Evidência direta`: no export completo observado, o bloco top-level `<Objects>` continha `7219` nos `<Object>`.
+- `Evidência direta`: em um export completo observado nesta trilha, o bloco top-level `<Objects>` continha `7219` nos `<Object>`.
+- `Regra editorial`: esse `7219` descreve aquele envelope/export observado e nao deve ser lido automaticamente como total do inventario publico atual, cuja rastreabilidade agregada fica em `09-inventario-e-rastreabilidade-publica.md`.
 - `Evidência direta`: apos o fechamento do bloco top-level `<Objects>`, o envelope observado seguiu com `<Attributes>`, depois `<Dependencies>`, e por fim `</ExportFile>`.
 - `Inferência forte`: para esta base, a forma mais segura de pensar um XPZ e "envelope `<ExportFile>` com secoes top-level recorrentes", e nao "arquivo `Objects.xml` isolado" sem prova local.
 - `Evidência direta`: no lote amplo de `.xpz` reais, o formato normal mais frequente nao traz bloco especial de KB; esse bloco aparece apenas em exportacoes especiais/full e em variacoes antigas de mudanca de versao.
@@ -150,7 +151,7 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: XML gerado, clonado ou ajustado localmente nunca deve ser tratado como se ja fosse snapshot oficial da KB.
 - `Regra operacional`: `ObjetosGeradosParaImportacaoNaKbNoGenexus` e a area de trabalho para XMLs gerados, clonados, ajustados ou preservados para importacao manual na IDE.
 - `Regra operacional`: `PacotesGeradosParaImportacaoNaKbNoGenexus` e a area de saida para `import_file.xml` e demais pacotes gerados localmente.
-- `Regra operacional`: na area ativa de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, os XMLs candidatos do lote devem ficar juntos na raiz, sem subpastas por tipo, salvo regra local explicita do repositorio.
+- `Regra operacional`: na area ativa de `ObjetosGeradosParaImportacaoNaKbNoGenexus`, os XMLs candidatos do lote devem ficar juntos na raiz da subpasta ativa da frente, sem subpastas por tipo, salvo regra local explicita do repositorio.
 - `Regra operacional`: agente nunca deve criar subpastas por tipo automaticamente em `ObjetosGeradosParaImportacaoNaKbNoGenexus`.
 - `Regra operacional`: agente nunca deve mover XMLs para `ArquivoMorto` sem pedido explicito do usuario.
 - `Regra operacional`: quando houver conflito entre habito anterior do agente e documentacao local do repositorio, a documentacao local prevalece.

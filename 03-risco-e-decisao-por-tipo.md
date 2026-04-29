@@ -99,6 +99,7 @@ Preservar explicitamente o caráter heurístico dessas leituras.
 ## SDT
 
 - Evidência direta: total de objetos analisados: 594.
+- `Regra editorial`: este bloco de `SDT` preserva o snapshot original usado nesta secao; para total atual do inventario agregado, consultar `09-inventario-e-rastreabilidade-publica.md` sem recalcular automaticamente a leitura metodologica daqui.
 - Evidência direta: Part type com forte indicio de obrigatoriedade: 5c2aa9da-8fc4-4b6b-ae02-8db4fa48976a; babf62c5-0111-49e9-a1c3-cc004d90900a.
 - Evidência direta: Part type com indicio de opcionalidade: nenhum.
 - Evidência direta: Part type com indicio de vazio/estrutural: babf62c5-0111-49e9-a1c3-cc004d90900a.
@@ -319,6 +320,7 @@ Servir como primeira triagem operacional antes de qualquer tentativa de clonagem
 
 | FolderType | StructuralRisk | ParentModuleDependency | PatternDependency | CurrentConfidence | PracticalRecommendation |
 | --- | --- | --- | --- | --- | --- |
+| Nota editorial | snapshot original | Procedure = 2281; SDT = 594 | ver `09` para totais agregados atuais | nao recalcular esta tabela sem revisao metodologica | manter leitura relativa desta secao |
 | API | alto | 1/1 | 0/1 | baixa | exigir molde bruto comparável muito proximo do caso alvo |
 | DataProvider | alto | 24/24 | 0/24 | baixa | exigir molde bruto comparável muito proximo do caso alvo |
 | DesignSystem | alto | 1/2 | 0/2 | baixa | exigir molde bruto comparável e evitar extrapolacao com amostra pequena |
@@ -354,6 +356,5 @@ Servir como primeira triagem operacional antes de qualquer tentativa de clonagem
 
 - `Inferência forte`: sem substituir o risco estrutural acima, o risco runtime relativo tende a ser `baixo a medio` em cascas simples e isoladas, `medio` em objetos com codigo mas baixa dependencia contextual, e `alto` quando se acumulam `grid`, `events`, multiplos `Level`, `parent` forte ou `pattern`.
 - `Hipótese`: essa leitura runtime relativa serve apenas como desempate operacional e deve ser confirmada no `02-regras-operacionais-e-runtime.md` antes de orientar clonagem ou resposta do agente.
-
 
 
