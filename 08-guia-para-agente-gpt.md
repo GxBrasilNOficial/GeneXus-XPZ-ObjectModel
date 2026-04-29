@@ -130,6 +130,18 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - operador, funcao, conversao ou padrao string/numerico novo so pode ser aceito como pronto quando a propria trilha XPZ o sustentar por regra explicita, exemplo sanitizado ou molde documentado
 - corpus local da KB ajuda a confirmar e desempatar, mas nao substitui a base metodologica
 - se um trecho essencial do `Source` continuar sustentado apenas por plausibilidade, o agente deve reescrever para padrao documentado ou abortar a consolidacao
+- antes de empacotar, separar explicitamente duas decisoes: `XML bem-formado` e `objeto provavelmente importavel`
+- `XML bem-formado` nao dispensa gate de sanidade do `Source` quando o objeto depende de `Source` para importar com seguranca conservadora
+- o gate minimo de sanidade do `Source` deve revisar os pares estruturais realmente tocados pela mudanca, como `Sub/EndSub`, `For each/EndFor`, `Do Case/EndCase` e `If/EndIf`
+- se a mudanca inserir novo `Case` em um `Do Case` de `Source` que dependa materialmente de `parm(...)`, revisar os `Case` irmaos do mesmo bloco antes de concluir a compatibilidade
+- nessa revisao de `Do Case`, conferir se os parametros de entrada relevantes, esperados pelo padrao local do bloco, aparecem de forma coerente no novo ramo; ausencia de parametro comparavelmente esperado exige justificativa explicita
+- se o novo `Case` divergir do padrao local dos ramos irmaos sem justificativa explicita, bloquear a consolidacao em vez de aceitar branch hardcoded ou sustentado apenas por analogia fraca
+- se o trecho novo introduzir `elseif`, `iif(...)`, condicao excessivamente densa ou chamada em condicao destoando do estilo local, tratar isso como alerta consultivo e preferir reescrita para forma conservadora documentada
+- quando houver cheque automatizado leve de `Source`, interpretar o resultado de forma conservadora:
+- `xmlWellFormed=false` bloqueia qualquer conversa de empacotamento ate correcao do XML
+- `sourceSanityStatus=fail` bloqueia empacotamento ate corrigir balanceamento estrutural e fechamentos
+- `sourceSanityStatus=warn` com `probablyImportable=true` ainda exige revisao dos warnings; nao tratar como liberacao automatica
+- `sourceSanityStatus=pass` com `xmlWellFormed=true` libera apenas o proximo gate metodologico; nao prova importacao, especificacao nem build
 - ao revisar `Source` grande, a leitura deve considerar o contorno visual do bloco afetado, e comentarios estruturais humanos ja existentes podem ser preservados quando ajudam a navegacao do trecho
 - em `Procedure Source`, pares como `count/then-copy`, `exists/then-load`, `validate/then-apply` e `select-candidate/then-materialize` devem ser revisados como unidade logica quando compartilham a mesma tabela/base e identidade candidata
 - se a mudanca altera filtros de identidade, unicidade ou ambiguidade em um `for each`, buscar queries irmas no mesmo `Source` e reconciliar os criterios ou justificar explicitamente a divergencia
@@ -217,7 +229,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando houver contexto esperado da frente, o agente pode comparar opcionalmente `foco esperado` versus `retorno oficial`, classificando `esperados que voltaram`, `esperados que nao voltaram` e `retorno oficial adicional da KB`, sem transformar a ausencia desse contexto em erro
 - frente validada tecnicamente nao implica publicacao Git; a conclusao tecnica e apenas `validado_tecnicamente` ate o usuario autorizar o fechamento
 - enquanto nao houver autorizacao explicita, o agente pode sugerir os proximos passos de Git e publicacao, mas nao pode executar `git add`, `commit` ou `push`
-- a ordem obrigatoria e: isolar lote, classificar raizes, validar `lastUpdate`, validar BOM, validar manifesto e so entao empacotar
+- a ordem obrigatoria e: isolar lote, classificar raizes, validar `lastUpdate`, validar BOM, validar manifesto, validar `XML bem-formado`, validar sanidade minima do `Source` quando aplicavel, e so entao empacotar
 - manifesto nao implica automaticamente arquivo fisico; por padrao, ele deve ser apresentado na propria conversa
 - para `WorkWithWeb` com ruído comprovado de `Load Code` em `Selection` e/ou tabs de `View`, registrar isso como nao funcional no manifesto e nao generalizar para todo caso de `WorkWithWeb`
 - ao gerar pacote local para importacao na IDE, preferir nome no formato `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml`

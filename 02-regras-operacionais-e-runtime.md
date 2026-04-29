@@ -114,6 +114,24 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: para XML grande, preferir serializacao estruturada, script dedicado ou gravacao em arquivo temporario seguida de validacao e troca atomica; escrita em blocos so e aceitavel quando a validacao final do arquivo completo for obrigatoria.
 - `Regra operacional`: quando houver tamanho, quantidade de linhas ou fechamento estrutural esperado por molde comparavel, usar esses sinais como alerta de truncamento; divergencia relevante bloqueia empacotamento ate reinspecao.
 
+### Gate de sanidade do `Source` GeneXus antes do empacotamento
+
+- `Regra operacional`: antes de gerar `import_file.xml` ou outro pacote importavel, diferenciar explicitamente `XML bem-formado` de `objeto provavelmente importavel`.
+- `Regra operacional`: `XML bem-formado` cobre parse XML, raiz fechada, `CDATA` encerrado, `lastUpdate` conferido quando aplicavel e ausencia de truncamento evidente.
+- `Regra operacional`: `objeto provavelmente importavel` exige tambem um gate minimo de sanidade do `Source` GeneXus para objetos cujo comportamento principal vive no `Source`, especialmente `Procedure`, `DataProvider` e casos comparaveis.
+- `Regra operacional`: o gate minimo de sanidade do `Source` deve conferir pelo menos o balanceamento estrutural basico dos pares realmente tocados pela mudanca, como `Sub/EndSub`, `For each/EndFor`, `Do Case/EndCase` e `If/EndIf`.
+- `Regra operacional`: quando a mudanca inserir ou mover bloco em `Source` grande, revisar o trecho alterado junto com algumas linhas antes e depois, incluindo os fechamentos ao redor.
+- `Regra operacional`: em objeto grande ou sensivel, preferir delta minimo, sintaxe conservadora e reaproveitamento do estilo sintatico ja dominante no proprio objeto.
+- `Regra operacional`: se o bloco novo tiver analogia local clara no mesmo objeto, comparar com esse bloco irmao para copiar forma sintatica, distribuicao de quebras de linha e padrao de fechamento, sem transformar o estilo local em regra funcional universal.
+- `Regra operacional`: quando a mudanca inserir novo `Case` em um `Do Case` de `Source` que dependa materialmente de `parm(...)`, revisar os `Case` irmaos do mesmo bloco antes de aceitar o delta.
+- `Regra operacional`: nessa revisao de `Do Case`, conferir se os parametros de entrada relevantes, esperados pelo padrao local do bloco, aparecem de forma coerente no novo ramo; ausencia de parametro comparavelmente esperado exige justificativa explicita.
+- `Regra operacional`: se o novo `Case` divergir do padrao local dos ramos irmaos sem justificativa explicita, bloquear o delta em vez de aceitar branch hardcoded ou sustentado apenas por analogia fraca.
+- `Regra operacional`: sinais como `elseif`, `iif(...)`, condicao nova excessivamente densa ou chamada de funcao/procedure dentro da condicao devem entrar como alerta consultivo de conservadorismo, nao como erro funcional universal.
+- `Regra operacional`: quando um alerta consultivo aparecer em trecho novo e a base metodologica nao sustentar claramente aquela forma, preferir reescrever para a forma mais conservadora documentada antes do empacotamento.
+- `Regra operacional`: falha em balanceamento estrutural basico do `Source` bloqueia empacotamento.
+- `Regra operacional`: alerta consultivo isolado nao bloqueia automaticamente, mas deve ser registrado como risco e resolvido quando o trecho ainda estiver sustentado apenas por plausibilidade.
+- `Regra operacional`: cheque automatizado leve de `Source`, quando existir no repositório, deve ser tratado como apoio de triagem e nao como prova completa de importabilidade.
+
 ### Conferencia auditavel de `lastUpdate`
 
 - `Regra operacional`: gravou ou regravou XML local de objeto, releia o arquivo salvo antes de seguir.

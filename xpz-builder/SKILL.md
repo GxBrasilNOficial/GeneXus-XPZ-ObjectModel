@@ -56,6 +56,8 @@ If the main need is to prepare or validate the initial folder structure around t
 - Abort for confirmation instead of extrapolating from weak analogy when no strong enough local precedent justifies the package format
 - Treat `runtime`, `Import File Load`, `Import`, and `Specification` as distinct validation layers; success in one does not authorize conclusions about the others
 - Validate `Source` compatibility by methodology first: GeneXus semantic rules plus the XPZ trail and `nexa`; use KB corpus search only as fallback when the methodological base does not cover the case
+- Separate explicitly `well-formed XML` from `probably importable object` before packaging; never treat XML parse success alone as enough when the object depends materially on `Source`
+- When a local XML candidate already exists on disk and depends materially on `Source`, run `..\scripts\Test-GeneXusSourceSanity.ps1 -InputPath <arquivo>` before packaging; treat `sourceSanityStatus=fail` as a hard stop and `warn` as consultative conservative review
 - For simple report `Procedure`, prefer the documented sanitized canonical template first; use it as a materialization source only when the selected block in [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md) is marked as `molde pronto`; escalate to KB corpus only when the methodological base does not cover the case, when the initial attempt plus one short structural corrective attempt fail, or when KB-local dialect/localism appears
 - Classify each package candidate by content delta as `requested change`, `necessary auxiliary change`, or `extra unrequested change` before packaging
 - Require explicit signaling before packaging when a candidate item remains as `extra unrequested change`, including metadata, reserialization, or known noise that is not strictly required
@@ -111,8 +113,15 @@ If the main need is to prepare or validate the initial folder structure around t
 - Declare confidence level and limitations explicitly at the end of every output
 - Keep `WorkWithWeb` noise that is already proven in this trail as non-functional in the manifest, especially `Load Code` in `Selection` and the affected `View` tabs; do not generalize this to unrelated `WorkWithWeb` cases
 - When changing a `Procedure`, run a minimum semantic pre-packaging gate on the `Procedure` itself:
+  - distinguish `well-formed XML` from `minimum Source sanity gate passed`
+  - if the object depends on `Source`, do not package while the `Source` gate is still unresolved
+  - review structural pair balance touched by the delta, such as `Sub/EndSub`, `For each/EndFor`, `Do Case/EndCase`, and `If/EndIf`
+  - treat `elseif`, `iif(...)`, newly dense conditions, and calls inside conditions that diverge from the object's dominant local style as conservative warnings to rewrite when the form is not methodologically anchored
   - if `parm(...)` changed, every new parm variable must exist in the variables section of the object
   - if `parm(...)` changed, variable name, base type, and presence must remain coherent
+  - if the current `Source` delta inserts a new `Case` inside a `Do Case` that depends materially on `parm(...)`, compare the new branch against adjacent sibling `Case` branches in the same block before accepting the delta
+  - in that `Do Case` review, verify that relevant input parms expected by the local pattern are actually used in the new branch; if a comparably expected parm is not used, require an explicit justification before concluding the delta
+  - if the new `Case` diverges from the local pattern of sibling branches without explicit justification, block the delta instead of accepting a hardcoded or weakly analogous branch
   - if `parm(...)` changed or a direct call is reviewed, distinguish the callee signature line from each caller call-site line
   - do NOT treat the callee `parm(...)` line as evidence that a caller invokes that `Procedure`
   - for report `Procedure`, classify every edited fragment as `Source`, `Rules`, or layout before accepting the change
@@ -246,6 +255,15 @@ Reference files and when to load them:
    - Each introduced `Source` construct must be anchored by layer-1 methodological evidence from this XPZ trail: explicit rule, sanitized example, or documented template
    - Local KB corpus may confirm or disambiguate the choice, but does NOT replace layer-1 methodological evidence
    - If an essential `Source` construct is still justified only by plausibility, generic GeneXus memory, or isolated local corpus evidence, rewrite it using documented patterns or **ABORT**
+   - Before packaging an object that depends materially on `Source`, classify the result explicitly as `well-formed XML` and `minimum Source sanity gate passed` or `failed`
+   - If XML is well-formed but the minimum `Source` sanity gate failed, **ABORT** packaging
+   - Use lightweight automated `Source` sanity checks from the repository only as advisory support; a pass does not prove import/build success
+   - Recommended local check command when the XML file is already materialized: `& ..\scripts\Test-GeneXusSourceSanity.ps1 -InputPath .\Objeto.xml -AsJson`
+   - Interpret the JSON result conservatively:
+     - `xmlWellFormed=false` -> **ABORT** before any packaging discussion
+     - `sourceSanityStatus=fail` -> **ABORT** packaging and correct structural balance first
+     - `sourceSanityStatus=warn` with `probablyImportable=true` -> keep packaging blocked until each warning is either rewritten to a documented conservative form or explicitly justified as residual risk
+     - `sourceSanityStatus=pass` with `xmlWellFormed=true` -> proceed only to the next packaging gate; do NOT describe this as proof of import/build success
    - For report `Procedure`, classify each edited fragment before serialization as `Source`, `Rules`, or layout and reject any cross-layer mixture
    - For report `Procedure`, verify coherence between layout `PrintBlock` names and each `print printBlock...` reference in `Source`
    - For report `Procedure`, if an import error points to invalid control, report block, or layout shape, inspect layout first before altering envelope
