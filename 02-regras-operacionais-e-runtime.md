@@ -233,6 +233,21 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: o agente nao deve absorver mudanca extra nao pedida no pacote apenas porque ela apareceu no XML ativo, no diff local ou na reserializacao.
 - `Regra operacional`: o delta deve ser estrito pelo conteudo do pacote, nao por `git diff` abstrato.
 
+## Revisao por blocos em `Transaction`
+
+- `Regra operacional`: em `Transaction`, nao tratar a transacao inteira como bloco unico de leitura; a revisao fina deve declarar antes qual e o bloco primario do sintoma atual.
+- `Regra operacional`: os blocos canonicos de revisao em `Transaction` sao `Transaction structure`, `Attributes and attribute properties`, `Rules`, `Events`, `Execution context` e `Identity and container`.
+- `Regra operacional`: `Transaction structure` cobre `Level`, chave, `DescriptionAttribute`, shape transacional e coerencia estrutural do nucleo da transacao.
+- `Regra operacional`: `Attributes and attribute properties` cobre atributos, `AttributeProperties`, subtipos e relacoes de contrato de dados que afetem a transacao.
+- `Regra operacional`: `Rules` cobre regras declarativas da `Transaction` e seus efeitos normativos.
+- `Regra operacional`: `Events` cobre fluxo procedural e comportamento acionado via interface, especialmente via edicao web.
+- `Regra operacional`: `Execution context` cobre a separacao explicita entre comportamento via edicao web e comportamento via BC; essa camada nao deve ser colapsada por analogia.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa da `Transaction`.
+- `Regra operacional`: em `Transaction`, as transicoes mais comuns e justificadas sao `Transaction structure -> Attributes and attribute properties`, `Rules -> Execution context`, `Rules -> Attributes and attribute properties`, `Events -> Execution context` e `Transaction structure -> Rules`.
+- `Regra operacional`: quando a duvida for de comportamento, declarar explicitamente se a conclusao vale via edicao web, via BC, ou se a evidencia atual ainda nao separa os dois contextos.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `Transaction` inteira por reflexo.
+
 ## Fechamento tecnico e Git
 
 - `Regra operacional`: concluir `sync`, importacao, exportacao, materializacao, validacao ou build gera apenas o estado `validado_tecnicamente`; isso nao autoriza automaticamente `git add`, `commit` ou `push`.

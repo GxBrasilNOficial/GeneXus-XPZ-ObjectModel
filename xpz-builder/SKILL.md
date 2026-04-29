@@ -50,6 +50,7 @@ If the main need is to prepare or validate the initial folder structure around t
 - Apply risk assessment from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md) before proceeding
 - Abort if no comparable structural template exists and risk is high or very high
 - For `WebPanel`, classify the current delta by functional block before editing: `layout`, `events`, `variables`, `serialized functional metadata`, `identity and container`, or `dependencies`
+- For `Transaction`, classify the current delta by functional block before editing: `Transaction structure`, `Attributes and attribute properties`, `Rules`, `Events`, `Execution context`, or `Identity and container`
 - For `Procedure`, classify the current delta by functional block before editing: `Source`, `Rules/parm`, `Variables`, `Calls and dependencies`, `Identity and container`, and `Report layout` when applicable
 - Clone conservatively: preserve `Object/@guid`, `parent*`, `moduleGuid`, all recurring Part types
 - Apply XPZ envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
@@ -106,6 +107,7 @@ If the main need is to prepare or validate the initial folder structure around t
 - Keep `PacotesGeradosParaImportacaoNaKbNoGenexus` flat, without subfolders by front
 - Classify each active XML root as `Object`, `Attribute`, or unsupported before serializing the package
 - For a new `Transaction` package, treat top-level `Attribute` items referenced by the `Level` as mandatory package members under `<Attributes>`, never as `Domain`/object payload under `<Objects>`
+- When changing a `Transaction`, declare the primary edit block before touching the XML, use only the adjacent blocks required by explicit functional dependency, name each justified block transition, and state whether the intended effect is via web editing, via BC, or both
 - Validate UTF-8 without BOM hygiene on active XMLs before packaging
 - Reread and apply local repository documentation (`AGENTS.md`, `README.md`, and equivalent project docs) before packaging whenever the target KB/repository defines specific functional review rules, contracts, or operational flow
 - Use local repository documentation as the mandatory specialization layer for KB-specific contracts and review chains, without promoting those local rules to the shared XPZ methodology
@@ -479,6 +481,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] For `Transaction`, every `Level/Attribute` name exists in `<Attributes>/Attribute@name`
 - [ ] For `Transaction`, every `DescriptionAttribute` present exists in the same `Level` and also in `<Attributes>`
 - [ ] For `Transaction`, no required `Attribute` was serialized as `Domain` or other object type under `<Objects>`
+- [ ] For `Transaction`, the primary edit block was declared before editing, any block transition was justified explicitly, and intended scope via web editing vs BC was stated when relevant
 - [ ] UTF-8 BOM hygiene was checked on every active XML
 - [ ] Generated package name followed the preferred `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml` pattern when applicable
 - [ ] Package write was blocked if the same front prefix already had the same `nn`

@@ -177,6 +177,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
 - usar `Report layout` como bloco inicial apenas em `Procedure` de relatorio quando o sintoma falar de `PrintBlock`, `ReportLabel`, `ReportAttribute`, `Bands` ou shape de layout
 
+### Regra adicional para revisao de `Transaction`
+
+- em `Transaction`, revisar por blocos funcionais; nao tratar a transacao inteira como bloco unico de leitura
+- os blocos canonicos sao `Transaction structure`, `Attributes and attribute properties`, `Rules`, `Events`, `Execution context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Rules -> Execution context` para separar efeito via edicao web de efeito via BC
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `Transaction` inteira por reflexo
+- usar `Transaction structure` como bloco inicial para `Level`, chave, `DescriptionAttribute`, shape estrutural e composicao transacional
+- usar `Attributes and attribute properties` como bloco inicial para atributos, `AttributeProperties`, subtipo e contrato de dados
+- usar `Rules` como bloco inicial para regra declarativa, obrigatoriedade e efeito normativo da transacao
+- usar `Events` como bloco inicial para comportamento via interface, acao do usuario e fluxo via edicao web
+- usar `Execution context` como bloco inicial quando a duvida central for a diferenca entre via edicao web e via BC
+- usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
+
 ### Regra adicional para revisao de `WebPanel`
 
 - em `WebPanel`, revisar por blocos funcionais; nao abrir o XML inteiro como massa unica quando a pergunta for de comportamento, filtro, evento ou diagnostico fino
