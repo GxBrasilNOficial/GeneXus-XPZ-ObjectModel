@@ -220,6 +220,19 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: em `DataProvider`, as transicoes mais comuns e justificadas sao `Output structure -> Source`, `Source -> Navigation context`, `Source -> Calls and dependencies`, `Navigation context -> Source` e `Calls and dependencies -> Output structure`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataProvider` inteiro por reflexo.
 
+### Revisao por blocos em `API`
+
+- `Regra operacional`: em `API`, nao presumir leitura centrada em codigo ou dependencias; a revisao fina deve declarar antes qual e o bloco primario do sintoma atual.
+- `Regra operacional`: os blocos canonicos de revisao em `API` sao `Service contract`, `Events and orchestration`, `Calls and dependencies`, `Data contract` e `Identity and container`.
+- `Regra operacional`: `Service contract` cobre identidade do servico, metodos expostos, assinatura externa e shape publicado no nivel do endpoint.
+- `Regra operacional`: `Events and orchestration` cobre eventos `.Before/.After`, fluxo interno, validacoes, transformacoes e coordenacao executada pela camada de `API`.
+- `Regra operacional`: `Calls and dependencies` cobre `Procedure`, `SDT`, `Domain`, `Transaction`, `EXO`, `DataProvider` e a cadeia funcional imediata necessaria para justificar a conclusao.
+- `Regra operacional`: `Data contract` cobre shape de entrada e saida, coerencia de tipos, estruturas e mapeamentos entre contrato exposto e dados processados.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do objeto.
+- `Regra operacional`: em `API`, as transicoes mais comuns e justificadas sao `Service contract -> Data contract`, `Service contract -> Events and orchestration`, `Events and orchestration -> Calls and dependencies`, `Calls and dependencies -> Data contract` e `Data contract -> Calls and dependencies`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `API` inteira por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.

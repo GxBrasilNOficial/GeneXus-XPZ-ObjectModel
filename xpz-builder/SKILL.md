@@ -53,6 +53,7 @@ If the main need is to prepare or validate the initial folder structure around t
 - For `Transaction`, classify the current delta by functional block before editing: `Transaction structure`, `Attributes and attribute properties`, `Rules`, `Events`, `Execution context`, or `Identity and container`
 - For `Procedure`, classify the current delta by functional block before editing: `Source`, `Rules/parm`, `Variables`, `Calls and dependencies`, `Identity and container`, and `Report layout` when applicable
 - For `DataProvider`, classify the current delta by functional block before editing: `Output structure`, `Source`, `Navigation context`, `Calls and dependencies`, or `Identity and container`
+- For `API`, classify the current delta by functional block before editing: `Service contract`, `Events and orchestration`, `Calls and dependencies`, `Data contract`, or `Identity and container`
 - Treat any extra block opened after the first one as an `adjacent block` and open it only when there is explicit functional dependency with the primary edit block
 - Name every justified block transition in the review or packaging rationale, instead of silently widening the edit scope
 - State the intended conclusion or effect scope at the smallest functional level supported by the delta, including execution context when that distinction matters
@@ -238,6 +239,7 @@ Reference files and when to load them:
    - WebPanel → use closest family from [04-webpanel-familias-e-templates](../04-webpanel-familias-e-templates.md)
    - For `WebPanel`, declare the primary edit block before touching the XML and use only the adjacent blocks required by explicit functional dependency
    - For `DataProvider`, declare the primary edit block before touching the XML and use only the adjacent blocks required by explicit functional dependency
+   - For `API`, declare the primary edit block before touching the XML and use only the adjacent blocks required by explicit functional dependency
    - Simple report `Procedure` → use the canonical sanitized family from [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md) first when the case fits simple F2/F3 coverage and the selected block is marked as `molde pronto`
    - Other types → use sanitized representative from [08-guia-para-agente-gpt](../08-guia-para-agente-gpt.md) materialization rules
    - For simple report `Procedure`, escalate to comparable real XML only when the request falls outside the documented simple family, when the initial attempt plus one short structural corrective attempt already failed, or when KB-local dialect/localism appears
@@ -271,6 +273,12 @@ Reference files and when to load them:
    - For `DataProvider`, do NOT treat `SDT`, `Procedure`, `BC`, or `Transaction` dependency inventory by itself as proof of the output shape
    - For `DataProvider`, name each justified block transition during review, for example `Output structure -> Source` or `Source -> Navigation context`
    - For `DataProvider`, if the current reasoning no longer needs a new block, stop expanding; do NOT reopen the whole object by reflex
+   - For `API`, treat `Service contract` and `Data contract` as their own functional layers; do NOT collapse endpoint contract, response shape, and internal orchestration into a generic code reading
+   - For `API`, if the delta touches exposed method, endpoint, signature, published operation, input/output shape, or response structure, classify `Service contract` or `Data contract` as the primary edit block unless explicit evidence points elsewhere
+   - For `API`, if the delta depends on `.Before/.After`, internal validation, transformation, or orchestration flow, open `Events and orchestration` only as an explicitly justified adjacent block
+   - For `API`, do NOT treat `Procedure`, `SDT`, `Domain`, `Transaction`, `EXO`, or `DataProvider` dependency inventory by itself as proof of the published contract
+   - For `API`, name each justified block transition during review, for example `Service contract -> Data contract` or `Events and orchestration -> Calls and dependencies`
+   - For `API`, if the current reasoning no longer needs a new block, stop expanding; do NOT reopen the whole object by reflex
    - Before generating a new delta for an object that already returned from the KB, compare any intermediate import/delta copy against the official corpus XML and rebase on the official corpus if the working copy is stale
    - If a filter, business rule, or functional interpretation depends on a calculated or derived field, open the field formula/source and review the immediate chain of called procedures before defining the condition
    - Do NOT conclude the semantic meaning of a calculated or derived field from its name, label, or mere XML presence
@@ -494,6 +502,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] For `Transaction`, no required `Attribute` was serialized as `Domain` or other object type under `<Objects>`
 - [ ] For `Transaction`, the primary edit block was declared before editing, any block transition was justified explicitly, and intended scope via web editing vs BC was stated when relevant
 - [ ] For `DataProvider`, the primary edit block was declared before editing and any block transition was justified explicitly
+- [ ] For `API`, the primary edit block was declared before editing and any block transition was justified explicitly
 - [ ] UTF-8 BOM hygiene was checked on every active XML
 - [ ] Generated package name followed the preferred `NomeCurto_GUID_YYYYMMDD_nn.import_file.xml` pattern when applicable
 - [ ] Package write was blocked if the same front prefix already had the same `nn`
@@ -521,6 +530,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] Every new helper variable introduced by the current `Source` delta exists in the variables section and remains coherent with its declared type
 - [ ] For `WebPanel`, the primary edit block was declared before editing and any block transition was justified explicitly
 - [ ] For `DataProvider`, output-shape deltas were reviewed explicitly against the promised return structure before packaging
+- [ ] For `API`, contract deltas were reviewed explicitly against the published operation and the effective orchestration before packaging
 - [ ] For `Procedure`, the primary edit block was declared before editing and any block transition was justified explicitly
 - [ ] Every new method call introduced by the current `Source` delta on a variable is compatible with the declared type of that variable and is anchored by the methodological base loaded for the case
 - [ ] Cleanup or reinitialization introduced by the current `Source` delta for a collection, SDT, or `Messages, GeneXus.Common` uses a pattern anchored by the methodological base loaded for that declared type

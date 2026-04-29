@@ -48,6 +48,7 @@ Do NOT use this skill for:
 - For `Transaction`, classify the review by functional block before fine analysis: `Transaction structure`, `Attributes and attribute properties`, `Rules`, `Events`, `Execution context`, or `Identity and container`
 - For `Procedure`, classify the review by functional block before fine analysis: `Source`, `Rules/parm`, `Variables`, `Calls and dependencies`, `Identity and container`, and `Report layout` when applicable
 - For `DataProvider`, classify the review by functional block before fine analysis: `Output structure`, `Source`, `Navigation context`, `Calls and dependencies`, or `Identity and container`
+- For `API`, classify the review by functional block before fine analysis: `Service contract`, `Events and orchestration`, `Calls and dependencies`, `Data contract`, or `Identity and container`
 - Treat any extra block opened after the first one as an `adjacent block` and open it only when there is explicit functional dependency with the primary block
 - Name every justified block transition in the analysis and handoff, instead of silently widening the scope
 - State the conclusion scope at the smallest functional level supported by evidence, including execution context when that distinction matters
@@ -152,25 +153,33 @@ Reference files and when to load them:
    - `Calls and dependencies` for `SDT`, `Procedure`, `BC`, `Transaction`, and immediate external dependencies needed to justify the conclusion
    - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
 17. For `DataProvider`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
-18. If type is `Procedure` → classify the primary review block before fine analysis:
+18. If type is `API` → classify the primary review block before fine analysis:
+   - `Service contract` for exposed method, endpoint, external signature, and published operation shape
+   - `Events and orchestration` for `.Before/.After`, internal flow, validation, transformation, and orchestration behavior
+   - `Calls and dependencies` for `Procedure`, `SDT`, `Domain`, `Transaction`, `EXO`, `DataProvider`, and immediate external dependencies needed to justify the conclusion
+   - `Data contract` for input/output shape, type coherence, response structure, and mapping between contract and processed data
+   - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
+19. For `API`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
+20. If type is `Procedure` → classify the primary review block before fine analysis:
    - `Source` for filters, flow, conditions, assignments, navigation, and calls made in the body
    - `Rules/parm` for signature, parameters, declarative contract, and rule-focused errors
    - `Variables` for existence, type, helper declarations, and collection-vs-simple coherence
    - `Calls and dependencies` for callee review, dependency chain, and proof of caller call-site
    - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
    - `Report layout` only when the `Procedure` is a report and the symptoms involve `Bands`, `PrintBlock`, `ReportLabel`, `ReportAttribute`, or layout shape
-19. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
-20. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
-21. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
-22. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
-23. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-24. Report result:
+21. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
+22. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
+23. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
+24. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
+25. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+26. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
    - For `WebPanel`, primary review block and any justified block transition used in the analysis
    - For `Transaction`, primary review block and any justified block transition used in the analysis, plus explicit scope via web editing, via BC, or unresolved
    - For `DataProvider`, primary review block and any justified block transition used in the analysis
+   - For `API`, primary review block and any justified block transition used in the analysis
    - For `Procedure`, primary review block and any justified block transition used in the analysis
    - Risk level
    - Part types: present / expected / missing — or N/A if the type is confirmed in [01b] as using no Parts
@@ -195,6 +204,7 @@ Reference files and when to load them:
 - [ ] For `WebPanel`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Transaction`, the primary review block was declared before fine analysis, any block transition was justified explicitly, and web editing vs BC scope was stated when relevant
 - [ ] For `DataProvider`, the primary review block was declared before fine analysis and any block transition was justified explicitly
+- [ ] For `API`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Procedure`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For report `Procedure`, evidence was separated into `Source`, `Rules`, and layout and the escalation status was made explicit
 - [ ] Confidence level declared for every conclusion
@@ -220,5 +230,6 @@ Reference files and when to load them:
 - For `WebPanel`, NEVER jump from one functional block to another without explicit dependency rationale
 - For `Transaction`, NEVER collapse web editing and BC behavior into the same conclusion without explicit evidence
 - For `DataProvider`, NEVER treat output shape as proved only by dependency inventory, or navigation context as proved only by the return shape
+- For `API`, NEVER treat dependency inventory as enough to prove service contract, or service contract text as enough to prove the full orchestration chain
 - For `Procedure`, NEVER jump from one functional block to another without explicit dependency rationale
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) take precedence over all heuristics

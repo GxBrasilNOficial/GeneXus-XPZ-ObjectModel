@@ -199,6 +199,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Calls and dependencies` como bloco inicial para `SDT`, `Procedure`, `BC`, `Transaction` e dependencia externa imediata
 - usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
 
+### Regra adicional para revisao de `API`
+
+- em `API`, revisar por blocos funcionais; nao presumir leitura centrada em codigo ou dependencias
+- os blocos canonicos sao `Service contract`, `Events and orchestration`, `Calls and dependencies`, `Data contract` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Service contract -> Data contract` para reconciliar endpoint publicado com shape efetivo
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `API` inteira por reflexo
+- usar `Service contract` como bloco inicial para metodo exposto, endpoint, assinatura externa, operacao publicada e contrato visivel ao consumidor
+- usar `Events and orchestration` como bloco inicial para `.Before/.After`, ordem de execucao, validacao interna, transformacao e fluxo procedural da camada de `API`
+- usar `Calls and dependencies` como bloco inicial para `Procedure`, `SDT`, `Domain`, `Transaction`, `EXO`, `DataProvider` e cadeia funcional externa
+- usar `Data contract` como bloco inicial para shape de entrada/saida, coerencia de tipos, estrutura de resposta e mapeamento entre contrato e dados
+- usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
+
 ### Regra adicional para revisao de `Transaction`
 
 - em `Transaction`, revisar por blocos funcionais; nao tratar a transacao inteira como bloco unico de leitura
