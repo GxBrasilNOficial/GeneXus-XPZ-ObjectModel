@@ -22,6 +22,7 @@ Em `modo_atualizacao`, a verificacao de naming de `ObjetosDaKbEmXml` nao e opcio
 - Este `SKILL.md` fica dentro de uma subpasta de skill sob a raiz do repositório.
 - Toda referência `../arquivo.md` deve ser resolvida a partir da pasta deste `SKILL.md`, e não do diretório de trabalho corrente.
 - Na prática, `../` aponta para a base metodológica compartilhada na pasta-pai desta skill.
+- Quando a sessão já publicar um caminho desta skill ou de seus exemplos, usar esse caminho publicado como fonte autoritativa; não inferir caminho alternativo por heurística.
 
 ---
 
@@ -77,6 +78,7 @@ Do NOT use this skill for:
 - Tratar `kb-source-metadata.md` como metadado operacional da materializacao XPZ/XML; ele deve expor `last_xpz_materialization_run_at` quando o fluxo oficial tiver processado um insumo da IDE
 - Tratar qualquer memoria local de setup que diga `ainda nao materializada`, `aguardando primeiro XPZ` ou equivalente como estado provisório; depois da primeira materializacao oficial bem-sucedida, esse estado nao deve continuar sendo apresentado como atual
 - Tratar `KbIntelligence\kb-intelligence.sqlite` como dono do metadado `last_index_build_run_at` na tabela `metadata`; esse horario deve ser igual ou posterior a `last_xpz_materialization_run_at` para permitir triagem ampla e geracao de objetos de importacao
+- Tratar `kb-source-metadata.md` e a saida de `-Query index-metadata` do wrapper local como fonte efetiva dos timestamps operacionais; `AGENTS.md` e `README.md` locais funcionam como memoria auxiliar humana e devem ser mantidos coerentes com esses valores efetivos
 - Explicar que o fluxo oficial de materializacao XPZ/XML deve chamar a regeneracao/validacao do indice derivado compulsoriamente apos atualizar `ObjetosDaKbEmXml`
 - Explicar que, apos processamento bem-sucedido, um `.xpz` em `XpzExportadosPelaIDE` pode ser renomeado para `processado_<nome-original>.xpz`
 - Tratar `ObjetosGeradosParaImportacaoNaKbNoGenexus` como area de trabalho para XMLs temporarios destinados a importacao manual na IDE
@@ -98,6 +100,7 @@ Do NOT use this skill for:
 - Explicar que `KbIntelligence` nao substitui `ObjetosDaKbEmXml`; ele e uma camada derivada para triagem e deve ser regeneravel a partir do snapshot oficial
 - Explicar que, se `last_index_build_run_at` estiver ausente ou anterior a `last_xpz_materialization_run_at`, o agente nao deve pesquisar o acervo em massa nem gerar objetos para importacao; deve tratar isso como excecao operacional e oferecer a regeneracao/validacao do indice antes de seguir
 - Prever wrappers locais `.ps1` na pasta `scripts` quando a pasta paralela da KB precisar reconstruir o fluxo operacional local sobre o motor compartilhado
+- Quando a pasta paralela da KB tambem for usada para gerar XMLs locais e pacotes de importacao, prever wrapper local consultivo para gate de sanidade do `Source` antes do empacotamento
 - Quando a pasta paralela da KB for inicializada do zero para operar com fluxo oficial de materializacao XPZ/XML, tratar a camada minima de wrappers locais em `scripts` como parte do bootstrap tecnico esperado, nao como pendencia para a etapa seguinte
 - Nao declarar `setup inicial concluido`, `estrutura pronta` ou equivalente final se a pasta ainda nao tiver a camada minima de wrappers locais necessaria para materializacao oficial e, quando adotado, para `KbIntelligence`
 - Se a pasta paralela ja estiver versionada em Git, tratar `.gitignore` na raiz e `.gitkeep` nas subpastas estruturais vazias como parte esperada do setup inicial padrao
@@ -169,6 +172,13 @@ Do NOT use this skill for:
   - execucao do gate de frescor (`Test-*KbGate.ps1`): chama o wrapper de consulta local com `-Query index-metadata`, le `kb-source-metadata.md`, compara timestamps e retorna `GATE_OK` ou lanca `BLOCK: <motivo>`; depende de `Query-*KbIntelligence.ps1` na mesma pasta; deve ser o unico ponto de execucao do gate de frescor
   - leitura de campos chave de `kb-source-metadata.md` (`Get-*KbMetadata.ps1`): elimina o padrao recorrente de `Select-String + regex` inline nos chamadores; expoe ao menos `last_xpz_materialization_run_at`, `kb_name` e `source_guid`
   - verificacao de estrutura da pasta paralela (`Test-*KbStructure.ps1`): relatorio de presenca/ausencia de pastas, scripts e artefatos esperados; retorna `STRUCTURE_OK` ou lista componentes ausentes; usado no setup e em diagnostico antes de qualquer operacao
+- Quando a pasta paralela da KB operar com `ObjetosGeradosParaImportacaoNaKbNoGenexus` e `PacotesGeradosParaImportacaoNaKbNoGenexus`, recomendar tambem wrapper local fino para gate de `Source`, por exemplo `Test-*KbSourceSanity.ps1`:
+  - recebe um XML especifico ou a subpasta ativa da frente
+  - delega para `scripts\Test-GeneXusSourceSanity.ps1` da base compartilhada
+  - retorna saida estruturada suficiente para distinguir `xmlWellFormed`, `sourceSanityStatus` e `probablyImportable`
+  - bloqueia empacotamento local quando encontrar `sourceSanityStatus=fail`
+  - em `warn`, devolve a lista de warnings e exige revisao conservadora antes do pacote
+- A ausencia isolada de `Test-*KbSourceSanity.ps1` nao impede, por si so, classificar a pasta como tendo camada minima de wrappers para materializacao oficial ou para `KbIntelligence`; ele passa a ser esperado quando a KB adota fluxo local de geracao e empacotamento que dependa desse gate.
 - Um helper local de notificacao pode existir como apoio operacional, mas nao substitui os wrappers principais
 - O wrapper local deve ser fino:
   - resolver caminhos da pasta paralela da KB
@@ -189,6 +199,7 @@ Do NOT use this skill for:
   - [Test-KbFullSnapshot.example.ps1](examples/Test-KbFullSnapshot.example.ps1)
   - [Query-KbIntelligence.example.ps1](examples/Query-KbIntelligence.example.ps1)
   - [Rebuild-KbIntelligenceIndex.example.ps1](examples/Rebuild-KbIntelligenceIndex.example.ps1)
+  - [Test-KbSourceSanity.example.ps1](examples/Test-KbSourceSanity.example.ps1)
   - [Notify-TaskComplete.example.ps1](examples/Notify-TaskComplete.example.ps1)
   - [Test-KbGate.example.ps1](examples/Test-KbGate.example.ps1)
   - [Get-KbMetadata.example.ps1](examples/Get-KbMetadata.example.ps1)
@@ -274,6 +285,7 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 - Se a existencia da pasta nativa da KB foi verificada, declarar no fechamento se ela existe/acessou corretamente ou se ficou como ressalva operacional
 - Ao fechar um `modo_atualizacao`, a resposta deve conter obrigatoriamente: classificacao de cada script (EQUIVALENTE / AUSENTE / CUSTOMIZADO), resultado da verificacao de naming de cada diretorio presente em `ObjetosDaKbEmXml` (conforme ou divergente — mesmo que nenhuma divergencia seja encontrada), estado operacional declarado e resultado do gate quando executado
 - Se o gate ou `Test-KbStructure` reportar qualquer linha `NAMING_DIVERGENTE` no output, incluir na resposta ao usuario — independente da pergunta original — o aviso explicito de quais diretorios estao com nome divergente e a oferta de correcao via `xpz-kb-parallel-setup`; nao suprimir esse aviso mesmo quando a pergunta de negocio ja foi respondida
+- Se `AGENTS.md` local ou `README.md` local declararem timestamps, estado operacional ou observacoes de frescor que conflitem com `kb-source-metadata.md`, `-Query index-metadata` ou com o gate efetivo, tratar isso como memoria local desatualizada; nao declarar a pasta "tudo certo" sem antes apontar a divergencia e oferecer atualizacao dessa memoria
 
 ---
 
@@ -317,9 +329,23 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
    - Se o usuario pedir explicitamente para apagar tudo, recriar do zero ou equivalente e a pasta tem historico real: recusar, explicar que dados existentes nao serao destruidos e oferecer `modo_atualizacao` como unico caminho disponivel
 --- BLOCO DE ATUALIZACAO (executar somente em modo_atualizacao) ---
 
-8.a Inspecionar `scripts/` e categorizar cada script previsto pela base metodologica em uma de tres classes:
+Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao antes de iniciar 8.a; se o gatilho global nao foi verificado ainda, executar 7b agora antes de prosseguir com qualquer passo do bloco.
+
+8.a Inspecionar `scripts/` e categorizar cada script previsto pela base metodologica em uma de tres classes.
+
+8.a.i OBRIGATORIO — chamar a ferramenta shell/PowerShell e executar o parser sobre cada script antes de qualquer classificacao:
+    ```powershell
+    $tokens = $null; $parseErrors = $null
+    [System.Management.Automation.Language.Parser]::ParseFile("$scriptPath", [ref]$tokens, [ref]$parseErrors) | Out-Null
+    "$scriptPath — erros de parse: $($parseErrors.Count)"
+    ```
+    Registrar o output (nome do script + contagem de erros) antes de avancar.
+    Se `$parseErrors.Count -gt 0`, classificar o script como CUSTOMIZADO imediatamente, sem comparar logica.
+    Nao prosseguir para 8.a.ii sem ter registrado o resultado do parser para cada script.
+
+8.a.ii Classificar cada script que passou em 8.a.i em uma de tres classes:
     - AUSENTE: script previsto que ainda nao existe localmente
-    - EQUIVALENTE: script que existe e cuja logica e equivalente ao exemplo correspondente; diferencas apenas de nome KB (ex: `FabricaBrasil` no lugar do nome generico) sao toleradas e nao constituem divergencia; para ser EQUIVALENTE, nenhum parametro pode ter default hardcoded apontando para arquivo que nao existe no disco e o caminho de engine inferido no corpo do script — tipicamente `Join-Path $SharedSkillsRoot 'scripts\<nome>.ps1'` — deve apontar para arquivo que existe no motor compartilhado; engine path apontando para arquivo inexistente classifica o script como CUSTOMIZADO independente de qualquer outra diferenca
+    - EQUIVALENTE: script que passou em 8.a.i e cuja logica e equivalente ao exemplo correspondente; diferencas apenas de nome KB (ex: `FabricaBrasil` no lugar do nome generico) sao toleradas e nao constituem divergencia; para ser EQUIVALENTE, nenhum parametro pode ter default hardcoded apontando para arquivo que nao existe no disco e o caminho de engine inferido no corpo do script — tipicamente `Join-Path $SharedSkillsRoot 'scripts\<nome>.ps1'` — deve apontar para arquivo que existe no motor compartilhado; engine path apontando para arquivo inexistente classifica o script como CUSTOMIZADO; adicionalmente, para o papel especifico de `Test-*KbStructure.ps1`, o script deve emitir `STRUCTURE_OK` via `Write-Output`, nao via `Write-Host` — a diferenca e funcional porque o gate filtra `$_ -is [string]` no output redirecionado via `*>&1` e `Write-Host` emite `InformationRecord` (nao `string`), quebrando o gate silenciosamente
     - CUSTOMIZADO: script que existe com diferencas de logica, parametros adicionais, fluxo alterado ou qualquer mudanca alem da substituicao de nome KB; tambem e CUSTOMIZADO qualquer script com parametro cujo default hardcoded aponta para arquivo inexistente, mesmo que a logica seja identica ao exemplo — o default quebrado e divergencia de configuracao efetiva, nao mera diferenca de nome
 
 8.b Para cada script AUSENTE: preparar criacao a partir do exemplo correspondente; apresentar ao usuario o script que sera criado e aguardar aprovacao explicita antes de gravar
@@ -329,6 +355,7 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
     - B) Substituir pelo exemplo atual — personalizacao local e descartada; script volta ao estado canonico
     - C) Revisar e incorporar seletivamente — usuario decide o que do exemplo incorporar; agente aplica apenas o que o usuario confirmar explicitamente
     - D) Pular este script por agora — nenhuma escrita; continuar com os demais scripts da lista
+    Quando dois ou mais scripts consecutivos receberem a mesma decisao, o agente pode perguntar ao usuario se deseja aplicar essa mesma decisao a todos os scripts CUSTOMIZADO ainda nao revisados, evitando rounds repetitivos; aguardar resposta antes de prosseguir
 
 8.d Nao tocar `kb-source-metadata.md` em modo_atualizacao; o arquivo contem timestamps operacionais reais que o gate de frescor depende e nao devem ser sobrescritos pelo agente
 
@@ -358,6 +385,8 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 8.g2.i  Identificar todos os diretorios presentes em `ObjetosDaKbEmXml`
 
 8.g2.ii Para cada diretorio presente, ler pelo menos um XML e extrair o tipo canonico:
+    - Em auditoria focal ou curta, quando o objetivo estiver limitado a diretorios especificos, localizar diretamente um XML dentro de cada diretorio-alvo, ler esse XML e classificar; nao introduzir uma etapa exploratoria separada so para redescobrir se ha arquivos no diretorio quando a propria amostragem direta ja resolve
+    - Para `Folder`, `Module`, `PackagedModule` e `Attribute`, um unico XML por diretorio e evidencia suficiente, salvo se o primeiro arquivo lido estiver corrompido, ilegivel ou sem o trecho minimo necessario para classificacao
     - Se o elemento raiz for `<Attribute>`, o tipo canonico e `Attribute`
     - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico conforme o catalogo em `01a-catalogo-e-padroes-empiricos.md`
     - O GUID encontrado no XML e sempre a fonte autoritativa; o nome do diretorio e convencao local e pode divergir
@@ -379,15 +408,27 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
     - Atualizar referencias ao nome antigo no `AGENTS.md` local se houver
     - Informar ao usuario que o indice `KbIntelligence`, se existente, deve ser regenerado: o tipo dos objetos ja estava correto, mas o campo `path` dos registros ainda reflete o nome antigo da pasta e ficara desatualizado ate o rebuild
 
+8.g2.vii Criterio de parada por evidencia suficiente:
+    - Se `Test-*KbStructure.ps1` retornou `STRUCTURE_OK`, `Test-*KbGate.ps1` retornou `GATE_OK` e a verificacao de naming concluiu cada diretorio presente como conforme ou divergente com base no proprio XML local, considerar a evidencia suficiente para encerrar o diagnostico de `modo_atualizacao`
+    - Nessa situacao, nao prolongar a sessao procurando catalogos externos, caminhos fora da pasta paralela ou mais amostras apenas para reconfirmar tipos ja identificados pelo XML local
+    - Falha de uma tentativa intermediaria de glob, listagem ou busca nao autoriza expandir o escopo; apenas trocar para uma leitura local mais simples e direta do XML do diretorio em teste
+    - Excecao operacional: se o XML local ja permitir identificar o tipo canonico pela propria estrutura — por exemplo, raiz `<Attribute>` — isso basta; nao exigir `Object/@type` nem consulta adicional externa para fechar a auditoria
+    - Se houver divergencia real, relatar a divergencia e propor a acao segura; se nao houver divergencia, seguir para 8.h e declarar o estado sem exploracao extra
+
 8.h Ao concluir o bloco de atualizacao, declarar o estado `wrappers_atualizados` e listar explicitamente: scripts adicionados, scripts mantidos (EQUIVALENTES), scripts substituidos com aprovacao e scripts pulados. Atualizar o campo de estado operacional no `AGENTS.md` local da pasta paralela para refletir o que realmente foi concluido (ex: `wrappers_atualizados`, `bootstrap_incompleto`). Nao manter declaracao de estado anterior desatualizada — se o `AGENTS.md` dizia `materializado_e_indice_validado` mas o gate script nao existia e acabou de ser criado, o estado deve ser atualizado para `wrappers_atualizados`. Um `AGENTS.md` com estado desatualizado serve como argumento falso para agentes burlarem o gate. Verificar tambem se a secao `## Wrappers locais` do `AGENTS.md` local lista todos os scripts atualmente presentes em `scripts/` com nomes e funcoes corretos; se estiver desatualizada — por listar scripts com nomes antigos ou omitir scripts recem-adicionados — propor atualizacao ao usuario antes de declarar o setup como concluido. Por fim, comparar a estrutura geral do `AGENTS.md` local contra o modelo canonico em `examples/AGENTS.md.example` desta skill; se houver secoes canonicas ausentes alem das ja verificadas nos passos anteriores (`## Triagem Por Indice` em 8.g e `## Wrappers locais` acima), propor adicao ao usuario antes de declarar o setup como concluido.
+    - Quando `README.md` local tambem declarar estado operacional humano, timestamps de materializacao/indice ou observacao de frescor, comparar esses campos com `AGENTS.md`, `kb-source-metadata.md` e `-Query index-metadata`
+    - Se `README.md` e `AGENTS.md` estiverem divergentes entre si ou em relacao aos valores efetivos, evidenciar a divergencia ao usuario e propor refresh da memoria local em ambos antes de encerrar o setup como "ok"
+    - `GATE_OK` nao neutraliza essa obrigacao: gate liberado prova compatibilidade operacional atual, mas nao prova que a memoria local humana esta sincronizada
 
 --- FIM DO BLOCO DE ATUALIZACAO ---
 
---- BLOCO DE VERIFICACAO DE NAMING (executar quando solicitado isoladamente, fora do modo_atualizacao; em modo_atualizacao os mesmos passos ja estao incorporados em 8.g2.i a 8.g2.vi) ---
+--- BLOCO DE VERIFICACAO DE NAMING (executar quando solicitado isoladamente, fora do modo_atualizacao; em modo_atualizacao os mesmos passos ja estao incorporados em 8.g2.i a 8.g2.vii) ---
 
 8.i Identificar todos os diretorios presentes em `ObjetosDaKbEmXml`
 
 8.j Para cada diretorio presente, ler pelo menos um XML e extrair o tipo canonico:
+    - Em auditoria focal ou curta, quando o objetivo estiver limitado a diretorios especificos, localizar diretamente um XML dentro de cada diretorio-alvo, ler esse XML e classificar; nao introduzir uma etapa exploratoria separada so para redescobrir se ha arquivos no diretorio quando a propria amostragem direta ja resolve
+    - Para `Folder`, `Module`, `PackagedModule` e `Attribute`, um unico XML por diretorio e evidencia suficiente, salvo se o primeiro arquivo lido estiver corrompido, ilegivel ou sem o trecho minimo necessario para classificacao
     - Se o elemento raiz for `<Attribute>`, o tipo canonico e `Attribute`
     - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico conforme o catalogo em `01a-catalogo-e-padroes-empiricos.md`
     - O GUID encontrado no XML e sempre a fonte autoritativa; o nome do diretorio e convencao local e pode divergir
@@ -408,6 +449,11 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 8.n Apos renome aprovado e executado:
     - Atualizar referencias ao nome antigo no `AGENTS.md` local se houver
     - Informar ao usuario que o indice `KbIntelligence`, se existente, deve ser regenerado: o tipo dos objetos ja estava correto, mas o campo `path` dos registros ainda reflete o nome antigo da pasta e ficara desatualizado ate o rebuild
+
+8.o Criterio de parada por evidencia suficiente na auditoria isolada:
+    - Se cada diretorio presente ja foi classificado como conforme ou divergente com base no proprio XML local, encerrar a auditoria sem procurar catalogos externos, caminhos fora da pasta paralela ou amostras extras so para reconfirmacao
+    - Falha de uma tentativa intermediaria de glob, listagem ou busca nao autoriza expandir o escopo; apenas trocar para uma leitura local mais simples e direta do XML do diretorio em teste
+    - Se o XML local ja identificar o tipo canonico pela propria estrutura — por exemplo, raiz `<Attribute>` — isso basta para fechar aquele diretorio
 
 --- FIM DO BLOCO DE VERIFICACAO DE NAMING ---
 
@@ -461,14 +507,18 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
 24. Se o gate falhar, oferecer atualizacao da pasta paralela/wrappers/indice e nao responder a pergunta de negocio por fallback manual
 25. Antes de declarar o setup como concluido, validar se a camada minima de wrappers locais esperados em `scripts` ja existe para o fluxo oficial adotado por essa pasta paralela
 26. Quando os wrappers locais forem derivados dos `.example.ps1`, validar que eles nao mantem placeholders sanitizados em configuracao efetiva antes de classifica-los como wrappers minimos existentes
-27. Se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir ou ainda mantiver placeholders sanitizados em configuracao efetiva, reportar isso como `estrutura parcial` ou `bootstrap incompleto`, nao como setup concluido
-28. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
-29. Se a primeira materializacao oficial ocorrer depois do setup, atualizar ou neutralizar a memoria local provisoria criada no setup que ainda afirme `ObjetosDaKbEmXml` nao materializada, `aguardando primeiro XPZ` ou equivalente
-30. Ao concluir o setup inicial, oferecer os proximos passos:
+27. Se `Test-*KbSourceSanity.ps1` for criado ou atualizado nesta frente, validar esse wrapper diretamente antes do fechamento:
+   - no minimo, confirmar parse do `.ps1`, existencia do engine compartilhado apontado por ele e ausencia de placeholders sanitizados em configuracao efetiva
+   - quando houver XML local seguro para teste, preferir uma execucao consultiva controlada do proprio wrapper
+   - nao usar `STRUCTURE_OK` ou `GATE_OK` como evidencia suficiente desse wrapper, porque o checklist estrutural canonico nao o trata como item minimo universal
+28. Se a estrutura de pastas e documentos estiver pronta, mas a camada minima de wrappers locais ainda nao existir ou ainda mantiver placeholders sanitizados em configuracao efetiva, reportar isso como `estrutura parcial` ou `bootstrap incompleto`, nao como setup concluido
+29. Ao concluir o setup inicial, deixar explicito que a estrutura esta pronta, mas `ObjetosDaKbEmXml` ainda nao foi materializada
+30. Se a primeira materializacao oficial ocorrer depois do setup, atualizar ou neutralizar a memoria local provisoria criada no setup que ainda afirme `ObjetosDaKbEmXml` nao materializada, `aguardando primeiro XPZ` ou equivalente
+31. Ao concluir o setup inicial, oferecer os proximos passos:
    - `A)` o usuario exporta o `.xpz` full pela IDE para `XpzExportadosPelaIDE`, e o agente materializa os XMLs depois
    - `B)` o agente tenta gerar o `.xpz` full a partir da pasta nativa da KB, grava esse `.xpz` em `XpzExportadosPelaIDE` e depois materializa os XMLs
-31. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
-32. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
+32. Ao oferecer `A)` e `B)`, declarar que `A)` e o caminho preferencial e normalmente mais rapido, enquanto `B)` tende a demorar mais por depender da trilha via `MSBuild`
+33. Se o usuario escolher `B)`, usar a skill `xpz-msbuild-import-export` e nao improvisar fluxo alternativo de exportacao
 
 ---
 

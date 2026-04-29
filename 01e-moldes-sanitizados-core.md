@@ -150,6 +150,8 @@ Concentrar moldes sanitizados centrais de tipos core e contratos recorrentes usa
 - Uso operacional: recorte de apoio para o `Gate visual de Source`; preservar os comentarios estruturais humanos ajuda a leitura na IDE e evita piorar legibilidade herdada.
 - Evidencia direta: no objeto real examinado na KB, os comentarios `//if` aparecem como apoio de leitura em blocos com aninhamento e fechamento visual relevante.
 - Inferencia forte: quando uma edicao local mexe em fechamento de bloco, o foco da revisao deve incluir o trecho afetado e o contorno visual imediato, sem tentar "limpar" comentarios estruturais uteis.
+- Inferencia forte: o mesmo recorte serve como apoio para um gate leve de sanidade do `Source`, revisando pares como `If/EndIf` e `Do Case/EndCase` antes do empacotamento.
+- Uso operacional: quando um bloco novo for inserido em `Source` grande, preferir sintaxe conservadora e comparar o delta com um bloco semelhante ja existente no mesmo objeto antes de aceitar a consolidacao.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>

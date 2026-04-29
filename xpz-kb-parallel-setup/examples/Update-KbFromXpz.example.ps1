@@ -170,8 +170,21 @@ function Show-LocalGitSummary {
         return
     }
 
+    $modifiedCount  = @($statusLines | Where-Object { $_ -match '^( M|M |MM|AM|RM| T|MT|TM)' }).Count
+    $addedCount     = @($statusLines | Where-Object { $_ -match '^(A | A|AA)' }).Count
+    $deletedCount   = @($statusLines | Where-Object { $_ -match '^( D|D |DD|AD|DA)' }).Count
+    $renamedCount   = @($statusLines | Where-Object { $_ -match '^(R | R|RR)' }).Count
+    $untrackedCount = @($statusLines | Where-Object { $_ -match '^\?\?' }).Count
+
     Write-Host ""
     Write-Host "Git summary (`"$PathFilter`"):" -ForegroundColor Cyan
+    Write-Host ("  Modified : {0}" -f $modifiedCount)
+    Write-Host ("  Added    : {0}" -f $addedCount)
+    Write-Host ("  Deleted  : {0}" -f $deletedCount)
+    Write-Host ("  Renamed  : {0}" -f $renamedCount)
+    Write-Host ("  Untracked: {0}" -f $untrackedCount)
+    Write-Host ""
+    Write-Host "Changed paths:" -ForegroundColor Cyan
     $statusLines | ForEach-Object { Write-Host ("  {0}" -f $_) }
 }
 

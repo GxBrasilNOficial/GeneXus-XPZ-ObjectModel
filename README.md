@@ -91,6 +91,7 @@ Se você quer entender a base rapidamente:
 - esta base prioriza evidência estrutural observada em XML
 - ela não promete sucesso de importação ou build sem validação externa
 - a base já incorpora testes documentados de importação em casos controlados, mas isso não elimina risco
+- antes de gerar `import_file.xml` ou pacote importável, a trilha deve separar explicitamente `XML bem-formado` de `Source GeneXus estruturalmente conservador/provavelmente importável`; parse XML sozinho não basta
 - moldes sanitizados completos podem servir como ponto de partida em cenários específicos documentados na própria base; resumos textuais e exemplos incompletos não servem como fonte final de materialização
 - o conteúdo foi organizado para reduzir tentativa e erro, não para eliminar risco
 - existe uma pasta privada separada, `GeneXus-XPZ-PrivateMap`, usada apenas para rastreabilidade editorial privada entre aliases públicos e artefatos reais; a fonte publicada continua sendo esta raiz
@@ -106,6 +107,7 @@ Se você quer entender a base rapidamente:
 - `ObjetosDaKbEmXml`: snapshot oficial da KB; somente leitura para agentes
 - `KbIntelligence`: pasta do índice SQLite derivado e regenerável, usado para triagem técnica e funcional curta sem substituir o snapshot oficial
 - `KbIntelligence` só deve ser usado para triagem ampla quando `last_index_build_run_at` no SQLite for igual ou posterior a `last_xpz_materialization_run_at` em `kb-source-metadata.md`; todo sync XPZ/XML oficial deve regenerar/validar o índice logo depois da materialização, e índice ausente ou defasado é exceção operacional que deve bloquear pesquisa ampla/geração e oferecer atualização ao usuário
+- quando `AGENTS.md` ou `README.md` locais da pasta paralela declararem timestamps, estado operacional ou observações de frescor, esses campos devem permanecer coerentes com `kb-source-metadata.md`, com `-Query index-metadata` do wrapper local e com o gate efetivo; drift documental local também é pendência de setup
 - `XpzExportadosPelaIDE`: pasta onde o usuário grava tanto o `XPZ` completo da Carga Inicial quanto os `XPZ` incrementais do dia a dia
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabalho para XMLs gerados, ajustados ou preservados para importação manual na IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de saída para `import_file.xml` e demais pacotes gerados localmente
@@ -140,6 +142,7 @@ Se você quer entender a base rapidamente:
 - `scripts` concentra os wrappers `.ps1` que tratam `XPZ` e indice derivado
 - quando a pasta paralela da KB for inicializada do zero para operar com fluxo oficial de materializacao XPZ/XML, o bootstrap tecnico minimo deve incluir os wrappers locais principais em `scripts`
 - nao declarar `setup inicial concluido` enquanto essa camada minima de wrappers locais ainda nao existir; nesse caso, o status correto e `estrutura parcial` ou `bootstrap incompleto`
+- `Test-*KbSourceSanity.ps1` e recomendado quando a pasta tambem adotar fluxo local de geracao e empacotamento; sua ausencia isolada nao impede, por si so, classificar a camada minima de wrappers do fluxo oficial de materializacao ou de `KbIntelligence`
 - `KbIntelligence` guarda o SQLite derivado e os relatórios de validação do índice, quando esse fluxo estiver adotado na KB
 - a Carga Inicial pode usar um `XPZ` completo novo a qualquer momento para reatualizar `ObjetosDaKbEmXml`
 - `XPZ` full define o insumo exportado; a materializacao normal desse insumo nao implica `-FullSnapshot`, que deve ficar restrito a conferencia full explicita ou exigencia documental nominal
@@ -180,6 +183,7 @@ Se você quer entender a base rapidamente:
 - os scripts públicos desta raiz devem operar por parâmetros explícitos de entrada e saída, sem depender de caminhos absolutos privados
 - os `.example.ps1` publicados nas skills funcionam como exemplos metodologicos importantes para bootstrap tecnico e reconstrucao assistida de wrappers locais finais
 - esses `.example.ps1` nao substituem o wrapper local real da pasta paralela da KB e nao devem virar fallback automatico de execucao no fluxo normal
+- quando a sessao ja publicar o caminho de uma skill ou de seus exemplos, esse caminho publicado prevalece sobre heuristica local de instalacao
 - memoria operacional de setup e compatibilidade deve permanecer primeiro na propria pasta paralela da KB, em `AGENTS.md`, `README.md` e arquivos operacionais locais; memoria externa do agente fora do repositorio nao deve ser tratada como requisito nem ser gravada sem autorizacao explicita do usuario
 - se o motor precisar evoluir, a mudança deve preservar compatibilidade com esse uso ou ser acompanhada de atualização explícita dos wrappers consumidores
 
@@ -266,6 +270,7 @@ Si quieres entender la base rápidamente:
 - esta base prioriza evidencia estructural observada en XML
 - no promete éxito de importación o build sin validación externa
 - la base ya incorpora pruebas documentadas de importación en casos controlados, pero eso no elimina el riesgo
+- antes de generar `import_file.xml` o paquete importable, la trilha debe separar explícitamente `XML bien formado` de `Source GeneXus estructuralmente conservador/probablemente importable`; el parseo XML por sí solo no alcanza
 - moldes sanitizados completos pueden servir como punto de partida en escenarios específicos documentados en la propia base; resúmenes textuales y ejemplos incompletos no sirven como fuente final de materialización
 - el contenido fue organizado para reducir prueba y error, no para eliminar riesgo
 - existe una carpeta privada separada, `GeneXus-XPZ-PrivateMap`, usada solo para trazabilidad editorial privada entre aliases públicos y artefactos reales; la fuente publicada sigue siendo esta raíz
@@ -281,6 +286,7 @@ Si quieres entender la base rápidamente:
 - `ObjetosDaKbEmXml`: snapshot oficial de la KB; solo lectura para agentes
 - `KbIntelligence`: carpeta del índice SQLite derivado y regenerable, usado para triaje técnico y funcional corto sin sustituir el snapshot oficial
 - `KbIntelligence` solo debe usarse para triaje amplio cuando `last_index_build_run_at` en SQLite sea igual o posterior a `last_xpz_materialization_run_at` en `kb-source-metadata.md`; todo sync XPZ/XML oficial debe regenerar/validar el indice inmediatamente despues de la materializacion, y un indice ausente o desfasado es una excepcion operativa que debe bloquear investigacion amplia/generacion y ofrecer actualizacion al usuario
+- cuando `AGENTS.md` o `README.md` locales de la carpeta paralela declaren timestamps, estado operativo u observaciones de frescura, esos campos deben mantenerse coherentes con `kb-source-metadata.md`, con `-Query index-metadata` del wrapper local y con el gate efectivo; el drift documental local tambien es una pendiente de setup
 - `XpzExportadosPelaIDE`: carpeta donde el usuario graba tanto el `XPZ` completo de la Carga Inicial como los `XPZ` incrementales del día a día
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabajo para XMLs generados, ajustados o preservados para importación manual en la IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de salida para `import_file.xml` y demás paquetes generados localmente
@@ -315,6 +321,7 @@ Si quieres entender la base rápidamente:
 - `scripts` concentra los wrappers `.ps1` que tratan `XPZ` e índice derivado
 - cuando la carpeta paralela de la KB se inicialice desde cero para operar con el flujo oficial de materialización XPZ/XML, el bootstrap técnico mínimo debe incluir los wrappers locales principales en `scripts`
 - no declarar `setup inicial concluido` mientras esa capa mínima de wrappers locales todavía no exista; en ese caso, el estado correcto es `estructura parcial` o `bootstrap incompleto`
+- `Test-*KbSourceSanity.ps1` se recomienda cuando la carpeta también adopte flujo local de generación y empaquetado; su ausencia aislada no impide por sí sola clasificar la capa mínima de wrappers del flujo oficial de materialización o de `KbIntelligence`
 - `KbIntelligence` guarda el SQLite derivado y los informes de validación del índice, cuando ese flujo esté adoptado en la KB
 - la Carga Inicial puede usar un `XPZ` completo nuevo en cualquier momento para reactualizar `ObjetosDaKbEmXml`
 - `XPZ` full define el insumo exportado; la materialización normal de ese insumo no implica `-FullSnapshot`, que debe quedar restringido a la verificación full explícita o a exigencia documental nominal
@@ -355,6 +362,7 @@ Si quieres entender la base rápidamente:
 - los scripts públicos de esta raíz deben operar por parámetros explícitos de entrada y salida, sin depender de rutas absolutas privadas
 - los `.example.ps1` publicados en las skills funcionan como ejemplos metodológicos importantes para bootstrap técnico y reconstrucción asistida de wrappers locales finales
 - esos `.example.ps1` no sustituyen el wrapper local real de la carpeta paralela de la KB y no deben convertirse en fallback automático de ejecución en el flujo normal
+- cuando la sesión ya publique la ruta de una skill o de sus ejemplos, esa ruta publicada prevalece sobre cualquier heurística local de instalación
 - la memoria operativa de setup y compatibilidad debe permanecer primero en la propia carpeta paralela de la KB, en `AGENTS.md`, `README.md` y archivos operativos locales; la memoria externa del agente fuera del repositorio no debe tratarse como requisito ni escribirse sin autorización explícita del usuario
 - si el motor necesita evolucionar, el cambio debe preservar compatibilidad con ese uso o venir acompañado de actualización explícita de los wrappers consumidores
 
@@ -441,6 +449,7 @@ If you want to understand the repository quickly:
 - this base prioritizes structural evidence observed in XML
 - it does not guarantee successful import or build without external validation
 - the base already includes documented import tests in controlled cases, but that still does not remove risk
+- before generating `import_file.xml` or another importable package, the trail must explicitly separate `well-formed XML` from `structurally conservative/probably importable GeneXus Source`; XML parsing alone is not enough
 - complete sanitized templates can serve as a starting point in specific scenarios documented in the base itself; textual summaries and incomplete examples are not valid as the final source for materialization
 - the content is meant to reduce trial and error, not to eliminate risk
 - there is a separate private folder, `GeneXus-XPZ-PrivateMap`, used only for private editorial traceability between public aliases and real artifacts; the published source remains this root
@@ -456,6 +465,7 @@ If you want to understand the repository quickly:
 - `ObjetosDaKbEmXml`: official KB snapshot; read-only for agents
 - `KbIntelligence`: folder for the derived and regenerable SQLite index, used for technical and short functional triage without replacing the official snapshot
 - `KbIntelligence` should only be used for broad triage when `last_index_build_run_at` in SQLite is equal to or later than `last_xpz_materialization_run_at` in `kb-source-metadata.md`; every official XPZ/XML sync must regenerate/validate the index immediately after materialization, and a missing or stale index is an operational exception that must block broad search/generation and offer the user an update
+- when local `AGENTS.md` or `README.md` in the parallel folder declare timestamps, operational state, or freshness notes, those fields must remain consistent with `kb-source-metadata.md`, with the local wrapper `-Query index-metadata`, and with the effective gate result; local documentation drift is also a setup pending item
 - `XpzExportadosPelaIDE`: folder where the user stores both the full Initial Load `XPZ` and the day-to-day incremental `XPZ` files
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: working area for XMLs generated, adjusted, or preserved for manual IDE import
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: output area for `import_file.xml` and other locally generated packages
@@ -490,6 +500,7 @@ If you want to understand the repository quickly:
 - `scripts` concentrates the `.ps1` wrappers that handle `XPZ` and the derived index
 - when the KB parallel folder is initialized from zero to operate with the official XPZ/XML materialization flow, the minimum technical bootstrap must include the main local wrappers in `scripts`
 - do not declare `initial setup complete` while that minimum local wrapper layer does not exist yet; in that case, the correct status is `partial structure` or `incomplete bootstrap`
+- `Test-*KbSourceSanity.ps1` is recommended when the folder also adopts a local generation and packaging flow; its isolated absence does not by itself prevent classifying the minimum wrapper layer for the official materialization flow or for `KbIntelligence`
 - `KbIntelligence` stores the derived SQLite index and index validation reports when that flow is adopted in the KB
 - the Initial Load can use a new full `XPZ` at any time to refresh `ObjetosDaKbEmXml`
 - full `XPZ` defines the exported input; normal materialization of that input does not imply `-FullSnapshot`, which must stay restricted to explicit full verification or nominal documentary requirement
@@ -530,5 +541,6 @@ If you want to understand the repository quickly:
 - the public scripts in this root must operate through explicit input and output parameters, without depending on private absolute paths
 - the `.example.ps1` files published inside the skills act as important methodological examples for technical bootstrap and assisted reconstruction of final local wrappers
 - those `.example.ps1` files do not replace the real local wrapper of the KB parallel folder and must not become an automatic execution fallback in the normal flow
+- when the session already publishes the path of a skill or its examples, that published path takes precedence over local installation heuristics
 - setup and compatibility operational memory should remain first inside the KB parallel folder itself, in `AGENTS.md`, `README.md`, and local operational files; external agent memory outside the repository must not be treated as a requirement or written without explicit user authorization
 - if the engine needs to evolve, the change must preserve compatibility with that use or be accompanied by explicit updates to the consuming wrappers

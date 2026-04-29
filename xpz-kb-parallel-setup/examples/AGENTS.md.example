@@ -65,12 +65,17 @@ Wrappers esperados:
 - `Test-<NomeKb>KbGate.ps1`: gate de frescor — verifica estrutura, SQLite,
   timestamps e retorna `GATE_OK` ou lanca `BLOCK: <motivo>`; deve ser o unico
   ponto de execucao do gate.
+- `Test-<NomeKb>KbSourceSanity.ps1`: wrapper consultivo para XMLs locais da
+  frente antes do empacotamento; delega ao script compartilhado de sanidade do
+  `Source` e devolve `xmlWellFormed`, `sourceSanityStatus` e
+  `probablyImportable`.
 - `Get-<NomeKb>KbMetadata.ps1`: le campos-chave de `kb-source-metadata.md` sem
   regex inline nos chamadores; expoe ao menos `last_xpz_materialization_run_at`,
   `kb_name` e `source_guid`.
 - `Test-<NomeKb>KbStructure.ps1`: relatorio de presenca/ausencia de pastas,
   scripts e artefatos esperados; retorna `STRUCTURE_OK` ou lista componentes
-  ausentes.
+  ausentes. Na auditoria de naming, `Attribute` pode ser identificado pela raiz
+  `<Attribute>` sem depender de `Object/@type`.
 - `Notify-TaskComplete.ps1`: helper opcional de notificacao operacional.
 
 ## Triagem Por Indice
@@ -103,6 +108,9 @@ dependencias ou investigacao funcional curta sobre objetos desta KB, usar
   ou `ObjectsIdentityMapping`, usar a skill `xpz-*` aplicavel.
 - `ObjetosDaKbEmXml` e o snapshot oficial materializado; `KbIntelligence` e
   apenas camada derivada e regeneravel.
+- antes de gerar `import_file.xml` localmente a partir de
+  `ObjetosGeradosParaImportacaoNaKbNoGenexus`, preferir passar o XML ou a
+  subpasta ativa da frente por `Test-<NomeKb>KbSourceSanity.ps1`.
 - `last_xpz_materialization_run_at` deve existir em `kb-source-metadata.md`.
 - `last_index_build_run_at`, no SQLite, deve ser igual ou posterior a
   `last_xpz_materialization_run_at` antes de triagem ampla ou geracao de objetos.
