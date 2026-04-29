@@ -241,6 +241,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `layout` como bloco inicial para composicao visual, estrutura de grid/tab/controle e bindings visiveis
 - usar `variables` como bloco inicial para tipo, declaracao, coerencia de uso e colecao vs simples
 - usar `metadado funcional serializado` como bloco inicial para `Conditions`, `ControlWhere`, `ControlBaseTable`, `ControlOrder`, `ControlUnique`, `PATTERN_ELEMENT_CUSTOM_PROPERTIES`, `WebUserControlProperties` e marcas de pattern
+- se a leitura do layout serializado em `CDATA` vier truncada, nao remontar o layout manualmente; extrair o bloco completo por metodo estruturado ou operar por substituicao cirurgica no raw integral
 - usar `identidade e contêiner` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, risco de clonagem e classificacao estrutural
 - usar `dependencias` como bloco inicial quando o sintoma nascer de `MasterPage`, pattern, user control, objeto chamado ou vinculo externo ausente
 
@@ -593,6 +594,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - nao concluir XML ou pacote enquanto o `lastUpdate` do arquivo final nao tiver sido relido e confirmado
 - nao concluir XML GeneXus grande apenas porque a escrita terminou; reler cabecalho, cauda e trecho funcional afetado, validar XML bem-formado, fechamento da raiz e `CDATA` antes de empacotar
 - se heredoc, here-string ou mecanismo equivalente terminar por EOF antes do delimitador esperado, tratar o arquivo como truncado/corrompido e regenerar por metodo controlado
+- em PowerShell, se houver interpolacao com chamada de metodo dentro de here-string, usar subexpressao `$()` ou evitar here-string para essa composicao; `$variavel.Metodo()` pode sair literal
+- em clonagem conservadora de `WebPanel` que deveria preservar bindings, comparar antes do pacote os bindings serializados relevantes do original e do clone; no minimo, `fieldSpecifier` deve bater em contagem e nomes
 - se houver export real comparavel da IDE para a mesma composicao, preferir repetir o shape desse export em vez de improvisar `Dependencies` ou `ObjectsIdentityMapping`
 - para pacote misto com `Transaction`, `WorkWithForWeb` e `Procedure`, preferir objetos embutidos em `<Objects>` quando esse for o formato validado pelo molde real
 - quando o formato exigir UTC com `Z`, converter corretamente a partir do horario local real; nao reaproveitar timestamp antigo nem de rodada anterior

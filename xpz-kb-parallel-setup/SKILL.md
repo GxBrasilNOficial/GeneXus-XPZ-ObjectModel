@@ -322,6 +322,19 @@ Nao usar `setup concluido`, `estrutura pronta` ou expressao equivalente sem dize
       Ao identificar que a pasta de trabalho ou qualquer pasta referenciada na conversa contem `ObjetosDaKbEmXml/` ou `KbIntelligence/`, invocar `xpz-kb-parallel-setup` uma vez na sessao antes de qualquer triagem, consulta ou geracao de objetos — mesmo que o AGENTS.md local nao instrua isso explicitamente.
       ```
     - Esta verificacao e nao bloqueante: recusa ou pulo pelo usuario nao impede a conclusao do setup
+7c. Quando a frente detectar risco operacional recorrente de edicao textual fora do padrao esperado do repositorio, como `line ending` misto em arquivo de texto coberto por `.gitattributes`, o agente pode propor reforco opcional no arquivo global de instrucoes da ferramenta:
+    - Tratar isso como recomendacao geral de higiene editorial, nao como gate de setup da KB
+    - Verificar primeiro se o arquivo global centralizado da ferramenta ja contem instrucao equivalente sobre preservar `eol` e validar `line ending`
+    - So propor adicao quando essa orientacao ainda estiver ausente no arquivo direto ou no arquivo centralizado por ele referenciado
+    - A proposta deve mostrar ao usuario qual arquivo global sera alterado, explicar que a regra vale para outras frentes alem de GeneXus e aguardar aprovacao explicita antes de gravar
+    - Bloco sugerido:
+      ```
+      ## Line Endings Em Arquivos De Texto
+
+      - Em arquivos de texto cobertos por `.gitattributes`, preservar o `eol` esperado pelo repositorio ao gravar.
+      - Se houver aviso de `line ending`, suspeita de arquivo `mixed` ou politica `eol` explicita no repositorio, validar antes de concluir que o arquivo salvo ficou no formato esperado.
+      ```
+    - Esta verificacao tambem e nao bloqueante: recusa ou pulo pelo usuario nao impede a conclusao do setup
 8. Detectar o contexto operacional da pasta paralela antes de qualquer escrita:
    - `modo_criacao`: pasta inexistente, vazia, sem `ObjetosDaKbEmXml` materializado e sem `kb-source-metadata.md` com timestamps reais → criar primeiro a estrutura base e so aprofundar exploracao se surgir bloqueio concreto; prosseguir para o passo 9
    - `modo_atualizacao`: pasta com historico real — qualquer combinacao de `ObjetosDaKbEmXml` materializado, `kb-source-metadata.md` com timestamps reais ou `kb-intelligence.sqlite` com dados → executar o BLOCO DE ATUALIZACAO a seguir antes de prosseguir para o passo 9

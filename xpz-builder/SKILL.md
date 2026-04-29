@@ -265,6 +265,7 @@ Reference files and when to load them:
    - For `WebPanel`, verify where each relevant property is actually persisted before editing: `Conditions` may live in its own `Part`, while `ControlWhere`, `ControlBaseTable`, `ControlOrder`, `ControlUnique`, `PATTERN_ELEMENT_CUSTOM_PROPERTIES`, and `WebUserControlProperties` often live inside serialized layout metadata; follow the operational rules in [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md)
    - For `WebPanel`, treat serialized functional metadata as its own functional layer; do NOT collapse it into visual layout when planning or reviewing the delta
    - For `WebPanel`, do NOT treat template defaults mentioning `Conditions` as proof that a real filter is materialized in the object
+   - For `WebPanel`, NEVER manually reconstruct serialized layout `CDATA` after truncated reading; extract the full block structurally or apply a surgical substitution on the full raw file while preserving the original serialized layout byte-for-byte outside the intended delta
    - For `WebPanel`, name each justified block transition during review, for example `events -> variables` or `layout -> serialized functional metadata`
    - For `WebPanel`, if the current reasoning no longer needs a new block, stop expanding; do NOT reopen the whole object by reflex
    - For `DataProvider`, treat `Output structure` as its own functional layer; do NOT collapse return shape into a generic `Source` reading
@@ -363,6 +364,7 @@ Reference files and when to load them:
    - For large GeneXus XML, especially `Procedure` with long `Source` or `CDATA`, do not rely on heredoc/here-string as the primary generation mechanism when a structured script or serializer is available
    - If heredoc, here-string, or an equivalent shell writer is used, inspect stderr and reject any artifact whose writer ended by EOF before the expected delimiter
    - Before packaging generated large XML, reread the file header, tail, and affected functional block; confirm the expected root closing tag, complete `CDATA`, and no truncated final line
+   - For cloned `WebPanel`, if the delta should preserve the original binding surface, extract and compare the relevant serialized bindings from original and clone before packaging; at minimum, confirm matching `fieldSpecifier` count and names, and classify any divergence as intentional delta or clone error
    - For `WorkWithForWeb`, do not use broad text substitution over repeated tags such as `<actions>`; locate the target `Selection` structurally inside the internal XML before editing actions
    - For `WorkWithForWeb`, confirm any new action appears exactly once in the intended `Selection`; duplicates or ambiguous action scope block packaging
    - When the current delta edits `Source`, reread the saved snippet before packaging and confirm coherent indentation, visually consistent block closure, and absence of visually broken blocks
