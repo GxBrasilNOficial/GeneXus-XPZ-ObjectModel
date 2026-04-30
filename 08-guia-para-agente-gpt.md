@@ -286,6 +286,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
 - manter separado o que e definicao-base do atributo, o que e tipagem, o que e referencia semantica nominal e o que e semantica funcional de controle/apresentacao; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `PatternSettings`
+
+- em `PatternSettings`, revisar por blocos funcionais; nao tratar o objeto como XML pequeno autossuficiente quando a pergunta for de registro do pattern, configuracao interna, contexto ou diagnostico fino
+- os blocos canonicos sao `Pattern registration and environment fit`, `Internal pattern configuration`, `Context and callable dependencies`, `Security and auxiliary references` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Pattern registration and environment fit -> Context and callable dependencies` para confirmar se o problema do pattern no ambiente na verdade vem de dependencia funcional faltante
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `PatternSettings` inteiro por reflexo
+- usar `Pattern registration and environment fit` como bloco inicial para pattern nao registrado, incompatibilidade do ambiente, `was not changed` e encaixe operacional do pattern
+- usar `Internal pattern configuration` como bloco inicial para `CDATA`, flags, shape declarativo e configuracao persistida do pattern
+- usar `Context and callable dependencies` como bloco inicial para `ContextVariable`, `LoadProcedure`, procedures faltantes e contexto funcional exigido pelo pattern
+- usar `Security and auxiliary references` como bloco inicial para `Security`, referencias auxiliares e dependencias complementares do pattern
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
+- manter separado o que e registro do pattern no ambiente, o que e configuracao interna, o que e dependencia de contexto/chamada e o que e referencia auxiliar/seguranca; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino
