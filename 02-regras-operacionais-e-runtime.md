@@ -359,6 +359,28 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `registro/encaixe do pattern`, `configuracao interna`, `dependencia de contexto/chamada`, `referencia auxiliar/seguranca` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `PatternSettings` inteiro por reflexo.
 
+### Revisao por blocos em `Folder`
+
+- `Regra operacional`: em `Folder`, nao tratar o objeto como caso resolvido apenas por shape minimo; a revisao fina deve separar explicitamente shape estrutural, contexto pai/modulo, leitura semantica da IDE e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `Folder` sao `Minimal structural shape`, `Parent and module context`, `IDE semantic reading`, `Identity and naming semantics` e `Identity and container`.
+- `Regra operacional`: `Minimal structural shape` cobre o envelope XML minimo do `Folder`, `Object/@type`, metadados essenciais e a estrutura curta esperada do objeto.
+- `Regra operacional`: `Parent and module context` cobre `parent`, `parentGuid`, `parentType`, `moduleGuid` e o encaixe estrutural do `Folder` na hierarquia real do repositorio/modelo.
+- `Regra operacional`: `IDE semantic reading` cobre a leitura semantica feita pela IDE/importador, inclusive quando o objeto estruturalmente `Folder` aparecer rotulado como `Category`.
+- `Regra operacional`: `Identity and naming semantics` cobre a semantica nominal do objeto, inclusive a diferenca entre nome estrutural do XML, nome exibido e qualquer ambiguidade entre tipo XML e rotulo de UI.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, contêiner estrutural e o risco de estar avaliando o agrupador errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `Folder`.
+- `Regra operacional`: em `Folder`, as transicoes mais comuns e justificadas sao `Minimal structural shape -> Parent and module context`, `Minimal structural shape -> IDE semantic reading`, `Minimal structural shape -> Identity and container`, `Parent and module context -> IDE semantic reading`, `Parent and module context -> Identity and naming semantics`, `Parent and module context -> Identity and container`, `IDE semantic reading -> Identity and naming semantics`, `IDE semantic reading -> Parent and module context`, `IDE semantic reading -> Minimal structural shape`, `Identity and naming semantics -> IDE semantic reading`, `Identity and naming semantics -> Identity and container`, `Identity and naming semantics -> Parent and module context`, `Identity and container -> Minimal structural shape`, `Identity and container -> Parent and module context`, `Identity and container -> IDE semantic reading` e `Identity and container -> Identity and naming semantics`.
+- `Regra operacional`: usar `Minimal structural shape` como bloco inicial quando o sintoma falar de envelope, `Object/@type`, shape minimo, serializacao basica ou suspeita de XML malformado.
+- `Regra operacional`: usar `Parent and module context` como bloco inicial quando o sintoma falar de `parent`, `module`, posicao hierarquica, encaixe estrutural ou suspeita de `Folder` no contexto errado.
+- `Regra operacional`: usar `IDE semantic reading` como bloco inicial quando o sintoma falar de `Category`, leitura da IDE, rotulo exibido, diferenca entre o que o XML e e o que o importador mostra.
+- `Regra operacional`: usar `Identity and naming semantics` como bloco inicial quando o sintoma falar de nome do agrupador, ambiguidade nominal, diferenca entre tipo estrutural e rotulo visual, ou expectativa errada sobre o nome exibido.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `Folder`, nao tratar `Category` como tipo rival de envelope XML; ele deve ser lido como rotulo de UI/importador enquanto `Folder` permanece o tipo estrutural XML.
+- `Regra operacional`: em `Folder`, nao tratar shape minimo correto como prova automatica de leitura semantica identica na IDE; a camada de UI/importador continua separada.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `shape minimo`, `contexto pai/modulo`, `leitura semantica da IDE`, `semantica nominal` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Folder` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.

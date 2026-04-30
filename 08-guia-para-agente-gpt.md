@@ -301,6 +301,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
 - manter separado o que e registro do pattern no ambiente, o que e configuracao interna, o que e dependencia de contexto/chamada e o que e referencia auxiliar/seguranca; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Folder`
+
+- em `Folder`, revisar por blocos funcionais; nao tratar o objeto como caso trivial apenas por ter shape minimo quando a pergunta for de parent, leitura da IDE, semantica nominal ou diagnostico fino
+- os blocos canonicos sao `Minimal structural shape`, `Parent and module context`, `IDE semantic reading`, `Identity and naming semantics` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Minimal structural shape -> IDE semantic reading` para separar o tipo XML valido do rotulo exibido pela IDE
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Folder` inteiro por reflexo
+- usar `Minimal structural shape` como bloco inicial para envelope, `Object/@type`, shape minimo e serializacao basica
+- usar `Parent and module context` como bloco inicial para `parent`, `parentGuid`, `parentType`, `moduleGuid` e encaixe estrutural do agrupador
+- usar `IDE semantic reading` como bloco inicial para `Category`, leitura da IDE/importador e diferenca entre tipo XML e rotulo exibido
+- usar `Identity and naming semantics` como bloco inicial para ambiguidade nominal, expectativa sobre nome exibido e semantica do agrupador
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
+- manter separado o que e shape minimo XML, o que e contexto estrutural, o que e leitura semantica da IDE e o que e semantica nominal; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino
