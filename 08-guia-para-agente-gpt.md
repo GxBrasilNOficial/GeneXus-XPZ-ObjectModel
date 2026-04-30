@@ -265,11 +265,11 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Class graph and references -> Predefined types and style bindings` para confirmar se a classe existente esta realmente vinculada ao tipo visual normativo certo
 - parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Theme` inteiro por reflexo
 - usar `Theme core definition` como bloco inicial para definicao-base do tema, propriedades centrais, shape do objeto e configuracao global
-- usar `Class graph and references` como bloco inicial para `ThemeClass`, referencias internas, heranca visual e dependencias entre classes
-- usar `Predefined types and style bindings` como bloco inicial para `PredefinedTypes`, `Styles` e bindings entre tipos visuais conhecidos e classes/estilos concretos
-- usar `Visual simplification and override surface` como bloco inicial para simplificacao, override, enxugamento visual e remocao controlada de superficie
+- usar `Class graph and references` como bloco inicial para grafo de `ThemeClass`, referencias internas entre classes e heranca visual
+- usar `Predefined types and style bindings` como bloco inicial para `PredefinedTypes`, `Styles` e bindings normativos entre tipo visual conhecido e a pilha concreta `ThemeClass`/`ThemeColor`/`ColorPalette`/`DesignSystem`
+- usar `Visual simplification and override surface` como bloco inicial para simplificacao, override, enxugamento visual e remocao controlada de superficie somente depois que o acoplamento visual basico ja estiver sustentado
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
-- manter separado o que e definicao-base do tema, o que e grafo de classes, o que e binding visual normativo e o que e simplificacao/override; nao colapsar essas camadas cedo demais
+- manter separado o que e definicao-base do tema, o que e grafo de classes, o que e binding visual normativo e o que e simplificacao/override; nao usar simplificacao como atalho para substituir leitura do binding nem do grafo de classes
 
 ### Regra adicional para revisao de `ThemeClass`
 
