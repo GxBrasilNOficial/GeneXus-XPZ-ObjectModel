@@ -478,6 +478,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e definicao do grupo, o que e mapeamento de subtype e o que e uso contextual; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `File`
+
+- em `File`, revisar por blocos funcionais; nao tratar o objeto como recurso monolitico quando a pergunta for de payload, consumo, identidade do recurso ou diagnostico fino
+- os blocos canonicos sao `File identity and declared surface`, `Binary or textual payload fidelity`, `References and consumption context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Binary or textual payload fidelity -> References and consumption context` para separar problema de conteudo de problema de consumo
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `File` inteiro por reflexo
+- usar `File identity and declared surface` como bloco inicial para nome do recurso, extensao logica, role funcional e surface declarada
+- usar `Binary or textual payload fidelity` como bloco inicial para conteudo materializado, payload, extracao, preservacao binaria/textual e fidelidade do recurso
+- usar `References and consumption context` como bloco inicial para referencias externas, quem consome o arquivo, dependencia de runtime e contexto de uso
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e identidade/surface do recurso, o que e payload e o que e contexto de consumo; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

@@ -605,6 +605,25 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao do grupo`, `mapeamentos de subtype`, `contrato contextual de uso` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `SubTypeGroup` inteiro por reflexo.
 
+### Revisao por blocos em `File`
+
+- `Regra operacional`: em `File`, nao tratar o objeto como recurso monolitico; a revisao fina deve separar explicitamente identidade/surface declarada, fidelidade do payload e contexto de consumo.
+- `Regra operacional`: os blocos canonicos de revisao em `File` sao `File identity and declared surface`, `Binary or textual payload fidelity`, `References and consumption context` e `Identity and container`.
+- `Regra operacional`: `File identity and declared surface` cobre nome do recurso, extensao/logica declarada, papel funcional e a surface top-level do arquivo.
+- `Regra operacional`: `Binary or textual payload fidelity` cobre conteudo materializado, integridade do payload, preservacao de bytes/texto e fidelidade de extracao.
+- `Regra operacional`: `References and consumption context` cobre quem consome o `File`, referencias externas, dependencias de runtime e o contexto de uso do recurso.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, alem do risco de estar lendo o arquivo errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `File`.
+- `Regra operacional`: em `File`, as transicoes mais comuns e justificadas sao `File identity and declared surface -> Binary or textual payload fidelity`, `File identity and declared surface -> References and consumption context`, `File identity and declared surface -> Identity and container`, `Binary or textual payload fidelity -> File identity and declared surface`, `Binary or textual payload fidelity -> References and consumption context`, `Binary or textual payload fidelity -> Identity and container`, `References and consumption context -> File identity and declared surface`, `References and consumption context -> Binary or textual payload fidelity`, `References and consumption context -> Identity and container`, `Identity and container -> File identity and declared surface`, `Identity and container -> Binary or textual payload fidelity` e `Identity and container -> References and consumption context`.
+- `Regra operacional`: usar `File identity and declared surface` como bloco inicial quando o sintoma falar do que o arquivo e, do nome do recurso, da extensao logica ou do papel funcional declarado.
+- `Regra operacional`: usar `Binary or textual payload fidelity` como bloco inicial quando a duvida falar de conteudo materializado, payload, integridade binaria/textual, extracao ou preservacao do conteudo.
+- `Regra operacional`: usar `References and consumption context` como bloco inicial quando o sintoma falar de quem consome o arquivo, referencias externas, dependencia de runtime ou contexto de uso.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `File`, nao tratar identidade/surface declarada como prova automatica de payload integro, e nao tratar payload integro como prova automatica de consumo correto no contexto.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade/surface`, `payload`, `contexto de consumo` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `File` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
