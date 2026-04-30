@@ -316,6 +316,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e identidade da paleta, o que e composicao declarada, o que e acoplamento arquitetural e o que e superficie de uso; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `DesignSystem`
+
+- em `DesignSystem`, revisar por blocos funcionais; nao tratar o objeto como camada visual generica quando a pergunta for de identidade do sistema, tokens, acoplamento com tema/paleta, superficie de consumo ou diagnostico fino
+- os blocos canonicos sao `System identity and naming`, `Design tokens and declared resources`, `Theme and palette coupling`, `Visual rules and consumption surface` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Visual rules and consumption surface -> Design tokens and declared resources` para verificar se o efeito visual quebrado vem da regra consumida ou do token/recurso declarado na origem
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `DesignSystem` inteiro por reflexo
+- usar `System identity and naming` como bloco inicial para nome logico do sistema, identidade nominal e papel arquitetural esperado
+- usar `Design tokens and declared resources` como bloco inicial para tokens, recursos declarados, composicao interna e shape funcional do sistema
+- usar `Theme and palette coupling` como bloco inicial para relacao com `Theme`, `ColorPalette`, coerencia arquitetural e encaixe entre camadas visuais
+- usar `Visual rules and consumption surface` como bloco inicial para regras visuais consumidas por outras camadas e impacto funcional de uso
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e identidade do sistema, o que e token/recurso declarado, o que e acoplamento com tema/paleta e o que e superficie de consumo; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Attribute`
 
 - em `Attribute`, revisar por blocos funcionais; nao tratar o objeto como definicao escalar trivial quando a pergunta for de tipagem, referencia nominal, semantica de controle ou diagnostico fino

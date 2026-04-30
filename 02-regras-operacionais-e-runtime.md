@@ -380,6 +380,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade da paleta`, `composicao declarada`, `acoplamento arquitetural`, `superficie de uso` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `ColorPalette` inteiro por reflexo.
 
+### Revisao por blocos em `DesignSystem`
+
+- `Regra operacional`: em `DesignSystem`, nao tratar o objeto como camada visual generica ou so como contêiner declarativo; a revisao fina deve separar explicitamente identidade do sistema, tokens/recursos declarados, acoplamento com tema/paleta e superficie de consumo visual.
+- `Regra operacional`: os blocos canonicos de revisao em `DesignSystem` sao `System identity and naming`, `Design tokens and declared resources`, `Theme and palette coupling`, `Visual rules and consumption surface` e `Identity and container`.
+- `Regra operacional`: `System identity and naming` cobre nome logico do sistema, identidade nominal e papel arquitetural esperado na camada visual.
+- `Regra operacional`: `Design tokens and declared resources` cobre tokens, recursos declarados, composicao interna, itens faltantes e o shape funcional do que o `DesignSystem` realmente materializa.
+- `Regra operacional`: `Theme and palette coupling` cobre relacao com `Theme`, `ColorPalette` e a coerencia arquitetural do encaixe entre essas camadas.
+- `Regra operacional`: `Visual rules and consumption surface` cobre regras visuais consumidas por outras camadas, impacto funcional de uso e a superficie em que o sistema realmente irradia efeito visual.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa de `DesignSystem`.
+- `Regra operacional`: em `DesignSystem`, as transicoes mais comuns e justificadas sao `System identity and naming -> Design tokens and declared resources`, `System identity and naming -> Visual rules and consumption surface`, `System identity and naming -> Identity and container`, `Design tokens and declared resources -> System identity and naming`, `Design tokens and declared resources -> Theme and palette coupling`, `Design tokens and declared resources -> Visual rules and consumption surface`, `Theme and palette coupling -> Design tokens and declared resources`, `Theme and palette coupling -> Visual rules and consumption surface`, `Theme and palette coupling -> Identity and container`, `Visual rules and consumption surface -> Design tokens and declared resources`, `Visual rules and consumption surface -> Theme and palette coupling`, `Visual rules and consumption surface -> System identity and naming`, `Identity and container -> System identity and naming`, `Identity and container -> Theme and palette coupling` e `Identity and container -> Design tokens and declared resources`.
+- `Regra operacional`: usar `System identity and naming` como bloco inicial quando o sintoma falar de nome do sistema, papel semantico, colisao nominal, alias inadequado ou renomeacao.
+- `Regra operacional`: usar `Design tokens and declared resources` como bloco inicial quando o sintoma falar de tokens, recursos declarados, composicao interna, itens faltantes ou shape funcional do sistema.
+- `Regra operacional`: usar `Theme and palette coupling` como bloco inicial quando o sintoma falar de relacao com `Theme` ou `ColorPalette`, coerencia arquitetural ou encaixe entre as camadas visuais.
+- `Regra operacional`: usar `Visual rules and consumption surface` como bloco inicial quando o sintoma falar de regra visual aplicada, consumo por outras camadas ou impacto funcional de uso do sistema.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `guid`, `fullyQualifiedName`, modulo, clonagem ou contexto estrutural.
+- `Regra operacional`: em `DesignSystem`, nao tratar `System identity and naming` como prova automatica de tokens/recursos corretos, e nao tratar `Theme and palette coupling` como mero contexto decorativo.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade do sistema`, `tokens/recursos declarados`, `acoplamento tema/paleta`, `superficie de consumo` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `DesignSystem` inteiro por reflexo.
+
 ### Revisao por blocos em `Attribute`
 
 - `Regra operacional`: em `Attribute`, nao tratar o objeto como definicao escalar trivial; a revisao fina deve separar explicitamente shape top-level, propriedades semanticas, referencias nominais e contexto estrutural.
