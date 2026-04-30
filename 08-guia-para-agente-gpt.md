@@ -576,6 +576,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e surface declarada do documento, o que e payload e o que e contexto de consumo; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `DeploymentUnit`
+
+- em `DeploymentUnit`, revisar por blocos funcionais; nao tratar o objeto como unidade unica quando a pergunta for de parametro, entrega, empacotamento ou diagnostico fino
+- os blocos canonicos sao `Deployment unit definition and declared surface`, `Packaging parameters and technical options`, `Runtime or delivery context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Deployment unit definition and declared surface -> Packaging parameters and technical options`
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DeploymentUnit` inteiro por reflexo
+- usar `Deployment unit definition and declared surface` como bloco inicial para o que a unidade declara ser, seu papel principal e sua surface estrutural
+- usar `Packaging parameters and technical options` como bloco inicial para parametro, opcao, flag e configuracao tecnica de empacotamento/entrega
+- usar `Runtime or delivery context` como bloco inicial para encaixe no fluxo, destino de entrega, consumo efetivo e papel operacional
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e surface declarada da unidade, o que e parametro tecnico e o que e contexto de entrega/uso; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

@@ -783,6 +783,40 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra de fronteira`: nao colapsar surface declarada, payload e contexto de consumo como se provassem a mesma coisa.
 - `Conclusao`: fechar a resposta no menor nivel funcional sustentado pelo XML e pela dependencia realmente aberta: identidade declarada, payload, contexto de consumo ou identidade estrutural.
 
+### Revisao por blocos em DeploymentUnit
+
+- `Regra operacional`: `DeploymentUnit` nao deve ser tratado como bloco unico; separar definicao da unidade, parametros tecnicos, contexto de entrega/uso e identidade estrutural.
+- `Blocos canonicos`:
+  - `Deployment unit definition and declared surface`
+  - `Packaging parameters and technical options`
+  - `Runtime or delivery context`
+  - `Identity and container`
+- `Definicao do bloco Deployment unit definition and declared surface`: usar quando a duvida principal for o que a unidade declara ser, sua surface estrutural ou seu papel principal.
+- `Definicao do bloco Packaging parameters and technical options`: usar quando a duvida principal for parametro, opcao, flag ou configuracao tecnica de empacotamento/entrega.
+- `Definicao do bloco Runtime or delivery context`: usar quando a duvida principal for encaixe no fluxo, destino de entrega, consumo efetivo ou papel operacional.
+- `Definicao do bloco Identity and container`: usar quando a duvida principal for `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` ou risco de objeto errado.
+- `Regra de condução`: declarar o bloco primario antes da leitura fina e abrir bloco adjacente apenas quando houver dependencia funcional explicita.
+- `Transicoes permitidas`:
+  - `Deployment unit definition and declared surface -> Packaging parameters and technical options`
+  - `Deployment unit definition and declared surface -> Runtime or delivery context`
+  - `Deployment unit definition and declared surface -> Identity and container`
+  - `Packaging parameters and technical options -> Deployment unit definition and declared surface`
+  - `Packaging parameters and technical options -> Runtime or delivery context`
+  - `Packaging parameters and technical options -> Identity and container`
+  - `Runtime or delivery context -> Deployment unit definition and declared surface`
+  - `Runtime or delivery context -> Packaging parameters and technical options`
+  - `Runtime or delivery context -> Identity and container`
+  - `Identity and container -> Deployment unit definition and declared surface`
+  - `Identity and container -> Packaging parameters and technical options`
+  - `Identity and container -> Runtime or delivery context`
+- `Gatilhos do bloco primario`:
+  - `Deployment unit definition and declared surface` para duvida sobre o que a unidade declara ser, seu papel principal ou sua surface estrutural.
+  - `Packaging parameters and technical options` para duvida sobre parametros, opcoes, flags ou configuracao tecnica de empacotamento/entrega.
+  - `Runtime or delivery context` para duvida sobre encaixe no fluxo, destino de entrega, consumo efetivo ou papel operacional.
+  - `Identity and container` para duvida sobre `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` e risco de objeto errado.
+- `Regra de fronteira`: nao colapsar surface declarada, parametros tecnicos e contexto de entrega/uso como se provassem a mesma coisa.
+- `Conclusao`: fechar a resposta no menor nivel funcional sustentado pelo XML e pela dependencia realmente aberta: definicao, parametros, contexto de entrega/uso ou identidade estrutural.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
