@@ -450,6 +450,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e surface funcional externa, o que e assinatura tipada e o que e binding nativo/plataforma; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `UserControl`
+
+- em `UserControl`, revisar por blocos funcionais; nao tratar o objeto como controle visual monolitico quando a pergunta for de propriedade, evento, recurso runtime ou diagnostico fino
+- os blocos canonicos sao `Control contract surface`, `Properties and event bindings`, `Runtime resources and external dependencies` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Properties and event bindings -> Runtime resources and external dependencies` para separar problema de binding de problema de recurso runtime
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `UserControl` inteiro por reflexo
+- usar `Control contract surface` como bloco inicial para interface declarada, surface exposta, papel funcional e shape geral do controle
+- usar `Properties and event bindings` como bloco inicial para propriedade, evento, parametro e contrato de binding entre host e controle
+- usar `Runtime resources and external dependencies` como bloco inicial para script, asset, recurso externo, dependencia tecnica e acoplamento de execucao
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e contrato do controle, o que e binding de propriedades/eventos e o que e dependencia runtime; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

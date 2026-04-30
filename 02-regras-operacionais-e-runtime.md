@@ -567,6 +567,25 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `superficie externa`, `assinatura e tipagem`, `binding nativo/plataforma` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `ExternalObject` inteiro por reflexo.
 
+### Revisao por blocos em `UserControl`
+
+- `Regra operacional`: em `UserControl`, nao tratar o objeto como controle visual monolitico; a revisao fina deve separar explicitamente contrato do controle, bindings de propriedades/eventos, dependencias runtime e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `UserControl` sao `Control contract surface`, `Properties and event bindings`, `Runtime resources and external dependencies` e `Identity and container`.
+- `Regra operacional`: `Control contract surface` cobre a interface declarada do controle, o que ele expoe funcionalmente e o shape geral da surface consumida pelo host.
+- `Regra operacional`: `Properties and event bindings` cobre propriedades, eventos, parametros e o contrato de binding entre o controle e quem o consome.
+- `Regra operacional`: `Runtime resources and external dependencies` cobre scripts, assets, recursos auxiliares, dependencias tecnicas e acoplamentos de execucao do `UserControl`.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, alem do risco de estar lendo o controle errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `UserControl`.
+- `Regra operacional`: em `UserControl`, as transicoes mais comuns e justificadas sao `Control contract surface -> Properties and event bindings`, `Control contract surface -> Runtime resources and external dependencies`, `Control contract surface -> Identity and container`, `Properties and event bindings -> Control contract surface`, `Properties and event bindings -> Runtime resources and external dependencies`, `Properties and event bindings -> Identity and container`, `Runtime resources and external dependencies -> Control contract surface`, `Runtime resources and external dependencies -> Properties and event bindings`, `Runtime resources and external dependencies -> Identity and container`, `Identity and container -> Control contract surface`, `Identity and container -> Properties and event bindings` e `Identity and container -> Runtime resources and external dependencies`.
+- `Regra operacional`: usar `Control contract surface` como bloco inicial quando o sintoma falar do que o controle expoe, da interface declarada, do papel funcional ou do shape geral do controle.
+- `Regra operacional`: usar `Properties and event bindings` como bloco inicial quando a duvida falar de propriedade, evento, parametro, binding de uso ou contrato entre host e controle.
+- `Regra operacional`: usar `Runtime resources and external dependencies` como bloco inicial quando o sintoma falar de script, asset, recurso externo, dependencia tecnica ou acoplamento de execucao.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `UserControl`, nao tratar contrato declarado do controle como prova automatica de binding correto em propriedades/eventos, e nao tratar dependencia runtime presente como prova automatica de surface funcional coerente.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `contrato do controle`, `bindings de propriedades/eventos`, `dependencias runtime` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `UserControl` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
