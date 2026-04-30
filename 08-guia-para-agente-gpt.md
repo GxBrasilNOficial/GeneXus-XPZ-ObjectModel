@@ -436,6 +436,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - tratar `Index` como estrutura embutida da `Table` nesta trilha; nao abrir um bloco top-level separado de `Index` por padrao
 - manter separado o que e chave primaria, o que e indice embutido e o que e acoplamento fisico/contextual com `Transaction`; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `ExternalObject`
+
+- em `ExternalObject`, revisar por blocos funcionais; nao tratar o objeto como contrato externo monolitico quando a pergunta for de metodo, tipo, binding nativo ou diagnostico fino
+- os blocos canonicos sao `External contract surface`, `Method signatures and parameter typing`, `Platform and native binding metadata` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Method signatures and parameter typing -> Platform and native binding metadata` para separar erro de assinatura de erro de binding nativo
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `ExternalObject` inteiro por reflexo
+- usar `External contract surface` como bloco inicial para surface exposta, nome externo, papel funcional e metodos/propriedades publicados
+- usar `Method signatures and parameter typing` como bloco inicial para metodo, parametro, retorno, coerencia de assinatura e dependencia tipada
+- usar `Platform and native binding metadata` como bloco inicial para plataforma, assembly, biblioteca alvo, binding nativo e metadata tecnica especifica
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e surface funcional externa, o que e assinatura tipada e o que e binding nativo/plataforma; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

@@ -53,6 +53,7 @@ Do NOT use this skill for:
 - For `DataProvider`, classify the review by functional block before fine analysis: `Output structure`, `Source`, `Navigation context`, `Calls and dependencies`, or `Identity and container`
 - For `API`, classify the review by functional block before fine analysis: `Service contract`, `Events and orchestration`, `Calls and dependencies`, `Data contract`, or `Identity and container`
 - For `Table`, classify the review by functional block before fine analysis: `Primary key structure`, `Secondary indexes and embedded index members`, `Transaction coupling and physical context`, or `Identity and container`
+- For `ExternalObject`, classify the review by functional block before fine analysis: `External contract surface`, `Method signatures and parameter typing`, `Platform and native binding metadata`, or `Identity and container`
 - Treat any extra block opened after the first one as an `adjacent block` and open it only when there is explicit functional dependency with the primary block
 - Name every justified block transition in the analysis and handoff, instead of silently widening the scope
 - State the conclusion scope at the smallest functional level supported by evidence, including execution context when that distinction matters
@@ -275,19 +276,25 @@ Reference files and when to load them:
    - `Transaction coupling and physical context` for physical reassociation with the `Transaction` of the same name, structural context in the target, and contextual dependency that still exists even when named `parent` is absent
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parentGuid`, `moduleGuid`, and the risk of reading the wrong `Table` in the wrong structural context
 51. For `Table`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, keep primary key, embedded indexes, and transaction-coupling/context layers separate until evidence supports joining them, and do not promote embedded `Index` to a separate top-level object in this reading
-52. If type is `Procedure` → classify the primary review block before fine analysis:
+52. If type is `ExternalObject` → classify the primary review block before fine analysis:
+   - `External contract surface` for exposed surface, external naming, published methods/properties, and the functional role of the wrapper
+   - `Method signatures and parameter typing` for methods, parameters, return values, signature coherence, and typed dependencies such as `SDT`, domains, or helper types
+   - `Platform and native binding metadata` for assembly, target library, platform metadata, native binding, and technical coupling specific to the `ExternalObject`
+   - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
+53. For `ExternalObject`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep exposed surface, typed signatures, and native-binding/platform metadata separate until evidence supports joining them
+54. If type is `Procedure` → classify the primary review block before fine analysis:
    - `Source` for filters, flow, conditions, assignments, navigation, and calls made in the body
    - `Rules/parm` for signature, parameters, declarative contract, and rule-focused errors
    - `Variables` for existence, type, helper declarations, and collection-vs-simple coherence
    - `Calls and dependencies` for callee review, dependency chain, and proof of caller call-site
    - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
    - `Report layout` only when the `Procedure` is a report and the symptoms involve `Bands`, `PrintBlock`, `ReportLabel`, `ReportAttribute`, or layout shape
-53. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
-54. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
-55. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
-56. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
-57. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-58. Report result:
+55. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
+56. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
+57. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
+58. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
+59. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+60. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
@@ -305,6 +312,7 @@ Reference files and when to load them:
    - For `Folder`, primary review block and any justified block transition used in the analysis
    - For `Domain`, primary review block and any justified block transition used in the analysis
    - For `Table`, primary review block and any justified block transition used in the analysis
+   - For `ExternalObject`, primary review block and any justified block transition used in the analysis
    - For `Procedure`, primary review block and any justified block transition used in the analysis
    - Risk level
    - Part types: present / expected / missing — or N/A if the type is confirmed in [01b] as using no Parts
@@ -334,6 +342,7 @@ Reference files and when to load them:
 - [ ] For `DataProvider`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `API`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Table`, the primary review block was declared before fine analysis and any block transition was justified explicitly
+- [ ] For `ExternalObject`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Procedure`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For report `Procedure`, evidence was separated into `Source`, `Rules`, and layout and the escalation status was made explicit
 - [ ] Confidence level declared for every conclusion
@@ -364,5 +373,6 @@ Reference files and when to load them:
 - For `DataProvider`, NEVER treat output shape as proved only by dependency inventory, or navigation context as proved only by the return shape
 - For `API`, NEVER treat dependency inventory as enough to prove service contract, or service contract text as enough to prove the full orchestration chain
 - For `Table`, NEVER treat embedded `Index` as an independent top-level object in this review, and NEVER treat absence of named `parent` as proof that the `Table` has no contextual dependency
+- For `ExternalObject`, NEVER treat native-binding/platform metadata as enough to prove method signatures, or exposed surface text as enough to prove technical binding correctness
 - For `Procedure`, NEVER jump from one functional block to another without explicit dependency rationale
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) take precedence over all heuristics

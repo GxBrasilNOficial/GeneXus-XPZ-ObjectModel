@@ -548,6 +548,25 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `chave primaria`, `indices embutidos`, `acoplamento fisico/contextual` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `Table` inteira por reflexo.
 
+### Revisao por blocos em `ExternalObject`
+
+- `Regra operacional`: em `ExternalObject`, nao tratar o objeto como contrato externo monolitico; a revisao fina deve separar explicitamente superficie exposta, assinaturas tipadas, metadata de binding nativo e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `ExternalObject` sao `External contract surface`, `Method signatures and parameter typing`, `Platform and native binding metadata` e `Identity and container`.
+- `Regra operacional`: `External contract surface` cobre nome externo, superficie de metodos/propriedades expostas e o papel funcional publicado pelo wrapper.
+- `Regra operacional`: `Method signatures and parameter typing` cobre metodos, parametros, retorno, coerencia de assinatura e dependencias tipadas como `SDT`, dominios ou tipos auxiliares.
+- `Regra operacional`: `Platform and native binding metadata` cobre assembly, biblioteca, metadata de plataforma, binding nativo e o acoplamento tecnico especifico do `ExternalObject`.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, alem do risco de estar lendo o wrapper errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `ExternalObject`.
+- `Regra operacional`: em `ExternalObject`, as transicoes mais comuns e justificadas sao `External contract surface -> Method signatures and parameter typing`, `External contract surface -> Platform and native binding metadata`, `External contract surface -> Identity and container`, `Method signatures and parameter typing -> External contract surface`, `Method signatures and parameter typing -> Platform and native binding metadata`, `Method signatures and parameter typing -> Identity and container`, `Platform and native binding metadata -> External contract surface`, `Platform and native binding metadata -> Method signatures and parameter typing`, `Platform and native binding metadata -> Identity and container`, `Identity and container -> External contract surface`, `Identity and container -> Method signatures and parameter typing` e `Identity and container -> Platform and native binding metadata`.
+- `Regra operacional`: usar `External contract surface` como bloco inicial quando o sintoma falar do que o objeto expoe, do nome externo, da surface funcional ou do papel do wrapper.
+- `Regra operacional`: usar `Method signatures and parameter typing` como bloco inicial quando a duvida falar de metodo, parametro, retorno, tipo quebrado, assinatura incoerente ou dependencia tipada.
+- `Regra operacional`: usar `Platform and native binding metadata` como bloco inicial quando o sintoma falar de binding nativo, plataforma, assembly, biblioteca alvo ou metadata tecnica especifica.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `ExternalObject`, nao tratar surface externa publicada como prova automatica de assinatura tipada correta, e nao tratar metadata de binding nativo como prova automatica de contrato funcional bem definido.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `superficie externa`, `assinatura e tipagem`, `binding nativo/plataforma` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `ExternalObject` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
