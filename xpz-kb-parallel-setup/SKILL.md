@@ -17,8 +17,6 @@ Quando o usuario usar qualquer linguagem que sugira setup — "refazer", "reinic
 
 Essa confirmacao breve antes de gravar deve ser textual, objetiva e aderente ao diagnostico em andamento. Nao abrir menu, enquete, questionario ou lista de opcoes logo no inicio de `modo_atualizacao` quando a auditoria minima obrigatoria ainda nao tiver sido concluida.
 
-Na mensagem visivel ao usuario, preferir linguagem operacional humana e concreta, pensada para usuario tipico de GeneXus. Em vez de frases abstratas como "executar em modo_atualizacao", "alinhar com a base metodologica atual", "incorporar o que estiver faltando" ou "verificar o naming", explicar o que sera olhado de forma reconhecivel: por exemplo, revisar os scripts da pasta `scripts`, conferir se `ObjetosDaKbEmXml` e `KbIntelligence` estao coerentes e apontar o que estiver faltando, desatualizado ou divergente. Se houver chance real de alteracao, dizer explicitamente que primeiro vem a revisao e que qualquer correcao sera apresentada antes de gravar.
-
 Em `modo_atualizacao`, a verificacao de naming de `ObjetosDaKbEmXml` nao e opcional e nao pode ser pulada mesmo quando todos os scripts forem EQUIVALENTE: para cada diretorio presente na pasta, o agente deve ler pelo menos um XML, extrair o tipo canonico pelo GUID (ou pelo elemento raiz `<Attribute>`), comparar com o nome do diretorio e reportar o resultado — conforme ou divergente — antes de declarar qualquer estado de conclusao.
 
 Dentro de `modo_atualizacao`, separar primeiro a intencao operacional antes de avancar:
@@ -28,7 +26,7 @@ Dentro de `modo_atualizacao`, separar primeiro a intencao operacional antes de a
 
 `modo_atualizacao` descreve o contexto da pasta; `auditar_setup`, `corrigir_wrapper_local` e `atualizar_bootstrap_local` descrevem a natureza do trabalho. Nao tratar essas tres intencoes como se fossem a mesma coisa so porque acontecem na mesma pasta com historico real.
 
-Em `auditar_setup`, concluir primeiro a auditoria minima obrigatoria e so depois oferecer proximos passos. Antes disso, nao oferecer `sincronizar XPZ novamente`, `rebuild do indice` ou equivalentes como resposta-padrao a um pedido de "refazer setup". A saida minima da auditoria deve declarar, separadamente, `sync/materializacao`, `indice/gate` e `empacotamento local`, alem da classificacao dos wrappers auditados; `GATE_OK` e `STRUCTURE_OK`, sozinhos, nao bastam para resumir a pasta como "tudo certo".
+Em `auditar_setup`, concluir primeiro a auditoria minima obrigatoria e so depois oferecer proximos passos. Antes disso, nao oferecer `sincronizar XPZ novamente`, `rebuild do indice` ou equivalentes como resposta-padrao a um pedido de "refazer setup".
 
 ## PATH RESOLUTION
 

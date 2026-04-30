@@ -51,6 +51,7 @@ If the main need is to prepare or validate the initial folder structure around t
 - Abort if no comparable structural template exists and risk is high or very high
 - For `WebPanel`, classify the current delta by functional block before editing: `layout`, `events`, `variables`, `serialized functional metadata`, `identity and container`, or `dependencies`
 - For `Transaction`, classify the current delta by functional block before editing: `Transaction structure`, `Attributes and attribute properties`, `Rules`, `Events`, `Execution context`, or `Identity and container`
+- For `Transaction`, when the delta generates or reviews logic that assigns values to attributes accessed from a Transaction's base table, run the writability classification gate before any assignment is generated: classify each `key="False"` attribute in the Level using detection signals in order — `isRedundant="True"` in Level → `extended-parent-fk` (non-writable); `Formula` in its Attribute XML → `formula` (non-writable); SubTypeGroup member mapped to non-key Supertype → `extended-subtype-descriptive` (non-writable); SubTypeGroup member mapped to PK Supertype → `extended-subtype-key` (writable); none of the above → `own-physical` (writable); generating an assignment to a non-writable attribute is a hard error — ABORT; never conclude a Transaction's physical table has "only keys" before verifying that every `key="False"` attribute was classified and confirmed as non-writable
 - For `Procedure`, classify the current delta by functional block before editing: `Source`, `Rules/parm`, `Variables`, `Calls and dependencies`, `Identity and container`, and `Report layout` when applicable
 - For `DataProvider`, classify the current delta by functional block before editing: `Output structure`, `Source`, `Navigation context`, `Calls and dependencies`, or `Identity and container`
 - For `API`, classify the current delta by functional block before editing: `Service contract`, `Events and orchestration`, `Calls and dependencies`, `Data contract`, or `Identity and container`
@@ -114,6 +115,7 @@ If the main need is to prepare or validate the initial folder structure around t
 - Classify each active XML root as `Object`, `Attribute`, or unsupported before serializing the package
 - For a new `Transaction` package, treat top-level `Attribute` items referenced by the `Level` as mandatory package members under `<Attributes>`, never as `Domain`/object payload under `<Objects>`
 - When changing a `Transaction`, declare the primary edit block before touching the XML, use only the adjacent blocks required by explicit functional dependency, name each justified block transition, and state whether the intended effect is via web editing, via BC, or both
+- When changing a `Transaction` and the delta involves `Rules` or `Events` blocks that generate attribute assignments, run the writability classification gate from RESPONSIBILITIES before writing any assignment; do NOT generate assignments to non-writable attributes
 - Validate UTF-8 without BOM hygiene on active XMLs before packaging
 - Reread and apply local repository documentation (`AGENTS.md`, `README.md`, and equivalent project docs) before packaging whenever the target KB/repository defines specific functional review rules, contracts, or operational flow
 - Use local repository documentation as the mandatory specialization layer for KB-specific contracts and review chains, without promoting those local rules to the shared XPZ methodology
@@ -245,6 +247,18 @@ Reference files and when to load them:
        - Value is `False` or property is absent → **ABORT**: Transaction `X` exists in the official corpus but is not marked as Business Component; the Procedure's `bc:` dependency cannot be satisfied
        - Value is `True` → proceed normally; Transaction already exists as BC in the KB and is not being re-imported
      - If `X` is absent from both the batch and `ObjetosDaKbEmXml` → **ABORT**: Transaction `X` cannot be confirmed as existing or as Business Component in the target KB; do not package the dependent Procedure until the dependency is resolved
+8-WW. WorkWithWeb Apply-mark preflight gate — run before any packaging when the batch contains a `WorkWithForWeb` object (type `78cecefe-be7d-4980-86ce-8d6e91fba04b`; `Object/@name` starts with `WorkWithWeb` in the KB):
+   - For each `WorkWithForWeb` in the batch:
+     - Locate Part type `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc` in the WorkWithForWeb XML and read `<Property><Name>Apply</Name>` inside `<Source><Properties>`
+       - Property absent → **ABORT**: the `Apply` mark is missing from the WorkWithForWeb object; the IDE will not re-apply the Work With for Web pattern on save; add `<Name>Apply</Name><Value>True</Value>` before packaging
+       - Value is `False` → alert: pattern application is explicitly disabled for this object; confirm whether this is intentional before continuing
+       - Value is `True` → proceed to Transaction check
+     - Read the linked Transaction name from `<Property><Name>Transaction</Name><Value>...` in the same Part
+     - If that Transaction is present in the batch: read its `<Properties>` block and check for `<Name>Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b</Name><Value>True</Value>`
+       - Property absent → **ABORT**: Transaction `X` is in the batch but lacks the `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` mark; the IDE will not re-apply the Work With for Web pattern when saving that Transaction; add the property before packaging
+     - If that Transaction is in `ObjetosDaKbEmXml` but not in the batch: read the corpus XML and check for the same `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` property
+       - Property absent → alert: Transaction `X` exists in the official corpus but lacks the `Apply:GUID` mark; verify whether the existing KB state will preserve the expected pattern behavior after import
+     - If the linked Transaction is absent from both the batch and `ObjetosDaKbEmXml` → alert: cannot confirm the `Apply:GUID` mark on the target Transaction; document the gap before packaging
 8. Check for improper local changes in `ObjetosDaKbEmXml`:
    - If detected, treat this as an explicit process error
    - Preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, present a structured manifest of preserved items in the conversation, save it as a local file when incident traceability requires it, and **ABORT** packaging until the snapshot is sane
@@ -572,6 +586,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] Final closing explicitly states that the saved XML was reread, the persisted `lastUpdate` was confirmed, and the applicable local rules were reread and satisfied
 - [ ] Limitations block included in output
 - [ ] For every `Procedure` in the batch with a `bc:<X>` variable: Transaction `X` was confirmed as `idISBUSINESSCOMPONENT=True` in the batch or in `ObjetosDaKbEmXml`; when `X` is also in the same batch, import ordering risk was explicitly acknowledged or the batch was staged
+- [ ] For every `WorkWithForWeb` (`WorkWithWeb*`) in the batch: `Apply` property was verified in Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc`; if linked Transaction is also in the batch or in `ObjetosDaKbEmXml`, `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` was confirmed in that Transaction's Properties
 - [ ] If the package contains a WWP PatternInstance (`WorkWithPlus*`): rename collisions were checked (two old fields mapping to the same new name)
 - [ ] If the package contains a WWP PatternInstance: duplicate nodes in `<attribute>`, `<gridAttribute>`, and `<parameter>` were removed
 - [ ] If the package contains a WWP PatternInstance: `parentGuid` points to the correct target Transaction, not to the source entity
@@ -634,6 +649,8 @@ Ao clonar tela customizada WorkWithPlus:
 - ABORT if an essential `Source` construct depends only on intuition, generic GeneXus memory, or isolated local corpus evidence
 - NEVER package a `Procedure` with a `bc:<X>` variable when Transaction `X` is confirmed as not having `idISBUSINESSCOMPONENT=True` in the batch or in `ObjetosDaKbEmXml`
 - ABORT if a `bc:<X>` variable exists in a `Procedure` in the batch and Transaction `X` cannot be confirmed as `idISBUSINESSCOMPONENT=True` either in the batch or in `ObjetosDaKbEmXml`
+- NEVER package a `WorkWithForWeb` (`WorkWithWeb*`) object when the `Apply` property is absent from Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc`
+- ABORT if a `WorkWithForWeb` in the batch has its linked Transaction also in the batch and that Transaction lacks `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` in its Properties
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) and [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) take precedence over all other heuristics
 
 ---
