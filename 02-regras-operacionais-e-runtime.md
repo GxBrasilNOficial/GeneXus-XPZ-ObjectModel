@@ -715,6 +715,40 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra de fronteira`: nao colapsar surface declarada, parametros tecnicos e contexto de uso como se provassem a mesma coisa.
 - `Conclusao`: fechar a resposta no menor nivel funcional sustentado pelo XML e pela dependencia realmente aberta: definicao, parametros, contexto de uso ou identidade estrutural.
 
+### Revisao por blocos em Language
+
+- `Regra operacional`: `Language` nao deve ser tratado como bloco unico; separar definicao do idioma, parametros tecnicos de localizacao, contexto de uso e identidade estrutural.
+- `Blocos canonicos`:
+  - `Language definition and declared surface`
+  - `Localization parameters and technical options`
+  - `Model and runtime usage context`
+  - `Identity and container`
+- `Definicao do bloco Language definition and declared surface`: usar quando a duvida principal for o que o objeto declara ser, sua surface estrutural ou seu papel principal.
+- `Definicao do bloco Localization parameters and technical options`: usar quando a duvida principal for parametro, opcao, codigo, flag ou configuracao tecnica de localizacao.
+- `Definicao do bloco Model and runtime usage context`: usar quando a duvida principal for encaixe no modelo, consumo efetivo, vinculo com runtime ou papel funcional do idioma.
+- `Definicao do bloco Identity and container`: usar quando a duvida principal for `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` ou risco de objeto errado.
+- `Regra de condução`: declarar o bloco primario antes da leitura fina e abrir bloco adjacente apenas quando houver dependencia funcional explicita.
+- `Transicoes permitidas`:
+  - `Language definition and declared surface -> Localization parameters and technical options`
+  - `Language definition and declared surface -> Model and runtime usage context`
+  - `Language definition and declared surface -> Identity and container`
+  - `Localization parameters and technical options -> Language definition and declared surface`
+  - `Localization parameters and technical options -> Model and runtime usage context`
+  - `Localization parameters and technical options -> Identity and container`
+  - `Model and runtime usage context -> Language definition and declared surface`
+  - `Model and runtime usage context -> Localization parameters and technical options`
+  - `Model and runtime usage context -> Identity and container`
+  - `Identity and container -> Language definition and declared surface`
+  - `Identity and container -> Localization parameters and technical options`
+  - `Identity and container -> Model and runtime usage context`
+- `Gatilhos do bloco primario`:
+  - `Language definition and declared surface` para duvida sobre o que o objeto declara ser, seu papel principal ou sua surface estrutural.
+  - `Localization parameters and technical options` para duvida sobre parametros, opcoes, codigos, flags ou configuracao tecnica de localizacao.
+  - `Model and runtime usage context` para duvida sobre encaixe no modelo, consumo efetivo, vinculo com runtime ou papel funcional do idioma.
+  - `Identity and container` para duvida sobre `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` e risco de objeto errado.
+- `Regra de fronteira`: nao colapsar surface declarada, parametros tecnicos e contexto de uso como se provassem a mesma coisa.
+- `Conclusao`: fechar a resposta no menor nivel funcional sustentado pelo XML e pela dependencia realmente aberta: definicao, parametros, contexto de uso ou identidade estrutural.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
