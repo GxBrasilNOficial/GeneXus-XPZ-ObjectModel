@@ -520,6 +520,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e definicao do stencil, o que e parametrizacao/configuracao e o que e contexto de consumo; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `DataStore`
+
+- em `DataStore`, revisar por blocos funcionais; nao tratar o objeto como definicao de armazenamento monolitica quando a pergunta for de parametro, configuracao, conexao ou diagnostico fino
+- os blocos canonicos sao `Store definition and declared connection surface`, `Configuration parameters and runtime options`, `Model and consumption context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Configuration parameters and runtime options -> Model and consumption context` para separar problema de configuracao de problema de consumo contextual do store
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataStore` inteiro por reflexo
+- usar `Store definition and declared connection surface` como bloco inicial para identidade declarada do store, surface de conexao e shape principal da definicao
+- usar `Configuration parameters and runtime options` como bloco inicial para parametro, flag, opcao e configuracao operacional
+- usar `Model and consumption context` como bloco inicial para encaixe no modelo, consumo por objetos dependentes e papel no runtime
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e definicao do store, o que e configuracao runtime e o que e contexto de consumo; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

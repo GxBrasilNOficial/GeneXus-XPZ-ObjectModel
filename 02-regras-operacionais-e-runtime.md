@@ -662,6 +662,25 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao estrutural`, `parametros/configuracao`, `consumo por pattern/geracao` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Stencil` inteiro por reflexo.
 
+### Revisao por blocos em `DataStore`
+
+- `Regra operacional`: em `DataStore`, nao tratar o objeto como definicao de armazenamento monolitica; a revisao fina deve separar explicitamente definicao do store, configuracao operacional e contexto de consumo no modelo.
+- `Regra operacional`: os blocos canonicos de revisao em `DataStore` sao `Store definition and declared connection surface`, `Configuration parameters and runtime options`, `Model and consumption context` e `Identity and container`.
+- `Regra operacional`: `Store definition and declared connection surface` cobre a identidade declarada do store, a surface principal de conexao e o shape estrutural da definicao.
+- `Regra operacional`: `Configuration parameters and runtime options` cobre parametros, flags, opcoes e configuracao operacional do `DataStore`.
+- `Regra operacional`: `Model and consumption context` cobre como o `DataStore` se encaixa no modelo, o papel contextual do store e seu consumo por outros objetos ou pelo runtime.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, alem do risco de estar lendo o `DataStore` errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `DataStore`.
+- `Regra operacional`: em `DataStore`, as transicoes mais comuns e justificadas sao `Store definition and declared connection surface -> Configuration parameters and runtime options`, `Store definition and declared connection surface -> Model and consumption context`, `Store definition and declared connection surface -> Identity and container`, `Configuration parameters and runtime options -> Store definition and declared connection surface`, `Configuration parameters and runtime options -> Model and consumption context`, `Configuration parameters and runtime options -> Identity and container`, `Model and consumption context -> Store definition and declared connection surface`, `Model and consumption context -> Configuration parameters and runtime options`, `Model and consumption context -> Identity and container`, `Identity and container -> Store definition and declared connection surface`, `Identity and container -> Configuration parameters and runtime options` e `Identity and container -> Model and consumption context`.
+- `Regra operacional`: usar `Store definition and declared connection surface` como bloco inicial quando o sintoma falar do que o store declara ser, da surface de conexao ou do shape principal da definicao.
+- `Regra operacional`: usar `Configuration parameters and runtime options` como bloco inicial quando a duvida falar de parametro, flag, opcao ou configuracao operacional.
+- `Regra operacional`: usar `Model and consumption context` como bloco inicial quando o sintoma falar do encaixe do store no modelo, no runtime ou no consumo por objetos dependentes.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `DataStore`, nao tratar surface declarada como prova automatica de configuracao runtime correta, e nao tratar configuracao runtime como prova automatica de consumo contextual coerente.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao do store`, `configuracao runtime`, `contexto de consumo` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataStore` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
