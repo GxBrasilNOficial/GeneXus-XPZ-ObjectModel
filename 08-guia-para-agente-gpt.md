@@ -241,6 +241,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Data contract` como bloco inicial para shape de entrada/saida, coerencia de tipos, estrutura de resposta e mapeamento entre contrato e dados
 - usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
 
+### Regra adicional para revisao de `SDT`
+
+- em `SDT`, revisar por blocos funcionais; nao tratar objeto pequeno ou declarativo como leitura monolitica quando a pergunta for de shape, tipo, serializacao ou diagnostico fino
+- os blocos canonicos sao `Structure definition`, `Item typing and dependencies`, `External serialization contract`, `Top-level type properties` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Structure definition -> Item typing and dependencies` para confirmar se o item estruturalmente correto tambem aponta para o tipo certo
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `SDT` inteiro por reflexo
+- usar `Structure definition` como bloco inicial para `Level`, `LevelInfo`, sequencia de `Item`, hierarquia, composicao interna, item no nivel errado e colecao vs simples
+- usar `Item typing and dependencies` como bloco inicial para `idBasedOn`, `ATTCUSTOMTYPE`, dominio base, referencia a outro `SDT` e coerencia semantica do item
+- usar `External serialization contract` como bloco inicial para `ExternalName`, `ExternalNamespace`, `idXmlName`, `idXmlNamespace`, `soaptype`, `idCollectionItemName` e metadata de serializacao/integracao
+- usar `Top-level type properties` como bloco inicial para propriedade declarada no proprio `SDT`, especialmente tipagem ou comportamento estrutural top-level
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e shape interno do `SDT`, o que e dependencia tipada de item e o que e metadata de serializacao externa; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

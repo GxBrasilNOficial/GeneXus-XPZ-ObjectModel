@@ -274,6 +274,28 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: em `API`, as transicoes mais comuns e justificadas sao `Service contract -> Data contract`, `Service contract -> Events and orchestration`, `Events and orchestration -> Calls and dependencies`, `Calls and dependencies -> Data contract` e `Data contract -> Calls and dependencies`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `API` inteira por reflexo.
 
+### Revisao por blocos em `SDT`
+
+- `Regra operacional`: em `SDT`, nao tratar objeto pequeno ou declarativo como leitura monolitica; a revisao fina deve separar explicitamente estrutura interna, tipagem referenciada e metadata externa.
+- `Regra operacional`: os blocos canonicos de revisao em `SDT` sao `Structure definition`, `Item typing and dependencies`, `External serialization contract`, `Top-level type properties` e `Identity and container`.
+- `Regra operacional`: `Structure definition` cobre `Level`, `LevelInfo`, sequencia de `Item`, hierarquia, composicao simples vs composta, colecao vs simples e shape interno do `SDT`.
+- `Regra operacional`: `Item typing and dependencies` cobre `idBasedOn`, `ATTCUSTOMTYPE`, dominio base, referencia a outro `SDT` e coerencia entre papel estrutural do item e tipo declarado.
+- `Regra operacional`: `External serialization contract` cobre `ExternalName`, `ExternalNamespace`, `idXmlName`, `idXmlNamespace`, `soaptype`, `idCollectionItemName` e metadata equivalente de serializacao ou integracao.
+- `Regra operacional`: `Top-level type properties` cobre propriedades declaradas no nivel do proprio objeto `SDT`, especialmente quando expressarem tipagem, comportamento estrutural ou contrato do tipo como um todo, e nao de um item especifico.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `type`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `SDT`.
+- `Regra operacional`: em `SDT`, as transicoes mais comuns e justificadas sao `Structure definition -> Item typing and dependencies`, `Structure definition -> External serialization contract`, `Structure definition -> Identity and container`, `Item typing and dependencies -> Structure definition`, `Item typing and dependencies -> External serialization contract`, `Item typing and dependencies -> Identity and container`, `Item typing and dependencies -> Top-level type properties`, `External serialization contract -> Structure definition`, `External serialization contract -> Item typing and dependencies`, `External serialization contract -> Top-level type properties`, `External serialization contract -> Identity and container`, `Top-level type properties -> Item typing and dependencies`, `Top-level type properties -> External serialization contract`, `Top-level type properties -> Identity and container`, `Identity and container -> Structure definition`, `Identity and container -> Item typing and dependencies`, `Identity and container -> Top-level type properties` e `Identity and container -> External serialization contract`.
+- `Regra operacional`: usar `Structure definition` como bloco inicial quando o sintoma falar de shape, nivel, item ausente, item no lugar errado, colecao vs simples, hierarquia, composicao interna ou regressao estrutural do `SDT`.
+- `Regra operacional`: usar `Item typing and dependencies` como bloco inicial quando o sintoma falar de `ATTCUSTOMTYPE`, `idBasedOn`, dominio, tipo invalido, referencia a outro `SDT`, item semanticamente quebrado ou dependencia tipada ausente no destino.
+- `Regra operacional`: usar `External serialization contract` como bloco inicial quando o sintoma falar de XML externo, SOAP, namespace, nome externo, nome serializado de item/colecao, contrato publicado ou integracao.
+- `Regra operacional`: usar `Top-level type properties` como bloco inicial quando o sintoma falar de propriedade do proprio `SDT`, especialmente tipagem ou comportamento estrutural top-level, sem apontar primeiro para um `Item` especifico.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, pasta, modulo, `parent`, `fullyQualifiedName`, clonagem, colisao de identidade ou contexto estrutural do `SDT`.
+- `Regra operacional`: em `SDT`, nao tratar `ATTCUSTOMTYPE` de item interno e `ATTCUSTOMTYPE` top-level como a mesma camada de evidencia; cada um pede bloco proprio.
+- `Regra operacional`: em `SDT`, nao tratar `External serialization contract` como prova automatica de shape interno correto, e nao tratar shape interno correto como prova automatica de contrato externo valido.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `shape interno`, `tipagem/dependencia`, `contrato externo`, `propriedade top-level` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `SDT` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
