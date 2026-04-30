@@ -401,6 +401,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade do sistema`, `tokens/recursos declarados`, `acoplamento tema/paleta`, `superficie de consumo` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `DesignSystem` inteiro por reflexo.
 
+### Revisao por blocos em `PackagedModule`
+
+- `Regra operacional`: em `PackagedModule`, nao tratar o objeto como contêiner trivial de instalacao; a revisao fina deve separar explicitamente identidade do modulo, fronteira de empacotamento, contexto de instalacao e superficie de dependencia/consumo.
+- `Regra operacional`: os blocos canonicos de revisao em `PackagedModule` sao `Module identity and naming`, `Packaging boundary and declared members`, `Parent and installation context`, `Dependency and consumption surface` e `Identity and container`.
+- `Regra operacional`: `Module identity and naming` cobre nome logico do modulo, identidade nominal e papel semantico esperado do pacote.
+- `Regra operacional`: `Packaging boundary and declared members` cobre fronteira do pacote, membros declarados, composicao interna, itens faltantes e o conjunto funcional que o modulo empacotado realmente delimita.
+- `Regra operacional`: `Parent and installation context` cobre relacao com instalacao, `parent` estrutural, contexto do modulo empacotado e o encaixe do objeto na hierarquia em que ele e distribuido.
+- `Regra operacional`: `Dependency and consumption surface` cobre dependencias do modulo e a forma como ele e consumido por outros objetos, camadas ou modulos.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa de `PackagedModule`.
+- `Regra operacional`: em `PackagedModule`, as transicoes mais comuns e justificadas sao `Module identity and naming -> Packaging boundary and declared members`, `Module identity and naming -> Dependency and consumption surface`, `Module identity and naming -> Identity and container`, `Packaging boundary and declared members -> Module identity and naming`, `Packaging boundary and declared members -> Parent and installation context`, `Packaging boundary and declared members -> Dependency and consumption surface`, `Parent and installation context -> Packaging boundary and declared members`, `Parent and installation context -> Dependency and consumption surface`, `Parent and installation context -> Identity and container`, `Dependency and consumption surface -> Packaging boundary and declared members`, `Dependency and consumption surface -> Parent and installation context`, `Dependency and consumption surface -> Module identity and naming`, `Identity and container -> Module identity and naming`, `Identity and container -> Parent and installation context` e `Identity and container -> Packaging boundary and declared members`.
+- `Regra operacional`: usar `Module identity and naming` como bloco inicial quando o sintoma falar de nome do modulo, papel semantico, colisao nominal, alias inadequado ou renomeacao.
+- `Regra operacional`: usar `Packaging boundary and declared members` como bloco inicial quando o sintoma falar de fronteira do pacote, membros declarados, composicao interna, itens faltantes ou delimitacao funcional do modulo.
+- `Regra operacional`: usar `Parent and installation context` como bloco inicial quando o sintoma falar de instalacao, `parent`, contexto hierarquico ou encaixe do modulo empacotado.
+- `Regra operacional`: usar `Dependency and consumption surface` como bloco inicial quando o sintoma falar de dependencias do modulo ou da forma como ele e consumido por outras camadas.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `guid`, `fullyQualifiedName`, `moduleGuid`, clonagem ou contexto estrutural.
+- `Regra operacional`: em `PackagedModule`, nao tratar `Module identity and naming` como prova automatica de fronteira de empacotamento correta, e nao tratar `Parent and installation context` como mero detalhe administrativo.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade do modulo`, `fronteira de empacotamento`, `contexto de instalacao`, `superficie de dependencia/consumo` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `PackagedModule` inteiro por reflexo.
+
 ### Revisao por blocos em `Attribute`
 
 - `Regra operacional`: em `Attribute`, nao tratar o objeto como definicao escalar trivial; a revisao fina deve separar explicitamente shape top-level, propriedades semanticas, referencias nominais e contexto estrutural.

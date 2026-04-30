@@ -331,6 +331,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e identidade do sistema, o que e token/recurso declarado, o que e acoplamento com tema/paleta e o que e superficie de consumo; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `PackagedModule`
+
+- em `PackagedModule`, revisar por blocos funcionais; nao tratar o objeto como contêiner trivial de instalacao quando a pergunta for de identidade do modulo, fronteira do pacote, contexto de instalacao, superficie de dependencia/consumo ou diagnostico fino
+- os blocos canonicos sao `Module identity and naming`, `Packaging boundary and declared members`, `Parent and installation context`, `Dependency and consumption surface` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Dependency and consumption surface -> Packaging boundary and declared members` para verificar se a quebra percebida no consumo do modulo vem da dependencia externa ou da fronteira funcional que o pacote realmente declara
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `PackagedModule` inteiro por reflexo
+- usar `Module identity and naming` como bloco inicial para nome logico do modulo, identidade nominal e papel semantico esperado
+- usar `Packaging boundary and declared members` como bloco inicial para membros declarados, composicao interna, fronteira do pacote e delimitacao funcional
+- usar `Parent and installation context` como bloco inicial para relacao com instalacao, `parent`, contexto hierarquico e encaixe estrutural do modulo
+- usar `Dependency and consumption surface` como bloco inicial para dependencias do modulo e forma de consumo por outras camadas
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e identidade do modulo, o que e fronteira de empacotamento, o que e contexto de instalacao e o que e superficie de dependencia/consumo; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Attribute`
 
 - em `Attribute`, revisar por blocos funcionais; nao tratar o objeto como definicao escalar trivial quando a pergunta for de tipagem, referencia nominal, semantica de controle ou diagnostico fino
