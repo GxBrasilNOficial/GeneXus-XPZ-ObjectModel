@@ -58,6 +58,7 @@ Do NOT use this skill for:
 - For `SubTypeGroup`, classify the review by functional block before fine analysis: `Group definition and member structure`, `Subtype mappings and role assignments`, `Contextual usage contract`, or `Identity and container`
 - For `File`, classify the review by functional block before fine analysis: `File identity and declared surface`, `Binary or textual payload fidelity`, `References and consumption context`, or `Identity and container`
 - For `Dashboard`, classify the review by functional block before fine analysis: `Dashboard composition and layout`, `Widgets and data bindings`, `Navigation and interaction context`, or `Identity and container`
+- For `Stencil`, classify the review by functional block before fine analysis: `Stencil definition and structural surface`, `Parameters and configurable slots`, `Pattern or generation consumption context`, or `Identity and container`
 - Treat any extra block opened after the first one as an `adjacent block` and open it only when there is explicit functional dependency with the primary block
 - Name every justified block transition in the analysis and handoff, instead of silently widening the scope
 - State the conclusion scope at the smallest functional level supported by evidence, including execution context when that distinction matters
@@ -310,19 +311,25 @@ Reference files and when to load them:
    - `Navigation and interaction context` for actions, links, drill-down, user interaction, and the dashboard's functional placement in the wider flow
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
 61. For `Dashboard`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep composition, widget-binding, and navigation-interaction layers separate until evidence supports joining them
-62. If type is `Procedure` → classify the primary review block before fine analysis:
+62. If type is `Stencil` → classify the primary review block before fine analysis:
+   - `Stencil definition and structural surface` for artifact shape, declared composition, base structure, and structural surface of the stencil
+   - `Parameters and configurable slots` for parameters, placeholders, variable slots, and configurable contract of the stencil
+   - `Pattern or generation consumption context` for how the stencil is consumed by patterns, generation, or dependent flows
+   - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
+63. For `Stencil`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep structural definition, parameterization, and pattern/generation-consumption layers separate until evidence supports joining them
+64. If type is `Procedure` → classify the primary review block before fine analysis:
    - `Source` for filters, flow, conditions, assignments, navigation, and calls made in the body
    - `Rules/parm` for signature, parameters, declarative contract, and rule-focused errors
    - `Variables` for existence, type, helper declarations, and collection-vs-simple coherence
    - `Calls and dependencies` for callee review, dependency chain, and proof of caller call-site
    - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
    - `Report layout` only when the `Procedure` is a report and the symptoms involve `Bands`, `PrintBlock`, `ReportLabel`, `ReportAttribute`, or layout shape
-63. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
-64. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
-65. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
-66. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
-67. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-68. Report result:
+65. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
+66. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
+67. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
+68. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
+69. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+70. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
@@ -345,6 +352,7 @@ Reference files and when to load them:
    - For `SubTypeGroup`, primary review block and any justified block transition used in the analysis
    - For `File`, primary review block and any justified block transition used in the analysis
    - For `Dashboard`, primary review block and any justified block transition used in the analysis
+   - For `Stencil`, primary review block and any justified block transition used in the analysis
    - For `Procedure`, primary review block and any justified block transition used in the analysis
    - Risk level
    - Part types: present / expected / missing — or N/A if the type is confirmed in [01b] as using no Parts
@@ -379,6 +387,7 @@ Reference files and when to load them:
 - [ ] For `SubTypeGroup`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `File`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Dashboard`, the primary review block was declared before fine analysis and any block transition was justified explicitly
+- [ ] For `Stencil`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Procedure`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For report `Procedure`, evidence was separated into `Source`, `Rules`, and layout and the escalation status was made explicit
 - [ ] Confidence level declared for every conclusion
@@ -414,5 +423,6 @@ Reference files and when to load them:
 - For `SubTypeGroup`, NEVER treat contextual usage in another object as enough to prove internal subtype-role mapping correctness, or internal group composition as enough to prove contextual usage is coherent
 - For `File`, NEVER treat declared resource identity/surface as enough to prove payload fidelity, or payload fidelity as enough to prove correct consumption context
 - For `Dashboard`, NEVER treat visual composition as enough to prove widget/data binding correctness, or widget/data binding as enough to prove navigation/interaction coherence
+- For `Stencil`, NEVER treat structural definition as enough to prove parameterization correctness, or consumption by pattern/generation as enough to prove internal stencil definition is coherent
 - For `Procedure`, NEVER jump from one functional block to another without explicit dependency rationale
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) take precedence over all heuristics

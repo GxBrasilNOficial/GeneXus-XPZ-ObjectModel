@@ -643,6 +643,25 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `composicao`, `widgets e bindings`, `navegacao/interacao` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Dashboard` inteiro por reflexo.
 
+### Revisao por blocos em `Stencil`
+
+- `Regra operacional`: em `Stencil`, nao tratar o objeto como molde estrutural monolitico; a revisao fina deve separar explicitamente definicao do artefato, parametros/configuracao variavel, contexto de consumo por pattern/geracao e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `Stencil` sao `Stencil definition and structural surface`, `Parameters and configurable slots`, `Pattern or generation consumption context` e `Identity and container`.
+- `Regra operacional`: `Stencil definition and structural surface` cobre shape do stencil, composicao declarada, estrutura-base e a surface estrutural do artefato.
+- `Regra operacional`: `Parameters and configurable slots` cobre parametros, pontos variaveis, placeholders e o contrato configuravel do stencil.
+- `Regra operacional`: `Pattern or generation consumption context` cobre como o stencil e consumido por pattern, geracao ou fluxo dependente, sem colapsar isso com a definicao interna do artefato.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, alem do risco de estar lendo o stencil errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `Stencil`.
+- `Regra operacional`: em `Stencil`, as transicoes mais comuns e justificadas sao `Stencil definition and structural surface -> Parameters and configurable slots`, `Stencil definition and structural surface -> Pattern or generation consumption context`, `Stencil definition and structural surface -> Identity and container`, `Parameters and configurable slots -> Stencil definition and structural surface`, `Parameters and configurable slots -> Pattern or generation consumption context`, `Parameters and configurable slots -> Identity and container`, `Pattern or generation consumption context -> Stencil definition and structural surface`, `Pattern or generation consumption context -> Parameters and configurable slots`, `Pattern or generation consumption context -> Identity and container`, `Identity and container -> Stencil definition and structural surface`, `Identity and container -> Parameters and configurable slots` e `Identity and container -> Pattern or generation consumption context`.
+- `Regra operacional`: usar `Stencil definition and structural surface` como bloco inicial quando o sintoma falar de shape do stencil, composicao declarada, estrutura-base ou surface do artefato.
+- `Regra operacional`: usar `Parameters and configurable slots` como bloco inicial quando a duvida falar de parametro, placeholder, ponto variavel ou contrato configuravel.
+- `Regra operacional`: usar `Pattern or generation consumption context` como bloco inicial quando o sintoma falar do uso do stencil por pattern, geracao ou fluxo dependente.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `Stencil`, nao tratar estrutura declarada do artefato como prova automatica de parametrizacao correta, e nao tratar consumo por pattern/geracao como prova automatica de definicao interna coerente.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao estrutural`, `parametros/configuracao`, `consumo por pattern/geracao` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Stencil` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.

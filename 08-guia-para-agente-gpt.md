@@ -506,6 +506,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e composicao do dashboard, o que e binding de widget e o que e navegacao/interacao; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Stencil`
+
+- em `Stencil`, revisar por blocos funcionais; nao tratar o objeto como molde estrutural monolitico quando a pergunta for de parametro, placeholder, consumo por pattern ou diagnostico fino
+- os blocos canonicos sao `Stencil definition and structural surface`, `Parameters and configurable slots`, `Pattern or generation consumption context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Parameters and configurable slots -> Pattern or generation consumption context` para separar problema de configuracao de problema de consumo do stencil
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Stencil` inteiro por reflexo
+- usar `Stencil definition and structural surface` como bloco inicial para shape do artefato, composicao declarada, estrutura-base e surface do stencil
+- usar `Parameters and configurable slots` como bloco inicial para parametro, placeholder, ponto variavel e contrato configuravel
+- usar `Pattern or generation consumption context` como bloco inicial para consumo por pattern, geracao ou fluxo dependente
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e definicao do stencil, o que e parametrizacao/configuracao e o que e contexto de consumo; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino
