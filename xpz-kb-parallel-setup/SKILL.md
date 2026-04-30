@@ -13,7 +13,11 @@ Define e valida a estrutura inicial da pasta paralela da KB usada ao redor de um
 
 Usar esta skill quando o trabalho exigir preparar, explicar, validar, atualizar ou corrigir a estrutura da pasta paralela da KB. O agente deve separar claramente a pasta nativa da KB da pasta paralela e aplicar os nomes padrao quando o usuario nao informar alternativas.
 
-Quando o usuario usar qualquer linguagem que sugira setup — "refazer", "reiniciar", "recriar", "atualizar", "preciso dos novos scripts", "meu gate ta falhando" ou equivalente — em pasta que ja tem historico real, assumir `modo_atualizacao` e confirmar brevemente com o usuario o que sera feito antes de gravar. Em pasta com historico real, `modo_criacao` nunca e uma opcao oferecida ou aceita; se o usuario insistir em apagar tudo ou recriar do zero, recusar, explicar que dados existentes nao serao destruidos e redirecionar para `modo_atualizacao`.
+Quando o usuario usar qualquer linguagem que sugira setup — "refazer", "reiniciar", "recriar", "atualizar", "preciso dos novos scripts", "meu gate ta falhando" ou equivalente — em pasta que ja tem historico real, assumir `modo_atualizacao` e confirmar brevemente com o usuario o que sera feito antes de gravar. Se o pedido for generico, como "refazer o setup", "revisar o setup" ou equivalente, assumir por padrao a intencao `auditar_setup` ate que o usuario peca explicitamente `corrigir_wrapper_local` ou `atualizar_bootstrap_local`. Em pasta com historico real, `modo_criacao` nunca e uma opcao oferecida ou aceita; se o usuario insistir em apagar tudo ou recriar do zero, recusar, explicar que dados existentes nao serao destruidos e redirecionar para `modo_atualizacao`.
+
+Essa confirmacao breve antes de gravar deve ser textual, objetiva e aderente ao diagnostico em andamento. Nao abrir menu, enquete, questionario ou lista de opcoes logo no inicio de `modo_atualizacao` quando a auditoria minima obrigatoria ainda nao tiver sido concluida.
+
+Na mensagem visivel ao usuario, preferir linguagem operacional humana e concreta, pensada para usuario tipico de GeneXus. Em vez de frases abstratas como "executar em modo_atualizacao", "alinhar com a base metodologica atual", "incorporar o que estiver faltando" ou "verificar o naming", explicar o que sera olhado de forma reconhecivel: por exemplo, revisar os scripts da pasta `scripts`, conferir se `ObjetosDaKbEmXml` e `KbIntelligence` estao coerentes e apontar o que estiver faltando, desatualizado ou divergente. Se houver chance real de alteracao, dizer explicitamente que primeiro vem a revisao e que qualquer correcao sera apresentada antes de gravar.
 
 Em `modo_atualizacao`, a verificacao de naming de `ObjetosDaKbEmXml` nao e opcional e nao pode ser pulada mesmo quando todos os scripts forem EQUIVALENTE: para cada diretorio presente na pasta, o agente deve ler pelo menos um XML, extrair o tipo canonico pelo GUID (ou pelo elemento raiz `<Attribute>`), comparar com o nome do diretorio e reportar o resultado — conforme ou divergente — antes de declarar qualquer estado de conclusao.
 
@@ -24,12 +28,17 @@ Dentro de `modo_atualizacao`, separar primeiro a intencao operacional antes de a
 
 `modo_atualizacao` descreve o contexto da pasta; `auditar_setup`, `corrigir_wrapper_local` e `atualizar_bootstrap_local` descrevem a natureza do trabalho. Nao tratar essas tres intencoes como se fossem a mesma coisa so porque acontecem na mesma pasta com historico real.
 
+Em `auditar_setup`, concluir primeiro a auditoria minima obrigatoria e so depois oferecer proximos passos. Antes disso, nao oferecer `sincronizar XPZ novamente`, `rebuild do indice` ou equivalentes como resposta-padrao a um pedido de "refazer setup". A saida minima da auditoria deve declarar, separadamente, `sync/materializacao`, `indice/gate` e `empacotamento local`, alem da classificacao dos wrappers auditados; `GATE_OK` e `STRUCTURE_OK`, sozinhos, nao bastam para resumir a pasta como "tudo certo".
+
 ## PATH RESOLUTION
 
 - Este `SKILL.md` fica dentro de uma subpasta de skill sob a raiz do repositório.
 - Toda referência `../arquivo.md` deve ser resolvida a partir da pasta deste `SKILL.md`, e não do diretório de trabalho corrente.
 - Na prática, `../` aponta para a base metodológica compartilhada na pasta-pai desta skill.
 - Quando a sessão já publicar um caminho desta skill ou de seus exemplos, usar esse caminho publicado como fonte autoritativa; não inferir caminho alternativo por heurística.
+- Para `examples/`, resolver primeiro a pasta irmã do `SKILL.md` publicado na sessão. Se o `SKILL.md` publicado vier de fora do repositório corrente, não procurar `examples/` primeiro dentro do workspace atual só porque existe uma pasta de nome parecido.
+- Se o caminho publicado da skill estiver fora do workspace atual, isso não autoriza reinterpretar a origem da skill nem trocar automaticamente para um caminho "equivalente" dentro do repositório; o caminho publicado continua prevalecendo até evidência objetiva em contrário.
+- Se a leitura dos `examples/` publicados ainda não tiver ocorrido, a auditoria pode seguir provisoriamente com evidência local já disponível (`GATE_OK`, `STRUCTURE_OK`, parse dos wrappers, presença de seções obrigatórias e verificação de naming), deixando a classificação final contra os exemplos como etapa pendente explícita em vez de abrir exploração ampla de caminhos cedo demais.
 
 ---
 
