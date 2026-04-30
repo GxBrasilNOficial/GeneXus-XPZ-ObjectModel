@@ -338,6 +338,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `superficie direta`, `heranca`, `aplicabilidade/classificacao`, `dependencia visual externa` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `ThemeClass` inteira por reflexo.
 
+### Revisao por blocos em `ThemeColor`
+
+- `Regra operacional`: em `ThemeColor`, nao tratar o objeto como cor trivial isolada so porque ele e declarativo e nao usa `Part`; a revisao fina deve separar explicitamente identidade nominal, valor direto, encaixe tematico e dependencia de uso visual.
+- `Regra operacional`: os blocos canonicos de revisao em `ThemeColor` sao `Color identity and naming`, `Direct color value surface`, `Theme applicability and palette coupling`, `Visual references and usage dependencies` e `Identity and container`.
+- `Regra operacional`: `Color identity and naming` cobre nome logico da cor, identidade nominal e papel tematico esperado da cor dentro da familia visual.
+- `Regra operacional`: `Direct color value surface` cobre as `Properties` top-level da propria cor, valor serializado, shape direto do objeto e definicao concreta da cor sem mediacao por `Part`.
+- `Regra operacional`: `Theme applicability and palette coupling` cobre aplicabilidade tematica, relacao com `Theme`, `ColorPalette`, `DesignSystem` e o encaixe semantico da cor dentro da organizacao visual.
+- `Regra operacional`: `Visual references and usage dependencies` cobre consumo da cor por `ThemeClass`, `Theme`, estilos e outros elementos visuais que dependam dessa identidade existir e apontar para o valor esperado.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa de `ThemeColor`.
+- `Regra operacional`: em `ThemeColor`, as transicoes mais comuns e justificadas sao `Color identity and naming -> Direct color value surface`, `Color identity and naming -> Visual references and usage dependencies`, `Color identity and naming -> Identity and container`, `Direct color value surface -> Color identity and naming`, `Direct color value surface -> Theme applicability and palette coupling`, `Direct color value surface -> Visual references and usage dependencies`, `Theme applicability and palette coupling -> Direct color value surface`, `Theme applicability and palette coupling -> Visual references and usage dependencies`, `Theme applicability and palette coupling -> Identity and container`, `Visual references and usage dependencies -> Direct color value surface`, `Visual references and usage dependencies -> Theme applicability and palette coupling`, `Visual references and usage dependencies -> Color identity and naming`, `Identity and container -> Color identity and naming`, `Identity and container -> Theme applicability and palette coupling` e `Identity and container -> Direct color value surface`.
+- `Regra operacional`: usar `Color identity and naming` como bloco inicial quando o sintoma falar de nome de cor errado, colisao nominal, renomeacao, papel semantico ou alias visual inadequado.
+- `Regra operacional`: usar `Direct color value surface` como bloco inicial quando o sintoma falar de valor de cor errado, serializacao incorreta, propriedade faltante ou duvida sobre a propria definicao concreta da cor.
+- `Regra operacional`: usar `Theme applicability and palette coupling` como bloco inicial quando o sintoma falar de encaixe em tema/paleta, escopo da cor, organizacao tematica ou coerencia com a familia visual.
+- `Regra operacional`: usar `Visual references and usage dependencies` como bloco inicial quando o sintoma falar de referencia quebrada, consumo incorreto por classe/tema ou impacto em objetos visuais dependentes.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `guid`, `fullyQualifiedName`, modulo, clonagem ou contexto estrutural.
+- `Regra operacional`: em `ThemeColor`, nao tratar `Color identity and naming` e `Direct color value surface` como a mesma camada de evidencia, e nao tratar `Theme applicability and palette coupling` como mero agrupamento decorativo.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade nominal`, `valor direto`, `encaixe tematico`, `dependencia de uso visual` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `ThemeColor` inteiro por reflexo.
+
 ### Revisao por blocos em `Attribute`
 
 - `Regra operacional`: em `Attribute`, nao tratar o objeto como definicao escalar trivial; a revisao fina deve separar explicitamente shape top-level, propriedades semanticas, referencias nominais e contexto estrutural.

@@ -286,6 +286,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e superficie direta da classe, o que e heranca, o que e aplicabilidade/classificacao interna e o que e dependencia visual externa; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `ThemeColor`
+
+- em `ThemeColor`, revisar por blocos funcionais; nao tratar o objeto como cor trivial isolada quando a pergunta for de identidade nominal, valor, encaixe tematico, dependencia visual ou diagnostico fino
+- os blocos canonicos sao `Color identity and naming`, `Direct color value surface`, `Theme applicability and palette coupling`, `Visual references and usage dependencies` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Visual references and usage dependencies -> Direct color value surface` para verificar se o consumo quebrado da cor vem da referencia ou do valor concretamente serializado
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `ThemeColor` inteiro por reflexo
+- usar `Color identity and naming` como bloco inicial para nome logico, identidade nominal da cor e papel tematico esperado
+- usar `Direct color value surface` como bloco inicial para `Properties` top-level, valor serializado, shape direto e definicao concreta da cor
+- usar `Theme applicability and palette coupling` como bloco inicial para relacao com `Theme`, `ColorPalette`, `DesignSystem`, escopo da cor e encaixe semantico na familia visual
+- usar `Visual references and usage dependencies` como bloco inicial para consumo por `ThemeClass`, `Theme`, estilos ou outros elementos visuais dependentes
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e identidade nominal da cor, o que e valor direto, o que e encaixe tematico e o que e dependencia de uso visual; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Attribute`
 
 - em `Attribute`, revisar por blocos funcionais; nao tratar o objeto como definicao escalar trivial quando a pergunta for de tipagem, referencia nominal, semantica de controle ou diagnostico fino
