@@ -271,6 +271,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
 - manter separado o que e definicao-base do tema, o que e grafo de classes, o que e binding visual normativo e o que e simplificacao/override; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Attribute`
+
+- em `Attribute`, revisar por blocos funcionais; nao tratar o objeto como definicao escalar trivial quando a pergunta for de tipagem, referencia nominal, semantica de controle ou diagnostico fino
+- os blocos canonicos sao `Attribute core definition`, `Typing and base linkage`, `Semantic property references`, `Presentation and control semantics` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Typing and base linkage -> Semantic property references` para confirmar se o atributo tipado corretamente ainda depende de outro atributo real no destino
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Attribute` inteiro por reflexo
+- usar `Attribute core definition` como bloco inicial para shape top-level, definicao-base e estrutura central do atributo
+- usar `Typing and base linkage` como bloco inicial para `idBasedOn`, dominio base, tipo declarado e coerencia do contrato tipado
+- usar `Semantic property references` como bloco inicial para `ControlItemDescription`, referencia nominal quebrada e dependencia concreta de outro atributo real
+- usar `Presentation and control semantics` como bloco inicial para propriedades funcionais de exibicao, controle e comportamento serializado do atributo
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
+- manter separado o que e definicao-base do atributo, o que e tipagem, o que e referencia semantica nominal e o que e semantica funcional de controle/apresentacao; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

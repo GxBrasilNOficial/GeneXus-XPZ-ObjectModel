@@ -317,6 +317,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao-base`, `grafo de classes`, `binding visual normativo`, `simplificacao/override` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Theme` inteiro por reflexo.
 
+### Revisao por blocos em `Attribute`
+
+- `Regra operacional`: em `Attribute`, nao tratar o objeto como definicao escalar trivial; a revisao fina deve separar explicitamente shape top-level, propriedades semanticas, referencias nominais e contexto estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `Attribute` sao `Attribute core definition`, `Typing and base linkage`, `Semantic property references`, `Presentation and control semantics` e `Identity and container`.
+- `Regra operacional`: `Attribute core definition` cobre o shape top-level do atributo, definicao-base, propriedades centrais e o nucleo estrutural do objeto.
+- `Regra operacional`: `Typing and base linkage` cobre `idBasedOn`, dominio base, tipo declarado, ligacao estrutural ao contrato de dados e coerencia da base tipada do atributo.
+- `Regra operacional`: `Semantic property references` cobre propriedades nominais que apontem para outros atributos ou elementos reais da KB, como `ControlItemDescription` e referencias equivalentes.
+- `Regra operacional`: `Presentation and control semantics` cobre propriedades funcionais de exibicao, controle e comportamento serializado do atributo que nao sejam mera identidade nem mera tipagem base.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `Attribute`.
+- `Regra operacional`: em `Attribute`, as transicoes mais comuns e justificadas sao `Attribute core definition -> Typing and base linkage`, `Attribute core definition -> Presentation and control semantics`, `Attribute core definition -> Identity and container`, `Typing and base linkage -> Semantic property references`, `Typing and base linkage -> Attribute core definition`, `Typing and base linkage -> Identity and container`, `Semantic property references -> Typing and base linkage`, `Semantic property references -> Presentation and control semantics`, `Semantic property references -> Identity and container`, `Presentation and control semantics -> Semantic property references`, `Presentation and control semantics -> Attribute core definition`, `Presentation and control semantics -> Identity and container`, `Identity and container -> Attribute core definition`, `Identity and container -> Typing and base linkage`, `Identity and container -> Semantic property references` e `Identity and container -> Presentation and control semantics`.
+- `Regra operacional`: usar `Attribute core definition` como bloco inicial quando o sintoma falar de shape top-level, definicao do atributo, estrutura-base ou suspeita de objeto malformado.
+- `Regra operacional`: usar `Typing and base linkage` como bloco inicial quando o sintoma falar de `idBasedOn`, dominio, tipo do atributo, base tipada ou incoerencia de contrato de dados.
+- `Regra operacional`: usar `Semantic property references` como bloco inicial quando o sintoma falar de `ControlItemDescription`, referencia nominal quebrada, atributo inexistente no destino ou dependencia semantica concreta de outro atributo real.
+- `Regra operacional`: usar `Presentation and control semantics` como bloco inicial quando o sintoma falar de comportamento funcional serializado, semantica de exibicao, controle associado ou propriedade de apresentacao que afete o uso do atributo.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, contêiner, clonagem ou contexto estrutural do atributo.
+- `Regra operacional`: em `Attribute`, nao tratar `idBasedOn` como prova automatica de fechamento semantico completo, e nao tratar propriedade de controle/apresentacao como mero detalhe cosmetico quando ela apontar para outro atributo real.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao-base`, `tipagem/base`, `referencia semantica`, `semantica de controle/apresentacao` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Attribute` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
