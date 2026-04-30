@@ -534,6 +534,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e definicao do store, o que e configuracao runtime e o que e contexto de consumo; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Generator`
+
+- em `Generator`, revisar por blocos funcionais; nao tratar o objeto como definicao unica quando a pergunta for de parametro, alvo de geracao, plataforma ou diagnostico fino
+- os blocos canonicos sao `Generator definition and declared surface`, `Generation options and technical parameters`, `Model and target-platform usage context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Generator definition and declared surface -> Generation options and technical parameters`
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Generator` inteiro por reflexo
+- usar `Generator definition and declared surface` como bloco inicial para o que o gerador declara ser, seu papel principal e sua surface estrutural
+- usar `Generation options and technical parameters` como bloco inicial para parametro, flag, opcao e comportamento tecnico de geracao
+- usar `Model and target-platform usage context` como bloco inicial para encaixe no modelo, alvo de geracao, consumo efetivo e papel no fluxo
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e surface declarada do gerador, o que e parametro tecnico e o que e contexto de uso; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

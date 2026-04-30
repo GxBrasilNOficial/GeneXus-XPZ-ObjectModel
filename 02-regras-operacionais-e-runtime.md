@@ -681,6 +681,40 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao do store`, `configuracao runtime`, `contexto de consumo` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataStore` inteiro por reflexo.
 
+### Revisao por blocos em Generator
+
+- `Regra operacional`: `Generator` nao deve ser tratado como bloco unico; separar definicao do gerador, parametros tecnicos, contexto de uso e identidade estrutural.
+- `Blocos canonicos`:
+  - `Generator definition and declared surface`
+  - `Generation options and technical parameters`
+  - `Model and target-platform usage context`
+  - `Identity and container`
+- `Definicao do bloco Generator definition and declared surface`: usar quando a duvida principal for o que o gerador declara ser, sua surface estrutural ou seu papel principal.
+- `Definicao do bloco Generation options and technical parameters`: usar quando a duvida principal for parametro, flag, opcao ou comportamento tecnico de geracao.
+- `Definicao do bloco Model and target-platform usage context`: usar quando a duvida principal for encaixe no modelo, alvo de geracao, consumo efetivo ou papel no fluxo.
+- `Definicao do bloco Identity and container`: usar quando a duvida principal for `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` ou risco de objeto errado.
+- `Regra de condução`: declarar o bloco primario antes da leitura fina e abrir bloco adjacente apenas quando houver dependencia funcional explicita.
+- `Transicoes permitidas`:
+  - `Generator definition and declared surface -> Generation options and technical parameters`
+  - `Generator definition and declared surface -> Model and target-platform usage context`
+  - `Generator definition and declared surface -> Identity and container`
+  - `Generation options and technical parameters -> Generator definition and declared surface`
+  - `Generation options and technical parameters -> Model and target-platform usage context`
+  - `Generation options and technical parameters -> Identity and container`
+  - `Model and target-platform usage context -> Generator definition and declared surface`
+  - `Model and target-platform usage context -> Generation options and technical parameters`
+  - `Model and target-platform usage context -> Identity and container`
+  - `Identity and container -> Generator definition and declared surface`
+  - `Identity and container -> Generation options and technical parameters`
+  - `Identity and container -> Model and target-platform usage context`
+- `Gatilhos do bloco primario`:
+  - `Generator definition and declared surface` para duvida sobre o que o gerador declara ser, seu papel principal ou sua surface estrutural.
+  - `Generation options and technical parameters` para duvida sobre parametros, flags, opcoes ou comportamento tecnico de geracao.
+  - `Model and target-platform usage context` para duvida sobre encaixe no modelo, alvo de geracao, consumo efetivo ou papel no fluxo.
+  - `Identity and container` para duvida sobre `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` e risco de objeto errado.
+- `Regra de fronteira`: nao colapsar surface declarada, parametros tecnicos e contexto de uso como se provassem a mesma coisa.
+- `Conclusao`: fechar a resposta no menor nivel funcional sustentado pelo XML e pela dependencia realmente aberta: definicao, parametros, contexto de uso ou identidade estrutural.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
