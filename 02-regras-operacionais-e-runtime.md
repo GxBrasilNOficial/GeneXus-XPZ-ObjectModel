@@ -422,6 +422,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade do modulo`, `fronteira de empacotamento`, `contexto de instalacao`, `superficie de dependencia/consumo` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `PackagedModule` inteiro por reflexo.
 
+### Revisao por blocos em `Image`
+
+- `Regra operacional`: em `Image`, nao tratar o objeto como binario isolado ou como lista trivial de itens; a revisao fina deve separar explicitamente identidade do recurso, variantes declaradas, payload binario e referencias externas de tema/idioma.
+- `Regra operacional`: os blocos canonicos de revisao em `Image` sao `Image identity and naming`, `Image item set and declared variants`, `Binary payload and extraction fidelity`, `Theme and language references` e `Identity and container`.
+- `Regra operacional`: `Image identity and naming` cobre nome logico da imagem, identidade nominal e papel semantico esperado do recurso.
+- `Regra operacional`: `Image item set and declared variants` cobre `ImageItem`, variantes, composicao interna, item unico vs multiplos itens e o shape funcional do recurso.
+- `Regra operacional`: `Binary payload and extraction fidelity` cobre `base64Binary`, integridade do payload, preservacao do conteudo e fidelidade de extracao/materializacao.
+- `Regra operacional`: `Theme and language references` cobre `ThemeReference`, `LanguageReference` e a relacao da imagem com dependencias externas de apresentacao.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa de `Image`.
+- `Regra operacional`: em `Image`, as transicoes mais comuns e justificadas sao `Image identity and naming -> Image item set and declared variants`, `Image identity and naming -> Theme and language references`, `Image identity and naming -> Identity and container`, `Image item set and declared variants -> Binary payload and extraction fidelity`, `Image item set and declared variants -> Theme and language references`, `Image item set and declared variants -> Image identity and naming`, `Binary payload and extraction fidelity -> Image item set and declared variants`, `Binary payload and extraction fidelity -> Theme and language references`, `Theme and language references -> Image item set and declared variants`, `Theme and language references -> Image identity and naming`, `Theme and language references -> Identity and container`, `Identity and container -> Image identity and naming`, `Identity and container -> Theme and language references` e `Identity and container -> Image item set and declared variants`.
+- `Regra operacional`: usar `Image identity and naming` como bloco inicial quando o sintoma falar de nome da imagem, papel semantico, colisao nominal, alias inadequado ou renomeacao.
+- `Regra operacional`: usar `Image item set and declared variants` como bloco inicial quando o sintoma falar de item faltante, multiplas variantes, composicao do recurso ou shape do `Part` de imagens.
+- `Regra operacional`: usar `Binary payload and extraction fidelity` como bloco inicial quando o sintoma falar de `base64Binary` quebrado, binario truncado, corrupcao do conteudo ou divergencia entre recurso e arquivo extraido.
+- `Regra operacional`: usar `Theme and language references` como bloco inicial quando o sintoma falar de tema, idioma, referencia externa ausente ou dependencia de apresentacao incoerente.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `guid`, `fullyQualifiedName`, `moduleGuid`, clonagem ou contexto estrutural.
+- `Regra operacional`: em `Image`, nao tratar `Image item set and declared variants` como prova automatica de payload integro, e nao tratar `Binary payload and extraction fidelity` como prova automatica de referencia tematica/idiomatica correta.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade da imagem`, `variantes declaradas`, `fidelidade do payload`, `referencias de tema/idioma` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `Image` inteiro por reflexo.
+
 ### Revisao por blocos em `Attribute`
 
 - `Regra operacional`: em `Attribute`, nao tratar o objeto como definicao escalar trivial; a revisao fina deve separar explicitamente shape top-level, propriedades semanticas, referencias nominais e contexto estrutural.

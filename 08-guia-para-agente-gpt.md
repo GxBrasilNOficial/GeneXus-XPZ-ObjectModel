@@ -346,6 +346,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e identidade do modulo, o que e fronteira de empacotamento, o que e contexto de instalacao e o que e superficie de dependencia/consumo; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Image`
+
+- em `Image`, revisar por blocos funcionais; nao tratar o objeto como binario isolado ou lista trivial de itens quando a pergunta for de variantes, payload, referencia externa ou diagnostico fino
+- os blocos canonicos sao `Image identity and naming`, `Image item set and declared variants`, `Binary payload and extraction fidelity`, `Theme and language references` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Image item set and declared variants -> Binary payload and extraction fidelity` para verificar se a falha esta no desenho das variantes ou no conteudo binario de uma delas
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `Image` inteiro por reflexo
+- usar `Image identity and naming` como bloco inicial para nome logico da imagem, identidade nominal e papel semantico esperado
+- usar `Image item set and declared variants` como bloco inicial para `ImageItem`, variantes, composicao interna e shape funcional do recurso
+- usar `Binary payload and extraction fidelity` como bloco inicial para `base64Binary`, integridade do payload, preservacao do conteudo e fidelidade de extracao
+- usar `Theme and language references` como bloco inicial para `ThemeReference`, `LanguageReference` e dependencias externas de apresentacao
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e identidade da imagem, o que e conjunto de variantes, o que e payload binario e o que e referencia externa de tema/idioma; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Attribute`
 
 - em `Attribute`, revisar por blocos funcionais; nao tratar o objeto como definicao escalar trivial quando a pergunta for de tipagem, referencia nominal, semantica de controle ou diagnostico fino
