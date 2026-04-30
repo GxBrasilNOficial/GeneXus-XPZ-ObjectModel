@@ -212,47 +212,54 @@ Reference files and when to load them:
    - `Visual references and usage dependencies` for consumption by `ThemeClass`, `Theme`, styles, and other visual elements that depend on this color identity and value
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, and `moduleGuid`
 33. For `ThemeColor`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep nominal identity, direct value, thematic coupling, and visual usage dependencies separate until evidence supports joining them
-34. If type is `Attribute` → classify the primary review block before fine analysis:
+34. If type is `ColorPalette` → classify the primary review block before fine analysis:
+   - `Palette identity and naming` for the logical palette name, nominal identity, and expected thematic role
+   - `Palette composition and declared members` for the palette's internal composition, declared items, direct object shape, and the functional list it materializes
+   - `Theme and design-system coupling` for relation with `Theme`, `DesignSystem`, and architectural fit inside the broader visual layer
+   - `Color references and usage surface` for relation with `ThemeColor` and visual consumers that depend on this palette
+   - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, and `moduleGuid`
+35. For `ColorPalette`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep palette identity, declared composition, architectural coupling, and usage surface separate until evidence supports joining them
+36. If type is `Attribute` → classify the primary review block before fine analysis:
    - `Attribute core definition` for top-level shape, central definition, and baseline attribute structure
    - `Typing and base linkage` for `idBasedOn`, base domain, declared type, and typed contract coherence
    - `Semantic property references` for `ControlItemDescription`, broken nominal references, and dependencies on other real attributes in the KB
    - `Presentation and control semantics` for functional presentation/control properties and serialized behavior that affect attribute usage
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
-35. For `Attribute`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep baseline definition, typing, nominal references, and control/presentation semantics separate until evidence supports joining them
-36. If type is `PatternSettings` → classify the primary review block before fine analysis:
+37. For `Attribute`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep baseline definition, typing, nominal references, and control/presentation semantics separate until evidence supports joining them
+38. If type is `PatternSettings` → classify the primary review block before fine analysis:
    - `Pattern registration and environment fit` for pattern availability, environment compatibility, registration fit, and symptoms such as `pattern not registered` or `was not changed`
    - `Internal pattern configuration` for `CDATA`, persisted flags, internal declarative shape, and the pattern configuration stored in the object
    - `Context and callable dependencies` for `ContextVariable`, `LoadProcedure`, called procedures, and functional context required by the pattern
    - `Security and auxiliary references` for `Security` and other auxiliary references that the pattern needs outside its main context
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
-37. For `PatternSettings`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep pattern registration, internal configuration, callable context, and auxiliary/security references separate until evidence supports joining them
-38. If type is `Folder` → classify the primary review block before fine analysis:
+39. For `PatternSettings`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep pattern registration, internal configuration, callable context, and auxiliary/security references separate until evidence supports joining them
+40. If type is `Folder` → classify the primary review block before fine analysis:
    - `Minimal structural shape` for XML envelope, `Object/@type`, minimal structural shape, and baseline serialization
    - `Parent and module context` for `parent`, `parentGuid`, `parentType`, `moduleGuid`, and the folder's structural placement
    - `IDE semantic reading` for how the IDE/importer interprets the object, including `Category` as a UI label
    - `Identity and naming semantics` for naming ambiguity, displayed naming expectations, and the distinction between XML type and UI label
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, and container-level structural identity
-39. For `Folder`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep structural shape, parent/module context, IDE reading, and naming semantics separate until evidence supports joining them
-40. If type is `Domain` → classify the primary review block before fine analysis:
+41. For `Folder`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep structural shape, parent/module context, IDE reading, and naming semantics separate until evidence supports joining them
+42. If type is `Domain` → classify the primary review block before fine analysis:
    - `Base type definition` for base type, `ATTCUSTOMTYPE` when applicable, and the domain's primary typed contract
    - `Limits and scalar constraints` for length, precision, scale, flags, and scalar constraints
    - `Enumerated values contract` for `IDEnumDefinedValues`, value lists, descriptions, and enumerated contract coherence
    - `Usage-facing semantic contract` for how the domain is meant to be consumed by other objects, UI, or data contracts
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
-41. For `Domain`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep base typing, scalar limits, enumerated contract, and usage-facing semantics separate until evidence supports joining them
-42. If type is `Procedure` → classify the primary review block before fine analysis:
+43. For `Domain`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep base typing, scalar limits, enumerated contract, and usage-facing semantics separate until evidence supports joining them
+44. If type is `Procedure` → classify the primary review block before fine analysis:
    - `Source` for filters, flow, conditions, assignments, navigation, and calls made in the body
    - `Rules/parm` for signature, parameters, declarative contract, and rule-focused errors
    - `Variables` for existence, type, helper declarations, and collection-vs-simple coherence
    - `Calls and dependencies` for callee review, dependency chain, and proof of caller call-site
    - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
    - `Report layout` only when the `Procedure` is a report and the symptoms involve `Bands`, `PrintBlock`, `ReportLabel`, `ReportAttribute`, or layout shape
-43. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
-44. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
-45. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
-46. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
-47. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-48. Report result:
+45. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
+46. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
+47. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
+48. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
+49. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+50. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)

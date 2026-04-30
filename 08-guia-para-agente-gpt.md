@@ -301,6 +301,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e identidade nominal da cor, o que e valor direto, o que e encaixe tematico e o que e dependencia de uso visual; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `ColorPalette`
+
+- em `ColorPalette`, revisar por blocos funcionais; nao tratar o objeto como agrupador visual trivial quando a pergunta for de identidade da paleta, composicao, acoplamento arquitetural, superficie de uso ou diagnostico fino
+- os blocos canonicos sao `Palette identity and naming`, `Palette composition and declared members`, `Theme and design-system coupling`, `Color references and usage surface` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Color references and usage surface -> Palette composition and declared members` para verificar se o problema de uso visual vem do consumo da paleta ou da composicao declarada dela
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `ColorPalette` inteiro por reflexo
+- usar `Palette identity and naming` como bloco inicial para nome logico da paleta, identidade nominal e papel tematico esperado
+- usar `Palette composition and declared members` como bloco inicial para itens da paleta, composicao interna, shape direto e membros declarados
+- usar `Theme and design-system coupling` como bloco inicial para relacao com `Theme`, `DesignSystem`, coerencia arquitetural e encaixe na familia visual
+- usar `Color references and usage surface` como bloco inicial para relacao com `ThemeColor` e demais consumos visuais dependentes da paleta
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e identidade da paleta, o que e composicao declarada, o que e acoplamento arquitetural e o que e superficie de uso; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Attribute`
 
 - em `Attribute`, revisar por blocos funcionais; nao tratar o objeto como definicao escalar trivial quando a pergunta for de tipagem, referencia nominal, semantica de controle ou diagnostico fino

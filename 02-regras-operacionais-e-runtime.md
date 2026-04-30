@@ -359,6 +359,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade nominal`, `valor direto`, `encaixe tematico`, `dependencia de uso visual` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `ThemeColor` inteiro por reflexo.
 
+### Revisao por blocos em `ColorPalette`
+
+- `Regra operacional`: em `ColorPalette`, nao tratar o objeto como agrupador visual trivial so porque ele e declarativo; a revisao fina deve separar explicitamente identidade da paleta, composicao declarada, acoplamento arquitetural e superficie de uso visual.
+- `Regra operacional`: os blocos canonicos de revisao em `ColorPalette` sao `Palette identity and naming`, `Palette composition and declared members`, `Theme and design-system coupling`, `Color references and usage surface` e `Identity and container`.
+- `Regra operacional`: `Palette identity and naming` cobre nome logico da paleta, identidade nominal e papel tematico esperado dentro da camada visual.
+- `Regra operacional`: `Palette composition and declared members` cobre composicao interna da paleta, itens declarados, ordem/organizacao quando relevante, shape direto do objeto e a lista funcional que a paleta realmente materializa.
+- `Regra operacional`: `Theme and design-system coupling` cobre relacao com `Theme`, `DesignSystem` e o encaixe da paleta na arquitetura visual mais ampla.
+- `Regra operacional`: `Color references and usage surface` cobre relacao com `ThemeColor` e os consumos visuais dependentes da paleta, inclusive uso por tema, classes e outras camadas visuais.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa de `ColorPalette`.
+- `Regra operacional`: em `ColorPalette`, as transicoes mais comuns e justificadas sao `Palette identity and naming -> Palette composition and declared members`, `Palette identity and naming -> Color references and usage surface`, `Palette identity and naming -> Identity and container`, `Palette composition and declared members -> Palette identity and naming`, `Palette composition and declared members -> Theme and design-system coupling`, `Palette composition and declared members -> Color references and usage surface`, `Theme and design-system coupling -> Palette composition and declared members`, `Theme and design-system coupling -> Color references and usage surface`, `Theme and design-system coupling -> Identity and container`, `Color references and usage surface -> Palette composition and declared members`, `Color references and usage surface -> Theme and design-system coupling`, `Color references and usage surface -> Palette identity and naming`, `Identity and container -> Palette identity and naming`, `Identity and container -> Theme and design-system coupling` e `Identity and container -> Palette composition and declared members`.
+- `Regra operacional`: usar `Palette identity and naming` como bloco inicial quando o sintoma falar de nome da paleta, papel semantico, colisao nominal, alias inadequado ou renomeacao.
+- `Regra operacional`: usar `Palette composition and declared members` como bloco inicial quando o sintoma falar de itens da paleta, composicao, shape direto, membro faltante ou organizacao interna da paleta.
+- `Regra operacional`: usar `Theme and design-system coupling` como bloco inicial quando o sintoma falar de encaixe com `Theme` ou `DesignSystem`, coerencia arquitetural ou posicao da paleta dentro da familia visual.
+- `Regra operacional`: usar `Color references and usage surface` como bloco inicial quando o sintoma falar de relacao com `ThemeColor`, consumo visual dependente ou impacto funcional de uso da paleta.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `guid`, `fullyQualifiedName`, modulo, clonagem ou contexto estrutural.
+- `Regra operacional`: em `ColorPalette`, nao tratar `Palette identity and naming` como prova automatica de composicao correta, e nao tratar `Theme and design-system coupling` como mero contexto decorativo.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade da paleta`, `composicao declarada`, `acoplamento arquitetural`, `superficie de uso` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir `ColorPalette` inteiro por reflexo.
+
 ### Revisao por blocos em `Attribute`
 
 - `Regra operacional`: em `Attribute`, nao tratar o objeto como definicao escalar trivial; a revisao fina deve separar explicitamente shape top-level, propriedades semanticas, referencias nominais e contexto estrutural.
