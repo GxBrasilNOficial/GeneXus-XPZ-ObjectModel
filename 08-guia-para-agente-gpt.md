@@ -464,6 +464,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e contrato do controle, o que e binding de propriedades/eventos e o que e dependencia runtime; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `SubTypeGroup`
+
+- em `SubTypeGroup`, revisar por blocos funcionais; nao tratar o objeto como agrupamento nominal monolitico quando a pergunta for de composicao, subtype, uso contextual ou diagnostico fino
+- os blocos canonicos sao `Group definition and member structure`, `Subtype mappings and role assignments`, `Contextual usage contract` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Subtype mappings and role assignments -> Contextual usage contract` para separar erro de mapeamento interno de erro de uso contextual
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `SubTypeGroup` inteiro por reflexo
+- usar `Group definition and member structure` como bloco inicial para composicao do grupo, membros declarados, shape estrutural e integridade do agrupamento
+- usar `Subtype mappings and role assignments` como bloco inicial para supertipo, subtipo, papel de cada membro e mapeamentos internos
+- usar `Contextual usage contract` como bloco inicial para papel do grupo no consumo por `Attribute`, `Transaction` e outros objetos do modelo
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e definicao do grupo, o que e mapeamento de subtype e o que e uso contextual; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

@@ -586,6 +586,25 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `contrato do controle`, `bindings de propriedades/eventos`, `dependencias runtime` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `UserControl` inteiro por reflexo.
 
+### Revisao por blocos em `SubTypeGroup`
+
+- `Regra operacional`: em `SubTypeGroup`, nao tratar o objeto como agrupamento nominal monolitico; a revisao fina deve separar explicitamente definicao do grupo, mapeamentos de subtype, contrato contextual de uso e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `SubTypeGroup` sao `Group definition and member structure`, `Subtype mappings and role assignments`, `Contextual usage contract` e `Identity and container`.
+- `Regra operacional`: `Group definition and member structure` cobre composicao do grupo, membros declarados, shape estrutural e integridade do agrupamento.
+- `Regra operacional`: `Subtype mappings and role assignments` cobre quem atua como supertipo, quem atua como subtipo e os papeis/mapeamentos internos entre os membros.
+- `Regra operacional`: `Contextual usage contract` cobre como o `SubTypeGroup` sustenta uso em `Attribute`, `Transaction` e outros objetos do modelo, sem colapsar isso com a definicao interna do grupo.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, alem do risco de estar lendo o grupo errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `SubTypeGroup`.
+- `Regra operacional`: em `SubTypeGroup`, as transicoes mais comuns e justificadas sao `Group definition and member structure -> Subtype mappings and role assignments`, `Group definition and member structure -> Contextual usage contract`, `Group definition and member structure -> Identity and container`, `Subtype mappings and role assignments -> Group definition and member structure`, `Subtype mappings and role assignments -> Contextual usage contract`, `Subtype mappings and role assignments -> Identity and container`, `Contextual usage contract -> Group definition and member structure`, `Contextual usage contract -> Subtype mappings and role assignments`, `Contextual usage contract -> Identity and container`, `Identity and container -> Group definition and member structure`, `Identity and container -> Subtype mappings and role assignments` e `Identity and container -> Contextual usage contract`.
+- `Regra operacional`: usar `Group definition and member structure` como bloco inicial quando o sintoma falar de composicao do grupo, membros declarados, shape estrutural ou integridade do agrupamento.
+- `Regra operacional`: usar `Subtype mappings and role assignments` como bloco inicial quando a duvida falar de supertipo, subtipo, papel de membro ou mapeamento interno.
+- `Regra operacional`: usar `Contextual usage contract` como bloco inicial quando o sintoma falar do papel do grupo em `Attribute`, `Transaction` ou outros objetos consumidores do modelo.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `SubTypeGroup`, nao tratar composicao do grupo como prova automatica de mapeamento correto de papeis, e nao tratar uso contextual em outro objeto como prova automatica de definicao interna correta.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao do grupo`, `mapeamentos de subtype`, `contrato contextual de uso` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `SubTypeGroup` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.

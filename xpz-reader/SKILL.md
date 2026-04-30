@@ -55,6 +55,7 @@ Do NOT use this skill for:
 - For `Table`, classify the review by functional block before fine analysis: `Primary key structure`, `Secondary indexes and embedded index members`, `Transaction coupling and physical context`, or `Identity and container`
 - For `ExternalObject`, classify the review by functional block before fine analysis: `External contract surface`, `Method signatures and parameter typing`, `Platform and native binding metadata`, or `Identity and container`
 - For `UserControl`, classify the review by functional block before fine analysis: `Control contract surface`, `Properties and event bindings`, `Runtime resources and external dependencies`, or `Identity and container`
+- For `SubTypeGroup`, classify the review by functional block before fine analysis: `Group definition and member structure`, `Subtype mappings and role assignments`, `Contextual usage contract`, or `Identity and container`
 - Treat any extra block opened after the first one as an `adjacent block` and open it only when there is explicit functional dependency with the primary block
 - Name every justified block transition in the analysis and handoff, instead of silently widening the scope
 - State the conclusion scope at the smallest functional level supported by evidence, including execution context when that distinction matters
@@ -289,19 +290,25 @@ Reference files and when to load them:
    - `Runtime resources and external dependencies` for scripts, assets, auxiliary resources, technical dependencies, and execution-time coupling of the `UserControl`
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
 55. For `UserControl`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep declared control contract, property/event bindings, and runtime-dependency layers separate until evidence supports joining them
-56. If type is `Procedure` → classify the primary review block before fine analysis:
+56. If type is `SubTypeGroup` → classify the primary review block before fine analysis:
+   - `Group definition and member structure` for group composition, declared members, structural shape, and grouping integrity
+   - `Subtype mappings and role assignments` for supertype/subtype mapping, member roles, and internal subtype assignments
+   - `Contextual usage contract` for how the group supports usage in `Attribute`, `Transaction`, and other consumer objects of the model
+   - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
+57. For `SubTypeGroup`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep group definition, subtype-role mapping, and contextual-usage layers separate until evidence supports joining them
+58. If type is `Procedure` → classify the primary review block before fine analysis:
    - `Source` for filters, flow, conditions, assignments, navigation, and calls made in the body
    - `Rules/parm` for signature, parameters, declarative contract, and rule-focused errors
    - `Variables` for existence, type, helper declarations, and collection-vs-simple coherence
    - `Calls and dependencies` for callee review, dependency chain, and proof of caller call-site
    - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
    - `Report layout` only when the `Procedure` is a report and the symptoms involve `Bands`, `PrintBlock`, `ReportLabel`, `ReportAttribute`, or layout shape
-57. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
-58. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
-59. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
-60. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
-61. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-62. Report result:
+59. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
+60. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
+61. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
+62. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
+63. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+64. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
@@ -321,6 +328,7 @@ Reference files and when to load them:
    - For `Table`, primary review block and any justified block transition used in the analysis
    - For `ExternalObject`, primary review block and any justified block transition used in the analysis
    - For `UserControl`, primary review block and any justified block transition used in the analysis
+   - For `SubTypeGroup`, primary review block and any justified block transition used in the analysis
    - For `Procedure`, primary review block and any justified block transition used in the analysis
    - Risk level
    - Part types: present / expected / missing — or N/A if the type is confirmed in [01b] as using no Parts
@@ -352,6 +360,7 @@ Reference files and when to load them:
 - [ ] For `Table`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `ExternalObject`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `UserControl`, the primary review block was declared before fine analysis and any block transition was justified explicitly
+- [ ] For `SubTypeGroup`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Procedure`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For report `Procedure`, evidence was separated into `Source`, `Rules`, and layout and the escalation status was made explicit
 - [ ] Confidence level declared for every conclusion
@@ -384,5 +393,6 @@ Reference files and when to load them:
 - For `Table`, NEVER treat embedded `Index` as an independent top-level object in this review, and NEVER treat absence of named `parent` as proof that the `Table` has no contextual dependency
 - For `ExternalObject`, NEVER treat native-binding/platform metadata as enough to prove method signatures, or exposed surface text as enough to prove technical binding correctness
 - For `UserControl`, NEVER treat runtime dependency presence as enough to prove property/event binding correctness, or declared control surface as enough to prove runtime integration is complete
+- For `SubTypeGroup`, NEVER treat contextual usage in another object as enough to prove internal subtype-role mapping correctness, or internal group composition as enough to prove contextual usage is coherent
 - For `Procedure`, NEVER jump from one functional block to another without explicit dependency rationale
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) take precedence over all heuristics
