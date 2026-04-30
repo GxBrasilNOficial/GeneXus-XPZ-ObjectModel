@@ -316,6 +316,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
 - manter separado o que e shape minimo XML, o que e contexto estrutural, o que e leitura semantica da IDE e o que e semantica nominal; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Domain`
+
+- em `Domain`, revisar por blocos funcionais; nao tratar o objeto como definicao tipada trivial quando a pergunta for de limites, enumeracao, papel semantico ou diagnostico fino
+- os blocos canonicos sao `Base type definition`, `Limits and scalar constraints`, `Enumerated values contract`, `Usage-facing semantic contract` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Base type definition -> Enumerated values contract` para confirmar se o dominio tipado corretamente tambem fecha como enumeracao valida
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Domain` inteiro por reflexo
+- usar `Base type definition` como bloco inicial para tipo base, `ATTCUSTOMTYPE`, definicao nuclear e contrato tipado principal
+- usar `Limits and scalar constraints` como bloco inicial para tamanho, precisao, escala, flags e parametros escalares do dominio
+- usar `Enumerated values contract` como bloco inicial para `IDEnumDefinedValues`, lista de valores, descricoes e coerencia do contrato enumerado
+- usar `Usage-facing semantic contract` como bloco inicial para papel funcional do dominio no consumo por outros objetos, UI ou contrato de dados
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
+- manter separado o que e tipo base, o que e limite/constraint, o que e enumeracao e o que e contrato semantico de uso; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

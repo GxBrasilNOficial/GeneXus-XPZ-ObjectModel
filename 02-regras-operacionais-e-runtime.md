@@ -381,6 +381,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `shape minimo`, `contexto pai/modulo`, `leitura semantica da IDE`, `semantica nominal` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Folder` inteiro por reflexo.
 
+### Revisao por blocos em `Domain`
+
+- `Regra operacional`: em `Domain`, nao tratar o objeto como definicao tipada trivial; a revisao fina deve separar explicitamente tipo base, limites/parametros, valores enumerados e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `Domain` sao `Base type definition`, `Limits and scalar constraints`, `Enumerated values contract`, `Usage-facing semantic contract` e `Identity and container`.
+- `Regra operacional`: `Base type definition` cobre o tipo base do dominio, `ATTCUSTOMTYPE` quando aplicavel, a definicao nuclear do `Domain` e a coerencia do contrato tipado principal.
+- `Regra operacional`: `Limits and scalar constraints` cobre tamanho, precisao, escala, limites, flags e demais parametros escalares que modulam o tipo base sem transforma-lo em enumeracao.
+- `Regra operacional`: `Enumerated values contract` cobre `IDEnumDefinedValues`, lista de valores, descricao de enumerados e a coerencia entre codigo, descricao e contrato enumerado publicado.
+- `Regra operacional`: `Usage-facing semantic contract` cobre a semantica com que o dominio sera consumido por `Attribute`, `SDT`, `Transaction`, `Procedure` ou UI, quando o sintoma falar do papel funcional do dominio e nao apenas do seu shape interno.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `Domain`.
+- `Regra operacional`: em `Domain`, as transicoes mais comuns e justificadas sao `Base type definition -> Limits and scalar constraints`, `Base type definition -> Enumerated values contract`, `Base type definition -> Usage-facing semantic contract`, `Base type definition -> Identity and container`, `Limits and scalar constraints -> Base type definition`, `Limits and scalar constraints -> Usage-facing semantic contract`, `Limits and scalar constraints -> Identity and container`, `Enumerated values contract -> Base type definition`, `Enumerated values contract -> Usage-facing semantic contract`, `Enumerated values contract -> Identity and container`, `Usage-facing semantic contract -> Base type definition`, `Usage-facing semantic contract -> Limits and scalar constraints`, `Usage-facing semantic contract -> Enumerated values contract`, `Usage-facing semantic contract -> Identity and container`, `Identity and container -> Base type definition`, `Identity and container -> Limits and scalar constraints`, `Identity and container -> Enumerated values contract` e `Identity and container -> Usage-facing semantic contract`.
+- `Regra operacional`: usar `Base type definition` como bloco inicial quando o sintoma falar de tipo base, shape nuclear do dominio, `ATTCUSTOMTYPE`, contrato tipado principal ou suspeita de definicao errada do dominio.
+- `Regra operacional`: usar `Limits and scalar constraints` como bloco inicial quando o sintoma falar de tamanho, precisao, escala, limite, flag escalar ou parametros numericos/textuais do dominio.
+- `Regra operacional`: usar `Enumerated values contract` como bloco inicial quando o sintoma falar de enumeracao, valores permitidos, descricao de valor, codigo enumerado ou incoerencia na lista publicada de valores.
+- `Regra operacional`: usar `Usage-facing semantic contract` como bloco inicial quando o sintoma falar do papel funcional do dominio no consumo por outros objetos, na UI ou no contrato de dados que ele sustenta.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, contêiner, clonagem ou contexto estrutural do dominio.
+- `Regra operacional`: em `Domain`, nao tratar tipo base correto como prova automatica de limites corretos, e nao tratar limites corretos como prova automatica de contrato enumerado ou de papel semantico adequado no consumo.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `tipo base`, `limites/constraints`, `contrato enumerado`, `contrato semantico de uso` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Domain` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
