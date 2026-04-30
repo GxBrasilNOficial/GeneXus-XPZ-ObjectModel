@@ -296,6 +296,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `shape interno`, `tipagem/dependencia`, `contrato externo`, `propriedade top-level` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `SDT` inteiro por reflexo.
 
+### Revisao por blocos em `Theme`
+
+- `Regra operacional`: em `Theme`, nao tratar o objeto como XML visual pequeno autossuficiente; a revisao fina deve separar explicitamente tema-base, grafo de classes, bindings normativos e superficie de simplificacao visual.
+- `Regra operacional`: os blocos canonicos de revisao em `Theme` sao `Theme core definition`, `Class graph and references`, `Predefined types and style bindings`, `Visual simplification and override surface` e `Identity and container`.
+- `Regra operacional`: `Theme core definition` cobre o nucleo declarativo do tema, propriedades centrais, shape do objeto e definicao-base do `Theme`.
+- `Regra operacional`: `Class graph and references` cobre a malha de `ThemeClass`, referencias internas entre classes, heranca visual e dependencias entre classes auxiliares e classes base.
+- `Regra operacional`: `Predefined types and style bindings` cobre `PredefinedTypes`, `Styles` e os vinculos entre tipos visuais conhecidos do GeneXus e classes/estilos concretos do tema.
+- `Regra operacional`: `Visual simplification and override surface` cobre simplificacao, override, enxugamento visual e qualquer reducao controlada da superficie do tema que possa remover suporte visual implicito.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `Theme`.
+- `Regra operacional`: em `Theme`, as transicoes mais comuns e justificadas sao `Theme core definition -> Class graph and references`, `Theme core definition -> Predefined types and style bindings`, `Theme core definition -> Identity and container`, `Class graph and references -> Predefined types and style bindings`, `Class graph and references -> Visual simplification and override surface`, `Class graph and references -> Identity and container`, `Predefined types and style bindings -> Class graph and references`, `Predefined types and style bindings -> Theme core definition`, `Predefined types and style bindings -> Visual simplification and override surface`, `Predefined types and style bindings -> Identity and container`, `Visual simplification and override surface -> Class graph and references`, `Visual simplification and override surface -> Predefined types and style bindings`, `Visual simplification and override surface -> Theme core definition`, `Visual simplification and override surface -> Identity and container`, `Identity and container -> Theme core definition`, `Identity and container -> Class graph and references`, `Identity and container -> Predefined types and style bindings` e `Identity and container -> Visual simplification and override surface`.
+- `Regra operacional`: usar `Theme core definition` como bloco inicial quando o sintoma falar do tema como unidade principal, propriedades centrais, shape do objeto, definicao-base ou configuracao global do `Theme`.
+- `Regra operacional`: usar `Class graph and references` como bloco inicial quando o sintoma falar de classe faltante, referencia entre classes, heranca visual, dependencia entre `ThemeClass` ou quebra por remocao de classe auxiliar.
+- `Regra operacional`: usar `Predefined types and style bindings` como bloco inicial quando o sintoma falar de `PredefinedTypes`, `Styles`, binding entre tipo visual conhecido e classe concreta, ou mapeamento visual normativo do tema.
+- `Regra operacional`: usar `Visual simplification and override surface` como bloco inicial quando o sintoma falar de simplificacao, enxugamento, override, remocao visual, reducao de superficie ou tentativa de deixar o tema minimo sem quebrar o grafo visual.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, contêiner, clonagem, contexto estrutural ou suspeita de molde/base errada.
+- `Regra operacional`: em `Theme`, nao tratar `Class graph and references` como prova automatica de `PredefinedTypes` e `Styles` corretos, e nao tratar `Visual simplification and override surface` como camada puramente cosmetica.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao-base`, `grafo de classes`, `binding visual normativo`, `simplificacao/override` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Theme` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.

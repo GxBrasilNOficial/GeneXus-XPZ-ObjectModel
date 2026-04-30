@@ -256,6 +256,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e shape interno do `SDT`, o que e dependencia tipada de item e o que e metadata de serializacao externa; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Theme`
+
+- em `Theme`, revisar por blocos funcionais; nao tratar o objeto como XML visual pequeno autossuficiente quando a pergunta for de grafo visual, binding, simplificacao ou diagnostico fino
+- os blocos canonicos sao `Theme core definition`, `Class graph and references`, `Predefined types and style bindings`, `Visual simplification and override surface` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Class graph and references -> Predefined types and style bindings` para confirmar se a classe existente esta realmente vinculada ao tipo visual normativo certo
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Theme` inteiro por reflexo
+- usar `Theme core definition` como bloco inicial para definicao-base do tema, propriedades centrais, shape do objeto e configuracao global
+- usar `Class graph and references` como bloco inicial para `ThemeClass`, referencias internas, heranca visual e dependencias entre classes
+- usar `Predefined types and style bindings` como bloco inicial para `PredefinedTypes`, `Styles` e bindings entre tipos visuais conhecidos e classes/estilos concretos
+- usar `Visual simplification and override surface` como bloco inicial para simplificacao, override, enxugamento visual e remocao controlada de superficie
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
+- manter separado o que e definicao-base do tema, o que e grafo de classes, o que e binding visual normativo e o que e simplificacao/override; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino
