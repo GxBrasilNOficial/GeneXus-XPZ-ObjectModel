@@ -228,6 +228,26 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: em `Procedure`, as transicoes mais comuns e justificadas sao `Rules/parm -> Variables`, `Rules/parm -> Source`, `Source -> Variables`, `Source -> Calls and dependencies` e `Report layout -> Source`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `Procedure` inteira por reflexo.
 
+### Revisao por blocos em `DataSelector`
+
+- `Regra operacional`: em `DataSelector`, nao presumir que XML pequeno equivale a revisao simples; a revisao fina deve separar explicitamente contrato de selecao, logica de filtro, dependencias semanticas e contexto de navegacao.
+- `Regra operacional`: os blocos canonicos de revisao em `DataSelector` sao `Selection contract`, `Selection logic and conditions`, `Attribute and function dependencies`, `Navigation context` e `Identity and container`.
+- `Regra operacional`: `Selection contract` cobre assinatura de entrada, parametros, variaveis declarativas e o contrato esperado pelo seletor.
+- `Regra operacional`: `Selection logic and conditions` cobre `Condition`, filtros, expressoes, criterios de selecao e a logica efetiva que decide o conjunto retornado.
+- `Regra operacional`: `Attribute and function dependencies` cobre atributos referenciados, funcoes chamadas, nomes usados em filtro e qualquer dependencia semantica que precise existir de verdade na KB.
+- `Regra operacional`: `Navigation context` cobre base implicita ou explicita da selecao, contexto transacional/fisico e a moldura funcional em que o seletor opera.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `DataSelector`.
+- `Regra operacional`: em `DataSelector`, as transicoes mais comuns e justificadas sao `Selection contract -> Selection logic and conditions`, `Selection logic and conditions -> Attribute and function dependencies`, `Attribute and function dependencies -> Selection logic and conditions`, `Selection logic and conditions -> Navigation context`, `Navigation context -> Selection logic and conditions`, `Selection contract -> Attribute and function dependencies`, `Identity and container -> Selection contract` e `Identity and container -> Navigation context`.
+- `Regra operacional`: usar `Selection contract` como bloco inicial quando a duvida nascer de parametros, assinatura de entrada, variavel de controle ou diferenca entre o que o seletor espera receber e o que o caso parece fornecer.
+- `Regra operacional`: usar `Selection logic and conditions` como bloco inicial quando o sintoma falar de `Condition`, filtro, expressao, criterio de selecao, recorte de conjunto ou comportamento logico do seletor.
+- `Regra operacional`: usar `Attribute and function dependencies` como bloco inicial quando a pergunta falar de atributo citado, funcao usada no filtro, referencia quebrada, nome nao resolvido ou dependencia semantica inexistente na KB.
+- `Regra operacional`: usar `Navigation context` como bloco inicial quando a duvida falar de base implicita, contexto transacional/fisico, encaixe da selecao no modelo ou coerencia do seletor com a moldura de navegacao em volta.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural ou risco de estar olhando o seletor errado.
+- `Regra operacional`: em `DataSelector`, parametro nao prova filtro aplicado, e filtro nao prova existencia real de atributo ou funcao no destino; manter essas camadas separadas ate a evidencia permitir unificacao controlada.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataSelector` inteiro por reflexo.
+
 ### Revisao por blocos em `DataProvider`
 
 - `Regra operacional`: em `DataProvider`, nao presumir `Source` como bloco inicial universal; a revisao fina deve declarar antes qual e o bloco primario do sintoma atual.

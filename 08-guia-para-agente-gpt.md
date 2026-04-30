@@ -212,6 +212,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Calls and dependencies` como bloco inicial para `SDT`, `Procedure`, `BC`, `Transaction` e dependencia externa imediata
 - usar `Identity and container` como bloco inicial para `parent`, `module`, `fullyQualifiedName`, origem estrutural e risco de clonagem
 
+### Regra adicional para revisao de `DataSelector`
+
+- em `DataSelector`, revisar por blocos funcionais; nao tratar XML pequeno como leitura simples quando a pergunta for de filtro, parametro, selecao, funcao ou diagnostico fino
+- os blocos canonicos sao `Selection contract`, `Selection logic and conditions`, `Attribute and function dependencies`, `Navigation context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Selection logic and conditions -> Attribute and function dependencies` para confirmar se a referencia usada no filtro existe de verdade na KB
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `DataSelector` inteiro por reflexo
+- usar `Selection contract` como bloco inicial para parametros, assinatura de entrada, variavel de controle e contrato esperado pelo seletor
+- usar `Selection logic and conditions` como bloco inicial para `Condition`, filtro, expressao, criterio de selecao e comportamento logico do seletor
+- usar `Attribute and function dependencies` como bloco inicial para atributo citado, funcao usada no filtro, referencia quebrada, nome nao resolvido e dependencia semantica concreta
+- usar `Navigation context` como bloco inicial para base implicita, contexto transacional/fisico, encaixe no modelo e coerencia da selecao com a moldura de navegacao
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de estar olhando o seletor errado
+- manter separado o que e contrato de parametro, o que e filtro aplicado e o que depende da existencia real de atributo ou funcao no destino; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `API`
 
 - em `API`, revisar por blocos funcionais; nao presumir leitura centrada em codigo ou dependencias
