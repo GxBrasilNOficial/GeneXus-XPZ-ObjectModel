@@ -153,6 +153,7 @@ If the main need is to prepare or validate the initial folder structure around t
   - if a function on the column is kept, justify it explicitly
   - when the user asks for an initial-date/final-date pair, prefer two independent `where` clauses instead of branching into unnecessary scenarios
   - when the object already has a clear local form in `Source`, prefer following that form as a weak readability heuristic, not as a hard methodological rule
+- When the candidate batch contains a `Procedure` that declares a variable with `ATTCUSTOMTYPE` = `bc:<X>`, run the BC dependency preflight gate before packaging: locate Transaction `X` in the batch or in `ObjetosDaKbEmXml` and verify `idISBUSINESSCOMPONENT=True`; treat absence of that confirmation as a hard blocker
 
 ---
 
@@ -234,6 +235,16 @@ Reference files and when to load them:
    - Classify current-batch content as `requested change`, `necessary auxiliary change`, or `extra unrequested change`
    - Signal any `extra unrequested change` explicitly before packaging; do NOT silently absorb it into the package
    - If an older package lost validity after a change of direction, either rename it with prefix `OBSOLETO_` or present a structured manifest in the conversation stating that package X was replaced by package Y; save that manifest as a local file only when local traceability is concretely needed
+8-BC. BC dependency preflight gate — run before any packaging when the batch contains a `Procedure`:
+   - Scan variables of every `Procedure` in the batch for `ATTCUSTOMTYPE` = `bc:<X>`
+   - For each dependency `X` found:
+     - If `X` is present in the batch: read the batch XML and check `idISBUSINESSCOMPONENT`
+       - Value is `False` or property is absent → **ABORT**: Transaction `X` is in the batch but is not marked as Business Component; correct the Transaction XML before packaging
+       - Value is `True` → alert: Transaction `X` and its dependent Procedure are in the same batch; ordering risk exists; suggest staging into two packages — package 1 with Transaction `X`, package 2 with the dependent Procedure(s); require explicit user confirmation before packaging together
+     - If `X` is present in `ObjetosDaKbEmXml` but not in the batch: read the corpus XML and check `idISBUSINESSCOMPONENT`
+       - Value is `False` or property is absent → **ABORT**: Transaction `X` exists in the official corpus but is not marked as Business Component; the Procedure's `bc:` dependency cannot be satisfied
+       - Value is `True` → proceed normally; Transaction already exists as BC in the KB and is not being re-imported
+     - If `X` is absent from both the batch and `ObjetosDaKbEmXml` → **ABORT**: Transaction `X` cannot be confirmed as existing or as Business Component in the target KB; do not package the dependent Procedure until the dependency is resolved
 8. Check for improper local changes in `ObjetosDaKbEmXml`:
    - If detected, treat this as an explicit process error
    - Preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, present a structured manifest of preserved items in the conversation, save it as a local file when incident traceability requires it, and **ABORT** packaging until the snapshot is sane
@@ -560,6 +571,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] Any corrective package after partial failure reports original package, successful objects, failed objects, and contains only the necessary delta
 - [ ] Final closing explicitly states that the saved XML was reread, the persisted `lastUpdate` was confirmed, and the applicable local rules were reread and satisfied
 - [ ] Limitations block included in output
+- [ ] For every `Procedure` in the batch with a `bc:<X>` variable: Transaction `X` was confirmed as `idISBUSINESSCOMPONENT=True` in the batch or in `ObjetosDaKbEmXml`; when `X` is also in the same batch, import ordering risk was explicitly acknowledged or the batch was staged
 - [ ] If the package contains a WWP PatternInstance (`WorkWithPlus*`): rename collisions were checked (two old fields mapping to the same new name)
 - [ ] If the package contains a WWP PatternInstance: duplicate nodes in `<attribute>`, `<gridAttribute>`, and `<parameter>` were removed
 - [ ] If the package contains a WWP PatternInstance: `parentGuid` points to the correct target Transaction, not to the source entity
@@ -620,6 +632,8 @@ Ao clonar tela customizada WorkWithPlus:
 - ABORT if applicable local repository documentation was not reread before packaging
 - ABORT if a local functional review chain, contract, or operational rule required by the target KB is still pending or inconsistent in the saved XML
 - ABORT if an essential `Source` construct depends only on intuition, generic GeneXus memory, or isolated local corpus evidence
+- NEVER package a `Procedure` with a `bc:<X>` variable when Transaction `X` is confirmed as not having `idISBUSINESSCOMPONENT=True` in the batch or in `ObjetosDaKbEmXml`
+- ABORT if a `bc:<X>` variable exists in a `Procedure` in the batch and Transaction `X` cannot be confirmed as `idISBUSINESSCOMPONENT=True` either in the batch or in `ObjetosDaKbEmXml`
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) and [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) take precedence over all other heuristics
 
 ---
