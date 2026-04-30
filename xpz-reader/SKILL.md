@@ -62,6 +62,7 @@ Do NOT use this skill for:
 - For `DataStore`, classify the review by functional block before fine analysis: `Store definition and declared connection surface`, `Configuration parameters and runtime options`, `Model and consumption context`, or `Identity and container`
 - For `Generator`, classify the review by functional block before fine analysis: `Generator definition and declared surface`, `Generation options and technical parameters`, `Model and target-platform usage context`, or `Identity and container`
 - For `Language`, classify the review by functional block before fine analysis: `Language definition and declared surface`, `Localization parameters and technical options`, `Model and runtime usage context`, or `Identity and container`
+- For `Document`, classify the review by functional block before fine analysis: `Document identity and declared surface`, `Materialized content and payload fidelity`, `References and functional consumption context`, or `Identity and container`
 - Treat any extra block opened after the first one as an `adjacent block` and open it only when there is explicit functional dependency with the primary block
 - Name every justified block transition in the analysis and handoff, instead of silently widening the scope
 - State the conclusion scope at the smallest functional level supported by evidence, including execution context when that distinction matters
@@ -338,19 +339,25 @@ Reference files and when to load them:
    - `Model and runtime usage context` for model fit, effective consumption, runtime linkage, and functional role of the language
    - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
 69. For `Language`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep declared surface, localization parameters, and usage-context layers separate until evidence supports joining them
-70. If type is `Procedure` → classify the primary review block before fine analysis:
+70. If type is `Document` → classify the primary review block before fine analysis:
+   - `Document identity and declared surface` for what the document declares itself to be, its main role, naming, and structural surface
+   - `Materialized content and payload fidelity` for materialized content, payload integrity, text/byte preservation, and extraction fidelity
+   - `References and functional consumption context` for consumers of the document, external links, functional dependency, and role in the wider flow
+   - `Identity and container` for `fullyQualifiedName`, `name`, `guid`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
+71. For `Document`, open adjacent blocks only when there is explicit functional dependency with the primary block, name that transition in the analysis, and keep declared surface, payload, and consumption-context layers separate until evidence supports joining them
+72. If type is `Procedure` → classify the primary review block before fine analysis:
    - `Source` for filters, flow, conditions, assignments, navigation, and calls made in the body
    - `Rules/parm` for signature, parameters, declarative contract, and rule-focused errors
    - `Variables` for existence, type, helper declarations, and collection-vs-simple coherence
    - `Calls and dependencies` for callee review, dependency chain, and proof of caller call-site
    - `Identity and container` for `fullyQualifiedName`, `parent`, `parentGuid`, `parentType`, and `moduleGuid`
    - `Report layout` only when the `Procedure` is a report and the symptoms involve `Bands`, `PrintBlock`, `ReportLabel`, `ReportAttribute`, or layout shape
-71. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
-72. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
-73. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
-74. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
-75. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
-76. Report result:
+73. For `Procedure`, open adjacent blocks only when there is explicit functional dependency with the primary block, and name that transition in the analysis
+74. If type is report `Procedure` → load [05b-procedure-relatorio-familias-e-templates](../05b-procedure-relatorio-familias-e-templates.md), classify family, and separate observed evidence into `Source`, `Rules`, and layout
+75. For report `Procedure`, if the symptoms point to `invalid control`, `printBlock`, `ReportLabel`, or `ReportAttribute`, classify the primary suspicion as layout; if they point to `parm(...)` or missing `;`, classify the primary suspicion as `Rules`; if they point to `Header`, `Footer`, `For each`, or `Output_file`, classify the primary suspicion as `Source`
+76. For report `Procedure`, if the case still fits simple F2/F3 coverage with no repeated structural failure signal, report that sanitized canonical coverage is still available and label the basis as `molde sanitizado`; otherwise recommend escalation to comparable real XML explicitly
+77. Assign risk level from [03-risco-e-decisao-por-tipo](../03-risco-e-decisao-por-tipo.md)
+78. Report result:
    - Object type and canonical name
    - Container classification (`Folder`, `Module`, or unresolved)
    - Structural family (if applicable)
@@ -377,6 +384,7 @@ Reference files and when to load them:
    - For `DataStore`, primary review block and any justified block transition used in the analysis
    - For `Generator`, primary review block and any justified block transition used in the analysis
    - For `Language`, primary review block and any justified block transition used in the analysis
+   - For `Document`, primary review block and any justified block transition used in the analysis
    - For `Procedure`, primary review block and any justified block transition used in the analysis
    - Risk level
    - Part types: present / expected / missing — or N/A if the type is confirmed in [01b] as using no Parts
@@ -415,6 +423,7 @@ Reference files and when to load them:
 - [ ] For `DataStore`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Generator`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Language`, the primary review block was declared before fine analysis and any block transition was justified explicitly
+- [ ] For `Document`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For `Procedure`, the primary review block was declared before fine analysis and any block transition was justified explicitly
 - [ ] For report `Procedure`, evidence was separated into `Source`, `Rules`, and layout and the escalation status was made explicit
 - [ ] Confidence level declared for every conclusion
@@ -454,5 +463,6 @@ Reference files and when to load them:
 - For `DataStore`, NEVER treat declared connection surface as enough to prove runtime configuration correctness, or runtime configuration as enough to prove coherent consumption context in the model
 - For `Generator`, NEVER treat declared generator surface as enough to prove technical-parameter correctness, or technical parameters as enough to prove coherent target-platform usage context
 - For `Language`, NEVER treat declared language surface as enough to prove localization-parameter correctness, or localization parameters as enough to prove coherent model/runtime usage context
+- For `Document`, NEVER treat declared document surface as enough to prove payload fidelity, or payload fidelity as enough to prove coherent functional consumption context
 - For `Procedure`, NEVER jump from one functional block to another without explicit dependency rationale
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) take precedence over all heuristics

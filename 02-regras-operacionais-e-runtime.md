@@ -749,6 +749,40 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra de fronteira`: nao colapsar surface declarada, parametros tecnicos e contexto de uso como se provassem a mesma coisa.
 - `Conclusao`: fechar a resposta no menor nivel funcional sustentado pelo XML e pela dependencia realmente aberta: definicao, parametros, contexto de uso ou identidade estrutural.
 
+### Revisao por blocos em Document
+
+- `Regra operacional`: `Document` nao deve ser tratado como bloco unico; separar identidade do artefato, payload materializado, contexto de consumo e identidade estrutural.
+- `Blocos canonicos`:
+  - `Document identity and declared surface`
+  - `Materialized content and payload fidelity`
+  - `References and functional consumption context`
+  - `Identity and container`
+- `Definicao do bloco Document identity and declared surface`: usar quando a duvida principal for o que o documento declara ser, sua surface estrutural ou seu papel principal.
+- `Definicao do bloco Materialized content and payload fidelity`: usar quando a duvida principal for conteudo materializado, integridade do payload, preservacao de texto/bytes ou fidelidade de extracao.
+- `Definicao do bloco References and functional consumption context`: usar quando a duvida principal for quem consome o documento, vinculos externos, dependencia funcional ou papel no fluxo.
+- `Definicao do bloco Identity and container`: usar quando a duvida principal for `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` ou risco de objeto errado.
+- `Regra de condução`: declarar o bloco primario antes da leitura fina e abrir bloco adjacente apenas quando houver dependencia funcional explicita.
+- `Transicoes permitidas`:
+  - `Document identity and declared surface -> Materialized content and payload fidelity`
+  - `Document identity and declared surface -> References and functional consumption context`
+  - `Document identity and declared surface -> Identity and container`
+  - `Materialized content and payload fidelity -> Document identity and declared surface`
+  - `Materialized content and payload fidelity -> References and functional consumption context`
+  - `Materialized content and payload fidelity -> Identity and container`
+  - `References and functional consumption context -> Document identity and declared surface`
+  - `References and functional consumption context -> Materialized content and payload fidelity`
+  - `References and functional consumption context -> Identity and container`
+  - `Identity and container -> Document identity and declared surface`
+  - `Identity and container -> Materialized content and payload fidelity`
+  - `Identity and container -> References and functional consumption context`
+- `Gatilhos do bloco primario`:
+  - `Document identity and declared surface` para duvida sobre o que o documento declara ser, nome, papel principal ou surface estrutural.
+  - `Materialized content and payload fidelity` para duvida sobre conteudo materializado, integridade do payload, preservacao de texto/bytes ou fidelidade de extracao.
+  - `References and functional consumption context` para duvida sobre quem consome o documento, vinculos externos, dependencia funcional ou papel no fluxo.
+  - `Identity and container` para duvida sobre `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid` e risco de objeto errado.
+- `Regra de fronteira`: nao colapsar surface declarada, payload e contexto de consumo como se provassem a mesma coisa.
+- `Conclusao`: fechar a resposta no menor nivel funcional sustentado pelo XML e pela dependencia realmente aberta: identidade declarada, payload, contexto de consumo ou identidade estrutural.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
