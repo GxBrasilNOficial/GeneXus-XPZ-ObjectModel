@@ -2,6 +2,7 @@
 !/*.md
 !/.gitignore
 !/.gitattributes
+!/.editorconfig
 !/historico/
 !/historico/**
 !/scripts/
