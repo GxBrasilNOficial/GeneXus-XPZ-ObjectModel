@@ -317,6 +317,27 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `definicao-base`, `grafo de classes`, `binding visual normativo`, `simplificacao/override` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Theme` inteiro por reflexo.
 
+### Revisao por blocos em `ThemeClass`
+
+- `Regra operacional`: em `ThemeClass`, nao tratar o objeto como XML visual pequeno, direto e trivial; a revisao fina deve separar explicitamente superficie direta da classe, cadeia de heranca, marcadores de aplicabilidade e dependencias visuais externas.
+- `Regra operacional`: os blocos canonicos de revisao em `ThemeClass` sao `Direct class surface`, `Inheritance and parent linkage`, `Theme applicability and internal classification`, `Visual references and external dependencies` e `Identity and container`.
+- `Regra operacional`: `Direct class surface` cobre as `Properties` top-level da propria classe, propriedades visuais concretas, shape direto do objeto e o que a classe declara sem mediação por `Part`.
+- `Regra operacional`: `Inheritance and parent linkage` cobre `parent`, `parentGuid`, `parentType`, cadeia de heranca visual, classe base, variante derivada e estados visuais como `hover`.
+- `Regra operacional`: `Theme applicability and internal classification` cobre marcadores como `ThemeElementThemeTypes`, `ThemeElementInternalType`, escopo de aplicabilidade e classificacao interna da classe tematica.
+- `Regra operacional`: `Visual references and external dependencies` cobre referencias nominais a cores, imagens, classes auxiliares e outros recursos visuais externos que a leitura da classe dependa de sustentar.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid` e `moduleGuid`; em `ThemeClass`, nao colapsar automaticamente `parent*` neste bloco quando a evidencia apontar heranca funcional.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa da `ThemeClass`.
+- `Regra operacional`: em `ThemeClass`, as transicoes mais comuns e justificadas sao `Direct class surface -> Inheritance and parent linkage`, `Direct class surface -> Visual references and external dependencies`, `Direct class surface -> Theme applicability and internal classification`, `Inheritance and parent linkage -> Direct class surface`, `Inheritance and parent linkage -> Visual references and external dependencies`, `Inheritance and parent linkage -> Identity and container`, `Theme applicability and internal classification -> Direct class surface`, `Theme applicability and internal classification -> Inheritance and parent linkage`, `Visual references and external dependencies -> Direct class surface`, `Visual references and external dependencies -> Inheritance and parent linkage`, `Visual references and external dependencies -> Identity and container`, `Identity and container -> Inheritance and parent linkage`, `Identity and container -> Theme applicability and internal classification` e `Identity and container -> Direct class surface`.
+- `Regra operacional`: usar `Direct class surface` como bloco inicial quando o sintoma falar de propriedade visual errada, override local, shape direto da classe ou simplificacao pontual da propria `ThemeClass`.
+- `Regra operacional`: usar `Inheritance and parent linkage` como bloco inicial quando o sintoma falar de classe base faltante, heranca visual, variante derivada, propagacao de estilo ou quebra de cadeia.
+- `Regra operacional`: usar `Theme applicability and internal classification` como bloco inicial quando o sintoma falar de `ThemeElementThemeTypes`, `ThemeElementInternalType`, aplicabilidade web/mobile ou reconhecimento da classe pelo ecossistema visual.
+- `Regra operacional`: usar `Visual references and external dependencies` como bloco inicial quando o sintoma falar de cor, imagem, classe auxiliar ou outro recurso visual externo ausente, quebrado ou semanticamente incorreto.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, modulo, contexto estrutural, clonagem ou suspeita de molde/base errada.
+- `Regra operacional`: em `ThemeClass`, nao tratar `Inheritance and parent linkage` como mero contexto estrutural, e nao tratar `Theme applicability and internal classification` como detalhe cosmetico.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `superficie direta`, `heranca`, `aplicabilidade/classificacao`, `dependencia visual externa` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `ThemeClass` inteira por reflexo.
+
 ### Revisao por blocos em `Attribute`
 
 - `Regra operacional`: em `Attribute`, nao tratar o objeto como definicao escalar trivial; a revisao fina deve separar explicitamente shape top-level, propriedades semanticas, referencias nominais e contexto estrutural.

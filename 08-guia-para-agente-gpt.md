@@ -271,6 +271,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
 - manter separado o que e definicao-base do tema, o que e grafo de classes, o que e binding visual normativo e o que e simplificacao/override; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `ThemeClass`
+
+- em `ThemeClass`, revisar por blocos funcionais; nao tratar o objeto como XML visual pequeno, direto e trivial quando a pergunta for de heranca, marcadores de aplicabilidade, dependencia visual ou diagnostico fino
+- os blocos canonicos sao `Direct class surface`, `Inheritance and parent linkage`, `Theme applicability and internal classification`, `Visual references and external dependencies` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Inheritance and parent linkage -> Direct class surface` para verificar se o problema atribuido a heranca na verdade esta na superficie declarada da classe derivada
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `ThemeClass` inteira por reflexo
+- usar `Direct class surface` como bloco inicial para `Properties` top-level, propriedades visuais concretas, shape direto da classe e override local
+- usar `Inheritance and parent linkage` como bloco inicial para `parent`, `parentGuid`, `parentType`, classe base, cadeia de heranca visual, variantes derivadas e estados como `hover`
+- usar `Theme applicability and internal classification` como bloco inicial para `ThemeElementThemeTypes`, `ThemeElementInternalType`, aplicabilidade web/mobile e classificacao interna da classe tematica
+- usar `Visual references and external dependencies` como bloco inicial para referencias a cor, imagem, classe auxiliar ou outro recurso visual externo de que a classe dependa
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e superficie direta da classe, o que e heranca, o que e aplicabilidade/classificacao interna e o que e dependencia visual externa; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Attribute`
 
 - em `Attribute`, revisar por blocos funcionais; nao tratar o objeto como definicao escalar trivial quando a pergunta for de tipagem, referencia nominal, semantica de controle ou diagnostico fino
