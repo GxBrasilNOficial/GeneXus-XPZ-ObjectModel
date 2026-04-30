@@ -624,6 +624,25 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `identidade/surface`, `payload`, `contexto de consumo` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `File` inteiro por reflexo.
 
+### Revisao por blocos em `Dashboard`
+
+- `Regra operacional`: em `Dashboard`, nao tratar o objeto como composicao visual monolitica; a revisao fina deve separar explicitamente composicao estrutural, widgets com seus bindings, contexto de navegacao/interacao e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `Dashboard` sao `Dashboard composition and layout`, `Widgets and data bindings`, `Navigation and interaction context` e `Identity and container`.
+- `Regra operacional`: `Dashboard composition and layout` cobre secoes, blocos visuais, organizacao estrutural e shape composicional do dashboard.
+- `Regra operacional`: `Widgets and data bindings` cobre widgets, componentes, bindings de dados, parametros e o vinculo entre cada parte visivel e seu dado/fornecedor.
+- `Regra operacional`: `Navigation and interaction context` cobre acoes, links, drill-down, interacao do usuario e o encaixe funcional do dashboard no fluxo mais amplo.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parent`, `parentGuid`, `parentType` e `moduleGuid`, alem do risco de estar lendo o dashboard errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa do `Dashboard`.
+- `Regra operacional`: em `Dashboard`, as transicoes mais comuns e justificadas sao `Dashboard composition and layout -> Widgets and data bindings`, `Dashboard composition and layout -> Navigation and interaction context`, `Dashboard composition and layout -> Identity and container`, `Widgets and data bindings -> Dashboard composition and layout`, `Widgets and data bindings -> Navigation and interaction context`, `Widgets and data bindings -> Identity and container`, `Navigation and interaction context -> Dashboard composition and layout`, `Navigation and interaction context -> Widgets and data bindings`, `Navigation and interaction context -> Identity and container`, `Identity and container -> Dashboard composition and layout`, `Identity and container -> Widgets and data bindings` e `Identity and container -> Navigation and interaction context`.
+- `Regra operacional`: usar `Dashboard composition and layout` como bloco inicial quando o sintoma falar de composicao, secoes, organizacao visual ou shape estrutural do dashboard.
+- `Regra operacional`: usar `Widgets and data bindings` como bloco inicial quando a duvida falar de widget, componente, binding, fonte de dados, parametro ou vinculo entre visualizacao e dado.
+- `Regra operacional`: usar `Navigation and interaction context` como bloco inicial quando o sintoma falar de acao, link, drill-down, interacao do usuario ou encaixe do dashboard no fluxo.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, contêiner ou risco de clonagem/classificacao equivocada.
+- `Regra operacional`: em `Dashboard`, nao tratar composicao estrutural como prova automatica de binding correto de widget, e nao tratar binding de widget como prova automatica de navegacao/interacao coerente.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `composicao`, `widgets e bindings`, `navegacao/interacao` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Dashboard` inteiro por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.

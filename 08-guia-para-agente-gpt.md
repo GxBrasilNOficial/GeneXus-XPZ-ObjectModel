@@ -492,6 +492,20 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
 - manter separado o que e identidade/surface do recurso, o que e payload e o que e contexto de consumo; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Dashboard`
+
+- em `Dashboard`, revisar por blocos funcionais; nao tratar o objeto como composicao visual monolitica quando a pergunta for de widget, binding, navegacao ou diagnostico fino
+- os blocos canonicos sao `Dashboard composition and layout`, `Widgets and data bindings`, `Navigation and interaction context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Widgets and data bindings -> Navigation and interaction context` para separar problema de dado/widget de problema de acao/interacao
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Dashboard` inteiro por reflexo
+- usar `Dashboard composition and layout` como bloco inicial para composicao, secoes, shape estrutural e organizacao visual do dashboard
+- usar `Widgets and data bindings` como bloco inicial para widget, componente, binding, fonte de dados, parametro e vinculo entre visual e dado
+- usar `Navigation and interaction context` como bloco inicial para acao, link, drill-down, interacao do usuario e encaixe funcional no fluxo
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parent`, `moduleGuid`, origem estrutural e risco de clonagem
+- manter separado o que e composicao do dashboard, o que e binding de widget e o que e navegacao/interacao; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino
