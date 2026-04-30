@@ -421,6 +421,21 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, contêiner, origem estrutural e risco de clonagem
 - manter separado o que e tipo base, o que e limite/constraint, o que e enumeracao e o que e contrato semantico de uso; nao colapsar essas camadas cedo demais
 
+### Regra adicional para revisao de `Table`
+
+- em `Table`, revisar por blocos funcionais; nao tratar o objeto como bloco fisico unico quando a pergunta for de chave, indice, reassociacao com `Transaction` ou diagnostico fino
+- os blocos canonicos sao `Primary key structure`, `Secondary indexes and embedded index members`, `Transaction coupling and physical context` e `Identity and container`
+- antes da analise fina, declarar qual e o bloco primario do sintoma atual
+- abrir bloco adjacente apenas quando houver dependencia funcional explicita com o bloco primario
+- nomear a transicao de bloco no raciocinio e no handoff, por exemplo: `Secondary indexes and embedded index members -> Transaction coupling and physical context` para separar problema de indice embutido de problema de reassociacao fisica
+- parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `Table` inteira por reflexo
+- usar `Primary key structure` como bloco inicial para chave primaria, membros da chave, ordem estrutural e coerencia do nucleo fisico principal
+- usar `Secondary indexes and embedded index members` como bloco inicial para indice, membro de indice, ordenacao, cobertura de busca e leitura de `Index` embutido
+- usar `Transaction coupling and physical context` como bloco inicial para relacao com a `Transaction` de mesmo nome, reassociacao fisica, contexto estrutural no destino e dependencia contextual da `Table`
+- usar `Identity and container` como bloco inicial para `name`, `fullyQualifiedName`, `guid`, `parentGuid`, `moduleGuid`, origem estrutural e risco de clonagem
+- tratar `Index` como estrutura embutida da `Table` nesta trilha; nao abrir um bloco top-level separado de `Index` por padrao
+- manter separado o que e chave primaria, o que e indice embutido e o que e acoplamento fisico/contextual com `Transaction`; nao colapsar essas camadas cedo demais
+
 ### Regra adicional para revisao de `Panel`
 
 - em `Panel`, revisar por blocos funcionais; nao tratar XML curto como sinal automatico de revisao simples quando a pergunta for de estrutura, comportamento, pattern, parent ou diagnostico fino

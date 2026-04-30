@@ -528,6 +528,26 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 - `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `tipo base`, `limites/constraints`, `contrato enumerado`, `contrato semantico de uso` ou `identidade/contêiner`.
 - `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir o `Domain` inteiro por reflexo.
 
+### Revisao por blocos em `Table`
+
+- `Regra operacional`: em `Table`, nao tratar o objeto como bloco fisico unico de leitura; a revisao fina deve separar explicitamente chave primaria, indices embutidos, acoplamento com `Transaction` e identidade estrutural.
+- `Regra operacional`: os blocos canonicos de revisao em `Table` sao `Primary key structure`, `Secondary indexes and embedded index members`, `Transaction coupling and physical context` e `Identity and container`.
+- `Regra operacional`: `Primary key structure` cobre composicao da chave primaria, ordem estrutural, membros da chave e coerencia do nucleo fisico principal da `Table`.
+- `Regra operacional`: `Secondary indexes and embedded index members` cobre indices embutidos, membros declarados em indice, ordenacao, cobertura de busca e leitura do `Index` como estrutura interna da `Table`.
+- `Regra operacional`: `Transaction coupling and physical context` cobre a reassociacao fisica da `Table` com a `Transaction` de mesmo nome, o contexto estrutural no destino e a dependencia contextual que nao desaparece so porque `parent` nomeado nao aparece.
+- `Regra operacional`: `Identity and container` cobre `name`, `fullyQualifiedName`, `guid`, `parentGuid`, `moduleGuid` e o risco de estar lendo a `Table` errada no contexto estrutural errado.
+- `Regra operacional`: antes de aprofundar a leitura, declarar qual e o bloco primario do sintoma atual; se o agente ainda nao souber qual e o bloco primario, ele ainda nao esta pronto para revisao fina.
+- `Regra operacional`: abrir bloco adjacente apenas por dependencia funcional explicita; transicao sem motivo declarado reintroduz leitura difusa da `Table`.
+- `Regra operacional`: em `Table`, as transicoes mais comuns e justificadas sao `Primary key structure -> Secondary indexes and embedded index members`, `Primary key structure -> Transaction coupling and physical context`, `Primary key structure -> Identity and container`, `Secondary indexes and embedded index members -> Primary key structure`, `Secondary indexes and embedded index members -> Transaction coupling and physical context`, `Secondary indexes and embedded index members -> Identity and container`, `Transaction coupling and physical context -> Primary key structure`, `Transaction coupling and physical context -> Secondary indexes and embedded index members`, `Transaction coupling and physical context -> Identity and container`, `Identity and container -> Transaction coupling and physical context`, `Identity and container -> Primary key structure` e `Identity and container -> Secondary indexes and embedded index members`.
+- `Regra operacional`: usar `Primary key structure` como bloco inicial quando o sintoma falar de chave, composicao da tabela, atributos-chave, ordem estrutural da chave ou coerencia do nucleo fisico principal.
+- `Regra operacional`: usar `Secondary indexes and embedded index members` como bloco inicial quando o sintoma falar de indice, membro de indice, cobertura de busca, ordenacao, presenca/ausencia de indice ou leitura de `Index` embutido.
+- `Regra operacional`: usar `Transaction coupling and physical context` como bloco inicial quando a duvida falar de reassociacao fisica, relacao com a `Transaction` de mesmo nome, contexto estrutural no destino ou papel da `Table` fora da `Transaction`.
+- `Regra operacional`: usar `Identity and container` como bloco inicial quando a duvida falar de objeto errado, `name`, `fullyQualifiedName`, `guid`, `parentGuid`, `moduleGuid`, colisao de identidade ou contexto estrutural.
+- `Regra operacional`: em `Table`, `Index` deve ser lido como estrutura embutida da propria `Table` nesta trilha de export, e nao como tipo top-level independente na revisao por blocos.
+- `Regra operacional`: em `Table`, ausencia de `parent` nomeado nao prova autonomia estrutural; a dependencia contextual continua devendo ser lida por `parentGuid`, `moduleGuid` e pelo acoplamento com a `Transaction` de mesmo nome.
+- `Regra operacional`: declarar a conclusao no menor nivel funcional que a evidencia sustentar: `chave primaria`, `indices embutidos`, `acoplamento fisico/contextual` ou `identidade/contêiner`.
+- `Regra operacional`: parar a expansao quando a hipotese ja estiver sustentada; nao reabrir a `Table` inteira por reflexo.
+
 ### Escalada para corpus real
 
 - `Regra operacional`: quando a trilha ja cobrir o caso comum por molde sanitizado forte, o corpus real da KB nao deve ser exigido como primeiro passo.
