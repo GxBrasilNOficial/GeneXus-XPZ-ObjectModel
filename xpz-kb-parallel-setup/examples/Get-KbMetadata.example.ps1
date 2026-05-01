@@ -8,7 +8,14 @@ Le kb-source-metadata.md na raiz da pasta paralela da KB e retorna campos chave
 como texto estruturado. Elimina o padrao recorrente de Select-String + regex
 inline nos chamadores.
 
-Campos retornados: last_xpz_materialization_run_at, kb_name, source_guid.
+Campos retornados e sua origem em kb-source-metadata.md:
+  last_xpz_materialization_run_at : campo de topo ou frontmatter do arquivo
+  kb_name                         : campo "name" na tabela da secao ## Source/Version
+  source_guid                     : campo "kb (GUID)" na tabela da secao ## Source
+                                    (GUID da KB -- nao o GUID da versao em ## Source/Version;
+                                    implementacoes que lerem source_guid de ## Source/Version
+                                    serao semanticamente incorretas mesmo com parse valido)
+
 Campos ausentes sao indicados com "(ausente)" em vez de falha silenciosa.
 
 .PARAMETER MetadataPath

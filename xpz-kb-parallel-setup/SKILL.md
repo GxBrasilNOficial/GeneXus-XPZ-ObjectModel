@@ -188,6 +188,10 @@ Do NOT use this skill for:
   - regeneracao e validacao do indice a partir de `ObjetosDaKbEmXml`
   - execucao do gate de frescor (`Test-*KbGate.ps1`): chama o wrapper de consulta local com `-Query index-metadata`, le `kb-source-metadata.md`, compara timestamps e retorna `GATE_OK` ou lanca `BLOCK: <motivo>`; depende de `Query-*KbIntelligence.ps1` na mesma pasta; deve ser o unico ponto de execucao do gate de frescor
   - leitura de campos chave de `kb-source-metadata.md` (`Get-*KbMetadata.ps1`): elimina o padrao recorrente de `Select-String + regex` inline nos chamadores; expoe ao menos `last_xpz_materialization_run_at`, `kb_name` e `source_guid`
+    - contrato semantico canonico dos tres campos:
+      - `last_xpz_materialization_run_at`: campo de topo ou frontmatter de `kb-source-metadata.md`
+      - `kb_name`: campo `name` da tabela na secao `## Source/Version` (nome da KB na IDE)
+      - `source_guid`: campo `kb (GUID)` da tabela na secao `## Source` — GUID da KB, nao o GUID da versao em `## Source/Version`; implementacoes que lerem `source_guid` de `## Source/Version` serao semanticamente incorretas mesmo com parse valido
   - validacao do contrato funcional de metadata (`Test-*KbMetadataWrapper.ps1`): chama o motor compartilhado `Test-XpzKbMetadataWrapper.ps1`, compara o que `Get-*KbMetadata.ps1` expoe contra `kb-source-metadata.md` e retorna `METADATA_WRAPPER_OK`, `PENDENTE_DE_DADOS` ou `BLOCK: ...`
   - verificacao de estrutura da pasta paralela (`Test-*KbStructure.ps1`): relatorio de presenca/ausencia de pastas, scripts e artefatos esperados; retorna `STRUCTURE_OK` ou lista componentes ausentes; usado no setup e em diagnostico antes de qualquer operacao
   - auditoria agregada de setup (`Test-*KbSetupAudit.ps1`): chama o motor compartilhado `Test-XpzSetupAudit.ps1`, consolida evidencias deterministicas de `sync/materializacao`, `indice/gate`, `metadata wrapper`, `empacotamento local` e `estado_operacional_sugerido`; deve orquestrar os gates especificos, nunca substitui-los como evidencia primaria
