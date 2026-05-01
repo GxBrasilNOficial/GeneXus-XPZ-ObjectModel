@@ -102,6 +102,14 @@ If the main need is to prepare or validate the initial folder structure around t
 - Detect workspace contamination before packaging and abort when more than one plausible batch is active
 - Treat the workspace as contaminated when the active root of `ObjetosGeradosParaImportacaoNaKbNoGenexus` contains XMLs from different fronts, different target objects, superseded deltas, or unrelated older files that could be mistaken for the current batch
 - Build or validate a manifest for the candidate batch before packaging, treating the manifest first as structured output in the conversation
+- Classify the package intent explicitly before packaging as exactly one of:
+  - `pacote funcional` = objetivo principal e alterar comportamento funcional esperado
+  - `pacote experimental` = objetivo principal e testar serializacao, roundtrip IDE/XPZ, preservacao textual, envelope ou comportamento metodologico do fluxo
+  - `pacote arquitetural` = objetivo principal e reorganizar estrutura, dependencias ou forma de implementacao sem provar sozinho mudanca funcional
+  - `pacote cirurgico` = objetivo principal e corrigir falha localizada ou objeto pontual com delta minimo
+- Treat that package-intent classification as mandatory narrative context, not as optional labeling
+- Require a single primary intent per package; if the candidate batch mixes functional change, textual experiment, and architectural adjustment without clear separability, **ABORT** for confirmation or split the package plan before writing
+- For `pacote experimental`, describe the expected proof narrowly and do not imply functional validation unless an external IDE/import/specification step actually covered it
 - When the user already signals manual IDE import/testing, treat `import_file.xml` as the primary deliverable and generate it promptly instead of postponing packaging
 - Prefer `import_file.xml` as the operational package artifact for manual IDE import unless `.xpz` is explicitly required by the user or by a documented local flow
 - Do NOT generate `.xpz` as an extra artifact by default when `import_file.xml` already satisfies the intended manual IDE import flow
@@ -166,6 +174,8 @@ If the main need is to prepare or validate the initial folder structure around t
 - Respond in the same language the user writes in
 - Lead with the decision (proceed / abort) and the reason
 - State which template was used and why it was selected
+- State the package intent explicitly as `pacote funcional`, `pacote experimental`, `pacote arquitetural`, or `pacote cirurgico`
+- When the case is experimental or methodological, say that clearly in the narrative and separate it from any claim about functional behavior
 - Always end output with a limitations block: what was followed, what requires external validation
 - In the closing, declare explicitly whether the front identity was confirmed, directly evidenced, or assumed under local rule
 - In the closing, declare explicitly whether the package reused an existing front or opened a new front
@@ -224,7 +234,15 @@ Reference files and when to load them:
      - `COLLISION_OK`
      - `BLOCK: _nn ja existe para o front X, proximo livre: _mm`
    - If the gate blocks, **ABORT** packaging before any `Set-Content`, rename, move, or overwrite of the package artifact
-7. Evaluate batch isolation before packaging:
+7. Classify the package intent before packaging and record it in the conversation/manifests:
+   - `pacote funcional`
+   - `pacote experimental`
+   - `pacote arquitetural`
+   - `pacote cirurgico`
+   - if the candidate batch does not have one dominant primary intent, **ABORT** and require split or explicit confirmation before packaging
+   - if the case is `pacote experimental`, state the bounded proof target explicitly, such as `serializacao`, `roundtrip IDE/XPZ`, `preservacao textual`, or `envelope/importacao`
+   - if the case is `pacote experimental`, do NOT narrate the package as if it already proved business behavior
+8. Evaluate batch isolation before packaging:
    - If more than one plausible batch is present inside the current front folder → **ABORT**
    - Do NOT infer the correct batch only from recency when there is contamination risk
    - If the current front needs a new isolated single-object delta and the current front folder contains remnant XMLs that do not belong to the current front decision, treat that front folder as contaminated and **ABORT** until the unitary batch is isolated explicitly
@@ -239,7 +257,7 @@ Reference files and when to load them:
    - Classify current-batch content as `requested change`, `necessary auxiliary change`, or `extra unrequested change`
    - Signal any `extra unrequested change` explicitly before packaging; do NOT silently absorb it into the package
    - If an older package lost validity after a change of direction, either rename it with prefix `OBSOLETO_` or present a structured manifest in the conversation stating that package X was replaced by package Y; save that manifest as a local file only when local traceability is concretely needed
-8-BC. BC dependency preflight gate — run before any packaging when the batch contains a `Procedure`:
+9-BC. BC dependency preflight gate — run before any packaging when the batch contains a `Procedure`:
    - Scan variables of every `Procedure` in the batch for `ATTCUSTOMTYPE` = `bc:<X>`
    - For each dependency `X` found:
      - If `X` is present in the batch: read the batch XML and check `idISBUSINESSCOMPONENT`
@@ -249,7 +267,7 @@ Reference files and when to load them:
        - Value is `False` or property is absent → **ABORT**: Transaction `X` exists in the official corpus but is not marked as Business Component; the Procedure's `bc:` dependency cannot be satisfied
        - Value is `True` → proceed normally; Transaction already exists as BC in the KB and is not being re-imported
      - If `X` is absent from both the batch and `ObjetosDaKbEmXml` → **ABORT**: Transaction `X` cannot be confirmed as existing or as Business Component in the target KB; do not package the dependent Procedure until the dependency is resolved
-8-WW. WorkWithWeb Apply-mark preflight gate — run before any packaging when the batch contains a `WorkWithForWeb` object (type `78cecefe-be7d-4980-86ce-8d6e91fba04b`; `Object/@name` starts with `WorkWithWeb` in the KB):
+9-WW. WorkWithWeb Apply-mark preflight gate — run before any packaging when the batch contains a `WorkWithForWeb` object (type `78cecefe-be7d-4980-86ce-8d6e91fba04b`; `Object/@name` starts with `WorkWithWeb` in the KB):
    - For each `WorkWithForWeb` in the batch:
      - Locate Part type `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc` in the WorkWithForWeb XML and read `<Property><Name>Apply</Name>` inside `<Source><Properties>`
        - Property absent → **ABORT**: the `Apply` mark is missing from the WorkWithForWeb object; the IDE will not re-apply the Work With for Web pattern on save; add `<Name>Apply</Name><Value>True</Value>` before packaging

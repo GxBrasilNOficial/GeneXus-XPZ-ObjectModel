@@ -83,6 +83,8 @@ Do NOT use esta skill para:
 - Distinguir claramente:
   - sucesso operacional da chamada
   - efeito funcional observado depois no GeneXus
+- Classificar explicitamente quando a rodada for `ensaio metodologico/experimental`, especialmente em casos de serializacao, roundtrip controlado, prova de wrapper, prova de envelope, exportacao headless, `PreviewMode` ou importacao de teste sem validacao funcional posterior
+- Em `ensaio metodologico/experimental`, nao narrar o resultado como mudanca funcional validada; limitar a conclusao ao que a evidencia realmente cobriu
 - Exigir que o probe (sondagem técnica inicial) devolva diagnóstico estruturado com `status`, `summary`, `resolvedPaths`, `checks`, `blockingReasons`, `warnings` e `strategyTrace`
 - Preferir `JSON` como formato canônico inicial desse diagnóstico
 - Registrar `stdout`, `stderr`, `exitCode`, caminho do `.msbuild` temporário e caminho do log
@@ -105,6 +107,10 @@ Do NOT use esta skill para:
 - Responda no idioma do usuário
 - Seja direto sobre estado operacional, riscos e limites
 - Declare quando o resultado é apenas operacional e ainda depende de confirmação funcional
+- Quando a rodada for `ensaio metodologico/experimental`, declarar isso nominalmente no resumo e separar:
+  - objetivo metodologico da rodada
+  - resultado operacional observado
+  - confirmacao funcional ainda nao coberta
 - Quando houver ambiguidade de contexto, interrompa a execução e peça definição explícita
 - Não use linguagem otimista para sugerir segurança que ainda não foi validada empiricamente
 - Quando a exportação headless gerar um `.xpz` para alimentar a pasta paralela da KB, declarar explicitamente o marco `XPZ gerado`
@@ -232,6 +238,7 @@ Parâmetros específicos de importação:
    - `falha operacional`
    - `preview apenas`
    - `operação concluída, porém pendente de confirmação funcional`
+   - quando aplicavel, acumular tambem o marcador narrativo `ensaio metodologico/experimental`, sem substituir a classificacao operacional principal
 13. Recomendar o próximo passo seguro, incluindo reabertura da KB na IDE quando o teste exigir observação posterior
 14. Se a exportação gerou um `.xpz` full para a pasta paralela da KB, declarar explicitamente:
    - caminho do artefato gerado

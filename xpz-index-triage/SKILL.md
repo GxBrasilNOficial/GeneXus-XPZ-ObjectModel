@@ -174,6 +174,15 @@ Se o script retornar `GATE_OK`, encerrar o comando do gate; qualquer proxima aca
 
 Se qualquer `BLOCK:` ocorrer, encerrar a pergunta de negocio e oferecer `xpz-kb-parallel-setup`. Nao executar etapas posteriores do gate em comandos separados para "completar diagnostico".
 
+### ERROS COMUNS DE CHAMADA
+
+- executar o bloco do gate em `Bash` em vez de `PowerShell`
+- trocar o caminho absoluto literal do script por variavel, `Join-Path` ou montagem indireta
+- acrescentar parsing, `Write-Host`, `Get-Date`, saidas auxiliares ou comandos extras ao mesmo bloco do gate
+- tratar recusa de permissao, cancelamento ou interrupcao do gate como licenca para fallback manual
+- depois de `GATE_OK`, reinspecionar o wrapper local ou abrir `scripts/README-kb-intelligence.md` sem necessidade quando a pergunta ja cabe em `search-objects` ou `object-info`
+- em pergunta simples de existencia/localizacao nominal, abrir o wrapper apenas para confirmar assinatura antes de usar os parametros ja documentados em **QUERY PARAMETER REFERENCE**
+
 ---
 
 ## WORKFLOW
