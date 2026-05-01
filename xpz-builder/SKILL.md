@@ -156,6 +156,7 @@ If the main need is to prepare or validate the initial folder structure around t
   - when the user asks for an initial-date/final-date pair, prefer two independent `where` clauses instead of branching into unnecessary scenarios
   - when the object already has a clear local form in `Source`, prefer following that form as a weak readability heuristic, not as a hard methodological rule
 - When the candidate batch contains a `Procedure` that declares a variable with `ATTCUSTOMTYPE` = `bc:<X>`, run the BC dependency preflight gate before packaging: locate Transaction `X` in the batch or in `ObjetosDaKbEmXml` and verify `idISBUSINESSCOMPONENT=True`; treat absence of that confirmation as a hard blocker
+- When the candidate batch contains a `Procedure` whose `Source` delta introduces or materially expands a `Sub` block, run the Sub-pattern Mirroring gate (8-PSM): scan the procedure's pre-existing `Sub` delegation structure; if a dominant `iteration-sub → unit-sub` pattern exists and the new block is `mixed`, emit an architectural alert and require user acknowledgment or restructuring before proceeding; treat this as advisory, not as a hard packaging blocker
 
 ---
 
@@ -265,6 +266,23 @@ Reference files and when to load them:
    - `fail` → **ABORT**: correct the structural issue (missing key in Level, DescriptionAttribute not found in Level) before packaging
    - `warn` → keep packaging blocked; each flagged finding must be reviewed and either corrected or explicitly justified before proceeding; accepted justifications must be recorded in the closing declaration
    - `pass` → proceed to next gate
+8-PSM. Procedure Sub-pattern Mirroring gate — run before any packaging when the batch contains a `Procedure` whose `Source` delta introduces at least one new `Sub/EndSub` block or materially expands an existing one:
+   - Read the pre-existing `Source` of the Procedure (official corpus XML or base XML before the delta) and enumerate all named `Sub/EndSub` blocks
+   - If there are fewer than two pre-existing named `Sub` blocks, skip this gate — no dominant pattern can be established
+   - Classify each pre-existing `Sub` heuristically:
+     - `iteration-sub`: contains `For each` or a loop construct AND calls at least one other named `Sub` per record or item
+     - `unit-sub`: processes a single record or item, contains no loop, is called from an iteration sub
+     - `mixed`: cannot be clearly classified as either
+   - If at least half the pre-existing `Sub` blocks fit a coherent `iteration-sub → unit-sub` delegation pair, record it as the dominant local pattern and name the representative pair (for example `VarreAlunos → ProcessaAluno`)
+   - If no dominant pattern can be identified → skip and proceed normally
+   - If a dominant local pattern was identified, evaluate the new or materially expanded `Sub` block:
+     - Classify it by the same heuristic
+     - If it is `mixed` — it combines iteration, synchronization, and persistence in a single body without delegating to a unit sub — emit the following architectural alert before packaging:
+       - "a procedure já usa fluxo do tipo `<SubDeVarredura> → <SubUnitária>`; a nova sub mistura varredura e persistência sem delegar para uma sub unitária; considere espelhar o padrão dominante"
+     - This alert is advisory; it does not block packaging automatically
+     - Show the alert and require the user to either confirm the divergence is intentional (justification required) or restructure the logic to mirror the dominant pattern
+     - Record the outcome in the closing declaration
+   - Treat this gate as an architectural coherence signal, not as a syntax or structural error
 8. Check for improper local changes in `ObjetosDaKbEmXml`:
    - If detected, treat this as an explicit process error
    - Preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, present a structured manifest of preserved items in the conversation, save it as a local file when incident traceability requires it, and **ABORT** packaging until the snapshot is sane
@@ -594,6 +612,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] For every `Procedure` in the batch with a `bc:<X>` variable: Transaction `X` was confirmed as `idISBUSINESSCOMPONENT=True` in the batch or in `ObjetosDaKbEmXml`; when `X` is also in the same batch, import ordering risk was explicitly acknowledged or the batch was staged
 - [ ] For every `WorkWithForWeb` (`WorkWithWeb*`) in the batch: `Apply` property was verified in Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc`; if linked Transaction is also in the batch or in `ObjetosDaKbEmXml`, `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` was confirmed in that Transaction's Properties
 - [ ] For every `Transaction` in the batch: `Test-GeneXusTransactionCoherence.ps1` was run; `fail` findings were corrected; `warn` findings were reviewed and either corrected or explicitly justified before packaging
+- [ ] For every `Procedure` in the batch with a new or materially expanded `Sub` block: the dominant local sub-delegation pattern was scanned (8-PSM); if a dominant `iteration-sub → unit-sub` pattern was identified and the new block diverged, the architectural alert was shown and the outcome was recorded in the closing declaration
 - [ ] If the package contains a WWP PatternInstance (`WorkWithPlus*`): rename collisions were checked (two old fields mapping to the same new name)
 - [ ] If the package contains a WWP PatternInstance: duplicate nodes in `<attribute>`, `<gridAttribute>`, and `<parameter>` were removed
 - [ ] If the package contains a WWP PatternInstance: `parentGuid` points to the correct target Transaction, not to the source entity
@@ -643,6 +662,7 @@ Ao clonar tela customizada WorkWithPlus:
 - NEVER import a custom instance (`wc*`, `wp*`) without transporting its corresponding `WorkWithPlus*` object
 - NEVER re-apply a pattern over a Transaction without reviewing the diff of existing customizations
 - NEVER rename an entity with WWP active without checking for attribute collisions that would break the PatternInstance XML
+- NEVER silently accept a new `Sub` block in a `Procedure` that diverges strongly from the identified dominant local pattern without showing the 8-PSM architectural alert and recording user acknowledgment or justification in the closing declaration
 - ABORT if risk is high/very high and no internal comparable template is available
 - ABORT if type has fewer than 5 specimens in the corpus and no sanitized template exists
 - ABORT if container identity is unresolved among Module/Folder (`00000000-0000-0000-0000-000000000008`), PackagedModule (`c88fffcd-b6f8-0000-8fec-00b5497e2117`), and Root Module (`afa47377-41d5-4ae8-9755-6f53150aa361`) for the target object
