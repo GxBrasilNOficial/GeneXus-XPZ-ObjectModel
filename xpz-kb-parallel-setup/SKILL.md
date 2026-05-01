@@ -11,6 +11,10 @@ Define e valida a estrutura inicial da pasta paralela da KB usada ao redor de um
 
 ## GUIDELINE
 
+Esta skill e de invocacao obrigatoria antes de qualquer acao de consulta, triagem, leitura de XML ou geracao de objeto em pasta que contenha `ObjetosDaKbEmXml/` ou `KbIntelligence/`. Nenhuma outra skill de KB (`xpz-index-triage`, `xpz-reader`, `xpz-builder`, `xpz-sync`, `nexa`) pode ser iniciada nessa pasta enquanto esta skill nao tiver sido executada na sessao corrente.
+
+Apos o setup ser concluido com sucesso, qualquer consulta de existencia, localizacao ou triagem de XML deve ser roteada para `xpz-index-triage` antes de abrir arquivos individuais, quando a pasta adotar `KbIntelligence`.
+
 Usar esta skill quando o trabalho exigir preparar, explicar, validar, atualizar ou corrigir a estrutura da pasta paralela da KB. O agente deve separar claramente a pasta nativa da KB da pasta paralela e aplicar os nomes padrao quando o usuario nao informar alternativas.
 
 Quando o usuario usar qualquer linguagem que sugira setup — "refazer", "reiniciar", "recriar", "atualizar", "preciso dos novos scripts", "meu gate ta falhando" ou equivalente — em pasta que ja tem historico real, assumir `modo_atualizacao` e confirmar brevemente com o usuario o que sera feito antes de gravar. Se o pedido for generico, como "refazer o setup", "revisar o setup" ou equivalente, assumir por padrao a intencao `auditar_setup` ate que o usuario peca explicitamente `corrigir_wrapper_local` ou `atualizar_bootstrap_local`. Em pasta com historico real, `modo_criacao` nunca e uma opcao oferecida ou aceita; se o usuario insistir em apagar tudo ou recriar do zero, recusar, explicar que dados existentes nao serao destruidos e redirecionar para `modo_atualizacao`.

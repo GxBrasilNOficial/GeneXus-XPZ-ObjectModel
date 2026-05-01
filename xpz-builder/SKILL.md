@@ -378,6 +378,8 @@ Reference files and when to load them:
    - For simple report `Procedure`, load [05b-procedure-relatorio-familias-e-templates.md](../05b-procedure-relatorio-familias-e-templates.md) as a mandatory reference before generating from `molde pronto`; do NOT treat that read as optional
    - For report `Procedure`, verify coherence between layout `PrintBlock` names and each `print printBlock...` reference in `Source`
    - For report `Procedure`, if `Source` prints `printBlockX`, require a matching layout `PrintBlock` with coherent `RPT_INTERNAL_NAME`; if the pair is missing, **ABORT** before packaging
+   - For report `Procedure`, when cloning or adapting `PrintBlock` elements, verify that each `RPT_INTERNAL_NAME` value is unique across all sibling blocks in the layout Part; duplicate `RPT_INTERNAL_NAME` values across distinct blocks are a hard structural error — **ABORT** before packaging
+   - For report `Procedure`, treat the total layout width as a structural constant inherited from the source template or reference XML; do NOT invent or assume a default value — read it from the canonical template or cloned source; when the value is ambiguous, document the observed value explicitly in the packaging rationale before proceeding
    - For report `Procedure`, if an import error points to invalid control, report block, or layout shape, inspect layout first before altering envelope
 12. Apply envelope rules from [02-regras-operacionais-e-runtime](../02-regras-operacionais-e-runtime.md):
    - For delta of an existing object, prefer the package format with validated local precedent in the same KB trail before any generic preference
