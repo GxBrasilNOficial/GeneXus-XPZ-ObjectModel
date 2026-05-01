@@ -547,41 +547,15 @@ Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao an
     - Se `README.md` e `AGENTS.md` estiverem divergentes entre si ou em relacao aos valores efetivos, evidenciar a divergencia ao usuario e propor refresh da memoria local em ambos antes de encerrar o setup como "ok"
     - `GATE_OK` nao neutraliza essa obrigacao: gate liberado prova compatibilidade operacional atual, mas nao prova que a memoria local humana esta sincronizada
     - `GATE_OK` e `STRUCTURE_OK` nao bastam, sozinhos, para concluir "tudo certo" quando a aderencia do fluxo de empacotamento local ainda nao tiver sido auditada
+    - Para efeito das regras acima: `AGENTS.md` e memoria operacional normativa para agentes — estado canonico, lista de wrappers ativos, regras de gate e roteamento; `README.md` e guia de uso humano — como operar a pasta, quais automacoes o humano executa diretamente, quais fluxos estao expostos. Essa distincao define quando atualizar so um ou ambos.
+    - Gatilho obrigatorio para `AGENTS.md`: quando qualquer wrapper mudar de classe nesta rodada (AUSENTE resolvido, CUSTOMIZADO corrigido, wrapper novo adicionado), atualizar `## Wrappers locais` e o campo de estado operacional no `AGENTS.md` e etapa obrigatoria antes de declarar qualquer estado de conclusao — nao e proposta sujeita a pular.
+    - Gatilho obrigatorio para `README.md`: quando a mudanca de wrapper alterar o conjunto de automacoes expostas diretamente ao humano (novo script que o humano chama, script renomeado ou removido do fluxo normal), atualizar a secao correspondente do `README.md` tambem e obrigatorio antes de declarar `wrappers_atualizados`.
 
 --- FIM DO BLOCO DE ATUALIZACAO ---
 
---- BLOCO DE VERIFICACAO DE NAMING (executar quando solicitado isoladamente, fora do modo_atualizacao; em modo_atualizacao os mesmos passos ja estao incorporados em 8.g2.i a 8.g2.vii) ---
+--- BLOCO DE VERIFICACAO DE NAMING (execucao isolada, fora de modo_atualizacao) ---
 
-8.i Identificar todos os diretorios presentes em `ObjetosDaKbEmXml`
-
-8.j Para cada diretorio presente, ler pelo menos um XML e extrair o tipo canonico:
-    - Em auditoria focal ou curta, quando o objetivo estiver limitado a diretorios especificos, localizar diretamente um XML dentro de cada diretorio-alvo, ler esse XML e classificar; nao introduzir uma etapa exploratoria separada so para redescobrir se ha arquivos no diretorio quando a propria amostragem direta ja resolve
-    - Para `Folder`, `Module`, `PackagedModule` e `Attribute`, um unico XML por diretorio e evidencia suficiente, salvo se o primeiro arquivo lido estiver corrompido, ilegivel ou sem o trecho minimo necessario para classificacao
-    - Se o elemento raiz for `<Attribute>`, o tipo canonico e `Attribute`
-    - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico conforme o catalogo em `01a-catalogo-e-padroes-empiricos.md`
-    - O GUID encontrado no XML e sempre a fonte autoritativa; o nome do diretorio e convencao local e pode divergir
-    - Nota: o motor `Build-KbIntelligenceIndex.py` ja usa esse mesmo mapeamento por GUID — o campo `object_type` no indice estara correto independente do nome da pasta; a auditoria aqui serve a legibilidade e consistencia do acervo para humanos
-
-8.k Se o nome do diretorio divergir do nome canonico esperado para o GUID encontrado, declarar a divergencia explicitamente ao usuario: qual diretorio esta com qual tipo real, qual seria o nome canonico segundo a convencao, e qual foi a causa provavel quando conhecida
-
-8.l Antes de propor qualquer renome, verificar:
-    - Se o `AGENTS.md` local referencia os nomes de diretorio em risco de ser renomeados
-    - Se existe indice `KbIntelligence`: o campo `object_type` no SQLite ja estara correto (o motor le o GUID do XML, nao o nome da pasta), mas o campo `path` dos registros refletira o nome antigo da pasta — apos o renome, o path ficara desatualizado ate o proximo rebuild
-
-8.m Propor a sequencia de renome segura e aguardar aprovacao explicita do usuario antes de qualquer escrita no disco:
-    1. Diretorio A → `_tmp_<nome>/` (nome temporario para evitar colisao)
-    2. Diretorio B → nome que era de A
-    3. `_tmp_<nome>/` → nome que era de B
-    - Nunca tentar renomear A diretamente para B quando B ja existe
-
-8.n Apos renome aprovado e executado:
-    - Atualizar referencias ao nome antigo no `AGENTS.md` local se houver
-    - Informar ao usuario que o indice `KbIntelligence`, se existente, deve ser regenerado: o tipo dos objetos ja estava correto, mas o campo `path` dos registros ainda reflete o nome antigo da pasta e ficara desatualizado ate o rebuild
-
-8.o Criterio de parada por evidencia suficiente na auditoria isolada:
-    - Se cada diretorio presente ja foi classificado como conforme ou divergente com base no proprio XML local, encerrar a auditoria sem procurar catalogos externos, caminhos fora da pasta paralela ou amostras extras so para reconfirmacao
-    - Falha de uma tentativa intermediaria de glob, listagem ou busca nao autoriza expandir o escopo; apenas trocar para uma leitura local mais simples e direta do XML do diretorio em teste
-    - Se o XML local ja identificar o tipo canonico pela propria estrutura — por exemplo, raiz `<Attribute>` — isso basta para fechar aquele diretorio
+Quando acionado de forma isolada, seguir os mesmos passos de 8.g2.i a 8.g2.vii. Diferenca de contexto: nao ha estado de conclusao de modo_atualizacao a declarar — a saida e apenas o resultado da verificacao de naming para cada diretorio (conforme ou divergente) e, se houver divergencia, a oferta de correcao via a sequencia de renome segura de 8.g2.v.
 
 --- FIM DO BLOCO DE VERIFICACAO DE NAMING ---
 
