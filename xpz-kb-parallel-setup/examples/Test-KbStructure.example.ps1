@@ -75,7 +75,8 @@ foreach ($script in @(
     'Test-KbGate.ps1',
     'Get-KbMetadata.ps1',
     'Test-KbMetadataWrapper.ps1',
-    'Test-KbStructure.ps1'
+    'Test-KbStructure.ps1',
+    'Test-KbSetupAudit.ps1'
 )) {
     Test-Component -Label "scripts\$script" -Path (Join-Path $scriptsDir $script) -Type Leaf
 }
@@ -92,7 +93,8 @@ foreach ($scriptName in @(
     'Test-KbGate.ps1',
     'Get-KbMetadata.ps1',
     'Test-KbMetadataWrapper.ps1',
-    'Test-KbStructure.ps1'
+    'Test-KbStructure.ps1',
+    'Test-KbSetupAudit.ps1'
 )) {
     $scriptPath = Join-Path $scriptsDir $scriptName
     if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) { continue }
@@ -116,6 +118,7 @@ if (Test-Path -LiteralPath $acervoPath -PathType Container) {
     $guidToType = @{
         '36e32e2d-023e-4188-95df-d13573bac2e0' = 'API'
         '3affc0b3-494b-4d84-9ec1-3a6ab8349cda' = 'ColorPalette'
+        '280c149c-48b2-4284-a532-0c999df9e006' = 'CategoryDiagram'
         '526aba9f-a725-4bc7-b1db-0b9f92ac9550' = 'Dashboard'
         '2a9e9aba-d2de-4801-ae7f-5e3819222daf' = 'DataProvider'
         'ffd44be7-3bb4-4d01-9e7e-d1c1a3c095af' = 'DataSelector'
