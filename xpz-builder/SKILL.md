@@ -326,7 +326,7 @@ Reference files and when to load them:
      - `00000000-0000-0000-0000-000000000008` = Module/Folder (user-created container; GeneXus IDE shows "Module/Folder: X" in Properties)
      - `c88fffcd-b6f8-0000-8fec-00b5497e2117` = PackagedModule (installed module, cube icon in IDE)
      - `afa47377-41d5-4ae8-9755-6f53150aa361` = Root Module (virtual KB root; no XML file in acervo; objects here show "Module/Folder: Root Module" in Properties)
-     - `00000000-0000-0000-0000-000000000006` = system Folder (Main Programs, ToBeDefined); never appears as parentType of packagable objects
+     - `00000000-0000-0000-0000-000000000006` = Module (GeneXus system/organizational module: Main Programs, ToBeDefined, and installed package modules such as GAM); never appears as parentType of packagable user objects
 11. Apply conservative cloning:
    - Preserve `Object/@guid` (new GUID only for new objects, never reuse existing object's GUID)
    - Preserve `parent`, `parentGuid`, `parentType`, `moduleGuid`

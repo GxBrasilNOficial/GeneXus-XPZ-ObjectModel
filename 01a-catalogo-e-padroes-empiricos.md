@@ -193,14 +193,18 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 
 ### `Folder`
 
-- `Evidência direta`: exemplos reais em `C:\SANITIZED\ObjetosDaKbEmXml\Folder\EXEMPLO-SANITIZADO.xml` usam `Object/@type="00000000-0000-0000-0000-000000000006"`.
-- `Evidência direta`: esses exemplos sao extremamente curtos, com `Part type="babf62c5-0111-49e9-a1c3-cc004d90900a"` vazio e propriedades como `Name` e `IsDefault`.
-- `Evidência direta`: exemplos reais como `Main Programs.xml` e `ToBeDefined.xml` mostram o mesmo `Object/@type` de `Folder` com pequenas variacoes de propriedades, reforcando o mesmo tipo estrutural para pastas organizacionais da KB.
-- `Evidência direta`: as capturas da janela `New Object` da IDE mostram que `Category` e o nome do agrupador visual da lista de tipos, com grupos como `Data Management`, `User Interface`, `BPM`, `Resources`, `Documentation`, `Extensibility`, `Deploy`, `Super App`, `Reporting`, `Test` e `ALL`.
-- `Evidência direta`: nessas mesmas capturas, um mesmo tipo pode aparecer em mais de uma `Category` da UI, como `Web Theme` em `User Interface` e `Resources`, e `User Control` em `User Interface` e `Extensibility`.
-- `Inferência forte`: o shape XML de `Folder` nesta KB e minimo e estavel.
-- `Inferência forte`: isso reforca que `Category`, no contexto da IDE, funciona como rotulo de agrupamento visual de tipos de objeto, nao como tipo XML equivalente a `Folder`.
-- `Inferência forte`: como a IDE reconheceu o teste importado como `Category`, a divergencia atual parece ligada ao vocabulario de exibicao da interface/importador para agrupadores organizacionais, e nao a um envelope XML complexo ou a um segundo tipo estrutural concorrente.
+- `Evidência direta`: exemplos reais em `ObjetosDaKbEmXml\Folder\` (ex.: `ACESSO.xml`, `APIs.xml`) usam `Object/@type="00000000-0000-0000-0000-000000000008"`.
+- `Evidência direta`: o shape XML de `Folder` é mínimo — sem elemento `<Part>`, apenas `<Properties>` com `Name` e `IsDefault`.
+- `Evidência direta`: o campo `moduleGuid` aponta para o Root Module (`afa47377-41d5-4ae8-9755-6f53150aa361`) ou para outro container `...0008`; `parentType` é `00000000-0000-0000-0000-000000000008` quando o folder pai é também um folder de usuário.
+- `Inferência forte`: `Folder` (`...0008`) é o container criado pelo usuário na IDE ("New Folder" / "New Module"); a IDE exibe o nome na propriedade "Module/Folder" no painel Properties, mas o GUID canônico do tipo é `...0008` e o diretório de acervo é `Folder/`.
+
+### `Module`
+
+- `Evidência direta`: exemplos reais em `ObjetosDaKbEmXml\Module\` (ex.: `Main Programs.xml`, `ToBeDefined.xml`, `GAM.xml`) usam `Object/@type="00000000-0000-0000-0000-000000000006"`.
+- `Evidência direta`: o shape XML de `Module` inclui `<Part type="babf62c5-0111-49e9-a1c3-cc004d90900a">` com `<Properties />` vazio, mais propriedades adicionais em `<Properties>`: `Name`, `ShowInModelTree`, `Query`, `Properties` (ex.: `main_program=true`), `IsDefault`.
+- `Evidência direta`: o campo `moduleGuid` é `00000000-0000-0000-0000-000000000000` (sem módulo pai — nível raiz da KB); `Main Programs` e `ToBeDefined` têm `parentGuid` e `moduleGuid` zerados.
+- `Inferência forte`: `Module` (`...0006`) agrupa tanto containers de sistema internos do GeneXus (`Main Programs`, `ToBeDefined`) quanto módulos de pacote instalados (`GAM`, `GAM_Frontend-web`) — todos residem no diretório `Module/` do acervo.
+- `Inferência forte`: objetos `...0006` nunca aparecem como `parentType` de objetos exportáveis pelo usuário; são containers organizacionais do motor GeneXus, não da lógica da aplicação.
 
 ### `PatternSettings`
 
