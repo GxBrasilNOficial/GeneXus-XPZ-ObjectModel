@@ -412,7 +412,14 @@ No handoff final, usar literalmente um dos estados canonicos listados acima. Nao
    - `auditar_setup`: usar quando o pedido central for conferir, revisar, validar, diagnosticar ou responder se "esta tudo certo"; o fluxo deve priorizar evidencia, classificacao e handoff
    - `corrigir_wrapper_local`: usar quando a propria evidencia do gate ou do bloco de atualizacao apontar um wrapper especifico como defasado, ou quando o usuario pedir para corrigir wrapper/script local; o fluxo deve priorizar editar o wrapper, rerodar o gate afetado e so depois consolidar o estado final
    - `atualizar_bootstrap_local`: usar quando a pasta com historico real estiver sem wrappers previstos, sem secoes documentais obrigatorias ou sem parte do bootstrap metodologico; o fluxo deve priorizar incorporar esses faltantes
-   - Em pedido generico de auditoria, comecar por `auditar_setup`; se a auditoria encontrar um caso deterministico de wrapper defasado que esta skill manda corrigir, trocar explicitamente para `corrigir_wrapper_local` e informar isso no update ao usuario antes da escrita
+   - Em pedido generico de auditoria, comecar por `auditar_setup`; se a auditoria encontrar um caso deterministico de wrapper defasado que esta skill manda corrigir, trocar explicitamente para `corrigir_wrapper_local` e comunicar ao usuario antes da escrita usando a formula: "a auditoria encontrou um caso deterministico de correcao; vou mudar explicitamente para `corrigir_wrapper_local` antes da escrita"
+   - Conta como caso deterministico de correcao para fins dessa transicao:
+     - `Get-*KbMetadata.ps1` defasado contra o formato real de `kb-source-metadata.md` ja coberto pelo example atual, com `Test-*KbMetadataWrapper.ps1` bloqueando por esse motivo especifico — fluxo obrigatorio definido em 8.a.iii
+     - qualquer outro wrapper bloqueado por `Test-*KbMetadataWrapper.ps1` ou `Test-*KbGate.ps1` por razao funcional conhecida e inequivoca, com example atual que ja cobre o formato real do dado local; criterio: a correcao e local, observavel no proprio wrapper e nao depende de decisao editorial do usuario sobre o que preservar
+   - Nao conta como caso deterministico — a transicao nao deve ocorrer quando:
+     - a auditoria minima ainda nao foi concluida: gate ainda nao rodou, wrappers de 8.a ainda nao foram todos classificados ou naming de `ObjetosDaKbEmXml` (8.g2) ainda nao foi encerrado
+     - o wrapper e CUSTOMIZADO com diferenca de logica ou parametros que exijam decisao explicita do usuario sobre o que preservar
+     - o bloqueio do gate nao tem causa inequivoca ou depende de dado externo a pasta paralela para ser diagnosticado
    - Nao usar a mesma regra de interacao para todas as intencoes: `auditar_setup` fecha com diagnostico; `corrigir_wrapper_local` fecha com gate rerodado; `atualizar_bootstrap_local` fecha com lista do que foi incorporado
 --- BLOCO DE ATUALIZACAO (executar somente em modo_atualizacao) ---
 
