@@ -259,6 +259,12 @@ Reference files and when to load them:
      - If that Transaction is in `ObjetosDaKbEmXml` but not in the batch: read the corpus XML and check for the same `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` property
        - Property absent → alert: Transaction `X` exists in the official corpus but lacks the `Apply:GUID` mark; verify whether the existing KB state will preserve the expected pattern behavior after import
      - If the linked Transaction is absent from both the batch and `ObjetosDaKbEmXml` → alert: cannot confirm the `Apply:GUID` mark on the target Transaction; document the gap before packaging
+8-TWS. Transaction Coherence preflight gate — run before any packaging when the batch contains a `Transaction`:
+   - Run `& ..\scripts\Test-GeneXusTransactionCoherence.ps1 -InputPath <arquivo> -AsJson` for each Transaction XML in the batch
+   - `not-applicable` (object is not a Transaction or no Transaction found) → proceed normally
+   - `fail` → **ABORT**: correct the structural issue (missing key in Level, DescriptionAttribute not found in Level) before packaging
+   - `warn` → keep packaging blocked; each flagged finding must be reviewed and either corrected or explicitly justified before proceeding; accepted justifications must be recorded in the closing declaration
+   - `pass` → proceed to next gate
 8. Check for improper local changes in `ObjetosDaKbEmXml`:
    - If detected, treat this as an explicit process error
    - Preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, present a structured manifest of preserved items in the conversation, save it as a local file when incident traceability requires it, and **ABORT** packaging until the snapshot is sane
@@ -587,6 +593,7 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] Limitations block included in output
 - [ ] For every `Procedure` in the batch with a `bc:<X>` variable: Transaction `X` was confirmed as `idISBUSINESSCOMPONENT=True` in the batch or in `ObjetosDaKbEmXml`; when `X` is also in the same batch, import ordering risk was explicitly acknowledged or the batch was staged
 - [ ] For every `WorkWithForWeb` (`WorkWithWeb*`) in the batch: `Apply` property was verified in Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc`; if linked Transaction is also in the batch or in `ObjetosDaKbEmXml`, `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` was confirmed in that Transaction's Properties
+- [ ] For every `Transaction` in the batch: `Test-GeneXusTransactionCoherence.ps1` was run; `fail` findings were corrected; `warn` findings were reviewed and either corrected or explicitly justified before packaging
 - [ ] If the package contains a WWP PatternInstance (`WorkWithPlus*`): rename collisions were checked (two old fields mapping to the same new name)
 - [ ] If the package contains a WWP PatternInstance: duplicate nodes in `<attribute>`, `<gridAttribute>`, and `<parameter>` were removed
 - [ ] If the package contains a WWP PatternInstance: `parentGuid` points to the correct target Transaction, not to the source entity
@@ -651,6 +658,8 @@ Ao clonar tela customizada WorkWithPlus:
 - ABORT if a `bc:<X>` variable exists in a `Procedure` in the batch and Transaction `X` cannot be confirmed as `idISBUSINESSCOMPONENT=True` either in the batch or in `ObjetosDaKbEmXml`
 - NEVER package a `WorkWithForWeb` (`WorkWithWeb*`) object when the `Apply` property is absent from Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc`
 - ABORT if a `WorkWithForWeb` in the batch has its linked Transaction also in the batch and that Transaction lacks `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` in its Properties
+- NEVER package a `Transaction` when `Test-GeneXusTransactionCoherence.ps1` returned `fail` findings
+- ABORT if `Test-GeneXusTransactionCoherence.ps1` returned `warn` findings that have not been reviewed and explicitly justified before packaging
 - Absolute rules in [00-indice-da-base-genexus-xpz-xml.md](../00-indice-da-base-genexus-xpz-xml.md) and [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) take precedence over all other heuristics
 
 ---
