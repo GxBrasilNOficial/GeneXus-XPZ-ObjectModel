@@ -53,7 +53,7 @@ function Get-OpenTokenKind {
         return "Sub"
     }
 
-    if ($Line -match '^(?i)\s*for\s+each\b') {
+    if ($Line -match '^(?i)\s*for\b') {
         return "ForEach"
     }
 
@@ -62,6 +62,7 @@ function Get-OpenTokenKind {
     }
 
     if ($Line -match '^(?i)\s*if\b') {
+        if ($Line -match ';\s*$') { return $null }
         return "If"
     }
 
