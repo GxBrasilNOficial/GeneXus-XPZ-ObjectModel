@@ -157,6 +157,7 @@ If the main need is to prepare or validate the initial folder structure around t
   - when the object already has a clear local form in `Source`, prefer following that form as a weak readability heuristic, not as a hard methodological rule
 - When the candidate batch contains a `Procedure` that declares a variable with `ATTCUSTOMTYPE` = `bc:<X>`, run the BC dependency preflight gate before packaging: locate Transaction `X` in the batch or in `ObjetosDaKbEmXml` and verify `idISBUSINESSCOMPONENT=True`; treat absence of that confirmation as a hard blocker
 - When the candidate batch contains a `Procedure` whose `Source` delta introduces or materially expands a `Sub` block, run the Sub-pattern Mirroring gate (8-PSM): scan the procedure's pre-existing `Sub` delegation structure; if a dominant `iteration-sub → unit-sub` pattern exists and the new block is `mixed`, emit an architectural alert and require user acknowledgment or restructuring before proceeding; treat this as advisory, not as a hard packaging blocker
+- When the candidate batch contains 2 or more distinct objects, run the Import Dependency Ordering gate (8-IDO) after all other object-level gates: detect structural dependencies between batch objects, assign each object to a topological layer, alert when ordering risk exists across 2 or more layers, and ABORT when circular dependencies are found
 
 ---
 
@@ -283,6 +284,24 @@ Reference files and when to load them:
      - Show the alert and require the user to either confirm the divergence is intentional (justification required) or restructure the logic to mirror the dominant pattern
      - Record the outcome in the closing declaration
    - Treat this gate as an architectural coherence signal, not as a syntax or structural error
+8-IDO. Import Dependency Ordering gate — run before any packaging when the batch contains 2 or more distinct objects:
+   - Build the batch object list: all distinct GeneXus objects present in the candidate batch
+   - For each object in the batch, detect structural dependencies to other objects in the same batch:
+     - WorkWithForWeb: read Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc` and extract the linked Transaction name from `<Property><Name>Transaction</Name><Value>...`; if that Transaction is also in the batch → record dependency edge: Transaction must precede WorkWithForWeb
+     - Procedure with `ATTCUSTOMTYPE = bc:<X>`: if Transaction X is also in the batch → record dependency edge: Transaction X must precede this Procedure (this dependency was already validated by 8-BC for existence and validity; here it informs ordering only)
+     - Procedure calling another Procedure in the batch: scan `Source` for direct call references to other Procedure names present in the batch; if found and the called Procedure is new in this delta → record dependency edge: called Procedure must precede calling Procedure; declare this detection as best-effort — when `Source` cannot be structurally scanned, declare the gap explicitly rather than assuming no dependency exists
+   - Build the directed dependency graph for the batch using the recorded edges
+   - If the graph has one or more cycles → **ABORT**: circular dependency between batch objects; a consistent single-pass import is not possible; present the cycle(s) to the user and require resolution before packaging
+   - If the graph is acyclic, assign each object to a topological layer:
+     - Layer 1: objects with no incoming in-batch dependency edges (base objects, no in-batch predecessor)
+     - Layer N: objects whose all dependencies are satisfied by objects in layers 1 through N−1
+   - If all objects fall in Layer 1 (no in-batch dependency edges were detected) → no ordering risk identified; proceed normally
+   - If 2 or more layers exist → emit ordering alert: the batch has objects with structural import ordering dependencies; single-package import may be fragile; suggested staging:
+     - Package 1: Layer 1 objects (Transactions, base objects with no in-batch predecessor)
+     - Package 2: Layer 2 objects (WorkWithForWeb, Procedure bc: consumers, pattern-dependent objects)
+     - Package N: Layer N objects (deeper dependency consumers, callers, downstream procedures)
+   - Require explicit user confirmation or justification before proceeding with single-bundle packaging when 2 or more layers were identified
+   - This gate is advisory for acyclic dependency chains; circular dependencies are a hard ABORT
 8. Check for improper local changes in `ObjetosDaKbEmXml`:
    - If detected, treat this as an explicit process error
    - Preserve those XMLs in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, restore `ObjetosDaKbEmXml` to the official Git version, present a structured manifest of preserved items in the conversation, save it as a local file when incident traceability requires it, and **ABORT** packaging until the snapshot is sane
@@ -617,6 +636,9 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] If the package contains a WWP PatternInstance: duplicate nodes in `<attribute>`, `<gridAttribute>`, and `<parameter>` were removed
 - [ ] If the package contains a WWP PatternInstance: `parentGuid` points to the correct target Transaction, not to the source entity
 - [ ] If the package contains a WWP PatternInstance: references to attributes apparently removed from the model were reviewed
+- [ ] When the batch had 2 or more distinct objects: 8-IDO was run; dependency edges were identified for WorkWithForWeb→Transaction, Procedure bc:→Transaction, and best-effort Procedure→Procedure call chains
+- [ ] When 8-IDO identified 2 or more topological layers: ordering alert was emitted and explicit user confirmation or justification was obtained before proceeding with single-bundle packaging
+- [ ] 8-IDO found no circular dependencies in the batch dependency graph; if a cycle was found, packaging was aborted and the cycle was presented to the user
 
 ---
 
@@ -663,6 +685,9 @@ Ao clonar tela customizada WorkWithPlus:
 - NEVER re-apply a pattern over a Transaction without reviewing the diff of existing customizations
 - NEVER rename an entity with WWP active without checking for attribute collisions that would break the PatternInstance XML
 - NEVER silently accept a new `Sub` block in a `Procedure` that diverges strongly from the identified dominant local pattern without showing the 8-PSM architectural alert and recording user acknowledgment or justification in the closing declaration
+- NEVER proceed with single-bundle packaging when 8-IDO identified 2 or more topological layers without obtaining explicit user confirmation or justification for the ordering risk
+- NEVER treat absence of detected cross-references in 8-IDO as proof that no ordering risk exists when the `Source` scan for Procedure call chains was declared as not fully performed
+- ABORT if 8-IDO detects a circular dependency in the batch dependency graph
 - ABORT if risk is high/very high and no internal comparable template is available
 - ABORT if type has fewer than 5 specimens in the corpus and no sanitized template exists
 - ABORT if container identity is unresolved among Module/Folder (`00000000-0000-0000-0000-000000000008`), PackagedModule (`c88fffcd-b6f8-0000-8fec-00b5497e2117`), and Root Module (`afa47377-41d5-4ae8-9755-6f53150aa361`) for the target object
