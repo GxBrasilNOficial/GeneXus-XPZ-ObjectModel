@@ -180,6 +180,25 @@ Do NOT use this skill for:
 
 ## WRAPPERS LOCAIS ESPERADOS
 
+### Matriz de exigencia por wrapper
+
+Referencia rapida para decidir o peso operacional da ausencia de cada wrapper. As regras detalhadas de classificacao (AUSENTE / EQUIVALENTE / CUSTOMIZADO) e os criterios de evidencia permanecem em 8.a e 8.g3; esta tabela e leitura rapida, nao substituto.
+
+| Wrapper | Obrigatorio quando | Ausencia impede |
+|---|---|---|
+| `Update-*KbFromXpz.ps1` | sempre (fluxo oficial de materializacao) | `pronto_para_primeira_materializacao` |
+| `Test-*KbFullSnapshot.ps1` | sempre (fluxo oficial de materializacao) | `pronto_para_primeira_materializacao` |
+| `Query-*KbIntelligence.ps1` | `KbIntelligence` adotado | `wrappers_atualizados` |
+| `Rebuild-*KbIntelligenceIndex.ps1` | `KbIntelligence` adotado | `wrappers_atualizados` |
+| `Test-*KbGate.ps1` | `KbIntelligence` adotado | `wrappers_atualizados` |
+| `Get-*KbMetadata.ps1` | `KbIntelligence` adotado | `wrappers_atualizados` |
+| `Test-*KbMetadataWrapper.ps1` | `KbIntelligence` adotado | `wrappers_atualizados` |
+| `Test-*KbStructure.ps1` | `KbIntelligence` adotado | `wrappers_atualizados` |
+| `Test-*KbSetupAudit.ps1` | `KbIntelligence` adotado | `wrappers_atualizados` |
+| `Test-*KbSourceSanity.ps1` | empacotamento local adotado | `auditoria_de_empacotamento_pendente` |
+| `Test-*KbPackageCollision.ps1` | empacotamento local adotado | `auditoria_de_empacotamento_pendente` |
+| `Notify-TaskComplete.ps1` | opcional | nenhum estado |
+
 - A pasta `scripts` deve prever pelo menos dois wrappers locais quando a pasta paralela da KB operar com fluxo oficial de materializacao XML sobre o motor compartilhado:
   - wrapper de atualizacao diaria a partir de `.xpz`, XML exportado ou pasta contendo o XML do pacote
   - wrapper de conferencia full que reutiliza o wrapper diario em modo `VerifyOnly + FullSnapshot`
