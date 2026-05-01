@@ -88,6 +88,7 @@ Quando o usuário não informar nomes alternativos, adotar estas subpastas na ra
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: saída de pacotes `.xml` e, quando necessário, `.xpz`
 - após processamento bem-sucedido, o `.xpz` consumido pode ser renomeado para `processado_<nome-original>.xpz`
 - por padrão, novos fluxos devem ignorar arquivos com prefixo `processado_`
+- se o usuario apontar explicitamente como entrada da rodada um arquivo com prefixo `processado_`, tratar isso como alerta operacional de naming inconsistente, pedir confirmacao antes de seguir e deixar o `InputPath` informado prevalecer se o usuario confirmar
 - se alguma subpasta ainda não existir, criar nesta ordem:
   1. `scripts`
   2. `Temp`
@@ -229,6 +230,8 @@ Os wrappers seguem esta convenção de parâmetros:
     - para materializacao normal do `XPZ` em `ObjetosDaKbEmXml`, nao acrescentar `-FullSnapshot` por conta propria
     - nao reinterpretar `XPZ` full como autorizacao implicita para `-FullSnapshot`; export full e conferencia full sao coisas diferentes
     - usar `-FullSnapshot` apenas quando o usuario pedir conferencia full, quando o wrapper especifico de conferencia for o escolhido ou quando a documentacao local tornar isso requisito explicito
+    - tratar nome iniciado por `processado_` como heuristica forte de artefato ja consumido, nao como verdade absoluta sobre o conteudo do arquivo
+    - se o `InputPath` explicitamente informado pelo usuario apontar para arquivo com prefixo `processado_`, emitir alerta curto, pedir confirmacao e prosseguir somente se o usuario confirmar esse arquivo como insumo correto da rodada atual
     - se houver opcional comparativo como `-ExpectedItems`, lembrar que a
       exposicao no wrapper local nao prova compatibilidade integral do motor
       compartilhado efetivo; se a primeira execucao falhar apenas nesse ponto,
@@ -344,6 +347,8 @@ XPZ/XML, nao apenas a ultima mudanca material detectada nos XMLs.
 - NUNCA executar sync normal em pasta que adota `KbIntelligence` se o wrapper local de materializacao ainda nao encadeia refresh compulsorio do indice; oferecer atualizacao via `xpz-kb-parallel-setup`
 - NUNCA descrever `sync` seguido de rebuild manual separado do indice como fluxo normal em pasta que adota `KbIntelligence`
 - NUNCA usar sync por wrapper antigo para reparar metadado de materializacao quando o proprio wrapper esta defasado; primeiro atualizar/validar wrappers pela trilha de setup
+- NUNCA selecionar automaticamente por padrao um arquivo com prefixo `processado_` quando houver outros candidatos plausiveis para a rodada atual
+- NUNCA tratar prefixo `processado_` como bloqueio absoluto quando o usuario tiver apontado explicitamente o `InputPath`; primeiro emitir alerta operacional e exigir confirmacao explicita
 - NUNCA antecipar atualização manual de `ObjetosDaKbEmXml`
 - NUNCA prosseguir com sync normal quando `ObjetosDaKbEmXml` estiver dirty fora do fluxo oficial; primeiro preserve, restaure e trate como incidente de processo
 - NUNCA tratar edição detectada ou pretendida em `ObjetosDaKbEmXml` para delta ainda não reexportado oficialmente pela KB como detalhe operacional; isso é erro explícito de processo
