@@ -24,6 +24,14 @@ casos, o agente deve reconhecer a defasagem como oportunidade de adaptacao
 local, propor a mudanca ao usuario e aguardar aprovacao explicita; nao deve
 alterar wrappers locais por conta propria.
 
+A superficie do wrapper local tambem pode ficar temporariamente a frente, atras
+ou levemente desalinhada em relacao ao motor compartilhado efetivo daquela pasta
+paralela da KB. Quando a falha atingir apenas um parametro opcional de
+conferencia/comparacao e o sync principal continuar viavel, tratar o caso como
+divergencia wrapper/engine: rerodar sem o opcional, registrar o incidente no
+relato e nao classificar isso automaticamente como bloqueio da operacao
+principal.
+
 Os `.example.ps1` da base metodologica podem servir como referencia para
 consertar ou reconstruir wrappers locais finais, mas nao substituem o wrapper
 local real e nao devem ser usados como fallback automatico de execucao no fluxo
@@ -149,6 +157,17 @@ Os wrappers seguem esta convenção de parâmetros:
   que wrappers locais da pasta paralela da KB ja o exponham; se o wrapper local
   ainda nao o aceitar, tratar isso como oportunidade de atualizacao local,
   mencionar ao usuario e aguardar aprovacao explicita antes de qualquer ajuste
+- se o wrapper local aceitar `-ExpectedItems`, mas a execucao falhar no motor
+  compartilhado efetivo por incompatibilidade restrita a esse opcional
+  comparativo, tratar como divergencia wrapper/engine e nao como bloqueio
+  automatico do sync principal
+- quando a falha ficar restrita a esse opcional, rerodar sem `-ExpectedItems`,
+  concluir a materializacao se o restante do fluxo estiver sao e registrar no
+  handoff que a comparacao esperada x retorno oficial ficou indisponivel naquela
+  rodada por incompatibilidade do engine
+- se a falha atribuida a `-ExpectedItems` revelar quebra da materializacao,
+  contrato principal do wrapper, refresh obrigatorio do indice ou outro impacto
+  central no fluxo oficial, continuar tratando o caso como bloqueio real
 - `-KbMetadataPath` *(opcional)* — salva metadados da KB em formato Markdown
 - se esse parâmetro estiver ativo no wrapper local, `kb-source-metadata.md` faz parte normal do fluxo e pode ser reescrito a cada processamento
 - quando `kb-source-metadata.md` for reescrito, ele deve registrar `last_xpz_materialization_run_at` como horario do processamento XPZ/XML solicitado, mesmo quando nenhum XML tiver mudanca material
@@ -210,7 +229,18 @@ Os wrappers seguem esta convenção de parâmetros:
     - para materializacao normal do `XPZ` em `ObjetosDaKbEmXml`, nao acrescentar `-FullSnapshot` por conta propria
     - nao reinterpretar `XPZ` full como autorizacao implicita para `-FullSnapshot`; export full e conferencia full sao coisas diferentes
     - usar `-FullSnapshot` apenas quando o usuario pedir conferencia full, quando o wrapper especifico de conferencia for o escolhido ou quando a documentacao local tornar isso requisito explicito
+    - se houver opcional comparativo como `-ExpectedItems`, lembrar que a
+      exposicao no wrapper local nao prova compatibilidade integral do motor
+      compartilhado efetivo; se a primeira execucao falhar apenas nesse ponto,
+      preparar rerun sem o opcional antes de concluir bloqueio do sync
 13. Executar via Bash com `pwsh -File ...`
+    - se a execucao falhar com indicio claro de divergencia wrapper/engine
+      restrita a opcional de comparacao, rerodar uma vez sem o parametro
+      opcional antes de classificar o caso como bloqueio
+    - se o rerun sem opcional concluir a materializacao e os gates obrigatorios,
+      registrar sucesso do sync principal com incidente em capability opcional
+    - se o rerun sem opcional repetir falha central ou expuser problema fora do
+      escopo comparativo, tratar como bloqueio real do sync
 14. Se a materializacao XPZ/XML em `ObjetosDaKbEmXml` foi concluida com sucesso e nao era `VerifyOnly`, confirmar na saida do wrapper ou em evidencia local clara que o refresh compulsorio do indice derivado tambem foi executado
     - em pasta que adota `KbIntelligence`, ausencia de evidencia do refresh deve ser tratada como falha ou defasagem operacional do wrapper local
     - nao compensar essa ausencia com rebuild manual separado do indice como se fosse fluxo normal
@@ -234,6 +264,9 @@ Os wrappers seguem esta convenção de parâmetros:
     - se o `XPZ` oficial da KB trouxer objetos adicionais fora do foco imediato da frente, reportar isso como inesperado para a frente atual, mas tratar como possível mudança paralela legítima vinda da IDE/KB até evidência em contrário
     - se `-ExpectedItems` tiver sido informado, classificar explicitamente `itens esperados que voltaram`, `itens esperados que nao voltaram` e `retorno oficial adicional da KB`
     - se `-ExpectedItems` tiver sido informado, emitir tambem um resumo humano curto no console/handoff, sem alarmismo e sem tratar adicionais oficiais ou esperados ausentes como falha automatica
+    - se a rodada tiver precisado rerun sem `-ExpectedItems` por divergencia
+      wrapper/engine, separar explicitamente `sync principal concluido` de
+      `comparacao opcional indisponivel nesta rodada`
 17. Quando um objeto voltar da KB via `xpz` e for materializado no acervo oficial, tratar esse XML do acervo como a fonte mais confiável para alterações futuras; não reutilizar cópia intermediária/delta sem comparar com o acervo atualizado
 18. Ao preparar commit ou handoff após o `sync`, separar explicitamente:
     - artefato da frente atual = resultado que o processamento atual confirmou como pertencente à frente em curso
@@ -247,6 +280,9 @@ Os wrappers seguem esta convenção de parâmetros:
     - `MaterializationInterpretation` quando o wrapper expuser esse campo; caso contrario, limitar a leitura aos contadores e warnings reais
     - evidencia usada para afirmar refresh do indice ou bloqueio que impediu essa conclusao
     - se `kb-source-metadata.md` foi lido nominalmente na rodada atual ou apenas reescrito pelo wrapper
+    - se houve falha de opcional comparativo por divergencia wrapper/engine,
+      declarar o parametro afetado, o rerun sem ele e que isso nao bloqueou o
+      sync principal
 20. O resumo Git do item anterior e apenas informativo; nao autoriza `git add`, `commit` ou `push`
 21. Se o usuario nao pedir fechamento Git de forma explicita, o fluxo deve terminar no handoff tecnico e, no maximo, sugerir proximos passos sem executar publicacao
 

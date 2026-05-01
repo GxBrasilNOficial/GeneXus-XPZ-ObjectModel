@@ -66,6 +66,8 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - se houver tensao entre fluxo GeneXus geral do skill e achado empirico local desta base, o agente deve seguir a base local para decisao de `XPZ`/`XML` e manter do skill apenas a disciplina metodologica
 - quando a base compartilhar uma capacidade operacional nova, isso nao autoriza presumir que wrappers locais da pasta paralela da KB ja a exponham; a exposicao local e decisao separada
 - se o wrapper local ainda nao expuser um parametro operacional relevante ja disponivel na base compartilhada, o agente deve tratar isso como oportunidade de atualizacao local, mencionar ao usuario e aguardar aprovacao explicita; nao deve executar a mudanca local automaticamente
+- a superficie do wrapper local tambem pode ficar temporariamente a frente, atras ou levemente desalinhada em relacao ao motor compartilhado efetivo daquela pasta paralela; quando a falha atingir apenas capability opcional de conferencia/comparacao, o agente deve reconhecer a divergencia wrapper/engine, rerodar sem o opcional, registrar o incidente e nao promover isso automaticamente a bloqueio do sync principal
+- essa tolerancia vale apenas para capability opcional isolada; se a falha atingir materializacao, contrato principal do wrapper, refresh obrigatorio do indice ou outra etapa central do fluxo oficial, continua sendo bloqueio operacional real
 - exemplos sanitizados `.example.ps1` publicados pelas skills podem servir como referencia metodologica para reconstruir wrappers locais finais, mas nao substituem o wrapper local real nem autorizam fallback automatico de execucao no fluxo normal
 - quando wrappers locais precisarem nascer do zero no setup inicial da pasta paralela da KB, preferir adaptar os exemplos sanitizados completos da base como bootstrap tecnico, em vez de improvisar wrappers curtos ou parciais
 - quando a sessao ja publicar o caminho de uma skill ou de seus exemplos, usar esse caminho publicado como referencia autoritativa; nao inferir caminho alternativo por heuristica
@@ -78,6 +80,7 @@ Padronizar quando avançar, quando exigir molde bruto comparável e quando abort
 - quando a pergunta envolver `sync` ou wrappers locais da pasta paralela da KB, distinguir explicitamente:
   - capacidade ja disponivel na base compartilhada
   - exposicao dessa capacidade no wrapper local
+  - compatibilidade real dessa exposicao com o motor compartilhado efetivo
   - decisao local do usuario/equipe sobre atualizar ou nao o wrapper
 
 ## Regra de leitura para baseline oficial conhecido
