@@ -440,7 +440,7 @@ Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao an
     - Se `Test-*KbMetadataWrapper.ps1` estiver ausente em pasta que adota `KbIntelligence`, tratar isso como wrapper previsto `AUSENTE` em `modo_atualizacao` e oferecer criacao a partir de `Test-KbMetadataWrapper.example.ps1`
     - Nao concluir `Get-*KbMetadata.ps1 = EQUIVALENTE` e, no mesmo handoff, registrar que `kb_name` ou `source_guid` existem no metadata mas saem como `(ausente)`; isso e contradicao de auditoria
 
-8.b Para cada script AUSENTE: preparar criacao a partir do exemplo correspondente; apresentar ao usuario o script que sera criado e aguardar aprovacao explicita antes de gravar
+8.b Para cada script AUSENTE: preparar criacao a partir do exemplo correspondente; apresentar ao usuario o script que sera criado e aguardar aprovacao explicita antes de gravar. Apos gravar, se o repositorio tiver `.gitattributes` com politica explicita de EOL para `*.ps1` (ex: `*.ps1 text eol=crlf`), verificar se o arquivo salvo esta no formato esperado antes de declara-lo criado e valido; inconsistencia de EOL nesse caso nao e detalhe cosmetico — o arquivo deve ser normalizado antes do handoff
 
 8.c Para cada script CUSTOMIZADO: evidenciar objetivamente a divergencia (quais secoes diferem, quais parametros foram adicionados, qual logica foi alterada) e apresentar ao usuario quatro opcoes claras; aguardar decisao explicita antes de qualquer escrita:
     - A) Manter versao local intacta — script customizado fica como esta; nenhuma escrita
@@ -696,3 +696,4 @@ PastaParalelaDaKb/
 - NUNCA usar no handoff final timestamp placeholder, fixo, reaproveitado de outra mensagem ou obviamente nao obtido do relogio local no momento da resposta; isso invalida a conformidade formal do diagnostico.
 - NUNCA classificar `Get-*KbMetadata.ps1` como `EQUIVALENTE` se `kb-source-metadata.md` contem `kb_name` ou `source_guid` em formato documentado e o wrapper retorna esses campos como ausentes; isso e falha funcional do wrapper, nao ressalva informativa.
 - NUNCA, no caso deterministico em que `Test-*KbMetadataWrapper.ps1` bloqueia apenas porque `kb_name` ou `source_guid` existem em tabela Markdown documentada e o wrapper local os retorna como ausentes, abrir pergunta `A/B/C/D`, enquete equivalente ou pedido de preferencia ao usuario antes de alinhar o wrapper local ao example atual e rerodar o gate.
+- NUNCA declarar wrapper `.ps1` recem-criado ou reescrito como valido quando o repositorio tiver `.gitattributes` com politica explicita de EOL para `*.ps1` e o arquivo salvo estiver fora desse padrao; normalizar o EOL e parte obrigatoria do encerramento da criacao ou correcao do wrapper, nao retrabalho posterior.
