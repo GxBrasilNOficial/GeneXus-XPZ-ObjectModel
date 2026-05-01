@@ -341,7 +341,7 @@ No handoff final, usar literalmente um dos estados canonicos listados acima. Nao
 - Ao fechar um setup inicial bem-sucedido, diferenciar explicitamente `estrutura pronta` de `snapshot oficial ainda nao materializado`
 - No fechamento do setup inicial, apresentar `A)` e `B)` como opcoes de proximo passo e informar o tradeoff de tempo entre elas
 - Se a existencia da pasta nativa da KB foi verificada, declarar no fechamento se ela existe/acessou corretamente ou se ficou como ressalva operacional
-- Ao fechar um `modo_atualizacao`, a resposta deve conter obrigatoriamente: classificacao de cada script (EQUIVALENTE / AUSENTE / CUSTOMIZADO), resultado da verificacao de naming de cada diretorio presente em `ObjetosDaKbEmXml` (conforme ou divergente — mesmo que nenhuma divergencia seja encontrada), estado operacional declarado e resultado do gate quando executado
+- Ao fechar um `modo_atualizacao`, a resposta deve conter obrigatoriamente: classificacao de cada script (EQUIVALENTE / AUSENTE / CUSTOMIZADO), resultado da verificacao de naming de cada diretorio presente em `ObjetosDaKbEmXml` expresso como tabela ou lista estruturada com ao menos tres colunas — `Diretorio`, `Tipo real encontrado`, `Status` (conforme ou divergente) — mesmo que nenhuma divergencia seja encontrada; quando houver divergencia, incluir tambem a coluna `Nome canonico esperado`; estado operacional declarado e resultado do gate quando executado
 - Ao fechar um `modo_atualizacao`, declarar separadamente no handoff: `sync/materializacao`, `indice/gate` e `empacotamento local`; nao colapsar tudo em "tudo certo" sem mostrar a situacao de cada dimensao adotada
 - Ao fechar um `modo_atualizacao`, usar literalmente o rotulo `indice/gate` para a dimensao do gate estrutural e de frescor; nao substituir por variantes como `indice/frescor`, `frescor`, `indice` isolado ou equivalentes
 - No handoff final, capturar o timestamp real imediatamente antes de responder e usá-lo na propria resposta; nao usar placeholder, horario inventado, valor reaproveitado de mensagem anterior nem timestamp inferido do contexto
@@ -475,7 +475,7 @@ Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao an
 
 8.g2 OBRIGATÓRIO ANTES DE 8.h — Verificacao de naming de `ObjetosDaKbEmXml` (so pular se a pasta nao existir ou estiver completamente vazia):
 
-8.g2.i  Identificar todos os diretorios presentes em `ObjetosDaKbEmXml`
+8.g2.i  Identificar todos os diretorios presentes em `ObjetosDaKbEmXml`. Amostragem representativa nao e substituto aceito — todos os diretorios presentes devem ser cobertos sem excecao.
 
 8.g2.ii Para cada diretorio presente, ler pelo menos um XML e extrair o tipo canonico:
     - Em auditoria focal ou curta, quando o objetivo estiver limitado a diretorios especificos, localizar diretamente um XML dentro de cada diretorio-alvo, ler esse XML e classificar; nao introduzir uma etapa exploratoria separada so para redescobrir se ha arquivos no diretorio quando a propria amostragem direta ja resolve
@@ -485,7 +485,7 @@ Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao an
     - O GUID encontrado no XML e sempre a fonte autoritativa; o nome do diretorio e convencao local e pode divergir
     - Nota: o motor `Build-KbIntelligenceIndex.py` ja usa esse mesmo mapeamento por GUID — o campo `object_type` no indice estara correto independente do nome da pasta; a auditoria aqui serve a legibilidade e consistencia do acervo para humanos
 
-8.g2.iii Se o nome do diretorio divergir do nome canonico esperado para o GUID encontrado, declarar a divergencia explicitamente ao usuario: qual diretorio esta com qual tipo real, qual seria o nome canonico segundo a convencao, e qual foi a causa provavel quando conhecida
+8.g2.iii Se o nome do diretorio divergir do nome canonico esperado para o GUID encontrado, declarar a divergencia explicitamente ao usuario: qual diretorio esta com qual tipo real, qual seria o nome canonico segundo a convencao, e qual foi a causa provavel quando conhecida. Divergencia de naming nao resolvida impede declarar `wrappers_atualizados` ou `materializado_e_indice_validado` como estado final limpo — o estado operacional deve registrar a pendencia de naming explicitamente ate que o renome seja aprovado e executado ou descartado com ciencia do usuario.
 
 8.g2.iv Antes de propor qualquer renome, verificar:
     - Se o `AGENTS.md` local referencia os nomes de diretorio em risco de ser renomeados
@@ -547,6 +547,7 @@ Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao an
     - Se `README.md` e `AGENTS.md` estiverem divergentes entre si ou em relacao aos valores efetivos, evidenciar a divergencia ao usuario e propor refresh da memoria local em ambos antes de encerrar o setup como "ok"
     - `GATE_OK` nao neutraliza essa obrigacao: gate liberado prova compatibilidade operacional atual, mas nao prova que a memoria local humana esta sincronizada
     - `GATE_OK` e `STRUCTURE_OK` nao bastam, sozinhos, para concluir "tudo certo" quando a aderencia do fluxo de empacotamento local ainda nao tiver sido auditada
+    - Divergencia de naming em `ObjetosDaKbEmXml` pendente de correcao ou descarte explicito impede declarar `wrappers_atualizados` ou `materializado_e_indice_validado` como estado final limpo; nenhum desses dois estados pode ser declarado sem que a verificacao de naming esteja encerrada — todos os diretorios conformes, ou divergencias registradas e descartadas conscientemente pelo usuario
     - Para efeito das regras acima: `AGENTS.md` e memoria operacional normativa para agentes — estado canonico, lista de wrappers ativos, regras de gate e roteamento; `README.md` e guia de uso humano — como operar a pasta, quais automacoes o humano executa diretamente, quais fluxos estao expostos. Essa distincao define quando atualizar so um ou ambos.
     - Gatilho obrigatorio para `AGENTS.md`: quando qualquer wrapper mudar de classe nesta rodada (AUSENTE resolvido, CUSTOMIZADO corrigido, wrapper novo adicionado), atualizar `## Wrappers locais` e o campo de estado operacional no `AGENTS.md` e etapa obrigatoria antes de declarar qualquer estado de conclusao — nao e proposta sujeita a pular.
     - Gatilho obrigatorio para `README.md`: quando a mudanca de wrapper alterar o conjunto de automacoes expostas diretamente ao humano (novo script que o humano chama, script renomeado ou removido do fluxo normal), atualizar a secao correspondente do `README.md` tambem e obrigatorio antes de declarar `wrappers_atualizados`.
