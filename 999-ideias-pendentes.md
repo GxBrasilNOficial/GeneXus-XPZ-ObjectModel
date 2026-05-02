@@ -75,3 +75,37 @@ Essa camada nao substituiria `xmlWellFormed`, `sourceSanityStatus` nem os gates 
 - O que exatamente conta como `official baseline` em cada fluxo: XML oficial atual em `ObjetosDaKbEmXml`, ultimo delta aceito, ou outro marco explicitamente documentado?
 - A comparacao deve nascer primeiro como regra metodologica de handoff/revisao, ou ja como evolucao automatizada do `Test-GeneXusSourceSanity.ps1`?
 - Como impedir que baseline ruim vire permissao implicita para aceitar piora nova?
+
+## Wrapper compartilhado para auditoria de naming de `ObjetosDaKbEmXml`
+
+**Origem:** avaliacao de sugestao de agente externo em 2026-05-01.
+
+### Problema concreto que motiva a ideia
+
+A verificacao de naming dos diretorios de container em `ObjetosDaKbEmXml` e executada hoje como procedimento narrado pelo agente seguindo o bloco `8.g2` da `xpz-kb-parallel-setup`. O fluxo esta bem especificado — cobre todos os diretorios sem excecao, exige leitura de pelo menos um XML por diretorio, mapeia o GUID de `Object/@type` para o nome canonico via catalogo e produz saida estruturada em tabela — mas depende de interpretacao local do agente a cada sessao.
+
+O risco pratico nao e de ambiguidade na regra, mas de variancia entre execucoes: agentes distintos podem diferir na forma de localizar o XML, nomear as colunas da tabela ou reportar a evidencia, mesmo seguindo a mesma secao da skill.
+
+### Ideia de melhoria
+
+Adicionar ao motor compartilhado um script `Test-KbNamingAudit.ps1` que:
+
+- receba como entrada o caminho de `ObjetosDaKbEmXml`
+- liste todos os subdiretorios presentes
+- leia pelo menos um XML por diretorio, extraia o elemento raiz ou `Object/@type`
+- mapeie o GUID para o nome canonico usando o mesmo catalogo ja consumido por `Build-KbIntelligenceIndex.py`
+- emita saida estruturada por diretorio com as colunas `Diretorio`, `Tipo real encontrado`, `Status` e, quando divergente, `Nome canonico esperado`
+- retorne `NAMING_OK` quando todos os diretorios estiverem conformes ou `NAMING_DIVERGENTE: <lista>` quando houver inversao
+
+O wrapper local de cada pasta paralela chamaria esse script e repassaria o resultado ao handoff, em vez de o agente executar o mapeamento inline.
+
+### O que justificaria implementar agora vs. aguardar
+
+O limiar de maturidade ainda nao foi atingido. O conjunto de tipos de container auditados e finito (Folder, Module, PackagedModule, Attribute) e o `8.g2.vii` ja tem criterio de parada curta bem definido. A implementacao faria sentido quando houver: (a) evidencia de handoffs superficiais recorrentes por variancia de execucao artesanal entre sessoes, ou (b) tres ou mais KBs paralelas ativas produzindo tabelas de naming inconsistentes.
+
+### Perguntas a responder antes de decidir
+
+- O catalogo de GUIDs em `01a-catalogo-e-padroes-empiricos.md` ja esta em formato consumivel por um script PowerShell, ou exigiria extracao adicional?
+- O script deve ficar no motor compartilhado (ao lado de `Build-KbIntelligenceIndex.py`) ou como wrapper exemplo desta skill, seguindo o padrao dos `*.example.ps1`?
+- A saida estruturada do script deve ser consumida diretamente pelo `Test-*KbSetupAudit.ps1` ou reportada separadamente no handoff?
+- Como manter sincronia entre o catalogo de GUIDs e o mapeamento interno do script sem duplicar a fonte autoritativa?
