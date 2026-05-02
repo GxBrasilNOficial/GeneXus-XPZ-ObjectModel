@@ -92,6 +92,10 @@ Do NOT use this skill for:
 - Quando a inspecao local da pasta contradisser contexto indireto do ambiente, da sessao ou de hooks, confiar primeiro na inspecao local e seguir com verificacao curta e objetiva, sem narrativa longa de especulacao
 - Explicar a funcao de cada subpasta
 - Tratar `ObjetosDaKbEmXml` como snapshot oficial somente leitura para agentes
+- `ObjetosDaKbEmXml` é o snapshot oficial da KB e agentes não o editam manualmente
+- `ObjetosGeradosParaImportacaoNaKbNoGenexus` é a área intermediária de trabalho anterior ao retorno oficial da KB e não atualiza diretamente o acervo oficial
+- Preview ou importação bem-sucedida na IDE não atualizam, por si sós, `ObjetosDaKbEmXml`
+- `ObjetosDaKbEmXml` só é atualizado depois que a KB devolve `XPZ` oficial e o `xpz-sync` materializa esse retorno
 - Tratar `XpzExportadosPelaIDE` como pasta de entrada onde o usuario grava os `.xpz` exportados pela IDE
 - Tratar `Temp` como destino preferencial para artefatos efemeros, temporarios de execucao, relatorios descartaveis e copias temporarias de SQLite
 - Tratar `KbIntelligence` como pasta do indice SQLite derivado e regeneravel, normalmente `KbIntelligence\kb-intelligence.sqlite`, mais relatorios de validacao quando o repositorio local adotar esse fluxo

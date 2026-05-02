@@ -85,12 +85,17 @@ Do NOT use esta skill para:
   - efeito funcional observado depois no GeneXus
 - Classificar explicitamente quando a rodada for `ensaio metodologico/experimental`, especialmente em casos de serializacao, roundtrip controlado, prova de wrapper, prova de envelope, exportacao headless, `PreviewMode` ou importacao de teste sem validacao funcional posterior
 - Em `ensaio metodologico/experimental`, nao narrar o resultado como mudanca funcional validada; limitar a conclusao ao que a evidencia realmente cobriu
+- Quando a estrategia segura exigir mais de uma fase, tratar cada rodada como incremento controlado e validar build/import antes da fase seguinte
+- Sucesso operacional de uma fase nao autoriza recompor automaticamente pacote acumulado para a fase seguinte; a proxima rodada deve preferir o delta novo ainda nao validado
 - Exigir que o probe (sondagem técnica inicial) devolva diagnóstico estruturado com `status`, `summary`, `resolvedPaths`, `checks`, `blockingReasons`, `warnings` e `strategyTrace`
 - Preferir `JSON` como formato canônico inicial desse diagnóstico
 - Registrar `stdout`, `stderr`, `exitCode`, caminho do `.msbuild` temporário e caminho do log
 - Validar a assinatura efetiva do wrapper e da task antes de assumir formato de parâmetro sensível de exportação ou importação
 - Em exportação full da KB, preferir o atalho ergonômico `-FullExport` do wrapper local quando ele existir; manter `ExportAll='true'` apenas como compatibilidade com contratos antigos
 - Privilegiar `PreviewMode` e, quando suportado pela task carregada, `UpdateFile` antes de importação real
+- Distinguir explicitamente `operação na KB` de `atualização do acervo oficial`
+- Sucesso de preview ou importação não autoriza atualização manual de `ObjetosDaKbEmXml`
+- Quando houver retorno oficial da KB em `XPZ`, a atualização de `ObjetosDaKbEmXml` deve ocorrer depois, pelo fluxo de `xpz-sync`
 - Tratar `ImportKBInformation`, `UpdateFile` e defaults internos de importação/exportação como sensíveis e dependentes da assinatura efetiva da task `Import`
 - Normalizar recortes multiplos de `IncludeItems` e `ExcludeItems` como lista antes de serializar para a task carregada
 - Preservar `importedItems` como lista em qualquer diagnóstico JSON, mesmo quando houver apenas um item

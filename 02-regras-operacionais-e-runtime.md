@@ -848,6 +848,9 @@ Consolidar regras de geracao, clonagem conservadora, materializacao, serializaca
 
 ## Delta estrito
 
+- `Regra operacional`: frente faseada e valida quando a limitacao operacional do GeneXus impedir pacote monolitico seguro.
+- `Regra operacional`: depois de uma rodada validada da mesma frente, a preferencia metodologica e por delta novo, nao por reempacotamento acumulado desnecessario.
+- `Regra operacional`: quando a introducao de FK nova depender de `SubTypeGroup`, a revisao estrutural minima deve alcancar tambem a `Table` correspondente.
 - `Regra operacional`: antes de empacotar, classificar cada mudanca candidata como `mudanca pedida`, `mudanca auxiliar necessaria` ou `mudanca extra nao pedida`.
 - `Regra operacional`: se a mudanca for apenas metadado, reserializacao ou ruido, ela deve ser classificada como `mudanca extra nao pedida`, salvo quando houver justificativa objetiva de dependencia obrigatoria.
 - `Regra operacional`: mudanca extra nao pedida deve ser sinalizada explicitamente antes do empacotamento.

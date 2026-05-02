@@ -13,6 +13,11 @@ Invoca os scripts locais do repositório GeneXus ativo para sincronizar XMLs ind
 
 Identificar a raiz do repositório pelo contexto, localizar os scripts de sincronização na pasta `scripts\`, montar o comando correto e executá-lo via Bash. Reportar o resultado de forma clara. Não alterar arquivos manualmente — delegar tudo ao script. Tratar `ObjetosDaKbEmXml` como snapshot oficial somente leitura para agentes e não antecipar manualmente nenhuma promoção para esse acervo. Distinguir sempre a pasta nativa da KB da pasta paralela da KB. Se houver edição detectada ou pretendida em `ObjetosDaKbEmXml` para delta ainda não reexportado oficialmente pela KB, tratar isso como erro explícito de processo.
 
+- `ObjetosDaKbEmXml` é o snapshot oficial da KB e nunca deve ser alterado manualmente pelo agente.
+- `ObjetosDaKbEmXml` só pode ser atualizado pelo fluxo oficial de `sync`, a partir de `XPZ` exportado pela IDE do GeneXus.
+- XML gerado localmente para importação, mesmo após preview ou importação bem-sucedida, nunca deve ser promovido manualmente para `ObjetosDaKbEmXml`.
+- Enquanto o delta ainda não tiver retornado em `XPZ` oficial da KB, o trabalho deve permanecer em `ObjetosGeradosParaImportacaoNaKbNoGenexus`.
+
 Quando o mesmo `XPZ` for reprocessado após atualização do arquivo exportado, tratar o novo resultado como um novo snapshot daquele insumo, não como repetição irrelevante do processamento anterior. A classificação `updated` versus `unchanged` pertence ao resultado daquele processamento específico.
 
 Os nomes das pastas sao apenas padroes sugeridos quando o usuario nao informar outros. O que manda e a funcao da pasta no fluxo.

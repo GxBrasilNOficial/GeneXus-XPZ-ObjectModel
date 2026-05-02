@@ -102,6 +102,9 @@ If the main need is to prepare or validate the initial folder structure around t
 - Detect workspace contamination before packaging and abort when more than one plausible batch is active
 - Treat the workspace as contaminated when the active root of `ObjetosGeradosParaImportacaoNaKbNoGenexus` contains XMLs from different fronts, different target objects, superseded deltas, or unrelated older files that could be mistaken for the current batch
 - Build or validate a manifest for the candidate batch before packaging, treating the manifest first as structured output in the conversation
+- When an earlier round of the same front has already been validated, the next round should prefer a delta package with the new increment, not an unnecessarily large accumulated package
+- Reusing the same front does not authorize automatically re-packaging the whole active history of that front; the candidate batch for the current round must be reduced to the delta that is still needed
+- A phased front is a legitimate pattern when a GeneXus operational limitation makes a safe monolithic package impractical; in that case, splitting the delivery into sequential rounds is part of the methodology, not an ad hoc workaround
 - Classify the package intent explicitly before packaging as exactly one of:
   - `pacote funcional` = objetivo principal e alterar comportamento funcional esperado
   - `pacote experimental` = objetivo principal e testar serializacao, roundtrip IDE/XPZ, preservacao textual, envelope ou comportamento metodologico do fluxo
@@ -124,6 +127,9 @@ If the main need is to prepare or validate the initial folder structure around t
 - For a new `Transaction` package, treat top-level `Attribute` items referenced by the `Level` as mandatory package members under `<Attributes>`, never as `Domain`/object payload under `<Objects>`
 - When changing a `Transaction`, declare the primary edit block before touching the XML, use only the adjacent blocks required by explicit functional dependency, name each justified block transition, and state whether the intended effect is via web editing, via BC, or both
 - When changing a `Transaction` and the delta involves `Rules` or `Events` blocks that generate attribute assignments, run the writability classification gate from RESPONSIBILITIES before writing any assignment; do NOT generate assignments to non-writable attributes
+- When a phase introduces a new FK sustained by `SubTypeGroup`, the structural review must not stop at the `Transaction` or at a pattern object linked to it
+- In that situation, also review the corresponding `Table`, focusing on `Transaction coupling and physical context` and `Secondary indexes and embedded index members`
+- If the new FK depends on later physical materialization or on an embedded index in the `Table`, treat `Transaction`, `SubTypeGroup`, and `Table` as the minimum review set for that phase
 - Validate UTF-8 without BOM hygiene on active XMLs before packaging
 - Reread and apply local repository documentation (`AGENTS.md`, `README.md`, and equivalent project docs) before packaging whenever the target KB/repository defines specific functional review rules, contracts, or operational flow
 - Use local repository documentation as the mandatory specialization layer for KB-specific contracts and review chains, without promoting those local rules to the shared XPZ methodology
