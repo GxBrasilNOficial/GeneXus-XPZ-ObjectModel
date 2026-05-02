@@ -60,41 +60,22 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$KnownTypeMap = [ordered]@{
-    "36e32e2d-023e-4188-95df-d13573bac2e0" = "API"
-    "3affc0b3-494b-4d84-9ec1-3a6ab8349cda" = "ColorPalette"
-    "280c149c-48b2-4284-a532-0c999df9e006" = "CategoryDiagram"
-    "526aba9f-a725-4bc7-b1db-0b9f92ac9550" = "Dashboard"
-    "2a9e9aba-d2de-4801-ae7f-5e3819222daf" = "DataProvider"
-    "ffd44be7-3bb4-4d01-9e7e-d1c1a3c095af" = "DataSelector"
-    "dcdcdcdc-dfe0-4a57-ae8f-c6e31b0dcbc0" = "DataStore"
-    "bf08dfb1-361c-4e7e-ad54-391e56e60b49" = "DeploymentUnit"
-    "78b3fa0e-174c-4b2b-8716-718167a428b5" = "DesignSystem"
-    "faeb588c-dcce-4dad-9af3-cdd11b961a32" = "Document"
-    "00972a17-9975-449e-aab1-d26165d51393" = "Domain"
-    "c163e562-42c6-4158-ad83-5b21a14cf30e" = "ExternalObject"
-    "1132ac08-290f-4fd1-bd18-64777b7329d1" = "File"
-    "00000000-0000-0000-0000-000000000006" = "Module"
-    "ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0" = "Generator"
-    "9fb193d9-64a4-4d30-b129-ff7c76830f7e" = "Image"
-    "857ca50e-7905-0000-0007-c5d9ff2975ec" = "Table"
-    "88313f43-5eb2-0000-0028-e8d9f5bf9588" = "Language"
-    "00000000-0000-0000-0000-000000000008" = "Folder"
-    "c88fffcd-b6f8-0000-8fec-00b5497e2117" = "PackagedModule"
-    "d82625fd-5892-40b0-99c9-5c8559c197fc" = "Panel"
-    "83476c1e-fa72-4229-9930-f51b954fca2d" = "PatternSettings"
-    "84a12160-f59b-4ad7-a683-ea4481ac23e9" = "Procedure"
-    "447527b5-9210-4523-898b-5dccb17be60a" = "SDT"
-    "624a8b31-36f0-4292-adba-2d270d1e3537" = "Stencil"
-    "87313f43-5eb2-41d7-9b8c-e8d9f5bf9588" = "SubTypeGroup"
-    "c804fdbd-7c0b-440d-8527-4316c92649a6" = "Theme"
-    "d4876646-98dd-419b-8c1c-896f83c48368" = "ThemeClass"
-    "5592de59-d30a-499d-9100-a7006d3674f2" = "ThemeColor"
-    "1db606f2-af09-4cf9-a3b5-b481519d28f6" = "Transaction"
-    "562f4793-aabe-449f-8821-fc77e550698e" = "UserControl"
-    "c9584656-94b6-4ccd-890f-332d11fc2c25" = "WebPanel"
-    "78cecefe-be7d-4980-86ce-8d6e91fba04b" = "WorkWithForWeb"
+function Get-KnownTypeMap {
+    $mapPath = Join-Path $PSScriptRoot "gx-type-guid-map.json"
+    if (-not (Test-Path -LiteralPath $mapPath -PathType Leaf)) {
+        throw "Type GUID map not found: $mapPath"
+    }
+
+    $rawMap = Get-Content -LiteralPath $mapPath -Raw
+    $jsonMap = $rawMap | ConvertFrom-Json
+    $map = [ordered]@{}
+    foreach ($property in $jsonMap.PSObject.Properties) {
+        $map[$property.Name.ToLowerInvariant()] = [string]$property.Value
+    }
+
+    return $map
 }
+$KnownTypeMap = Get-KnownTypeMap
 
 function New-TempDirectory {
     $tempBase = [System.IO.Path]::GetTempPath()
@@ -472,7 +453,7 @@ function Convert-PackageToItems {
             Sort-Object Name |
             ForEach-Object { "$($_.Name) [$($_.Value)]" }
 
-        throw "Package contains object type GUIDs not mapped to destination folders: $($unknownList -join ', '). Update the type map before materializing this package."
+        throw "Package contains object type GUIDs not mapped to destination folders: $($unknownList -join ', '). Update scripts\gx-type-guid-map.json and reflect the new type in 01a-catalogo-e-padroes-empiricos.md before retrying."
     }
 
     $collisions = @(

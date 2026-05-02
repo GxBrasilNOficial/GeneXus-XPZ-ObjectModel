@@ -492,7 +492,7 @@ Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao an
     - Em auditoria focal ou curta, quando o objetivo estiver limitado a diretorios especificos, localizar diretamente um XML dentro de cada diretorio-alvo, ler esse XML e classificar; nao introduzir uma etapa exploratoria separada so para redescobrir se ha arquivos no diretorio quando a propria amostragem direta ja resolve
     - Para `Folder`, `Module`, `PackagedModule` e `Attribute`, um unico XML por diretorio e evidencia suficiente, salvo se o primeiro arquivo lido estiver corrompido, ilegivel ou sem o trecho minimo necessario para classificacao
     - Se o elemento raiz for `<Attribute>`, o tipo canonico e `Attribute`
-    - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico conforme o catalogo em `01a-catalogo-e-padroes-empiricos.md`
+    - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico usando a fonte operacional compartilhada `../scripts/gx-type-guid-map.json`, mantendo `01a-catalogo-e-padroes-empiricos.md` como referencia editorial canonica que tambem deve ser atualizada quando surgir tipo novo
     - O GUID encontrado no XML e sempre a fonte autoritativa; o nome do diretorio e convencao local e pode divergir
     - Nota: o motor `Build-KbIntelligenceIndex.py` ja usa esse mesmo mapeamento por GUID — o campo `object_type` no indice estara correto independente do nome da pasta; a auditoria aqui serve a legibilidade e consistencia do acervo para humanos
 
