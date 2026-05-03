@@ -34,7 +34,15 @@
       "expectation": "Expanded inventory must include Table objects"
     },
     {
-      "id": "phase4-case-5-impact-basic-expanded-type",
+      "id": "phase4-case-5-transaction-inventory",
+      "query": "object-info",
+      "object": "Transaction:AbateOrdem",
+      "should_exist": true,
+      "expected_file_contains": "Transaction/AbateOrdem.xml",
+      "expectation": "Expanded inventory must include Transaction objects with the correct canonical type"
+    },
+    {
+      "id": "phase4-case-6-impact-basic-expanded-type",
       "query": "impact-basic",
       "object": "Domain:AbrangenciaDaSelecaoDeCorte",
       "should_exist": true,
@@ -43,7 +51,7 @@
       "expectation": "impact-basic must find expanded inventory objects without inventing relations"
     },
     {
-      "id": "phase4-case-6-missing-expanded-type-object",
+      "id": "phase4-case-7-missing-expanded-type-object",
       "query": "object-info",
       "object": "Domain:ObjetoInexistenteParaTesteFase4",
       "should_exist": false,
