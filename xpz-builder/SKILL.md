@@ -170,8 +170,8 @@ If the main need is to prepare or validate the initial folder structure around t
   - when the user asks for an initial-date/final-date pair, prefer two independent `where` clauses instead of branching into unnecessary scenarios
   - when the object already has a clear local form in `Source`, prefer following that form as a weak readability heuristic, not as a hard methodological rule
 - When the candidate batch contains a `Procedure` that declares a variable with `ATTCUSTOMTYPE` = `bc:<X>`, run the BC dependency preflight gate before packaging: locate Transaction `X` in the batch or in `ObjetosDaKbEmXml` and verify `idISBUSINESSCOMPONENT=True`; treat absence of that confirmation as a hard blocker
-- When the candidate batch contains a `Procedure` whose `Source` delta introduces or materially expands a `Sub` block, run the Sub-pattern Mirroring gate (8-PSM): scan the procedure's pre-existing `Sub` delegation structure; if a dominant `iteration-sub → unit-sub` pattern exists and the new block is `mixed`, emit an architectural alert and require user acknowledgment or restructuring before proceeding; treat this as advisory, not as a hard packaging blocker
-- When the candidate batch contains 2 or more distinct objects, run the Import Dependency Ordering gate (8-IDO) after all other object-level gates: detect structural dependencies between batch objects, assign each object to a topological layer, alert when ordering risk exists across 2 or more layers, and ABORT when circular dependencies are found
+- When the candidate batch contains a `Procedure` whose `Source` delta introduces or materially expands a `Sub` block, run the Sub-pattern Mirroring gate (9-PSM): scan the procedure's pre-existing `Sub` delegation structure; if a dominant `iteration-sub → unit-sub` pattern exists and the new block is `mixed`, emit an architectural alert and require user acknowledgment or restructuring before proceeding; treat this as advisory, not as a hard packaging blocker
+- When the candidate batch contains 2 or more distinct objects, run the Import Dependency Ordering gate (9-IDO) after all other object-level gates: detect structural dependencies between batch objects, assign each object to a topological layer, alert when ordering risk exists across 2 or more layers, and ABORT when circular dependencies are found
 
 ---
 
@@ -285,13 +285,13 @@ Reference files and when to load them:
      - If that Transaction is in `ObjetosDaKbEmXml` but not in the batch: read the corpus XML and check for the same `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` property
        - Property absent → alert: Transaction `X` exists in the official corpus but lacks the `Apply:GUID` mark; verify whether the existing KB state will preserve the expected pattern behavior after import
      - If the linked Transaction is absent from both the batch and `ObjetosDaKbEmXml` → alert: cannot confirm the `Apply:GUID` mark on the target Transaction; document the gap before packaging
-8-TWS. Transaction Coherence preflight gate — run before any packaging when the batch contains a `Transaction`:
+9-TWS. Transaction Coherence preflight gate — run before any packaging when the batch contains a `Transaction`:
    - Run `& ..\scripts\Test-GeneXusTransactionCoherence.ps1 -InputPath <arquivo> -AsJson` for each Transaction XML in the batch
    - `not-applicable` (object is not a Transaction or no Transaction found) → proceed normally
    - `fail` → **ABORT**: correct the structural issue (missing key in Level, DescriptionAttribute not found in Level) before packaging
    - `warn` → keep packaging blocked; each flagged finding must be reviewed and either corrected or explicitly justified before proceeding; accepted justifications must be recorded in the closing declaration
    - `pass` → proceed to next gate
-8-PSM. Procedure Sub-pattern Mirroring gate — run before any packaging when the batch contains a `Procedure` whose `Source` delta introduces at least one new `Sub/EndSub` block or materially expands an existing one:
+9-PSM. Procedure Sub-pattern Mirroring gate — run before any packaging when the batch contains a `Procedure` whose `Source` delta introduces at least one new `Sub/EndSub` block or materially expands an existing one:
    - Read the pre-existing `Source` of the Procedure (official corpus XML or base XML before the delta) and enumerate all named `Sub/EndSub` blocks
    - If there are fewer than two pre-existing named `Sub` blocks, skip this gate — no dominant pattern can be established
    - Classify each pre-existing `Sub` heuristically:
@@ -308,11 +308,11 @@ Reference files and when to load them:
      - Show the alert and require the user to either confirm the divergence is intentional (justification required) or restructure the logic to mirror the dominant pattern
      - Record the outcome in the closing declaration
    - Treat this gate as an architectural coherence signal, not as a syntax or structural error
-8-IDO. Import Dependency Ordering gate — run before any packaging when the batch contains 2 or more distinct objects:
+9-IDO. Import Dependency Ordering gate — run before any packaging when the batch contains 2 or more distinct objects:
    - Build the batch object list: all distinct GeneXus objects present in the candidate batch
    - For each object in the batch, detect structural dependencies to other objects in the same batch:
      - WorkWithForWeb: read Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc` and extract the linked Transaction name from `<Property><Name>Transaction</Name><Value>...`; if that Transaction is also in the batch → record dependency edge: Transaction must precede WorkWithForWeb
-     - Procedure with `ATTCUSTOMTYPE = bc:<X>`: if Transaction X is also in the batch → record dependency edge: Transaction X must precede this Procedure (this dependency was already validated by 8-BC for existence and validity; here it informs ordering only)
+     - Procedure with `ATTCUSTOMTYPE = bc:<X>`: if Transaction X is also in the batch → record dependency edge: Transaction X must precede this Procedure (this dependency was already validated by 9-BC for existence and validity; here it informs ordering only)
      - Procedure calling another Procedure in the batch: scan `Source` for direct call references to other Procedure names present in the batch; if found and the called Procedure is new in this delta → record dependency edge: called Procedure must precede calling Procedure; declare this detection as best-effort — when `Source` cannot be structurally scanned, declare the gap explicitly rather than assuming no dependency exists
    - Build the directed dependency graph for the batch using the recorded edges
    - If the graph has one or more cycles → **ABORT**: circular dependency between batch objects; a consistent single-pass import is not possible; present the cycle(s) to the user and require resolution before packaging
@@ -657,14 +657,14 @@ Ao clonar tela customizada WorkWithPlus:
 - [ ] For every `Procedure` in the batch with a `bc:<X>` variable: Transaction `X` was confirmed as `idISBUSINESSCOMPONENT=True` in the batch or in `ObjetosDaKbEmXml`; when `X` is also in the same batch, import ordering risk was explicitly acknowledged or the batch was staged
 - [ ] For every `WorkWithForWeb` (`WorkWithWeb*`) in the batch: `Apply` property was verified in Part `babfa2b2-19a0-4ef1-b5f4-81b7c7be79dc`; if linked Transaction is also in the batch or in `ObjetosDaKbEmXml`, `Apply:78cecefe-be7d-4980-86ce-8d6e91fba04b = True` was confirmed in that Transaction's Properties
 - [ ] For every `Transaction` in the batch: `Test-GeneXusTransactionCoherence.ps1` was run; `fail` findings were corrected; `warn` findings were reviewed and either corrected or explicitly justified before packaging
-- [ ] For every `Procedure` in the batch with a new or materially expanded `Sub` block: the dominant local sub-delegation pattern was scanned (8-PSM); if a dominant `iteration-sub → unit-sub` pattern was identified and the new block diverged, the architectural alert was shown and the outcome was recorded in the closing declaration
+- [ ] For every `Procedure` in the batch with a new or materially expanded `Sub` block: the dominant local sub-delegation pattern was scanned (9-PSM); if a dominant `iteration-sub → unit-sub` pattern was identified and the new block diverged, the architectural alert was shown and the outcome was recorded in the closing declaration
 - [ ] If the package contains a WWP PatternInstance (`WorkWithPlus*`): rename collisions were checked (two old fields mapping to the same new name)
 - [ ] If the package contains a WWP PatternInstance: duplicate nodes in `<attribute>`, `<gridAttribute>`, and `<parameter>` were removed
 - [ ] If the package contains a WWP PatternInstance: `parentGuid` points to the correct target Transaction, not to the source entity
 - [ ] If the package contains a WWP PatternInstance: references to attributes apparently removed from the model were reviewed
-- [ ] When the batch had 2 or more distinct objects: 8-IDO was run; dependency edges were identified for WorkWithForWeb→Transaction, Procedure bc:→Transaction, and best-effort Procedure→Procedure call chains
-- [ ] When 8-IDO identified 2 or more topological layers: ordering alert was emitted and explicit user confirmation or justification was obtained before proceeding with single-bundle packaging
-- [ ] 8-IDO found no circular dependencies in the batch dependency graph; if a cycle was found, packaging was aborted and the cycle was presented to the user
+- [ ] When the batch had 2 or more distinct objects: 9-IDO was run; dependency edges were identified for WorkWithForWeb→Transaction, Procedure bc:→Transaction, and best-effort Procedure→Procedure call chains
+- [ ] When 9-IDO identified 2 or more topological layers: ordering alert was emitted and explicit user confirmation or justification was obtained before proceeding with single-bundle packaging
+- [ ] 9-IDO found no circular dependencies in the batch dependency graph; if a cycle was found, packaging was aborted and the cycle was presented to the user
 
 ---
 
@@ -710,10 +710,10 @@ Ao clonar tela customizada WorkWithPlus:
 - NEVER import a custom instance (`wc*`, `wp*`) without transporting its corresponding `WorkWithPlus*` object
 - NEVER re-apply a pattern over a Transaction without reviewing the diff of existing customizations
 - NEVER rename an entity with WWP active without checking for attribute collisions that would break the PatternInstance XML
-- NEVER silently accept a new `Sub` block in a `Procedure` that diverges strongly from the identified dominant local pattern without showing the 8-PSM architectural alert and recording user acknowledgment or justification in the closing declaration
-- NEVER proceed with single-bundle packaging when 8-IDO identified 2 or more topological layers without obtaining explicit user confirmation or justification for the ordering risk
-- NEVER treat absence of detected cross-references in 8-IDO as proof that no ordering risk exists when the `Source` scan for Procedure call chains was declared as not fully performed
-- ABORT if 8-IDO detects a circular dependency in the batch dependency graph
+- NEVER silently accept a new `Sub` block in a `Procedure` that diverges strongly from the identified dominant local pattern without showing the 9-PSM architectural alert and recording user acknowledgment or justification in the closing declaration
+- NEVER proceed with single-bundle packaging when 9-IDO identified 2 or more topological layers without obtaining explicit user confirmation or justification for the ordering risk
+- NEVER treat absence of detected cross-references in 9-IDO as proof that no ordering risk exists when the `Source` scan for Procedure call chains was declared as not fully performed
+- ABORT if 9-IDO detects a circular dependency in the batch dependency graph
 - ABORT if risk is high/very high and no internal comparable template is available
 - ABORT if type has fewer than 5 specimens in the corpus and no sanitized template exists
 - ABORT if container identity is unresolved among Module/Folder (`00000000-0000-0000-0000-000000000008`), PackagedModule (`c88fffcd-b6f8-0000-8fec-00b5497e2117`), and Root Module (`afa47377-41d5-4ae8-9755-6f53150aa361`) for the target object
