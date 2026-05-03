@@ -1,0 +1,311 @@
+{
+  "version": 1,
+  "types": {
+    "API": {
+      "objectTypeGuid": "36e32e2d-023e-4188-95df-d13573bac2e0",
+      "rootKind": "Object",
+      "folderName": "API",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Interface de servico GeneXus."
+    },
+    "Attribute": {
+      "objectTypeGuid": null,
+      "rootKind": "Attribute",
+      "folderName": "Attribute",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Envelope proprio com raiz <Attribute>."
+    },
+    "CategoryDiagram": {
+      "objectTypeGuid": "280c149c-48b2-4284-a532-0c999df9e006",
+      "rootKind": "Object",
+      "folderName": "CategoryDiagram",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Categoria ou diagrama organizacional exportado pela KB."
+    },
+    "ColorPalette": {
+      "objectTypeGuid": "3affc0b3-494b-4d84-9ec1-3a6ab8349cda",
+      "rootKind": "Object",
+      "folderName": "ColorPalette",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Paleta de cores."
+    },
+    "Dashboard": {
+      "objectTypeGuid": "526aba9f-a725-4bc7-b1db-0b9f92ac9550",
+      "rootKind": "Object",
+      "folderName": "Dashboard",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Painel visual composto."
+    },
+    "DataProvider": {
+      "objectTypeGuid": "2a9e9aba-d2de-4801-ae7f-5e3819222daf",
+      "rootKind": "Object",
+      "folderName": "DataProvider",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Fonte de dados parametrizada."
+    },
+    "DataSelector": {
+      "objectTypeGuid": "ffd44be7-3bb4-4d01-9e7e-d1c1a3c095af",
+      "rootKind": "Object",
+      "folderName": "DataSelector",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Seletor de dados."
+    },
+    "DataStore": {
+      "objectTypeGuid": "dcdcdcdc-dfe0-4a57-ae8f-c6e31b0dcbc0",
+      "rootKind": "Object",
+      "folderName": "DataStore",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Datastore GeneXus."
+    },
+    "DeploymentUnit": {
+      "objectTypeGuid": "bf08dfb1-361c-4e7e-ad54-391e56e60b49",
+      "rootKind": "Object",
+      "folderName": "DeploymentUnit",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Unidade de deploy."
+    },
+    "DesignSystem": {
+      "objectTypeGuid": "78b3fa0e-174c-4b2b-8716-718167a428b5",
+      "rootKind": "Object",
+      "folderName": "DesignSystem",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Sistema de design."
+    },
+    "Document": {
+      "objectTypeGuid": "faeb588c-dcce-4dad-9af3-cdd11b961a32",
+      "rootKind": "Object",
+      "folderName": "Document",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Documento GeneXus."
+    },
+    "Domain": {
+      "objectTypeGuid": "00972a17-9975-449e-aab1-d26165d51393",
+      "rootKind": "Object",
+      "folderName": "Domain",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Dominio."
+    },
+    "ExternalObject": {
+      "objectTypeGuid": "c163e562-42c6-4158-ad83-5b21a14cf30e",
+      "rootKind": "Object",
+      "folderName": "ExternalObject",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "External Object."
+    },
+    "File": {
+      "objectTypeGuid": "1132ac08-290f-4fd1-bd18-64777b7329d1",
+      "rootKind": "Object",
+      "folderName": "File",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Arquivo GeneXus."
+    },
+    "Folder": {
+      "objectTypeGuid": "00000000-0000-0000-0000-000000000008",
+      "rootKind": "Object",
+      "folderName": "Folder",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": true,
+      "notes": "Container criado pelo usuario."
+    },
+    "Generator": {
+      "objectTypeGuid": "ecececec-dfe0-4a57-ae8f-c6e31b0dcbc0",
+      "rootKind": "Object",
+      "folderName": "Generator",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Gerador GeneXus."
+    },
+    "Image": {
+      "objectTypeGuid": "9fb193d9-64a4-4d30-b129-ff7c76830f7e",
+      "rootKind": "Object",
+      "folderName": "Image",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Imagem."
+    },
+    "Language": {
+      "objectTypeGuid": "88313f43-5eb2-0000-0028-e8d9f5bf9588",
+      "rootKind": "Object",
+      "folderName": "Language",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Idioma."
+    },
+    "Module": {
+      "objectTypeGuid": "00000000-0000-0000-0000-000000000006",
+      "rootKind": "Object",
+      "folderName": "Module",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": true,
+      "notes": "Container de sistema."
+    },
+    "PackagedModule": {
+      "objectTypeGuid": "c88fffcd-b6f8-0000-8fec-00b5497e2117",
+      "rootKind": "Object",
+      "folderName": "PackagedModule",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": true,
+      "notes": "Modulo empacotado."
+    },
+    "Panel": {
+      "objectTypeGuid": "d82625fd-5892-40b0-99c9-5c8559c197fc",
+      "rootKind": "Object",
+      "folderName": "Panel",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Panel GeneXus."
+    },
+    "PatternSettings": {
+      "objectTypeGuid": "83476c1e-fa72-4229-9930-f51b954fca2d",
+      "rootKind": "Object",
+      "folderName": "PatternSettings",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Configuracao de pattern."
+    },
+    "Procedure": {
+      "objectTypeGuid": "84a12160-f59b-4ad7-a683-ea4481ac23e9",
+      "rootKind": "Object",
+      "folderName": "Procedure",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Procedure."
+    },
+    "SDT": {
+      "objectTypeGuid": "447527b5-9210-4523-898b-5dccb17be60a",
+      "rootKind": "Object",
+      "folderName": "SDT",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Structured Data Type."
+    },
+    "Stencil": {
+      "objectTypeGuid": "624a8b31-36f0-4292-adba-2d270d1e3537",
+      "rootKind": "Object",
+      "folderName": "Stencil",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Stencil."
+    },
+    "SubTypeGroup": {
+      "objectTypeGuid": "87313f43-5eb2-41d7-9b8c-e8d9f5bf9588",
+      "rootKind": "Object",
+      "folderName": "SubTypeGroup",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "SubTypeGroup."
+    },
+    "Table": {
+      "objectTypeGuid": "857ca50e-7905-0000-0007-c5d9ff2975ec",
+      "rootKind": "Object",
+      "folderName": "Table",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Tabela fisica."
+    },
+    "Theme": {
+      "objectTypeGuid": "c804fdbd-7c0b-440d-8527-4316c92649a6",
+      "rootKind": "Object",
+      "folderName": "Theme",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Tema."
+    },
+    "ThemeClass": {
+      "objectTypeGuid": "d4876646-98dd-419b-8c1c-896f83c48368",
+      "rootKind": "Object",
+      "folderName": "ThemeClass",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Classe de tema."
+    },
+    "ThemeColor": {
+      "objectTypeGuid": "5592de59-d30a-499d-9100-a7006d3674f2",
+      "rootKind": "Object",
+      "folderName": "ThemeColor",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Cor de tema."
+    },
+    "Transaction": {
+      "objectTypeGuid": "1db606f2-af09-4cf9-a3b5-b481519d28f6",
+      "rootKind": "Object",
+      "folderName": "Transaction",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Transacao."
+    },
+    "UserControl": {
+      "objectTypeGuid": "562f4793-aabe-449f-8821-fc77e550698e",
+      "rootKind": "Object",
+      "folderName": "UserControl",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "User control."
+    },
+    "WebPanel": {
+      "objectTypeGuid": "c9584656-94b6-4ccd-890f-332d11fc2c25",
+      "rootKind": "Object",
+      "folderName": "WebPanel",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "WebPanel."
+    },
+    "WorkWithForWeb": {
+      "objectTypeGuid": "78cecefe-be7d-4980-86ce-8d6e91fba04b",
+      "rootKind": "Object",
+      "folderName": "WorkWithForWeb",
+      "inventoryEligible": true,
+      "queryableByKbIntelligence": true,
+      "containerType": false,
+      "notes": "Pattern web por transacao."
+    }
+  }
+}
