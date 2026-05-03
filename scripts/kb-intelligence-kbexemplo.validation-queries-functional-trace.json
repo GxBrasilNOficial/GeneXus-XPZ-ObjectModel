@@ -1,59 +1,60 @@
 {
+  "description": "Validation cases for KB Intelligence Phase 6 functional-trace-basic query using the KBExemplo parallel KB.",
   "cases": [
     {
       "id": "phase6-case-1-workwith-functional-trace",
       "query": "functional-trace-basic",
-      "object": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "object": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
       "limit": 80,
       "should_exist": true,
       "expected_trace_targets": [
-        "Transaction:AbateOrdem",
-        "Procedure:procLeEmpresaSessao"
+        "Transaction:OrdemDeProducao",
+        "Procedure:procCarregaEmpresaSessao"
       ],
       "expected_rules": [
         "workwith_transaction_binding",
         "workwith_condition_procedure"
       ],
       "expected_reading_plan_files": [
-        "WorkWithForWeb/WorkWithWebAbateOrdem.xml"
+        "WorkWithForWeb/WorkWithWebOrdemDeProducao.xml"
       ]
     },
     {
       "id": "phase6-case-2-procedure-bc-functional-trace",
       "query": "functional-trace-basic",
-      "object": "Procedure:procAjustaCompraGadoIdDeAnimais",
+      "object": "Procedure:procAjustaPedidoCompraIdDeItens",
       "limit": 80,
       "should_exist": true,
       "expected_trace_sources": [
-        "WorkWithForWeb:WorkWithWebAbateOrdem"
+        "WorkWithForWeb:WorkWithWebOrdemDeProducao"
       ],
       "expected_trace_targets": [
-        "Transaction:Animal"
+        "Transaction:ItemDeEstoque"
       ],
       "expected_rules": [
         "source_bc_load_transaction",
         "source_bc_save_transaction"
       ],
       "expected_reading_plan_files": [
-        "Procedure/procAjustaCompraGadoIdDeAnimais.xml",
-        "WorkWithForWeb/WorkWithWebAbateOrdem.xml"
+        "Procedure/procAjustaPedidoCompraIdDeItens.xml",
+        "WorkWithForWeb/WorkWithWebOrdemDeProducao.xml"
       ]
     },
     {
       "id": "phase6-case-3-api-sdt-functional-trace",
       "query": "functional-trace-basic",
-      "object": "API:apiPDV_Integracao",
+      "object": "API:apiIntegracaoVendas",
       "limit": 80,
       "should_exist": true,
       "expected_trace_targets": [
-        "SDT:sdtProdutoDadosBasicos"
+        "SDT:sdtItemDadosBasicos"
       ],
       "expected_rules": [
         "attcustomtype_resolved_object"
       ],
       "expected_suppressed_redundant_custom_type_relations": 2,
       "expected_reading_plan_files": [
-        "API/apiPDV_Integracao.xml"
+        "API/apiIntegracaoVendas.xml"
       ]
     }
   ]

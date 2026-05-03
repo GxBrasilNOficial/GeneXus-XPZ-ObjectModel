@@ -1,9 +1,9 @@
 {
-  "description": "Validation cases for KB Intelligence Phase 2 using DataProvider as the first controlled expansion in the FabricaBrasil parallel KB.",
+  "description": "Validation cases for KB Intelligence Phase 2 using DataProvider as the first controlled expansion in the KBExemplo parallel KB.",
   "cases": [
     {
       "id": "phase2-case-1-dataprovider-procedure-direct-left",
-      "source": "DataProvider:dpCargaPedidos",
+      "source": "DataProvider:dpLotePedidos",
       "target": "Procedure:procESQUERDA",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
@@ -11,7 +11,7 @@
     },
     {
       "id": "phase2-case-2-dataprovider-procedure-direct-right",
-      "source": "DataProvider:dpCargaPedidos",
+      "source": "DataProvider:dpLotePedidos",
       "target": "Procedure:procDIREITA",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
@@ -19,119 +19,119 @@
     },
     {
       "id": "phase2-case-3-dataprovider-procedure-direct-recent-links",
-      "source": "DataProvider:dpGamMenuSidebarItems",
-      "target": "Procedure:procRecentLinksLoad",
+      "source": "DataProvider:dpMenuSidebarItens",
+      "target": "Procedure:procCarregaLinksRecentes",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "DataProvider assignment from direct procedure call must create a direct relation"
     },
     {
       "id": "phase2-case-4-dataprovider-procedure-direct-where",
-      "source": "DataProvider:dpSdtTributacaoDadosBasicosSelecaoConformeParametros",
-      "target": "Procedure:procTributacaoTemTipoRomaneio",
+      "source": "DataProvider:dpSdtParametrosSelecaoRegistros",
+      "target": "Procedure:procTributacaoTemTipoDocumento",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "DataProvider where expression with direct procedure call must create a direct relation"
     },
     {
       "id": "phase2-case-5-dataprovider-webpanel-link",
-      "source": "DataProvider:dpFixoSidebarItems",
-      "target": "WebPanel:WWEmbarqueSaida",
+      "source": "DataProvider:dpSidebarItensFixos",
+      "target": "WebPanel:WWExpedicaoSaida",
       "expected_rule": "webpanel_dot_link",
       "should_exist": true,
       "expectation": "DataProvider effective Source WebPanel .Link() must create a direct relation"
     },
     {
       "id": "phase2-case-6-dataprovider-webpanel-link-with-params",
-      "source": "DataProvider:dpFixoSidebarItems",
-      "target": "WebPanel:wpEtiquetaInterna",
+      "source": "DataProvider:dpSidebarItensFixos",
+      "target": "WebPanel:wpEtiquetaItem",
       "expected_rule": "webpanel_dot_link",
       "should_exist": true,
       "expectation": "DataProvider effective Source WebPanel .Link(...) with parameters must create a direct relation"
     },
     {
       "id": "phase2-case-7-dataprovider-comment-does-not-create-procedure-relation",
-      "source": "DataProvider:dpFixoSidebarItems",
-      "target": "Procedure:procRecentLinksLoad",
+      "source": "DataProvider:dpSidebarItensFixos",
+      "target": "Procedure:procCarregaLinksRecentes",
       "expected_rule": "procedure_direct_call",
       "should_exist": false,
       "expectation": "comment-only procedure reference in DataProvider must not create a direct relation"
     },
     {
       "id": "phase2-case-8-dataprovider-comment-does-not-create-webpanel-relation",
-      "source": "DataProvider:dpFixoSidebarItems",
-      "target": "WebPanel:NucleoMenu",
+      "source": "DataProvider:dpSidebarItensFixos",
+      "target": "WebPanel:MenuPrincipal",
       "expected_rule": "webpanel_dot_link",
       "should_exist": false,
       "expectation": "comment-only WebPanel .Link() in DataProvider must not create a direct relation"
     },
     {
       "id": "phase2-case-9-procedure-dataprovider-direct-call",
-      "source": "Procedure:procMenuItens",
-      "target": "DataProvider:dpFixoSidebarItems",
+      "source": "Procedure:procCarregaItensMenu",
+      "target": "DataProvider:dpSidebarItensFixos",
       "expected_rule": "dataprovider_direct_call",
       "should_exist": true,
       "expectation": "Procedure direct DataProvider call must create a direct relation"
     },
     {
       "id": "phase2-case-10-procedure-dataprovider-direct-call-second",
-      "source": "Procedure:procMenuItens",
-      "target": "DataProvider:dpRecentLinksSidebarItems",
+      "source": "Procedure:procCarregaItensMenu",
+      "target": "DataProvider:dpSidebarItensRecentes",
       "expected_rule": "dataprovider_direct_call",
       "should_exist": true,
       "expectation": "Second direct DataProvider call from the same Procedure must create a direct relation"
     },
     {
       "id": "phase2-case-11-webpanel-dataprovider-direct-call",
-      "source": "WebPanel:GAMExampleMasterPage",
-      "target": "DataProvider:dpGamMenuSidebarItems",
+      "source": "WebPanel:wpMasterPageAplicacao",
+      "target": "DataProvider:dpMenuSidebarItens",
       "expected_rule": "dataprovider_direct_call",
       "should_exist": true,
       "expectation": "WebPanel direct DataProvider call must create a direct relation"
     },
     {
       "id": "phase2-case-12-webpanel-dataprovider-direct-call-with-params",
-      "source": "WebPanel:wcEmbarqueSaidaPedidosPrevistos",
-      "target": "DataProvider:dpVolumeMovimentoPedidos",
+      "source": "WebPanel:wcExpedicaoPedidosPrevista",
+      "target": "DataProvider:dpPedidosMovimentoEstoque",
       "expected_rule": "dataprovider_direct_call",
       "should_exist": true,
       "expectation": "WebPanel direct DataProvider call with parameters must create a direct relation"
     },
     {
       "id": "phase2-case-13-webpanel-dataprovider-comment-does-not-create-relation",
-      "source": "WebPanel:wpInicializaUFsBrasil",
-      "target": "DataProvider:dpCarregaUFsBrasil",
+      "source": "WebPanel:wpInicializaEstados",
+      "target": "DataProvider:dpCarregaEstados",
       "expected_rule": "dataprovider_direct_call",
       "should_exist": false,
       "expectation": "comment-only DataProvider call in WebPanel must not create a direct relation"
     },
     {
       "id": "phase2-case-14-workwith-action-procedure",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "Procedure:procLimpaGridState",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "Procedure:procResetaEstadoGrid",
       "expected_rule": "workwith_action_gxobject",
       "should_exist": true,
       "expectation": "WorkWithForWeb action gxobject pointing to Procedure must create a direct relation"
     },
     {
       "id": "phase2-case-15-workwith-action-webpanel",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:wpPesagemAbate",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:wpRegistroPesagem",
       "expected_rule": "workwith_action_gxobject",
       "should_exist": true,
       "expectation": "WorkWithForWeb action gxobject pointing to WebPanel must create a direct relation"
     },
     {
       "id": "phase2-case-16-workwith-action-ww-webpanel",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:WWEmbarqueSaida",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:WWExpedicaoSaida",
       "expected_rule": "workwith_action_gxobject",
       "should_exist": true,
       "expectation": "WorkWithForWeb action gxobject pointing to WW WebPanel must create a direct relation"
     },
     {
       "id": "phase2-case-17-workwith-action-unknown-does-not-create-relation",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
       "target": "Procedure:ObjetoInexistenteParaNaoIndexar",
       "expected_rule": "workwith_action_gxobject",
       "should_exist": false,
@@ -139,15 +139,15 @@
     },
     {
       "id": "phase2-case-18-transaction-attcustomtype-sdt-context",
-      "source": "Transaction:AbateOrdem",
-      "target": "CustomType:sdt:Context",
+      "source": "Transaction:OrdemDeProducao",
+      "target": "CustomType:sdt:ContextoDeSessao",
       "expected_rule": "attcustomtype_property",
       "should_exist": true,
       "expectation": "Transaction ATTCUSTOMTYPE property must create a literal CustomType relation"
     },
     {
       "id": "phase2-case-19-transaction-attcustomtype-bas-boolean",
-      "source": "Transaction:AbateOrdem",
+      "source": "Transaction:OrdemDeProducao",
       "target": "CustomType:bas:Boolean",
       "expected_rule": "attcustomtype_property",
       "should_exist": true,
@@ -155,15 +155,15 @@
     },
     {
       "id": "phase2-case-20-procedure-attcustomtype-sdt-context",
-      "source": "Procedure:ExportWWOperacaoAjustada",
-      "target": "CustomType:sdt:Context",
+      "source": "Procedure:ExportWWRegistroAjustado",
+      "target": "CustomType:sdt:ContextoDeSessao",
       "expected_rule": "attcustomtype_property",
       "should_exist": true,
       "expectation": "Procedure ATTCUSTOMTYPE property must create a literal CustomType relation"
     },
     {
       "id": "phase2-case-21-attcustomtype-unknown-does-not-create-relation",
-      "source": "Transaction:AbateOrdem",
+      "source": "Transaction:OrdemDeProducao",
       "target": "CustomType:sdt:TipoInexistenteParaNaoIndexar",
       "expected_rule": "attcustomtype_property",
       "should_exist": false,
@@ -171,23 +171,23 @@
     },
     {
       "id": "phase2-case-22-workwith-transaction-binding-abate-ordem",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "Transaction:AbateOrdem",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "Transaction:OrdemDeProducao",
       "expected_rule": "workwith_transaction_binding",
       "should_exist": true,
       "expectation": "WorkWithForWeb explicit transaction binding must create a direct relation to its Transaction"
     },
     {
       "id": "phase2-case-23-workwith-transaction-binding-animal",
-      "source": "WorkWithForWeb:WorkWithWebAnimal",
-      "target": "Transaction:Animal",
+      "source": "WorkWithForWeb:WorkWithWebItemDeEstoque",
+      "target": "Transaction:ItemDeEstoque",
       "expected_rule": "workwith_transaction_binding",
       "should_exist": true,
       "expectation": "Second WorkWithForWeb explicit transaction binding must create a direct relation to its Transaction"
     },
     {
       "id": "phase2-case-24-workwith-transaction-binding-unknown-does-not-create-relation",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
       "target": "Transaction:ObjetoInexistenteParaNaoIndexar",
       "expected_rule": "workwith_transaction_binding",
       "should_exist": false,
@@ -195,31 +195,31 @@
     },
     {
       "id": "phase2-case-25-workwith-link-webpanel-view-pessoa",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:ViewPessoa",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:ViewDetalhesPessoa",
       "expected_rule": "workwith_link_webpanel",
       "should_exist": true,
       "expectation": "WorkWithForWeb explicit link webpanel attribute must create a direct relation to WebPanel"
     },
     {
       "id": "phase2-case-26-workwith-link-webpanel-view-compra-gado",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:ViewCompraGado",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:ViewDetalhesPedidoCompra",
       "expected_rule": "workwith_link_webpanel",
       "should_exist": true,
       "expectation": "Second WorkWithForWeb explicit link webpanel attribute must create a direct relation to WebPanel"
     },
     {
       "id": "phase2-case-27-workwith-link-webpanel-canonical-case",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:ViewAnimal",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:ViewDetalhesItem",
       "expected_rule": "workwith_link_webpanel",
       "should_exist": true,
       "expectation": "WorkWithForWeb explicit link must resolve WebPanel name preserving canonical case"
     },
     {
       "id": "phase2-case-28-workwith-link-webpanel-unknown-does-not-create-relation",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
       "target": "WebPanel:ObjetoInexistenteParaNaoIndexar",
       "expected_rule": "workwith_link_webpanel",
       "should_exist": false,
@@ -227,31 +227,31 @@
     },
     {
       "id": "phase2-case-29-workwith-prompt-webpanel-compra-gado",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:promptCompraGado",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:promptPedidoCompra",
       "expected_rule": "workwith_prompt_webpanel",
       "should_exist": true,
       "expectation": "WorkWithForWeb prompt attribute must create a direct relation to WebPanel prompt"
     },
     {
       "id": "phase2-case-30-workwith-prompt-webpanel-fornecedor",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:promptFornecedorDeGado",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:promptPessoaFornecedor",
       "expected_rule": "workwith_prompt_webpanel",
       "should_exist": true,
       "expectation": "Second WorkWithForWeb prompt attribute must create a direct relation to WebPanel prompt"
     },
     {
       "id": "phase2-case-31-workwith-prompt-webpanel-gta",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "WebPanel:promptGTA",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "WebPanel:promptDocTransporte",
       "expected_rule": "workwith_prompt_webpanel",
       "should_exist": true,
-      "expectation": "WorkWithForWeb prompt attribute for GTA must create a direct relation to WebPanel prompt"
+      "expectation": "WorkWithForWeb prompt attribute for transport document must create a direct relation to WebPanel prompt"
     },
     {
       "id": "phase2-case-32-workwith-prompt-webpanel-unknown-does-not-create-relation",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
       "target": "WebPanel:ObjetoInexistenteParaNaoIndexar",
       "expected_rule": "workwith_prompt_webpanel",
       "should_exist": false,
@@ -259,31 +259,31 @@
     },
     {
       "id": "phase2-case-33-workwith-condition-procedure-company-session",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "Procedure:procLeEmpresaSessao",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "Procedure:procCarregaEmpresaSessao",
       "expected_rule": "workwith_condition_procedure",
       "should_exist": true,
       "expectation": "WorkWithForWeb condition expression with direct Procedure call must create a direct relation"
     },
     {
       "id": "phase2-case-34-workwith-condition-procedure-federal-registration",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "Procedure:procPessoaInscricaoFederal",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "Procedure:procPessoaRegistroFederal",
       "expected_rule": "workwith_condition_procedure",
       "should_exist": true,
       "expectation": "Second WorkWithForWeb condition Procedure call must create a direct relation"
     },
     {
       "id": "phase2-case-35-workwith-condition-procedure-animal-volume",
-      "source": "WorkWithForWeb:WorkWithWebAnimal",
-      "target": "Procedure:procAnimalTemVolume",
+      "source": "WorkWithForWeb:WorkWithWebItemDeEstoque",
+      "target": "Procedure:procItemTemMovimento",
       "expected_rule": "workwith_condition_procedure",
       "should_exist": true,
       "expectation": "WorkWithForWeb condition Procedure calls must be indexed across different WorkWithForWeb objects"
     },
     {
       "id": "phase2-case-36-workwith-condition-unknown-does-not-create-relation",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
       "target": "Procedure:ObjetoInexistenteParaNaoIndexar",
       "expected_rule": "workwith_condition_procedure",
       "should_exist": false,
@@ -291,32 +291,32 @@
     },
     {
       "id": "phase2-case-37-workwith-condition-attribute-procedure-return-note",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "Procedure:procEmpresaGeraNotasDeRetornoPelaOrdemDeAbate",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "Procedure:procEmpresaGeraRetornosParaOrdem",
       "expected_rule": "workwith_condition_attribute_procedure",
       "should_exist": true,
       "expectation": "WorkWithForWeb condition attribute with direct Procedure call must create a direct relation"
     },
     {
       "id": "phase2-case-38-workwith-condition-attribute-nested-procedure",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "Procedure:procLeEmpresaSessao",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "Procedure:procCarregaEmpresaSessao",
       "expected_rule": "workwith_condition_attribute_procedure",
       "should_exist": true,
       "expectation": "Nested Procedure call inside WorkWithForWeb condition attribute must create a direct relation"
     },
     {
       "id": "phase2-case-39-workwith-deletecondition-attribute-procedure",
-      "source": "WorkWithForWeb:WorkWithWebAnimalPadrao",
-      "target": "Procedure:procUsuarioDaSessaoDaEquipeDaFrigobyte",
+      "source": "WorkWithForWeb:WorkWithWebItemDeEstoquePadrao",
+      "target": "Procedure:procUsuarioDaSessaoDoSistema",
       "expected_rule": "workwith_condition_attribute_procedure",
       "should_exist": true,
       "expectation": "DeleteCondition attribute with direct Procedure call must create a direct relation"
     },
     {
       "id": "phase2-case-40-workwith-condition-attribute-comment-does-not-create-relation",
-      "source": "WorkWithForWeb:WorkWithWebAbateOrdem",
-      "target": "Procedure:procReferenciadoRomaneioVolumesTotalPesoLiquido",
+      "source": "WorkWithForWeb:WorkWithWebOrdemDeProducao",
+      "target": "Procedure:procDocumentoVolumesTotalPeso",
       "expected_rule": "workwith_condition_attribute_procedure",
       "should_exist": false,
       "expectation": "Procedure reference after inline comment marker in condition attribute must not create a direct relation"

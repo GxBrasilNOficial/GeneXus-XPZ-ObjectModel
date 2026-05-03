@@ -1,39 +1,39 @@
 {
-  "description": "Validation cases for KB Intelligence Phase 3 impact-basic query using the FabricaBrasil parallel KB.",
+  "description": "Validation cases for KB Intelligence Phase 3 impact-basic query using the KBExemplo parallel KB.",
   "cases": [
     {
       "id": "phase3-case-1-impact-basic-procedure-planilha-volume",
       "query": "impact-basic",
-      "object": "Procedure:procPlanilhaVolumeMovimento",
+      "object": "Procedure:procPlanilhaMovimentoEstoque",
       "should_exist": true,
       "min_incoming_relations": 2,
       "min_outgoing_relations": 1,
       "expected_dependents": [
-        "WebPanel:wpRelatoriosDeMovimentosDeVolumes"
+        "WebPanel:wpRelatoriosMovimentoEstoque"
       ],
       "expectation": "impact-basic for Procedure must expose known direct dependents and outgoing direct dependencies"
     },
     {
       "id": "phase3-case-2-impact-basic-webpanel-relatorios-volume",
       "query": "impact-basic",
-      "object": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
+      "object": "WebPanel:wpRelatoriosMovimentoEstoque",
       "should_exist": true,
       "min_incoming_relations": 0,
       "min_outgoing_relations": 1,
       "expected_dependencies": [
-        "Procedure:procPlanilhaVolumeMovimento"
+        "Procedure:procPlanilhaMovimentoEstoque"
       ],
       "expectation": "impact-basic for WebPanel must expose known direct dependencies"
     },
     {
       "id": "phase3-case-3-impact-basic-workwith-volume-movimento",
       "query": "impact-basic",
-      "object": "WorkWithForWeb:WorkWithWebVolumeMovimento",
+      "object": "WorkWithForWeb:WorkWithWebMovimentoEstoque",
       "should_exist": true,
       "min_incoming_relations": 0,
       "min_outgoing_relations": 1,
       "expected_dependencies": [
-        "Transaction:VolumeMovimento"
+        "Transaction:MovimentoDeEstoque"
       ],
       "expectation": "impact-basic for WorkWithForWeb must expose direct indexed dependencies without promising complete pattern semantics"
     },

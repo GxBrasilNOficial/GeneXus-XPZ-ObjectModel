@@ -1,130 +1,130 @@
 {
-  "description": "Validation cases for KB Intelligence Phase 1 using the FabricaBrasil parallel KB as laboratory.",
+  "description": "Validation cases for KB Intelligence Phase 1 using the KBExemplo parallel KB as laboratory.",
   "cases": [
     {
       "id": "case-1-webpanel-procedure-dot-call",
-      "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
-      "target": "Procedure:procPlanilhaVolumeMovimento",
+      "source": "WebPanel:wpRelatoriosMovimentoEstoque",
+      "target": "Procedure:procPlanilhaMovimentoEstoque",
       "expected_rule": "procedure_dot_call",
       "should_exist": true,
-      "expectation": "procPlanilhaVolumeMovimento.Call(...) in effective Source must create a direct relation"
+      "expectation": "procPlanilhaMovimentoEstoque.Call(...) in effective Source must create a direct relation"
     },
     {
       "id": "case-2-procedure-direct-call",
-      "source": "Procedure:PreenchXmlNFE",
-      "target": "Procedure:procLeParteDeStringXml",
+      "source": "Procedure:PreenchXmlDocFiscal",
+      "target": "Procedure:procExtraiFragmentoXml",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
-      "expectation": "procLeParteDeStringXml(...) in effective Source must create a direct relation"
+      "expectation": "procExtraiFragmentoXml(...) in effective Source must create a direct relation"
     },
     {
       "id": "case-2b-procedure-direct-call-canonical-case",
-      "source": "Procedure:PreenchXmlNFE",
-      "target": "Procedure:ProcCodigodeBarraCode128",
+      "source": "Procedure:PreenchXmlDocFiscal",
+      "target": "Procedure:ProcCodigoBarrasCode128",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
-      "expectation": "ProcCodigodeBarraCode128(...) must resolve to the canonical Procedure file name despite casing"
+      "expectation": "ProcCodigoBarrasCode128(...) must resolve to the canonical Procedure file name despite casing"
     },
     {
       "id": "case-3-comment-does-not-create-relation",
-      "source": "Procedure:PreenchXmlNFE",
-      "target": "Procedure:procCodigoDeBarrasDobson2of5",
+      "source": "Procedure:PreenchXmlDocFiscal",
+      "target": "Procedure:procCodigoBarrasLinear2of5",
       "expected_rule": "procedure_direct_call",
       "should_exist": false,
       "expectation": "comment-only procedure reference must not create a direct relation"
     },
     {
       "id": "case-4-visual-layout-does-not-create-relation",
-      "source": "WebPanel:promptCompradorDeGado",
-      "target": "Procedure:procEmpresaLiberadaProUsuario",
+      "source": "WebPanel:promptCadastroPessoa",
+      "target": "Procedure:procEmpresaPermitidaParaUsuario",
       "expected_rule": "procedure_direct_call",
       "should_exist": false,
       "expectation": "visual-layout Source reference must not create a direct relation"
     },
     {
       "id": "case-5-procedure-direct-call-where",
-      "source": "Procedure:ExportWWOperacaoAjustada",
-      "target": "Procedure:procEmpresaCentroCusto",
+      "source": "Procedure:ExportWWRegistroAjustado",
+      "target": "Procedure:procEmpresaUnidadeDeNegocio",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "procedure call used in a where expression must create a direct relation"
     },
     {
       "id": "case-6-procedure-direct-call-temp-path",
-      "source": "Procedure:planilhaEntradaDeTransferencia",
-      "target": "Procedure:procPathTemporalStoragePublic",
+      "source": "Procedure:planilhaEntradaDeMovimento",
+      "target": "Procedure:procCaminhoArmazenamentoTemp",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "procedure call in assignment must create a direct relation"
     },
     {
       "id": "case-7-procedure-direct-call-nested",
-      "source": "Procedure:planilhaEntradaDeTransferencia",
-      "target": "Procedure:procUrlVisualizadorOffice",
+      "source": "Procedure:planilhaEntradaDeMovimento",
+      "target": "Procedure:procUrlVisualizadorDocumento",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "nested direct procedure call must create a direct relation"
     },
     {
       "id": "case-8-procedure-dot-call-short-name",
-      "source": "Procedure:IsAuthorized",
-      "target": "Procedure:LoadContext",
+      "source": "Procedure:IsUserAuthorized",
+      "target": "Procedure:LoadSessionContext",
       "expected_rule": "procedure_dot_call",
       "should_exist": true,
       "expectation": "short procedure name with .Call(...) must create a direct relation"
     },
     {
       "id": "case-9-procedure-dot-call-long-name",
-      "source": "Procedure:procGtaConsultaPeloCodigoDeBarra",
-      "target": "Procedure:procGtaConsultaPeloCodigoDeBarraNaADAFdoGoias",
+      "source": "Procedure:procDocConsultaPeloCodigoDeBarra",
+      "target": "Procedure:procDocConsultaCodigoBarraEstadoA",
       "expected_rule": "procedure_dot_call",
       "should_exist": true,
       "expectation": "long procedure name with .Call(...) must create a direct relation"
     },
     {
       "id": "case-10-procedure-dot-call-html-parser",
-      "source": "Procedure:procGtaTrataHtmlADADdaAlagoas",
-      "target": "Procedure:procCapturaDadosDaTagHtml",
+      "source": "Procedure:procDocTrataHtmlEstadoB",
+      "target": "Procedure:procExtraiDadosDaTagHtml",
       "expected_rule": "procedure_dot_call",
       "should_exist": true,
       "expectation": "repeated .Call(...) references must create direct relations"
     },
     {
       "id": "case-11-procedure-to-webpanel-link",
-      "source": "Procedure:ListPrograms",
-      "target": "WebPanel:WWAbateOrdem",
+      "source": "Procedure:ListObjectsPrograms",
+      "target": "WebPanel:WWOrdemDeProducao",
       "expected_rule": "webpanel_dot_link",
       "should_exist": true,
       "expectation": "WebPanel .Link() in procedure Source must create a direct relation"
     },
     {
       "id": "case-12-procedure-to-webpanel-link-second",
-      "source": "Procedure:ListPrograms",
-      "target": "WebPanel:WWAnimal",
+      "source": "Procedure:ListObjectsPrograms",
+      "target": "WebPanel:WWItemDeEstoque",
       "expected_rule": "webpanel_dot_link",
       "should_exist": true,
       "expectation": "second WebPanel .Link() case must create a direct relation"
     },
     {
       "id": "case-13-webpanel-procedure-direct-download",
-      "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
-      "target": "Procedure:procDownloadArquivoFisico",
+      "source": "WebPanel:wpRelatoriosMovimentoEstoque",
+      "target": "Procedure:procDownloadArquivo",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "WebPanel direct procedure call must create a direct relation"
     },
     {
       "id": "case-14-webpanel-procedure-direct-nested",
-      "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
-      "target": "Procedure:procTipoDeConteudoDeArquivoPelaExtencao",
+      "source": "WebPanel:wpRelatoriosMovimentoEstoque",
+      "target": "Procedure:procMimeTypePorExtensao",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "nested direct procedure call in WebPanel Source must create a direct relation"
     },
     {
       "id": "case-15-webpanel-procedure-direct-url",
-      "source": "WebPanel:wpRelatoriosDeMovimentosDeVolumes",
-      "target": "Procedure:procUrlVisualizadorOffice",
+      "source": "WebPanel:wpRelatoriosMovimentoEstoque",
+      "target": "Procedure:procUrlVisualizadorDocumento",
       "expected_rule": "procedure_direct_call",
       "should_exist": true,
       "expectation": "direct procedure call inside WebPanel expression must create a direct relation"

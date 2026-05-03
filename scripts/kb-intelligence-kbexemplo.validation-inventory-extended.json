@@ -1,50 +1,50 @@
 {
-  "description": "Validation cases for KB Intelligence Phase 4 expanded object inventory using the FabricaBrasil parallel KB.",
+  "description": "Validation cases for KB Intelligence Phase 4 expanded object inventory using the KBExemplo parallel KB.",
   "cases": [
     {
       "id": "phase4-case-1-attribute-inventory",
       "query": "object-info",
-      "object": "Attribute:AbateOrdemAnimaisContagem",
+      "object": "Attribute:OrdemDeProducaoItensContagem",
       "should_exist": true,
-      "expected_file_contains": "Attribute/AbateOrdemAnimaisContagem.xml",
+      "expected_file_contains": "Attribute/OrdemDeProducaoItensContagem.xml",
       "expectation": "Expanded inventory must include Attribute objects"
     },
     {
       "id": "phase4-case-2-domain-inventory",
       "query": "object-info",
-      "object": "Domain:AbrangenciaDaSelecaoDeCorte",
+      "object": "Domain:AbrangenciaDaSelecaoDeRegistro",
       "should_exist": true,
-      "expected_file_contains": "Domain/AbrangenciaDaSelecaoDeCorte.xml",
+      "expected_file_contains": "Domain/AbrangenciaDaSelecaoDeRegistro.xml",
       "expectation": "Expanded inventory must include Domain objects"
     },
     {
       "id": "phase4-case-3-sdt-inventory",
       "query": "object-info",
-      "object": "SDT:Context",
+      "object": "SDT:ContextoDeSessao",
       "should_exist": true,
-      "expected_file_contains": "SDT/Context.xml",
+      "expected_file_contains": "SDT/ContextoDeSessao.xml",
       "expectation": "Expanded inventory must include SDT objects"
     },
     {
       "id": "phase4-case-4-table-inventory",
       "query": "object-info",
-      "object": "Table:AbateOrdem",
+      "object": "Table:OrdemDeProducao",
       "should_exist": true,
-      "expected_file_contains": "Table/AbateOrdem.xml",
+      "expected_file_contains": "Table/OrdemDeProducao.xml",
       "expectation": "Expanded inventory must include Table objects"
     },
     {
       "id": "phase4-case-5-transaction-inventory",
       "query": "object-info",
-      "object": "Transaction:AbateOrdem",
+      "object": "Transaction:OrdemDeProducao",
       "should_exist": true,
-      "expected_file_contains": "Transaction/AbateOrdem.xml",
+      "expected_file_contains": "Transaction/OrdemDeProducao.xml",
       "expectation": "Expanded inventory must include Transaction objects with the correct canonical type"
     },
     {
       "id": "phase4-case-6-impact-basic-expanded-type",
       "query": "impact-basic",
-      "object": "Domain:AbrangenciaDaSelecaoDeCorte",
+      "object": "Domain:AbrangenciaDaSelecaoDeRegistro",
       "should_exist": true,
       "min_incoming_relations": 0,
       "min_outgoing_relations": 0,
