@@ -81,20 +81,42 @@ IDBASEDON_PROPERTY_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 OBJECT_TYPE_GUID_RE = re.compile(r'<Object\b[^>]*\btype="([^"]+)"')
-ATTRIBUTE_ROOT_RE = re.compile(r"<Attribute\b")
-TYPE_MAP_PATH = Path(__file__).with_name("gx-type-guid-map.json")
+ATTRIBUTE_ROOT_RE = re.compile(r"^\s*(?:<\?xml[^>]*\?>\s*)?<Attribute\b", re.IGNORECASE)
+CATEGORY_PATH = Path(__file__).with_name("gx-object-type-catalog.json")
 
-def load_gx_type_by_guid() -> dict[str, str]:
-    """Load the shared Object/@type GUID map used across the XPZ toolchain."""
+
+def load_gx_object_type_catalog() -> dict[str, object]:
+    """Load the shared object type catalog used across the XPZ toolchain."""
     try:
-        raw_map = json.loads(TYPE_MAP_PATH.read_text(encoding="utf-8-sig"))
+        catalog = json.loads(CATEGORY_PATH.read_text(encoding="utf-8-sig"))
     except FileNotFoundError as exc:
-        raise RuntimeError(f"Type GUID map not found: {TYPE_MAP_PATH}") from exc
+        raise RuntimeError(f"Object type catalog not found: {CATEGORY_PATH}") from exc
 
-    return {str(key).lower(): str(value) for key, value in raw_map.items()}
+    raw_types = catalog.get("types")
+    if not isinstance(raw_types, dict):
+        raise RuntimeError(f"Invalid object type catalog format: {CATEGORY_PATH}")
+
+    normalized_types: dict[str, dict[str, object]] = {}
+    for canonical_type, payload in raw_types.items():
+        if not isinstance(payload, dict):
+            raise RuntimeError(f"Invalid entry for type {canonical_type!r} in {CATEGORY_PATH}")
+        entry = dict(payload)
+        entry["canonicalType"] = str(canonical_type)
+        normalized_types[str(canonical_type)] = entry
+
+    return {
+        "version": int(catalog.get("version", 0)),
+        "types": normalized_types,
+    }
 
 
-GX_TYPE_BY_GUID: dict[str, str] = load_gx_type_by_guid()
+GX_OBJECT_TYPE_CATALOG = load_gx_object_type_catalog()
+GX_TYPE_CATALOG_BY_NAME: dict[str, dict[str, object]] = GX_OBJECT_TYPE_CATALOG["types"]
+GX_TYPE_BY_GUID: dict[str, str] = {
+    str(entry["objectTypeGuid"]).lower(): canonical_type
+    for canonical_type, entry in GX_TYPE_CATALOG_BY_NAME.items()
+    if entry.get("objectTypeGuid")
+}
 LEVEL_RE = re.compile(r"<Level\b(?P<attrs>[^>]*)>(?P<body>.*?)</Level>", re.IGNORECASE | re.DOTALL)
 LEVEL_ATTRIBUTE_RE = re.compile(
     r"<Attribute\b(?P<attrs>[^>]*)>(?P<name>.*?)</Attribute>",
@@ -133,6 +155,21 @@ class ObjectInfo:
 
 
 @dataclass(frozen=True)
+class InventorySemanticIssue:
+    issue_kind: str
+    expected_type: str
+    actual_type: str
+    file_path: str
+
+
+@dataclass(frozen=True)
+class InventoryScanSummary:
+    snapshot_objects_by_directory: dict[str, int]
+    folder_type_mismatches: list[InventorySemanticIssue]
+    unknown_type_folders: list[str]
+
+
+@dataclass(frozen=True)
 class Evidence:
     source_type: str
     source_name: str
@@ -162,7 +199,7 @@ def line_number_at(text: str, index: int) -> int:
 
 def resolve_canonical_type(text: str) -> tuple[str | None, str | None]:
     """Return (canonical_type, guid). canonical_type is None when the GUID is unknown."""
-    if ATTRIBUTE_ROOT_RE.search(text[:1024]):
+    if ATTRIBUTE_ROOT_RE.match(text[:1024]):
         return "Attribute", None
     m = OBJECT_TYPE_GUID_RE.search(text)
     if not m:
@@ -175,14 +212,25 @@ def collect_objects(
     folder: Path,
     source_root: Path,
     unknown_guids: list[tuple[str, str]],
+    folder_type_mismatches: list[InventorySemanticIssue],
 ) -> dict[str, dict[str, ObjectInfo]]:
     objects_by_type: dict[str, dict[str, ObjectInfo]] = {}
+    folder_name = folder.name
     for path in sorted(folder.glob("*.xml")):
         text = read_text(path)
         canonical_type, guid = resolve_canonical_type(text)
         if canonical_type is None:
             unknown_guids.append((guid or "(no type attribute)", path.relative_to(source_root).as_posix()))
             continue
+        if canonical_type != folder_name:
+            folder_type_mismatches.append(
+                InventorySemanticIssue(
+                    issue_kind="folder_type_mismatch",
+                    expected_type=folder_name,
+                    actual_type=canonical_type,
+                    file_path=path.relative_to(source_root).as_posix(),
+                )
+            )
         last_update_match = LAST_UPDATE_RE.search(text)
         guid_match = GUID_RE.search(text)
         rel_path = path.relative_to(source_root).as_posix()
@@ -201,13 +249,22 @@ def collect_objects(
     return objects_by_type
 
 
-def collect_all_objects(source_root: Path) -> dict[str, dict[str, ObjectInfo]]:
+def collect_all_objects(source_root: Path) -> tuple[dict[str, dict[str, ObjectInfo]], InventoryScanSummary]:
     objects_by_type: dict[str, dict[str, ObjectInfo]] = {}
     unknown_guids: list[tuple[str, str]] = []
+    folder_type_mismatches: list[InventorySemanticIssue] = []
+    snapshot_objects_by_directory: dict[str, int] = {}
+    unknown_type_folders: list[str] = []
     for folder in sorted(source_root.iterdir(), key=lambda item: item.name.lower()):
         if not folder.is_dir():
             continue
-        folder_objects = collect_objects(folder, source_root, unknown_guids)
+        xml_count = sum(1 for _ in folder.glob("*.xml"))
+        if xml_count == 0:
+            continue
+        snapshot_objects_by_directory[folder.name] = xml_count
+        if folder.name not in GX_TYPE_CATALOG_BY_NAME:
+            unknown_type_folders.append(folder.name)
+        folder_objects = collect_objects(folder, source_root, unknown_guids, folder_type_mismatches)
         for type_name, objs in folder_objects.items():
             if type_name not in objects_by_type:
                 objects_by_type[type_name] = {}
@@ -217,7 +274,7 @@ def collect_all_objects(source_root: Path) -> dict[str, dict[str, ObjectInfo]]:
             "",
             "ERRO: GUIDs de tipo desconhecidos encontrados no acervo.",
             "O índice não pode ser construído enquanto todos os tipos não forem identificados.",
-            "Informe o agente ou o administrador do acervo para atualizar scripts/gx-type-guid-map.json",
+            "Informe o agente ou o administrador do acervo para atualizar scripts/gx-object-type-catalog.json",
             "e refletir o novo tipo em 01a-catalogo-e-padroes-empiricos.md.",
             "GUIDs encontrados:",
             "",
@@ -227,7 +284,73 @@ def collect_all_objects(source_root: Path) -> dict[str, dict[str, ObjectInfo]]:
             lines.append(f"  Arquivo: {rel}")
             lines.append("")
         raise SystemExit("\n".join(lines))
-    return objects_by_type
+    return objects_by_type, InventoryScanSummary(
+        snapshot_objects_by_directory=snapshot_objects_by_directory,
+        folder_type_mismatches=folder_type_mismatches,
+        unknown_type_folders=sorted(set(unknown_type_folders)),
+    )
+
+
+def validate_inventory_semantics(
+    objects_by_type: dict[str, dict[str, ObjectInfo]],
+    scan_summary: InventoryScanSummary,
+) -> dict[str, object]:
+    indexed_objects_by_type = {key: len(value) for key, value in objects_by_type.items()}
+    mismatches: list[dict[str, object]] = []
+
+    for folder_name, snapshot_count in sorted(scan_summary.snapshot_objects_by_directory.items()):
+        indexed_count = indexed_objects_by_type.get(folder_name, 0)
+        if indexed_count != snapshot_count:
+            mismatches.append(
+                {
+                    "issue_kind": "directory_inventory_mismatch",
+                    "directory": folder_name,
+                    "snapshot_count": snapshot_count,
+                    "indexed_count": indexed_count,
+                }
+            )
+
+    for issue in scan_summary.folder_type_mismatches:
+        mismatches.append(
+            {
+                "issue_kind": issue.issue_kind,
+                "expected_type": issue.expected_type,
+                "actual_type": issue.actual_type,
+                "file_path": issue.file_path,
+            }
+        )
+
+    for folder_name in scan_summary.unknown_type_folders:
+        mismatches.append(
+            {
+                "issue_kind": "unknown_type_folder",
+                "directory": folder_name,
+                "snapshot_count": scan_summary.snapshot_objects_by_directory.get(folder_name, 0),
+            }
+        )
+
+    indexed_only_types = sorted(
+        type_name
+        for type_name in indexed_objects_by_type
+        if type_name not in scan_summary.snapshot_objects_by_directory
+    )
+    for type_name in indexed_only_types:
+        mismatches.append(
+            {
+                "issue_kind": "indexed_type_without_snapshot_directory",
+                "type": type_name,
+                "indexed_count": indexed_objects_by_type[type_name],
+            }
+        )
+
+    return {
+        "status": "OK" if not mismatches else "BLOCK",
+        "catalog_version": GX_OBJECT_TYPE_CATALOG["version"],
+        "snapshot_objects_by_directory": dict(sorted(scan_summary.snapshot_objects_by_directory.items())),
+        "indexed_objects_by_type": dict(sorted(indexed_objects_by_type.items())),
+        "mismatch_count": len(mismatches),
+        "mismatches": mismatches,
+    }
 
 
 def unwrap_source_body(raw_body: str) -> str:
@@ -1416,6 +1539,7 @@ def write_index(
     objects: list[ObjectInfo],
     evidences: list[Evidence],
     index_build_run_at: str,
+    inventory_semantics: dict[str, object],
 ) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     if output_path.exists():
@@ -1431,6 +1555,9 @@ def write_index(
                 ("source_root", str(source_root)),
                 ("schema_version", "1"),
                 ("scope", ",".join(sorted(set(obj.object_type for obj in objects)))),
+                ("inventory_catalog_version", str(inventory_semantics["catalog_version"])),
+                ("inventory_validation_status", str(inventory_semantics["status"])),
+                ("inventory_mismatch_count", str(inventory_semantics["mismatch_count"])),
             ],
         )
 
@@ -1491,6 +1618,7 @@ def validation_report(
     evidences: list[Evidence],
     validation_cases_path: Path | None,
     index_build_run_at: str,
+    inventory_semantics: dict[str, object],
 ) -> dict[str, object]:
     def has_relation(source_type: str, source_name: str, target_type: str, target_name: str, rule: str) -> bool:
         return any(
@@ -1502,18 +1630,67 @@ def validation_report(
             for evidence in evidences
         )
 
+    def object_info_exists(object_type: str, object_name: str) -> ObjectInfo | None:
+        return objects_by_type.get(object_type, {}).get(object_name)
+
+    def count_impact_relations(object_type: str, object_name: str) -> tuple[int, int]:
+        incoming = 0
+        outgoing = 0
+        for evidence in evidences:
+            if evidence.source_type == object_type and evidence.source_name == object_name:
+                outgoing += 1
+            if evidence.target_type == object_type and evidence.target_name == object_name:
+                incoming += 1
+        return incoming, outgoing
+
     cases: list[dict[str, object]] = []
     if validation_cases_path:
         raw_cases = json.loads(validation_cases_path.read_text(encoding="utf-8"))
         for raw_case in raw_cases.get("cases", []):
-            source_type, source_name = split_typed_name(raw_case["source"])
-            target_type, target_name = split_typed_name(raw_case["target"])
-            expected_rule = raw_case["expected_rule"]
-            should_exist = bool(raw_case.get("should_exist", True))
-            relation_exists = has_relation(source_type, source_name, target_type, target_name, expected_rule)
-            passed = relation_exists if should_exist else not relation_exists
             case_result = dict(raw_case)
-            case_result["status"] = "passed" if passed else "failed"
+            query = str(raw_case.get("query", ""))
+            failures: list[str] = []
+            if query == "object-info":
+                object_type, object_name = split_typed_name(raw_case["object"])
+                should_exist = bool(raw_case.get("should_exist", True))
+                info = object_info_exists(object_type, object_name)
+                if bool(info is not None) != should_exist:
+                    failures.append(f"found={info is not None} expected {should_exist}")
+                if should_exist and info is not None:
+                    expected_file_contains = raw_case.get("expected_file_contains")
+                    if expected_file_contains and expected_file_contains not in str(info.file_path):
+                        failures.append(f"file_path={info.file_path} does not contain {expected_file_contains}")
+            elif query == "impact-basic":
+                object_type, object_name = split_typed_name(raw_case["object"])
+                should_exist = bool(raw_case.get("should_exist", True))
+                info = object_info_exists(object_type, object_name)
+                if bool(info is not None) != should_exist:
+                    failures.append(f"found={info is not None} expected {should_exist}")
+                if should_exist and info is not None:
+                    incoming, outgoing = count_impact_relations(object_type, object_name)
+                    min_incoming = int(raw_case.get("min_incoming_relations", 0))
+                    min_outgoing = int(raw_case.get("min_outgoing_relations", 0))
+                    if incoming < min_incoming:
+                        failures.append(f"incoming_relations={incoming} below minimum {min_incoming}")
+                    if outgoing < min_outgoing:
+                        failures.append(f"outgoing_relations={outgoing} below minimum {min_outgoing}")
+            elif {"source", "target", "expected_rule"} <= set(raw_case):
+                source_type, source_name = split_typed_name(raw_case["source"])
+                target_type, target_name = split_typed_name(raw_case["target"])
+                expected_rule = raw_case["expected_rule"]
+                should_exist = bool(raw_case.get("should_exist", True))
+                relation_exists = has_relation(source_type, source_name, target_type, target_name, expected_rule)
+                if (relation_exists if should_exist else not relation_exists) is False:
+                    failures.append(
+                        f"relation {source_type}:{source_name} -> {target_type}:{target_name} via {expected_rule} "
+                        f"expected {should_exist} but got {relation_exists}"
+                    )
+            else:
+                failures.append(f"Unsupported validation case format: {query or 'relation'}")
+
+            case_result["status"] = "failed" if failures else "passed"
+            if failures:
+                case_result["failures"] = failures
             cases.append(case_result)
 
     return {
@@ -1522,6 +1699,7 @@ def validation_report(
         "objects_read_by_type": {key: len(value) for key, value in objects_by_type.items()},
         "objects_written": sum(len(value) for value in objects_by_type.values()),
         "relations_written": len(evidences),
+        "inventory_semantics": inventory_semantics,
         "validation_cases_path": str(validation_cases_path) if validation_cases_path else None,
         "cases": cases,
     }
@@ -1550,7 +1728,8 @@ def main() -> int:
     if not source_root.exists():
         raise SystemExit(f"SourceRoot not found: {source_root}")
 
-    objects_by_type = collect_all_objects(source_root)
+    objects_by_type, scan_summary = collect_all_objects(source_root)
+    inventory_semantics = validate_inventory_semantics(objects_by_type, scan_summary)
     procedures = objects_by_type.get("Procedure", {})
     webpanels = objects_by_type.get("WebPanel", {})
     data_providers = objects_by_type.get("DataProvider", {})
@@ -1694,13 +1873,20 @@ def main() -> int:
         *table_index_member_attribute_evidences,
     ]
     index_build_run_at = datetime.now(timezone.utc).isoformat()
-    write_index(args.output_path.resolve(), source_root, objects, evidences, index_build_run_at)
+    write_index(args.output_path.resolve(), source_root, objects, evidences, index_build_run_at, inventory_semantics)
 
     validation_cases_path = args.validation_cases_path.resolve() if args.validation_cases_path else None
     if validation_cases_path and not validation_cases_path.exists():
         raise SystemExit(f"ValidationCasesPath not found: {validation_cases_path}")
 
-    report = validation_report(source_root, objects_by_type, evidences, validation_cases_path, index_build_run_at)
+    report = validation_report(
+        source_root,
+        objects_by_type,
+        evidences,
+        validation_cases_path,
+        index_build_run_at,
+        inventory_semantics,
+    )
     if args.validation_report_path:
         report_path = args.validation_report_path.resolve()
         report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1709,7 +1895,7 @@ def main() -> int:
     print(json.dumps(report, indent=2, ensure_ascii=False))
     if args.fail_on_validation_failure:
         failed_cases = [case for case in report["cases"] if case.get("status") == "failed"]
-        if failed_cases:
+        if failed_cases or inventory_semantics["status"] != "OK":
             return 2
     return 0
 

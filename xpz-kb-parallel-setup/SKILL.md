@@ -284,17 +284,19 @@ Referencia rapida para decidir o peso operacional da ausencia de cada wrapper. A
 
 ## GATE DE COMPATIBILIDADE OPERACIONAL
 
-Antes de trabalho substantivo em uma pasta paralela da KB que declare uso de `KbIntelligence`, validar tres camadas na ordem exata executada pelo `Test-*KbGate.ps1`:
+Antes de trabalho substantivo em uma pasta paralela da KB que declare uso de `KbIntelligence`, validar quatro camadas na ordem exata executada pelo `Test-*KbGate.ps1`:
 
 1. Estrutura (primeira camada, executada via `Test-*KbStructure.ps1`): pastas funcionais esperadas, `README.md`, `AGENTS.md`, `kb-source-metadata.md`, `ObjetosDaKbEmXml`, `KbIntelligence` e scripts minimos com os nomes corretos. Se `Test-KbStructure` retornar qualquer coisa diferente de `STRUCTURE_OK`, o gate bloqueia imediatamente — nao avancar para camadas internas.
 2. Wrappers: scripts locais funcionais em `scripts`, incluindo consulta do indice com suporte a `index-metadata`, regeneracao/validacao do indice com `-FailOnValidationFailure` e materializacao XPZ/XML com refresh compulsorio do indice.
-3. Frescor: `last_index_build_run_at` obtido pelo wrapper local de consulta deve ser igual ou posterior a `last_xpz_materialization_run_at`, lido nominalmente em `kb-source-metadata.md`.
+3. Semantica de inventario: `index-metadata` deve expor `inventory_validation_status=OK`, confirmando que o inventario do SQLite permanece coerente com o snapshot oficial e com o catalogo tecnico compartilhado de tipos.
+4. Frescor: `last_index_build_run_at` obtido pelo wrapper local de consulta deve ser igual ou posterior a `last_xpz_materialization_run_at`, lido nominalmente em `kb-source-metadata.md`.
 
 Executar o gate em ordem sequencial e parar no primeiro bloqueio. Nao investigar camadas internas enquanto a camada externa estiver invalida; no maximo, mencionar que outras verificacoes podem ser necessarias depois da primeira correcao.
 
 Detectar defasagem de wrappers antes de executar a tarefa de negocio:
 
 - Wrapper de consulta: deve aceitar `index-metadata` pelo proprio wrapper local; se a chamada falhar por parametro desconhecido, `ValidateSet` antigo ou ausencia de saida com `last_index_build_run_at`, bloquear.
+- Wrapper de consulta: `index-metadata` tambem deve expor `inventory_validation_status`; se o campo estiver ausente ou diferente de `OK`, bloquear.
 - Wrapper de regeneracao: deve existir, aceitar validacao com `-FailOnValidationFailure` e gravar `last_index_build_run_at` no indice gerado.
 - Wrapper de materializacao XPZ/XML: se a pasta adota `KbIntelligence`, deve chamar o wrapper de regeneracao/validacao do indice apos sync bem-sucedido que nao seja `VerifyOnly`; se nao houver evidencia clara desse encadeamento, bloquear proximo sync normal e oferecer atualizacao.
 - A existencia de `.example.ps1` na base metodologica nao reduz esse bloqueio: enquanto o wrapper local real estiver ausente, o fluxo normal deve permanecer bloqueado.
@@ -324,7 +326,7 @@ Ao fechar um setup ou handoff de pasta paralela da KB, usar um estado operaciona
 - `estrutura_criada`: pastas e documentos basicos existem, mas wrappers locais, materializacao ou indice ainda nao foram validados.
 - `bootstrap_incompleto`: a estrutura existe, mas falta camada minima de wrappers locais para o fluxo oficial adotado, ou falta compatibilidade obrigatoria com `KbIntelligence`.
 - `pronto_para_primeira_materializacao`: estrutura, documentos e wrappers locais minimos foram criados ou validados, sem placeholders sanitizados pendentes em configuracao efetiva dos wrappers, mas `ObjetosDaKbEmXml` ainda nao recebeu materializacao oficial.
-- `materializado_e_indice_validado`: houve materializacao oficial bem-sucedida e, quando `KbIntelligence` for adotado, o indice derivado foi regenerado/validado com `last_index_build_run_at >= last_xpz_materialization_run_at`.
+- `materializado_e_indice_validado`: houve materializacao oficial bem-sucedida e, quando `KbIntelligence` for adotado, o indice derivado foi regenerado/validado com `last_index_build_run_at >= last_xpz_materialization_run_at` e `inventory_validation_status=OK`.
 - `wrappers_atualizados`: pasta ja em producao recebeu scripts ausentes previstos pela base metodologica; scripts com personalizacao foram preservados ou substituidos com aprovacao explicita do usuario; `ObjetosDaKbEmXml`, `kb-source-metadata.md` e `kb-intelligence.sqlite` intactos. Nenhum wrapper obrigatorio para o cenario adotado pode permanecer no estado AUSENTE sem decisao explicita do usuario para declarar este estado — wrapper AUSENTE sem decisao equivale a `bootstrap_incompleto`, nao a `wrappers_atualizados`.
 - `auditoria_de_empacotamento_pendente`: `sync`, indice e estrutura podem estar OK, mas a pasta adota ou pode adotar empacotamento local e a aderencia dos wrappers/gates desse fluxo ainda nao foi confirmada objetivamente.
 
@@ -346,7 +348,7 @@ No handoff final, usar literalmente um dos estados canonicos listados acima. Nao
 - No fechamento do setup inicial, apresentar `A)` e `B)` como opcoes de proximo passo e informar o tradeoff de tempo entre elas
 - Se a existencia da pasta nativa da KB foi verificada, declarar no fechamento se ela existe/acessou corretamente ou se ficou como ressalva operacional
 - Ao fechar um `modo_atualizacao`, a resposta deve conter obrigatoriamente: classificacao de cada script (EQUIVALENTE / AUSENTE / CUSTOMIZADO), resultado da verificacao de naming de cada diretorio presente em `ObjetosDaKbEmXml` expresso como tabela ou lista estruturada com ao menos tres colunas — `Diretorio`, `Tipo real encontrado`, `Status` (conforme ou divergente) — mesmo que nenhuma divergencia seja encontrada; quando houver divergencia, incluir tambem a coluna `Nome canonico esperado`; estado operacional declarado e resultado do gate quando executado
-- Ao fechar um `modo_atualizacao`, declarar separadamente no handoff: `sync/materializacao`, `indice/gate` e `empacotamento local`; nao colapsar tudo em "tudo certo" sem mostrar a situacao de cada dimensao adotada
+- Ao fechar um `modo_atualizacao`, declarar separadamente no handoff: `sync/materializacao`, `indice/gate`, `indice/semantica` e `empacotamento local`; nao colapsar tudo em "tudo certo" sem mostrar a situacao de cada dimensao adotada
 - Ao fechar um `modo_atualizacao`, usar literalmente o rotulo `indice/gate` para a dimensao do gate estrutural e de frescor; nao substituir por variantes como `indice/frescor`, `frescor`, `indice` isolado ou equivalentes
 - No handoff final, capturar o timestamp real imediatamente antes de responder e usá-lo na propria resposta; nao usar placeholder, horario inventado, valor reaproveitado de mensagem anterior nem timestamp inferido do contexto
 - Se a pasta tiver `PacotesGeradosParaImportacaoNaKbNoGenexus`, a resposta final de `modo_atualizacao` deve dizer explicitamente se o fluxo de empacotamento local foi classificado como `OK`, `NAO_ADOTADO` ou `PENDENTE`
@@ -355,7 +357,7 @@ No handoff final, usar literalmente um dos estados canonicos listados acima. Nao
 - Quando existir `Test-*KbMetadataWrapper.ps1`, o handoff final nao pode citar `kb_name`, `source_guid` ou classificar `Get-*KbMetadata.ps1` sem referenciar a evidencia produzida por esse gate; inspecao textual isolada nao basta
 - Se o gate ou `Test-KbStructure` reportar qualquer linha `NAMING_DIVERGENTE` no output, incluir na resposta ao usuario — independente da pergunta original — o aviso explicito de quais diretorios estao com nome divergente e a oferta de correcao via `xpz-kb-parallel-setup`; nao suprimir esse aviso mesmo quando a pergunta de negocio ja foi respondida
 - Se `AGENTS.md` local ou `README.md` local declararem timestamps, estado operacional ou observacoes de frescor que conflitem com `kb-source-metadata.md`, `-Query index-metadata` ou com o gate efetivo, tratar isso como memoria local desatualizada; nao declarar a pasta "tudo certo" sem antes apontar a divergencia e oferecer atualizacao dessa memoria
-- Em `auditar_setup`, quando `Test-*KbSetupAudit.ps1` existir, o handoff deve citar nominalmente os blocos consolidados produzidos por esse wrapper (`sync/materializacao`, `indice/gate`, `metadata wrapper`, `empacotamento local`, `estado_operacional_sugerido`) em vez de sintetizar essas dimensoes manualmente; a sintese manual so e aceitavel quando o wrapper estiver ausente
+- Em `auditar_setup`, quando `Test-*KbSetupAudit.ps1` existir, o handoff deve citar nominalmente os blocos consolidados produzidos por esse wrapper (`sync/materializacao`, `indice/gate`, `indice/semantica`, `metadata wrapper`, `empacotamento local`, `estado_operacional_sugerido`) em vez de sintetizar essas dimensoes manualmente; a sintese manual so e aceitavel quando o wrapper estiver ausente
 - O campo `estado_operacional_sugerido` reportado pelo wrapper deve ser confrontado com o estado canonico declarado pela skill; se o wrapper sugerir um estado diferente do estado canonico que a evidencia objetiva da auditoria sustenta, o agente deve declarar o estado canonico correto e explicitar a divergencia — nao silenciar nem adotar o sugerido pelo wrapper sem verificacao
 
 ---
@@ -492,7 +494,7 @@ Pre-condicao obrigatoria: confirmar que o passo 7b foi executado nesta sessao an
     - Em auditoria focal ou curta, quando o objetivo estiver limitado a diretorios especificos, localizar diretamente um XML dentro de cada diretorio-alvo, ler esse XML e classificar; nao introduzir uma etapa exploratoria separada so para redescobrir se ha arquivos no diretorio quando a propria amostragem direta ja resolve
     - Para `Folder`, `Module`, `PackagedModule` e `Attribute`, um unico XML por diretorio e evidencia suficiente, salvo se o primeiro arquivo lido estiver corrompido, ilegivel ou sem o trecho minimo necessario para classificacao
     - Se o elemento raiz for `<Attribute>`, o tipo canonico e `Attribute`
-    - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico usando a fonte operacional compartilhada `../scripts/gx-type-guid-map.json`, mantendo `01a-catalogo-e-padroes-empiricos.md` como referencia editorial canonica que tambem deve ser atualizada quando surgir tipo novo
+    - Caso contrario, extrair o GUID de `Object/@type` e mapear para o nome canonico usando a fonte operacional compartilhada `../scripts/gx-object-type-catalog.json`, mantendo `01a-catalogo-e-padroes-empiricos.md` como referencia editorial canonica que tambem deve ser atualizada quando surgir tipo novo
     - O GUID encontrado no XML e sempre a fonte autoritativa; o nome do diretorio e convencao local e pode divergir
     - Nota: o motor `Build-KbIntelligenceIndex.py` ja usa esse mesmo mapeamento por GUID — o campo `object_type` no indice estara correto independente do nome da pasta; a auditoria aqui serve a legibilidade e consistencia do acervo para humanos
 

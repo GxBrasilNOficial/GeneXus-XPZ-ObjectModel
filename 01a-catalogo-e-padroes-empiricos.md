@@ -49,6 +49,9 @@ Servir como base conceitual para os documentos empíricos e operacionais.
 
 Tipos que geram arquivo XML próprio no acervo. Containers de organização estão na seção seguinte.
 
+- `Regra editorial`: a fonte técnica canônica executável desta lista fica em `scripts/gx-object-type-catalog.json`.
+- `Regra editorial`: este documento continua como referência explicativa e histórica, não como ponto único de leitura por scripts.
+
 | Tipo | GUID em `Object/@type` | Descrição | Dir. Sugerido |
 | --- | --- | --- | --- |
 | `API` | `36e32e2d-023e-4188-95df-d13573bac2e0` | Interface de serviço REST ou SOAP | `API/` |
@@ -392,7 +395,6 @@ Separar com mais precisao o que e falta de shape, o que e dependencia semantica 
 - `Inferência forte`: para geracao conservadora de `XPZ`, o erro mais provavel do agente passa a ser excesso de `User` inventado; a distribuicao observada recomenda preferir ausencia de `User` ou poucos `User` antes de extrapolar tuning pesado.
 - `Inferência forte`: para ler a camada fisica desta base, o eixo primario de correlacao deve ser `Transaction -> Table`, tratando os `Index` como estrutura interna da `Table`.
 - `Inferência forte`: para evolucao metodologica da base, o pacote mais informativo nao e `Index` isolado, e sim combinacoes como `Transaction + Table`, `Transaction + Table + WorkWithForWeb + PatternSettings` e `Attribute + Domain + Transaction + SubtypeGroup + Table`.
-
 
 
 

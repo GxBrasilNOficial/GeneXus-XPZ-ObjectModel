@@ -36,16 +36,20 @@ if (-not $KbRoot) {
 
 function Get-KnownTypeMap {
     $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-    $mapPath = Join-Path $repoRoot 'scripts\gx-type-guid-map.json'
-    if (-not (Test-Path -LiteralPath $mapPath -PathType Leaf)) {
-        throw "Type GUID map not found: $mapPath"
+    $catalogPath = Join-Path $repoRoot 'scripts\gx-object-type-catalog.json'
+    if (-not (Test-Path -LiteralPath $catalogPath -PathType Leaf)) {
+        throw "Object type catalog not found: $catalogPath"
     }
 
-    $rawMap = Get-Content -LiteralPath $mapPath -Raw
-    $jsonMap = $rawMap | ConvertFrom-Json
+    $rawCatalog = Get-Content -LiteralPath $catalogPath -Raw
+    $catalog = $rawCatalog | ConvertFrom-Json
     $map = @{}
-    foreach ($property in $jsonMap.PSObject.Properties) {
-        $map[$property.Name.ToLowerInvariant()] = [string]$property.Value
+    foreach ($property in $catalog.types.PSObject.Properties) {
+        $entry = $property.Value
+        if ($null -eq $entry.objectTypeGuid -or [string]::IsNullOrWhiteSpace([string]$entry.objectTypeGuid)) {
+            continue
+        }
+        $map[[string]$entry.objectTypeGuid.ToLowerInvariant()] = [string]$property.Name
     }
 
     return $map

@@ -5,19 +5,19 @@ guia operacional
 
 ## Escopo atual
 
-Estes scripts implementam a base do KB Intelligence e os incrementos aprovados ao longo das Fases 1 a 5, alem da camada de suporte funcional aberta na Fase 6.
+Estes scripts implementam o indice tecnico KB Intelligence com suporte a inventario, relacoes semanticas e triagem funcional assistida por agentes.
 
-As fases continuam relevantes como marco historico e contrato documental, mas nao devem ser tratadas como identidade operacional unica do SQLite. O metadata operacional do indice deve refletir capacidades e frescor atuais, nao um numero de fase.
+O comando `impact-basic` resume dependentes e dependencias diretas do objeto. O comando `functional-trace-basic` monta trilha funcional inicial para perguntas curtas, mas nao produz conclusao funcional automatica.
 
-A Fase 3 foi aberta por contrato em `..\14-kb-intelligence-fase-3-contrato.md` para formalizar o uso operacional por agentes e o comando `impact-basic`.
+Catalogo tecnico canonico de tipos:
 
-A Fase 5 foi aberta por contrato em `..\16-kb-intelligence-fase-5-contrato.md` para ampliar relacoes semanticas por incrementos pequenos.
-
-A Fase 6 foi aberta por contrato em `..\17-kb-intelligence-fase-6-contrato.md` para suporte funcional assistido por agentes. O comando `functional-trace-basic` empacota a triagem inicial, mas nao produz conclusao funcional automatica.
+- `scripts/gx-object-type-catalog.json`
+- `Regra operacional`: esse JSON e a fonte tecnica canonica para `Object/@type`, `rootKind`, pasta esperada e elegibilidade de inventario; os `.md` seguem como explicacao editorial e historica
+- `Regra operacional`: `Attribute` so deve ser classificado como tipo canonico do arquivo quando a raiz real for `<Attribute ...>`; ocorrencias inline de `<Attribute>` dentro de `Transaction`, `Table` ou outros XMLs nao redefinem o tipo do objeto
 
 Escopo de inventario atual:
 
-- todos os tipos com XML em subpastas imediatas de `ObjetosDaKbEmXml`
+- todos os tipos marcados como `inventoryEligible=true` no catalogo tecnico e presentes com XML em subpastas imediatas de `ObjetosDaKbEmXml`
 
 Escopo de extracao de relacoes atual:
 
@@ -49,7 +49,7 @@ Escopo de extracao de relacoes atual:
 - relacoes: chamadas diretas em `Source efetivo`, actions `gxobject` resolvidas, vinculacoes explicitas de `Transaction`, links e prompts explicitos de `WebPanel` em `WorkWithForWeb`, condicoes por tag e atributo de `WorkWithForWeb` chamando `Procedure`, propriedades `ATTCUSTOMTYPE`, `idBasedOn` de `Attribute`, atributos e tabelas estruturais de `Transaction`, atributos chave e membros de indice de `Table`, tipos internos resolvidos de `SDT`, tabelas declaradas em `for each` explicito, prefixos de tabela em `for each` qualificado e chamadas `.Load(...)`/`.Save()`/`.Delete()`/`.Check()`/`.Insert()`/`.Update()` de BC resolvidas para `Transaction`
 - artefato principal: SQLite derivado
 
-A Fase 2 consolidada cobre `DataProvider` como origem e como destino de chamada direta, actions de `WorkWithForWeb` com `gxobject` resolvido para `Procedure` ou `WebPanel`, vinculacao explicita de `WorkWithForWeb` para `Transaction`, links e prompts explicitos de `WorkWithForWeb` para `WebPanel`, condicoes por tag e atributo de `WorkWithForWeb` chamando `Procedure`, e `ATTCUSTOMTYPE` como `CustomType` literal. Ela nao cobre semantica completa de `Transaction`, semantica de `WorkWithForWeb` alem dos recortes ja cobertos, `for each`, `.Load(...)` nem resolucao semantica de `CustomType` para `SDT` ou `Domain`; o recorte aprovado de `for each` entrou posteriormente na Fase 5.
+A extracao basica cobre `DataProvider` como origem e como destino de chamada direta, actions de `WorkWithForWeb` com `gxobject` resolvido para `Procedure` ou `WebPanel`, vinculacao explicita de `WorkWithForWeb` para `Transaction`, links e prompts explicitos de `WorkWithForWeb` para `WebPanel`, condicoes por tag e atributo de `WorkWithForWeb` chamando `Procedure`, e `ATTCUSTOMTYPE` como `CustomType` literal. Ela nao cobre semantica completa de `Transaction`, semantica de `WorkWithForWeb` alem dos recortes ja cobertos. A extracao semantica ampliou `for each`, `.Load(...)` e resolucao de `CustomType` para `SDT`, `Domain` e `ExternalObject`.
 
 Eles nao substituem o acervo XML em `ObjetosDaKbEmXml` e nao provam comportamento runtime.
 
@@ -60,20 +60,20 @@ Eles nao substituem o acervo XML em `ObjetosDaKbEmXml` e nao provam comportament
   -SourceRoot "C:\KB\KBExemplo\ObjetosDaKbEmXml" `
   -OutputPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence.sqlite" `
   -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-validation.json" `
-  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.phase1.validation-cases.json" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.validation-extraction-basic.json" `
   -FailOnValidationFailure
 ```
 
 Para outra KB, troque `-SourceRoot`, `-OutputPath` e, se aplicavel, `-ValidationCasesPath`.
 
-Para validar os incrementos aprovados da Fase 2 em `KBExemplo`, use:
+Para validar extracao estendida em `KBExemplo`, use:
 
 ```powershell
 .\scripts\Build-KbIntelligenceIndex.ps1 `
   -SourceRoot "C:\KB\KBExemplo\ObjetosDaKbEmXml" `
   -OutputPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence.sqlite" `
   -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-validation.json" `
-  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.phase2.validation-cases.json" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.validation-extraction-extended.json" `
   -FailOnValidationFailure
 ```
 
@@ -86,10 +86,12 @@ O indice so deve ser usado para triagem ampla quando estiver em dia com a ultima
 - `last_xpz_materialization_run_at` fica no `kb-source-metadata.md` da raiz da pasta paralela da KB
 - `last_index_build_run_at` fica na tabela `metadata` de `KbIntelligence\kb-intelligence.sqlite`
 - `last_index_build_run_at` tambem e espelhado em `KbIntelligence\kb-intelligence-validation.json` quando o relatorio de validacao e gerado
+- `inventory_validation_status` fica na tabela `metadata` do SQLite e deve estar `OK`
 - `generated_at` nao faz mais parte do contrato operacional do indice; se aparecer em artefato antigo, trate esse indice como legado/incompativel e regenere
 - todo processamento bem-sucedido de `XPZ` exportado pela IDE que materialize ou atualize XMLs em `ObjetosDaKbEmXml` deve chamar a regeneracao/validacao do indice logo depois
-- se `last_index_build_run_at >= last_xpz_materialization_run_at`, o indice esta apto para triagem inicial
+- se `last_index_build_run_at >= last_xpz_materialization_run_at` e `inventory_validation_status=OK`, o indice esta apto para triagem inicial
 - se o indice estiver ausente, sem metadado, mais antigo que a ultima materializacao ou se `kb-source-metadata.md` nao expuser literalmente `last_xpz_materialization_run_at`, o agente nao deve consultar o acervo oficial de objetos para responder pergunta de negocio, nem por varredura ampla nem por caminho pontual deduzido, e tambem nao deve gerar objetos para importacao na KB pela IDE
+- se `inventory_validation_status` estiver ausente, `BLOCK` ou diferente de `OK`, tratar o indice como semanticamente incompativel com o snapshot oficial e oferecer rebuild/atualizacao antes da triagem ampla
 - nesse estado defasado, o agente deve tratar a situacao como excecao operacional, oferecer regeneracao/validacao do indice ao usuario e nao seguir para varredura ampla, triagem substantiva, caminho pontual deduzido, leitura de XML oficial de objeto ou geracao
 - leitura pontual com gate bloqueado so deve ocorrer para diagnostico minimo da incompatibilidade em documentacao local, estrutura, wrappers e metadados operacionais; nao montar, testar existencia, listar ou abrir caminho de XML oficial de objeto como fallback para responder pergunta de negocio
 - o gate deve ser sequencial e atomico; nao testar caminho filho antes da camada pai, por exemplo `KbIntelligence\kb-intelligence.sqlite` antes de `KbIntelligence`
@@ -105,9 +107,9 @@ Para ler os metadados do indice pelo wrapper:
   -Format text
 ```
 
-Se `index-metadata` falhar, retornar vazio ou nao expor `last_index_build_run_at`, trate o indice como legado/incompativel ou sem metadado valido. Nao siga para triagem substantiva, pesquisa ampla, caminho pontual deduzido em `ObjetosDaKbEmXml`, leitura de XML oficial de objeto ou geracao de objetos; ofereca regeneracao/validacao do indice ao usuario.
+Se `index-metadata` falhar, retornar vazio ou nao expor `last_index_build_run_at` ou `inventory_validation_status`, trate o indice como legado/incompativel ou sem metadado valido. Nao siga para triagem substantiva, pesquisa ampla, caminho pontual deduzido em `ObjetosDaKbEmXml`, leitura de XML oficial de objeto ou geracao de objetos; ofereca regeneracao/validacao do indice ao usuario.
 
-Quando a validacao de frescor for parte relevante da resposta ou handoff, registre a decisao de forma curta. Em caso apto, informe `last_index_build_run_at >= last_xpz_materialization_run_at`; em caso bloqueado, informe o campo/capacidade ausente ou qual timestamp ficou defasado.
+Quando a validacao do indice for parte relevante da resposta ou handoff, registre a decisao de forma curta. Em caso apto, informe `last_index_build_run_at >= last_xpz_materialization_run_at` e `inventory_validation_status=OK`; em caso bloqueado, informe o campo/capacidade ausente, qual timestamp ficou defasado ou qual incompatibilidade semantica de inventario foi detectada.
 
 ## Schema e versionamento
 
@@ -258,7 +260,7 @@ O comando `functional-trace-basic` monta uma trilha inicial para perguntas funci
 - prioriza objetos resolvidos e locais antes de literais `CustomType`
 - oculta literais `CustomType` redundantes quando houver relacao resolvida equivalente na mesma linha
 - indica XMLs oficiais que o agente deve abrir
-- devolve o contrato de resposta da Fase 6
+- devolve trilha estruturada para resposta funcional curta
 
 Ele nao abre XML automaticamente, nao interpreta regra de negocio e nao substitui a leitura do XML oficial.
 
@@ -272,21 +274,21 @@ Ele nao abre XML automaticamente, nao interpreta regra de negocio e nao substitu
   -Format text
 ```
 
-## Validar consultas da Fase 3
+## Validar consultas de impacto basico
 
 Depois de gerar ou localizar um indice SQLite, valide o comportamento operacional de `impact-basic` com:
 
 ```powershell
 .\scripts\Test-KbIntelligenceQueries.ps1 `
   -IndexPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence.sqlite" `
-  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.phase3.validation-cases.json" `
-  -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-phase3-validation.json" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.validation-queries-impact.json" `
+  -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-validation-queries-impact.json" `
   -FailOnValidationFailure
 ```
 
-Os casos de validacao da Fase 3 conferem comportamento de consulta. Eles nao regeneram o indice nem substituem a bateria de extracao da Fase 2.
+Esses casos conferem comportamento de consulta. Eles nao regeneram o indice nem substituem as baterias de extracao.
 
-Escolha o executor pelo formato do caso, nao pelo numero da fase. Casos com campo `query` pertencem a validacao de consultas; casos com `source`, `target` e `expected_rule` pertencem a validacao de extracao/geracao.
+Escolha o executor pelo formato do caso. Casos com campo `query` pertencem a validacao de consultas; casos com `source`, `target` e `expected_rule` pertencem a validacao de extracao/geracao.
 
 ## Cuidado com validacoes SQLite no Windows
 
@@ -296,21 +298,27 @@ Se houver necessidade real de paralelizar, use copias temporarias independentes 
 
 Falhas transitorias de acesso, lock ou tabela ainda nao visivel no Windows devem ser reexecutadas primeiro em sequencia antes de serem tratadas como falha real de contrato ou regressao do indice.
 
-## Validar inventario ampliado da Fase 4
+## Validar inventario ampliado de tipos
 
 Depois de regenerar o indice, valide a presenca de tipos ampliados com:
 
 ```powershell
 .\scripts\Test-KbIntelligenceQueries.ps1 `
   -IndexPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence.sqlite" `
-  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.phase4.validation-cases.json" `
-  -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-phase4-validation.json" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.validation-inventory-extended.json" `
+  -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-validation-inventory-extended.json" `
   -FailOnValidationFailure
 ```
 
-Os casos da Fase 4 conferem inventario de objetos e comportamento conservador de `impact-basic` para tipos sem relacoes extraidas.
+Esses casos conferem inventario de objetos e comportamento conservador de `impact-basic` para tipos sem relacoes extraidas.
 
-## Validar relacoes semanticas da Fase 5
+Cobertura minima adicional recomendada para evitar falso verde de inventario:
+
+- pelo menos um caso positivo de `Transaction` em `object-info`
+- um caso de tipo com envelope proprio, como `Attribute`
+- um caso de tipo recentemente acrescentado ao catalogo, quando houver
+
+## Validar relacoes semanticas
 
 Depois de regenerar o indice, valide a resolucao semantica aprovada com:
 
@@ -319,29 +327,29 @@ Depois de regenerar o indice, valide a resolucao semantica aprovada com:
   -SourceRoot "C:\KB\KBExemplo\ObjetosDaKbEmXml" `
   -OutputPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence.sqlite" `
   -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-validation.json" `
-  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.phase5.validation-cases.json" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.validation-extraction-semantic.json" `
   -FailOnValidationFailure
 ```
 
-Os casos da Fase 5 conferem relacoes semanticas novas. Eles devem ser executados junto com as baterias anteriores quando houver rodada oficial.
+Esses casos conferem relacoes semanticas. Eles devem ser executados junto com as baterias de extracao quando houver rodada oficial.
 
-Esses casos usam `source`, `target` e `expected_rule`, entao devem rodar no gerador/indexador. Se forem enviados por engano para `Test-KbIntelligenceQueries.ps1`, o resultado deve ser tratado primeiro como executor incompatível, nao como regressao real da regra.
+Esses casos usam `source`, `target` e `expected_rule`, entao devem rodar no gerador/indexador. Se forem enviados por engano para `Test-KbIntelligenceQueries.ps1`, o resultado deve ser tratado primeiro como executor incompativel, nao como regressao real da regra.
 
-## Validar consulta da Fase 6
+## Validar triagem funcional basica
 
 Depois de localizar ou regenerar o indice canonico, valide `functional-trace-basic` com:
 
 ```powershell
 .\scripts\Test-KbIntelligenceQueries.ps1 `
   -IndexPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence.sqlite" `
-  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.phase6.validation-cases.json" `
-  -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-phase6-validation.json" `
+  -ValidationCasesPath ".\scripts\kb-intelligence-kbexemplo.validation-queries-functional-trace.json" `
+  -ValidationReportPath "C:\KB\KBExemplo\KbIntelligence\kb-intelligence-validation-queries-functional-trace.json" `
   -FailOnValidationFailure
 ```
 
-Os casos da Fase 6 conferem apenas a montagem da trilha funcional basica. Eles nao provam comportamento runtime nem substituem leitura do XML oficial.
+Esses casos conferem apenas a montagem da trilha funcional basica. Eles nao provam comportamento runtime nem substituem leitura do XML oficial.
 
-Como os casos da Fase 6 validam consultas e trazem `query`, eles pertencem ao executor `Test-KbIntelligenceQueries.ps1`, nao ao fluxo de regeneracao via `Build-KbIntelligenceIndex.ps1`.
+Como esses casos validam consultas e trazem `query`, eles pertencem ao executor `Test-KbIntelligenceQueries.ps1`, nao ao fluxo de regeneracao via `Build-KbIntelligenceIndex.ps1`.
 
 ## Saidas
 

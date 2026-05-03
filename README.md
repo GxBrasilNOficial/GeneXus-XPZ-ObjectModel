@@ -45,20 +45,10 @@ Os arquivos `10-matriz-part-types-por-tipo.md`, `11-campos-estaveis-vs-variaveis
 
 ### Documentacao operacional KB Intelligence
 
-Arquivos da serie KB Intelligence presentes na raiz enquanto a frente estiver ativa. Quando encerrados, migram para `historico/kb-intelligence/`.
+Guia operacional e metodologico da trilha KB Intelligence. Contratos de fases encerradas e registros historicos estao em `historico/kb-intelligence/`.
 
-- `11-plano-kb-intelligence-incremental.md`
-- `14-kb-intelligence-fase-3-contrato.md`
-- `16-kb-intelligence-fase-5-contrato.md`
-- `17-kb-intelligence-fase-6-contrato.md`
-- `18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md`
-- `19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md`
-- `21-kb-intelligence-fase-6-checklist-operacional-agente.md`
-- `22-kb-intelligence-fase-6-contrato-functional-trace-basic.md`
-- `23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md`
-- `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`
-- `27-kb-intelligence-fase-6-primeira-resposta-funcional.md`
-- `29-kb-intelligence-estudo-update-incremental.md`
+- `kb-intelligence-guia-metodologico-agente.md`: roteiro de investigacao funcional, checklist operacional, exemplos sanitizados e modelo de resposta para agentes
+- `scripts/README-kb-intelligence.md`: guia operacional de scripts, comandos de consulta, gates de frescor e baterias de validacao
 
 ### Skills para agentes
 
@@ -107,12 +97,12 @@ Se você quer entender a base rapidamente:
 
 - `ObjetosDaKbEmXml`: snapshot oficial da KB; somente leitura para agentes
 - `KbIntelligence`: pasta do índice SQLite derivado e regenerável, usado para triagem técnica e funcional curta sem substituir o snapshot oficial
-- `KbIntelligence` só deve ser usado para triagem ampla quando `last_index_build_run_at` no SQLite for igual ou posterior a `last_xpz_materialization_run_at` em `kb-source-metadata.md`; todo sync XPZ/XML oficial deve regenerar/validar o índice logo depois da materialização, e índice ausente ou defasado é exceção operacional que deve bloquear pesquisa ampla/geração e oferecer atualização ao usuário
+- `KbIntelligence` só deve ser usado para triagem ampla quando `last_index_build_run_at` no SQLite for igual ou posterior a `last_xpz_materialization_run_at` em `kb-source-metadata.md` e `inventory_validation_status` estiver literalmente `OK` no `index-metadata`; todo sync XPZ/XML oficial deve regenerar/validar o índice logo depois da materialização, e índice ausente, defasado ou semanticamente bloqueado é exceção operacional que deve bloquear pesquisa ampla/geração e oferecer atualização ao usuário
 - quando `AGENTS.md` ou `README.md` locais da pasta paralela declararem timestamps, estado operacional ou observações de frescor, esses campos devem permanecer coerentes com `kb-source-metadata.md`, com `-Query index-metadata` do wrapper local e com o gate efetivo; drift documental local também é pendência de setup
 - `XpzExportadosPelaIDE`: pasta onde o usuário grava tanto o `XPZ` completo da Carga Inicial quanto os `XPZ` incrementais do dia a dia
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabalho para XMLs gerados, ajustados ou preservados para importação manual na IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de saída para `import_file.xml` e demais pacotes gerados localmente
-- em auditoria operacional da pasta paralela, declarar separadamente `sync/materializacao`, `indice/gate` e `empacotamento local`; `GATE_OK` e estrutura OK nao bastam, sozinhos, para concluir genericamente que "esta tudo certo" quando o fluxo de empacotamento local ainda nao foi auditado
+- em auditoria operacional da pasta paralela, declarar separadamente `sync/materializacao`, `indice/gate`, `indice/semantica` e `empacotamento local`; `GATE_OK` e estrutura OK nao bastam, sozinhos, para concluir genericamente que "esta tudo certo" quando a semantica do indice ou o fluxo de empacotamento local ainda nao foram auditados
 - `Temp`: destino preferencial de artefatos efêmeros de execução, como diretórios temporários de wrappers, logs auxiliares e saídas intermediárias que não sejam fonte normativa da base
 - `ArquivoMorto`: subpasta opcional de `ObjetosGeradosParaImportacaoNaKbNoGenexus` para preservar XMLs contaminados que nao devem ser importados mas precisam de rastreabilidade; nao apagar sem autorizacao explicita do usuario
 - em `ObjetosGeradosParaImportacaoNaKbNoGenexus`, cada frente ativa deve usar sua propria subpasta no formato `NomeCurto_GUID_YYYYMMDD`
@@ -227,20 +217,10 @@ Los archivos `10-matriz-part-types-por-tipo.md`, `11-campos-estaveis-vs-variavei
 
 ### Documentacion operacional KB Intelligence
 
-Archivos de la serie KB Intelligence presentes en la raíz mientras la frente esté activa. Cuando se cierran, migran a `historico/kb-intelligence/`.
+Guía operacional y metodológica de la trilha KB Intelligence. Los contratos de fases cerradas y los registros históricos están en `historico/kb-intelligence/`.
 
-- `11-plano-kb-intelligence-incremental.md`
-- `14-kb-intelligence-fase-3-contrato.md`
-- `16-kb-intelligence-fase-5-contrato.md`
-- `17-kb-intelligence-fase-6-contrato.md`
-- `18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md`
-- `19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md`
-- `21-kb-intelligence-fase-6-checklist-operacional-agente.md`
-- `22-kb-intelligence-fase-6-contrato-functional-trace-basic.md`
-- `23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md`
-- `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`
-- `27-kb-intelligence-fase-6-primeira-resposta-funcional.md`
-- `29-kb-intelligence-estudo-update-incremental.md`
+- `kb-intelligence-guia-metodologico-agente.md`: roteiro de investigación funcional, checklist operacional, ejemplos sanitizados y modelo de respuesta para agentes
+- `scripts/README-kb-intelligence.md`: guía operacional de scripts, comandos de consulta, gates de frescura y baterías de validación
 
 ### Skills para agentes
 
@@ -289,12 +269,12 @@ Si quieres entender la base rápidamente:
 
 - `ObjetosDaKbEmXml`: snapshot oficial de la KB; solo lectura para agentes
 - `KbIntelligence`: carpeta del índice SQLite derivado y regenerable, usado para triaje técnico y funcional corto sin sustituir el snapshot oficial
-- `KbIntelligence` solo debe usarse para triaje amplio cuando `last_index_build_run_at` en SQLite sea igual o posterior a `last_xpz_materialization_run_at` en `kb-source-metadata.md`; todo sync XPZ/XML oficial debe regenerar/validar el indice inmediatamente despues de la materializacion, y un indice ausente o desfasado es una excepcion operativa que debe bloquear investigacion amplia/generacion y ofrecer actualizacion al usuario
+- `KbIntelligence` solo debe usarse para triaje amplio cuando `last_index_build_run_at` en SQLite sea igual o posterior a `last_xpz_materialization_run_at` en `kb-source-metadata.md` y `inventory_validation_status` sea literalmente `OK` en `index-metadata`; todo sync XPZ/XML oficial debe regenerar/validar el indice inmediatamente despues de la materializacion, y un indice ausente, desfasado o semanticamente bloqueado es una excepcion operativa que debe bloquear investigacion amplia/generacion y ofrecer actualizacion al usuario
 - cuando `AGENTS.md` o `README.md` locales de la carpeta paralela declaren timestamps, estado operativo u observaciones de frescura, esos campos deben mantenerse coherentes con `kb-source-metadata.md`, con `-Query index-metadata` del wrapper local y con el gate efectivo; el drift documental local tambien es una pendiente de setup
 - `XpzExportadosPelaIDE`: carpeta donde el usuario graba tanto el `XPZ` completo de la Carga Inicial como los `XPZ` incrementales del día a día
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: área de trabajo para XMLs generados, ajustados o preservados para importación manual en la IDE
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: área de salida para `import_file.xml` y demás paquetes generados localmente
-- en auditoría operativa de la carpeta paralela, declarar por separado `sync/materialización`, `índice/gate` y `empaquetado local`; `GATE_OK` y estructura OK no bastan, por sí solos, para concluir genéricamente que "todo está bien" cuando el flujo de empaquetado local todavía no fue auditado
+- en auditoría operativa de la carpeta paralela, declarar por separado `sync/materialización`, `índice/gate`, `índice/semántica` y `empaquetado local`; `GATE_OK` y estructura OK no bastan, por sí solos, para concluir genéricamente que "todo está bien" cuando la semántica del índice o el flujo de empaquetado local todavía no fueron auditados
 - `Temp`: destino preferente de artefactos efímeros de ejecución, como directorios temporales de wrappers, logs auxiliares y salidas intermedias que no sean fuente normativa de la base
 - `ArquivoMorto`: subcarpeta opcional de `ObjetosGeradosParaImportacaoNaKbNoGenexus` para preservar XML contaminados que no deben importarse pero necesitan trazabilidad; no borrar sin autorización explícita del usuario
 - en `ObjetosGeradosParaImportacaoNaKbNoGenexus`, cada frente activa debe usar su propia subcarpeta con el formato `NomeCurto_GUID_YYYYMMDD`
@@ -409,20 +389,10 @@ The files `10-matriz-part-types-por-tipo.md`, `11-campos-estaveis-vs-variaveis.m
 
 ### KB Intelligence operational documentation
 
-KB Intelligence series files present in the root while the workstream is active. When closed, they migrate to `historico/kb-intelligence/`.
+Operational and methodological guide for the KB Intelligence workstream. Closed phase contracts and historical records are in `historico/kb-intelligence/`.
 
-- `11-plano-kb-intelligence-incremental.md`
-- `14-kb-intelligence-fase-3-contrato.md`
-- `16-kb-intelligence-fase-5-contrato.md`
-- `17-kb-intelligence-fase-6-contrato.md`
-- `18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md`
-- `19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md`
-- `21-kb-intelligence-fase-6-checklist-operacional-agente.md`
-- `22-kb-intelligence-fase-6-contrato-functional-trace-basic.md`
-- `23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md`
-- `26-kb-intelligence-fase-6-verificacao-pos-filtro.md`
-- `27-kb-intelligence-fase-6-primeira-resposta-funcional.md`
-- `29-kb-intelligence-estudo-update-incremental.md`
+- `kb-intelligence-guia-metodologico-agente.md`: functional investigation roteiro, operational checklist, sanitized examples and response model for agents
+- `scripts/README-kb-intelligence.md`: script operational guide, query commands, freshness gates and validation batteries
 
 ### Skills for agents
 
@@ -471,12 +441,12 @@ If you want to understand the repository quickly:
 
 - `ObjetosDaKbEmXml`: official KB snapshot; read-only for agents
 - `KbIntelligence`: folder for the derived and regenerable SQLite index, used for technical and short functional triage without replacing the official snapshot
-- `KbIntelligence` should only be used for broad triage when `last_index_build_run_at` in SQLite is equal to or later than `last_xpz_materialization_run_at` in `kb-source-metadata.md`; every official XPZ/XML sync must regenerate/validate the index immediately after materialization, and a missing or stale index is an operational exception that must block broad search/generation and offer the user an update
+- `KbIntelligence` should only be used for broad triage when `last_index_build_run_at` in SQLite is equal to or later than `last_xpz_materialization_run_at` in `kb-source-metadata.md` and `inventory_validation_status` is literally `OK` in `index-metadata`; every official XPZ/XML sync must regenerate/validate the index immediately after materialization, and a missing, stale, or semantically blocked index is an operational exception that must block broad search/generation and offer the user an update
 - when local `AGENTS.md` or `README.md` in the parallel folder declare timestamps, operational state, or freshness notes, those fields must remain consistent with `kb-source-metadata.md`, with the local wrapper `-Query index-metadata`, and with the effective gate result; local documentation drift is also a setup pending item
 - `XpzExportadosPelaIDE`: folder where the user stores both the full Initial Load `XPZ` and the day-to-day incremental `XPZ` files
 - `ObjetosGeradosParaImportacaoNaKbNoGenexus`: working area for XMLs generated, adjusted, or preserved for manual IDE import
 - `PacotesGeradosParaImportacaoNaKbNoGenexus`: output area for `import_file.xml` and other locally generated packages
-- in operational audits of the KB parallel folder, declare `sync/materialization`, `index/gate`, and `local packaging` separately; `GATE_OK` and structure OK are not enough, by themselves, to conclude generically that "everything is fine" when the local packaging flow has not yet been audited
+- in operational audits of the KB parallel folder, declare `sync/materialization`, `index/gate`, `index/semantics`, and `local packaging` separately; `GATE_OK` and structure OK are not enough, by themselves, to conclude generically that "everything is fine" when the index semantics or the local packaging flow have not yet been audited
 - `Temp`: preferred destination for ephemeral execution artifacts, such as wrapper temporary directories, auxiliary logs, and intermediate outputs that are not normative source material for the base
 - `ArquivoMorto`: optional subfolder of `ObjetosGeradosParaImportacaoNaKbNoGenexus` used to preserve contaminated XMLs that must not be imported but require traceability; do not delete without explicit user authorization
 - in `ObjetosGeradosParaImportacaoNaKbNoGenexus`, each active front must use its own subfolder in the format `NomeCurto_GUID_YYYYMMDD`

@@ -15,7 +15,7 @@ Usar o indice derivado da KB como trilha inicial de triagem antes de expandir a 
 
 O indice e artefato derivado. Ele nao substitui os XMLs oficiais e nao autoriza conclusao funcional automatica.
 
-Antes de usar o indice como base de triagem, executar obrigatoriamente o gate via `Test-*KbGate.ps1`. O gate verifica em sequencia: estrutura da pasta paralela via `Test-*KbStructure.ps1`, existencia da pasta `KbIntelligence`, do SQLite, frescor via `index-metadata`, existencia de `kb-source-metadata.md` e `last_xpz_materialization_run_at`, e compara timestamps. Nao fazer verificacao manual de frescor ou estrutura — ambas as verificacoes sao encapsuladas no gate script, que e o unico ponto de execucao autorizado. Se `Test-*KbGate.ps1` nao existir em `scripts/`, tratar isso como bloqueio estrutural equivalente a `BLOCK:` do proprio script — encerrar a pergunta de negocio e oferecer atualizacao via `xpz-kb-parallel-setup`; nao compensar com verificacao manual, consulta direta ao indice ou qualquer outra alternativa.
+Antes de usar o indice como base de triagem, executar obrigatoriamente o gate via `Test-*KbGate.ps1`. O gate verifica em sequencia: estrutura da pasta paralela via `Test-*KbStructure.ps1`, existencia da pasta `KbIntelligence`, do SQLite, semantica de inventario e frescor via `index-metadata`, existencia de `kb-source-metadata.md` e `last_xpz_materialization_run_at`, e compara timestamps. Nao fazer verificacao manual de frescor, semantica ou estrutura — todas as verificacoes sao encapsuladas no gate script, que e o unico ponto de execucao autorizado. Se `Test-*KbGate.ps1` nao existir em `scripts/`, tratar isso como bloqueio estrutural equivalente a `BLOCK:` do proprio script — encerrar a pergunta de negocio e oferecer atualizacao via `xpz-kb-parallel-setup`; nao compensar com verificacao manual, consulta direta ao indice ou qualquer outra alternativa.
 
 - se o gate retornar `GATE_OK`, o indice esta apto para triagem inicial
 - se o gate retornar `BLOCK: <motivo>`, tratar o indice como defasado/incompatível
@@ -65,7 +65,7 @@ Do NOT use this skill for:
 - Localizar, pela documentacao local do repositorio, o wrapper de consulta do indice no ambiente ativo
 - Verificar `last_index_build_run_at` contra `last_xpz_materialization_run_at` antes da primeira consulta substantiva
 - Preferir `index-metadata` no wrapper local quando disponivel para ler metadados do SQLite
-- Se `index-metadata` existir, mas falhar, retornar vazio ou nao expuser `last_index_build_run_at`, tratar como indice sem metadado valido; nao prosseguir com triagem substantiva antes de oferecer regeneracao/validacao
+- Se `index-metadata` existir, mas falhar, retornar vazio, nao expuser `last_index_build_run_at` ou nao expuser `inventory_validation_status`, tratar como indice sem metadado valido; nao prosseguir com triagem substantiva antes de oferecer regeneracao/validacao
 - Se `kb-source-metadata.md` nao expuser literalmente `last_xpz_materialization_run_at`, tratar como metadado de materializacao incompatível; nao inferir frescor por data de arquivo, `updated`, `generated_at`, `source_xpz` ou outros campos
 - Se o wrapper local nao aceitar `index-metadata`, declarar essa defasagem precisamente como falta de exposicao no wrapper local, nao como falta do motor compartilhado; abortar a pergunta de negocio e oferecer atualizacao via `xpz-kb-parallel-setup`
 - Traduzir a pergunta do usuario para a consulta mais util no indice
@@ -101,7 +101,7 @@ Do NOT use this skill for:
 - Obter horario local imediatamente antes de cada update ou resposta ao usuario; nao reutilizar timestamp anterior nem inferir horario pela sequencia da conversa
 - Comecar pelo resultado da triagem, nao pelo historico do indice
 - Quando o gate de frescor/compatibilidade tiver sido relevante no fluxo, declarar brevemente a decisao do gate na resposta ou no handoff:
-  - se liberado, informar que `last_index_build_run_at >= last_xpz_materialization_run_at`
+  - se liberado, informar que `last_index_build_run_at >= last_xpz_materialization_run_at` e `inventory_validation_status=OK`
   - se bloqueado, informar qual campo/capacidade faltou ou qual timestamp ficou defasado
 - Quando o gate bloquear depois de `index-metadata`, nao dizer que "nao devo consultar o indice"; dizer que a consulta de metadados do gate foi feita, mas a triagem substantiva pelo indice esta bloqueada
 - Dizer explicitamente quando a resposta ainda depende de leitura do XML oficial
@@ -124,19 +124,11 @@ Do NOT use this skill for:
 
 Reference files and when to load them:
 
-Esta tabela prioriza contratos e guias de uso corrente da skill. Nao incluir por padrao contratos historicos de fase ja condensados em referencias operacionais mais diretas, nem registros de verificacao pontual ja absorvidos pelo contrato ativo; esses materiais so devem ser carregados quando houver duvida metodologica especifica que a tabela atual nao cubra.
-
 | Reference | Load when |
 |-----------|-----------|
 | [02-regras-operacionais-e-runtime.md](../02-regras-operacionais-e-runtime.md) | Depois do gate estrutural inicial, quando for necessario interpretar frescor, metadados, limite operacional ou relacao entre artefato derivado e fonte normativa |
 | [08-guia-para-agente-gpt.md](../08-guia-para-agente-gpt.md) | Depois do gate estrutural inicial, quando for necessario orientar uso do KB Intelligence, escalada para XML oficial ou decisao operacional |
-| [17-kb-intelligence-fase-6-contrato.md](../17-kb-intelligence-fase-6-contrato.md) | Quando a pergunta envolver resposta funcional curta |
-| [18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md](../18-kb-intelligence-fase-6-roteiro-investigacao-funcional.md) | Quando a pergunta for funcional e o agente precisar do roteiro passo a passo de investigacao |
-| [19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md](../19-kb-intelligence-fase-6-exemplos-investigacao-funcional.md) | Quando forem necessarios exemplos reais do roteiro funcional, incluindo a terminologia `via edicao web` e `via BC` |
-| [21-kb-intelligence-fase-6-checklist-operacional-agente.md](../21-kb-intelligence-fase-6-checklist-operacional-agente.md) | Quando a pergunta envolver roteiro operacional do agente |
-| [22-kb-intelligence-fase-6-contrato-functional-trace-basic.md](../22-kb-intelligence-fase-6-contrato-functional-trace-basic.md) | Quando a consulta candidata for `functional-trace-basic` |
-| [23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md](../23-kb-intelligence-fase-6-exemplos-functional-trace-basic.md) | Quando a consulta candidata for `functional-trace-basic` e exemplos operacionais forem necessarios |
-| [27-kb-intelligence-fase-6-primeira-resposta-funcional.md](../27-kb-intelligence-fase-6-primeira-resposta-funcional.md) | Quando for necessario um modelo canonico de resposta funcional completa |
+| [kb-intelligence-guia-metodologico-agente.md](../kb-intelligence-guia-metodologico-agente.md) | Quando a pergunta for funcional, exigir roteiro de investigacao, checklist operacional, uso de `functional-trace-basic`, terminologia `via edicao web`/`via BC` ou modelo de resposta funcional |
 | [scripts/README-kb-intelligence.md](../scripts/README-kb-intelligence.md) | Depois do gate estrutural inicial, quando a skill precisar escolher consulta, interpretar cobertura, executar comando do indice ou distinguir validadores |
 
 Para economizar contexto, nao carregue referencias longas da tabela acima antes do gate estrutural inicial (`KbIntelligence`, SQLite e wrapper local). Se o gate bloquear em uma dessas tres checagens, responda com a primeira falha e ofereca `xpz-kb-parallel-setup` sem abrir referencias adicionais.
@@ -192,7 +184,7 @@ Se qualquer `BLOCK:` ocorrer, encerrar a pergunta de negocio e oferecer `xpz-kb-
 3. A PRIMEIRA acao substantiva desta skill em qualquer sessao deve ser executar o gate. Nenhuma consulta ao indice, leitura de XML, varredura de `ObjetosDaKbEmXml` ou comando `Query-*KbIntelligence.ps1` pode ocorrer antes de `Test-*KbGate.ps1` retornar `GATE_OK`. Isso vale inclusive para perguntas simples de existencia/localizacao nominal — `search-objects` e `object-info` estao proibidos antes do gate.
 4. Executar o gate em ordem sequencial e parar no primeiro bloqueio; nao investigar camadas internas ate a camada externa estar valida
 5. Verificar se existe `Test-*KbGate.ps1` em `scripts\`; se ausente, bloquear como defasagem da pasta paralela e oferecer atualizacao via `xpz-kb-parallel-setup`
-6. Executar `Test-*KbGate.ps1`; o script verifica sequencialmente: estrutura da pasta paralela via `Test-*KbStructure.ps1`, pasta `KbIntelligence`, `kb-intelligence.sqlite`, wrapper local de consulta com `-Query index-metadata`, `kb-source-metadata.md` e comparacao de timestamps; qualquer `BLOCK:` encerra a pergunta de negocio
+6. Executar `Test-*KbGate.ps1`; o script verifica sequencialmente: estrutura da pasta paralela via `Test-*KbStructure.ps1`, pasta `KbIntelligence`, `kb-intelligence.sqlite`, wrapper local de consulta com `-Query index-metadata`, `inventory_validation_status`, `kb-source-metadata.md` e comparacao de timestamps; qualquer `BLOCK:` encerra a pergunta de negocio
    - se a execucao do comando do gate for negada, cancelada ou interrompida pelo usuario, tratar como gate nao liberado: encerrar a pergunta de negocio, relatar a situacao ao usuario, oferecer revisao da regra de permissao em `settings.json` e/ou `xpz-kb-parallel-setup`; NUNCA contornar o gate com varredura, leitura pontual ou consulta indireta
 7. Se qualquer etapa do gate falhar, bloquear pesquisa ampla, triagem substantiva, consulta substantiva ao acervo oficial de objetos, leitura de XML oficial de objeto e geracao de objetos para importacao, relatar a primeira excecao operacional encontrada e oferecer atualizacao via `xpz-kb-parallel-setup` antes de seguir
 8. Com gate bloqueado, encerrar a pergunta de negocio antes de resolver o objeto pedido para caminho de XML; nao montar, testar existencia, listar ou abrir caminhos deduzidos como `ObjetosDaKbEmXml\<Tipo>\<Nome>.xml`

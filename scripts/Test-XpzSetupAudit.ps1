@@ -90,12 +90,26 @@ $lastMaterialization = Normalize-Value (Get-MetadataField -Lines $metadataLines 
 
 $gateRaw = $null
 $gateStatus = $null
+$inventorySemanticStatus = $null
 try {
     $gateRaw = Invoke-WrapperText -Path $GateWrapperPath
     $gateStatus = if ($gateRaw -match '\bGATE_OK\b') { 'OK' } else { 'PENDENTE' }
 } catch {
     $gateRaw = $_.Exception.Message.Trim()
     $gateStatus = 'BLOCK'
+}
+
+$inventorySemanticMatch = if ($gateRaw) {
+    [regex]::Match($gateRaw, 'inventory_validation_status\s*[:=]\s*(?<value>\S+)')
+} else {
+    [regex]::Match('', 'a^')
+}
+if ($inventorySemanticMatch.Success) {
+    $inventorySemanticStatus = $inventorySemanticMatch.Groups['value'].Value.Trim()
+} elseif ($gateStatus -eq 'BLOCK' -and $gateRaw -match 'inventario semantico|inventory_validation_status') {
+    $inventorySemanticStatus = 'BLOCK'
+} else {
+    $inventorySemanticStatus = 'PENDENTE'
 }
 
 $metadataWrapperRaw = $null
@@ -147,9 +161,9 @@ $packageEvidenceParts += ('package_collision_wrapper={0}' -f $(if ($hasPackageCo
 $packageEvidence = $packageEvidenceParts -join '; '
 
 $suggestedState = switch ($true) {
-    ($syncStatus -eq 'OK' -and $gateStatus -eq 'OK' -and $packageAuditStatus -eq 'OK') { 'materializado_e_indice_validado'; break }
-    ($syncStatus -eq 'OK' -and $gateStatus -eq 'OK' -and $packageAuditStatus -eq 'NAO_ADOTADO') { 'materializado_e_indice_validado'; break }
-    ($syncStatus -eq 'OK' -and $gateStatus -eq 'OK' -and $packageAuditStatus -eq 'PENDENTE') { 'auditoria_de_empacotamento_pendente'; break }
+    ($syncStatus -eq 'OK' -and $gateStatus -eq 'OK' -and $inventorySemanticStatus -eq 'OK' -and $packageAuditStatus -eq 'OK') { 'materializado_e_indice_validado'; break }
+    ($syncStatus -eq 'OK' -and $gateStatus -eq 'OK' -and $inventorySemanticStatus -eq 'OK' -and $packageAuditStatus -eq 'NAO_ADOTADO') { 'materializado_e_indice_validado'; break }
+    ($syncStatus -eq 'OK' -and $gateStatus -eq 'OK' -and $inventorySemanticStatus -eq 'OK' -and $packageAuditStatus -eq 'PENDENTE') { 'auditoria_de_empacotamento_pendente'; break }
     ($syncStatus -eq 'PENDENTE') { 'pronto_para_primeira_materializacao'; break }
     default { 'wrappers_atualizados' }
 }
@@ -158,6 +172,8 @@ Emit-Line -Key 'sync/materializacao' -Value $syncStatus
 Emit-Line -Key 'sync/materializacao.evidencia' -Value $syncEvidence
 Emit-Line -Key 'indice/gate' -Value $gateStatus
 Emit-Line -Key 'indice/gate.evidencia' -Value $(if ($gateRaw) { $gateRaw.Replace([Environment]::NewLine, ' | ') } else { '(sem saida)' })
+Emit-Line -Key 'indice/semantica' -Value $inventorySemanticStatus
+Emit-Line -Key 'indice/semantica.evidencia' -Value $(if ($gateRaw) { $gateRaw.Replace([Environment]::NewLine, ' | ') } else { '(sem saida)' })
 Emit-Line -Key 'metadata wrapper' -Value $metadataWrapperStatus
 Emit-Line -Key 'metadata wrapper.evidencia' -Value $(if ($metadataWrapperRaw) { $metadataWrapperRaw.Replace([Environment]::NewLine, ' | ') } else { '(sem saida)' })
 Emit-Line -Key 'empacotamento local' -Value $packageAuditStatus

@@ -61,16 +61,20 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 function Get-KnownTypeMap {
-    $mapPath = Join-Path $PSScriptRoot "gx-type-guid-map.json"
-    if (-not (Test-Path -LiteralPath $mapPath -PathType Leaf)) {
-        throw "Type GUID map not found: $mapPath"
+    $catalogPath = Join-Path $PSScriptRoot "gx-object-type-catalog.json"
+    if (-not (Test-Path -LiteralPath $catalogPath -PathType Leaf)) {
+        throw "Object type catalog not found: $catalogPath"
     }
 
-    $rawMap = Get-Content -LiteralPath $mapPath -Raw
-    $jsonMap = $rawMap | ConvertFrom-Json
+    $rawCatalog = Get-Content -LiteralPath $catalogPath -Raw
+    $catalog = $rawCatalog | ConvertFrom-Json
     $map = [ordered]@{}
-    foreach ($property in $jsonMap.PSObject.Properties) {
-        $map[$property.Name.ToLowerInvariant()] = [string]$property.Value
+    foreach ($property in $catalog.types.PSObject.Properties) {
+        $entry = $property.Value
+        if ($null -eq $entry.objectTypeGuid -or [string]::IsNullOrWhiteSpace([string]$entry.objectTypeGuid)) {
+            continue
+        }
+        $map[[string]$entry.objectTypeGuid.ToLowerInvariant()] = [string]$property.Name
     }
 
     return $map
@@ -453,7 +457,7 @@ function Convert-PackageToItems {
             Sort-Object Name |
             ForEach-Object { "$($_.Name) [$($_.Value)]" }
 
-        throw "Package contains object type GUIDs not mapped to destination folders: $($unknownList -join ', '). Update scripts\gx-type-guid-map.json and reflect the new type in 01a-catalogo-e-padroes-empiricos.md before retrying."
+        throw "Package contains object type GUIDs not mapped to destination folders: $($unknownList -join ', '). Update scripts\gx-object-type-catalog.json and reflect the new type in 01a-catalogo-e-padroes-empiricos.md before retrying."
     }
 
     $collisions = @(

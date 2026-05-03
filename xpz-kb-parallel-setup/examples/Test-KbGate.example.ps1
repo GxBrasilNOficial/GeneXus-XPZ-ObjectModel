@@ -75,6 +75,9 @@ $indexMetadataText = ($indexMetadata | Out-String)
 if ([string]::IsNullOrWhiteSpace($indexMetadataText) -or ($indexMetadataText -notmatch 'last_index_build_run_at')) {
     throw 'BLOCK: index-metadata ausente ou sem last_index_build_run_at'
 }
+if ($indexMetadataText -notmatch 'inventory_validation_status') {
+    throw 'BLOCK: index-metadata ausente ou sem inventory_validation_status'
+}
 
 if (-not (Test-Path -LiteralPath $sourceMetadata -PathType Leaf)) {
     throw 'BLOCK: kb-source-metadata.md ausente'
@@ -99,4 +102,13 @@ if ($lastIndexBuild -lt $lastXpzMaterialization) {
     throw 'BLOCK: indice defasado em relacao a last_xpz_materialization_run_at'
 }
 
+$inventoryStatusMatch = [regex]::Match($indexMetadataText, 'inventory_validation_status\s*[:=]\s*(?<value>\S+)')
+if (-not $inventoryStatusMatch.Success) {
+    throw 'BLOCK: index-metadata sem valor parseavel de inventory_validation_status'
+}
+if ($inventoryStatusMatch.Groups['value'].Value -ne 'OK') {
+    throw 'BLOCK: indice com inventario semantico invalido ou pendente'
+}
+
+'inventory_validation_status: OK'
 'GATE_OK'

@@ -6,8 +6,8 @@ Wrapper local sanitizado para auditoria agregada da pasta paralela da KB.
 .DESCRIPTION
 Executa o script compartilhado `Test-XpzSetupAudit.ps1` para consolidar, em
 saida deterministica, as evidencias principais de auditoria operacional da
-pasta paralela: `sync/materializacao`, `indice/gate`, `metadata wrapper`,
-`empacotamento local` e `estado_operacional_sugerido`.
+pasta paralela: `sync/materializacao`, `indice/gate`, `indice/semantica`,
+`metadata wrapper`, `empacotamento local` e `estado_operacional_sugerido`.
 
 Este wrapper nao substitui os gates especificos. Ele apenas centraliza a
 execucao deles para handoff e diagnostico curto em `modo_atualizacao`.
